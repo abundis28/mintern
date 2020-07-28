@@ -35,11 +35,17 @@
       <artifactId>gson</artifactId>
       <version>2.8.6</version>
     </dependency>
+
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>8.0.19</version>
+    </dependency>
   </dependencies>
 
   <build>
     <plugins>
-      <!-- Provides `mvn package appengine:run` for local testing
+      <!-- Provides `mvn package appengine:run` for testing on the cloud
            and `mvn package appengine:deploy` for deploying. -->
       <plugin>
         <groupId>com.google.cloud.tools</groupId>
@@ -48,6 +54,16 @@
         <configuration>
           <deploy.projectId>internship-platform-step-2020</deploy.projectId>
           <deploy.version>1</deploy.version>
+        </configuration>
+      </plugin>
+      <!-- Provides `mvn tomcat7:run` for testing on local server. -->
+      <plugin>
+        <groupId>org.apache.tomcat.maven</groupId>
+        <artifactId>tomcat7-maven-plugin</artifactId>
+        <version>2.2</version>
+        <configuration>
+          <port>9090</port>
+          <path>/</path>
         </configuration>
       </plugin>
     </plugins>
