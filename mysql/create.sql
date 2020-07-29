@@ -85,6 +85,14 @@ CREATE TABLE Answer
     FOREIGN KEY (author_id) REFERENCES User (id)
   );
 
+CREATE TABLE AnswerFollower
+  (
+    answer_id INT NOT NULL,
+    follower_id INT NOT NULL,
+    FOREIGN KEY (answer_id) REFERENCES Answer (id),
+    FOREIGN KEY (follower_id) REFERENCES User (id)
+  );
+
 CREATE TABLE Comment
   (
     answer_id INT NOT NULL,
