@@ -64,6 +64,14 @@ CREATE TABLE QuestionFollower
     FOREIGN KEY (follower_id) REFERENCES User (id)
   );
 
+CREATE TABLE QuestionTag
+  (
+    question_id INT NOT NULL,
+    tag_id INT NOT NULL,
+    FOREIGN KEY (question_id) REFERENCES Question (id),
+    FOREIGN KEY (tag_id) REFERENCES Tag (id)
+  );
+
 CREATE TABLE Answer
   (
     id INT NOT NULL AUTO_INCREMENT,
