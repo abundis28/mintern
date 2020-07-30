@@ -5,23 +5,23 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * This servlet is just to test a query on the mintern database, and can be used as reference.
+ * This servlet is just to test a query on the Mintern database, and can be used as reference.
  * for later use.
  */
 @WebServlet("/test")
 public class TestServlet extends HttpServlet {
   // All the variables needed to connect to the local database.
-  // P.S. change the timezone if needed https://github.com/dbeaver/dbeaver/wiki/JDBC-Time-Zones.
-  String url = "jdbc:mysql://localhost:3306/mintern?useSSL=false&serverTimezone=America/Mexico_City";
+  // P.S.: Change the timezone if needed (https://github.com/dbeaver/dbeaver/wiki/JDBC-Time-Zones).
+  String url = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
   String user = "root";
   String password = "";
 
