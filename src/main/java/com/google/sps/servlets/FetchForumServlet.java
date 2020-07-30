@@ -27,17 +27,44 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
+/** 
+   * This servlet will retrieve forum posts to be displayed on the page.
+   */
 @WebServlet("/fetch-forum")
 public class FetchForumServlet extends HttpServlet {
+  // All the variables needed to connect to the local database.
+  // P.S.: Change the timezone if needed (https://github.com/dbeaver/dbeaver/wiki/JDBC-Time-Zones).
+  String url = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
+  String user = "root";
+  String password = "";
 
+  // This is the query that will be executed.
+  String query = "SELECT * FROM Question";
+  
+  /** 
+   * This method will get the forum questions from the query and return them as a JSON string.
+   */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    
-  }
-
-  @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    
+    // We begin the JSON string.
+    String json = "{";
+    // The connection and query are attempted.
+    try (Connection connection = DriverManager.getConnection(url, user, password);
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        ResultSet queryResult = preparedStatement.executeQuery()) {
+          // All of the rows from the query are looped if it goes through.
+          while (queryResult.next()) {
+          }
+          // Delete the last whitespace and comma that were added to the JSON string.
+          json = json.substring(0, json.length() - 2);
+        } catch (SQLException exception) {
+          // If the connection or the query don't go through, we get the log of what happened.
+          Logger logger = Logger.getLogger(TestServlet.class.getName());
+          logger.log(Level.SEVERE, exception.getMessage(), exception);
+        }
+    // We finish the JSON string.
+    json += "}";
+    response.setContentType("application/json;");
+    response.getWriter().println(json);
   }
 }
