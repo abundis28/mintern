@@ -1,13 +1,17 @@
-USE mintern;
+-- This file will populate the database with dummy data
 
-INSERT INTO Major (name) VALUES 
+USE Mintern;
+
+INSERT INTO Major (name) 
+VALUES 
   ('ITC'),
   ('INT'),
   ('ISD'),
   ('ITI'),
   ('IMT');
 
-INSERT INTO User (name, email, major_id, is_mentor) VALUES 
+INSERT INTO User (name, email, major_id, is_mentor) 
+VALUES 
   ('Shaar', 'a00825287@itesm.mx', 1, TRUE),
   ('Andres', 'a01283152@itesm.mx', 3, TRUE),
   ('Omar', 'a01206177@itesm.mx', 1, TRUE),
@@ -16,7 +20,8 @@ INSERT INTO User (name, email, major_id, is_mentor) VALUES
   ('Rodrigo', 'a01234245@itesm.mx', 1, FALSE),
   ('Daniel', 'a00825596@itesm.mx', 1, FALSE);
 
-INSERT INTO Notification (user_id, message, url, date) VALUES
+INSERT INTO Notification (user_id, message, url, date_time) 
+VALUES
   (4, 'You got an answer', 'questions/1', '2020-07-29 13:00:00.000000'),
   (6, 'You got an answer', 'questions/2', '2020-07-29 14:00:00.000000'),
   (6, 'You got an answer', 'questions/2', '2020-07-29 15:00:00.000000'),
@@ -26,7 +31,8 @@ INSERT INTO Notification (user_id, message, url, date) VALUES
   (3, 'Somebody commented your answer', 'questions/2', '2020-07-29 19:00:00.000000'),
   (3, 'Somebody commented your answer', 'questions/2', '2020-07-29 20:00:00.000000');
 
-INSERT INTO Tag (title, color) VALUES 
+INSERT INTO Tag (title, color) 
+VALUES 
   ('Documents', 'Red'),
   ('Google', 'Blue'),
   ('Resume', 'Green'),
@@ -34,7 +40,8 @@ INSERT INTO Tag (title, color) VALUES
   ('Facebook', 'Purple'),
   ('Uber', 'Brown');
 
-INSERT INTO MentorExperience (mentor_id, tag_id) VALUES 
+INSERT INTO MentorExperience (mentor_id, tag_id) 
+VALUES 
   (1, 1),
   (1, 2),
   (1, 3),
@@ -43,14 +50,16 @@ INSERT INTO MentorExperience (mentor_id, tag_id) VALUES
   (3, 1),
   (3, 2);
 
-INSERT INTO Question (title, body, asker_id, date) VALUES 
+INSERT INTO Question (title, body, asker_id, date_time) 
+VALUES 
   ('When are the Google SWE interviews?', 'I was wondering if it is this week or the other', 4, '2020-07-29 09:00:00.000000'),
   ('Should the kardex be in spanish or english?', 'Idk which one to get', 6, '2020-07-29 10:00:00.000000'),
   ('Do I include linkedin in my resume?', 'Just wondering', 5, '2020-07-29 11:00:00.000000'),
   ('Anyone have the FB or Uber recruiter mail?', 'I cannot find any', 7, '2020-07-29 12:00:00.000000'),
   ('What does ML mean?', null, 5, '2020-07-29 12:30:00.000000');
 
-INSERT INTO QuestionFollower (question_id, follower_id) VALUES
+INSERT INTO QuestionFollower (question_id, follower_id) 
+VALUES
   (1, 5),
   (1, 7),
   (2, 4),
@@ -58,7 +67,8 @@ INSERT INTO QuestionFollower (question_id, follower_id) VALUES
   (3, 4),
   (4, 6);
 
-INSERT INTO QuestionTag (question_id, tag_id) VALUES
+INSERT INTO QuestionTag (question_id, tag_id) 
+VALUES
   (1, 2),
   (1, 4),
   (2, 1),
@@ -66,7 +76,8 @@ INSERT INTO QuestionTag (question_id, tag_id) VALUES
   (4, 5),
   (4, 6);
 
-INSERT INTO Answer (question_id, body, author_id, date, votes) VALUES
+INSERT INTO Answer (question_id, body, author_id, date_time, votes) 
+VALUES
   (1, 'Next week', 1, '2020-07-29 13:00:00.000000', 3),
   (2, 'English', 2, '2020-07-29 14:00:00.000000', 1),
   (2, 'Either is fine', 3, '2020-07-29 15:00:00.000000', 4),
@@ -74,7 +85,8 @@ INSERT INTO Answer (question_id, body, author_id, date, votes) VALUES
   (4, 'I have an Uber one: example@uber.com', 2, '2020-07-29 17:00:00.000000', 5),
   (4, 'I have one for FB: example@fb.com', 1, '2020-07-29 18:00:00.000000', 4);
 
-INSERT INTO AnswerFollower (answer_id, follower_id) VALUES
+INSERT INTO AnswerFollower (answer_id, follower_id) 
+VALUES
   (1, 5),
   (1, 7),
   (2, 4),
@@ -82,6 +94,7 @@ INSERT INTO AnswerFollower (answer_id, follower_id) VALUES
   (3, 4),
   (4, 6);
 
-INSERT INTO Comment (answer_id, body, author_id, date) VALUES
+INSERT INTO Comment (answer_id, body, author_id, date_time) 
+VALUES
   (3, 'And how much does it cost?', 7, '2020-07-29 19:00:00.000000'),
   (3, '50$', 1, '2020-07-29 20:00:00.000000');
