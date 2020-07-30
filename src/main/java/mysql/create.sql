@@ -1,7 +1,7 @@
 -- This file will create the database and its tables
 
-CREATE DATABASE mintern;
-USE mintern;
+CREATE DATABASE Mintern;
+USE Mintern;
 
 CREATE TABLE Major (
   id INT NOT NULL AUTO_INCREMENT,

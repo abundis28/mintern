@@ -1,6 +1,6 @@
 -- This file will populate the database with dummy data
 
-USE mintern;
+USE Mintern;
 
 INSERT INTO Major (name) 
 VALUES 
