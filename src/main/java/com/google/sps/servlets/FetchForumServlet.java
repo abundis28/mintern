@@ -71,7 +71,7 @@ public class FetchForumServlet extends HttpServlet {
           }
         } catch (SQLException exception) {
           // If the connection or the query don't go through, we get the log of what happened.
-          Logger logger = Logger.getLogger(TestServlet.class.getName());
+          Logger logger = Logger.getLogger(FetchForumServlet.class.getName());
           logger.log(Level.SEVERE, exception.getMessage(), exception);
         }
 
