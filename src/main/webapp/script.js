@@ -12,6 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-function fetchForum() {
-  fetch('/fetch-forum').then(response => response.json()).then(data => console.log(data));
+/**
+ * Fetches questions from server, wraps each in an <li> element, 
+ * and adds them to the DOM.
+ */
+async function fetchForum() {
+  const response = await fetch('/fetch-forum');
+  const questionsObject = await response.json();
+  const questionsContainer = document.getElementById('forum');
+  questionsContainer.innerHTML = '';
+  questionsObject.forEach(question => {
+    questionsContainer.appendChild(createListElement(question));
+  });
 }
