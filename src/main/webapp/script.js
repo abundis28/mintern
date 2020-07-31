@@ -15,7 +15,7 @@
 /*
  * Displays navbar authentication buttons according to login status.
  */
-function fetchLogin() {
+window.onload = function fetchLogin() {
   fetch('/login').then(response => response.json()).then(user => {
     // If user is logged in, show logout button in navbar.
     if (user.loggedIn == true) {
@@ -23,7 +23,8 @@ function fetchLogin() {
       // Create logout button.
       const logoutButton = document.createElement('button');
       logoutButton.setAttribute('type', 'button');
-      logoutButton.classList.add('btn btn-outline-success');
+      logoutButton.classList.add('btn');
+      logoutButton.classList.add('btn-outline-success');
       logoutButton.innerHTML = 'Log Out';
 
       // Create navbar item to hold logout button.
@@ -33,7 +34,7 @@ function fetchLogin() {
     
       // Append logout button to navbar.
       const authenticationButtons = document.getElementById('authentication');
-      authenticationButtons = '';
+      authenticationButtons.innerHTML = '';
       authenticationButtons.appendChild(logoutButtonNavbarItem);
     // If user is logged out, show signup and login buttons in navbar.
     } else {
@@ -41,7 +42,8 @@ function fetchLogin() {
       // Create signup button.
       const signupButton = document.createElement('button');
       signupButton.setAttribute('type', 'button');
-      signupButton.classList.add('btn btn-success');
+      signupButton.classList.add('btn');
+      signupButton.classList.add('btn-success');
       signupButton.innerHTML = 'Sign Up';
 
       // Create navbar item to hold signup button.
@@ -52,7 +54,8 @@ function fetchLogin() {
       // Create login button.
       const loginButton = document.createElement('button');
       loginButton.setAttribute('type', 'button');
-      loginButton.classList.add('btn btn-outline-success');
+      loginButton.classList.add('btn');
+      loginButton.classList.add('btn-outline-success');
       loginButton.innerHTML = 'Log In';
 
       // Create navbar item to hold login button.
@@ -62,7 +65,7 @@ function fetchLogin() {
 
       // Append signup and login buttons to navbar.
       const authenticationButtons = document.getElementById('authentication');
-      authenticationButtons = '';
+      authenticationButtons.innerHTML = '';
       authenticationButtons.appendChild(signupButtonNavbarItem);
       authenticationButtons.appendChild(loginButtonNavbarItem);
     }
