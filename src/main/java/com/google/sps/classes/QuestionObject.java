@@ -20,30 +20,38 @@ import java.util.List;
 import java.sql.Timestamp;
 
 /**
- * Class to create a question for the forum.
+ * Class to create a question for the forum. It will be used for Gson conversion.
  */
 public class QuestionObject {
 
+  // Title of the question.
   private String title;
 
+  // Body of the question.
   private String body;
 
+  // Id of the user who posted the question.
   private int askerId;
 
+  // Time when the question was posted.
   private Timestamp dateTime;
 
+  // Method to set the title.
   public void setTitle(String title) {
     this.title = title;
   }
 
+  // Method to set the body.
   public void setBody(String body) {
     this.body = body;
   }
 
+  // Method to set the askerId.
   public void setAskerId(int askerId) {
     this.askerId = askerId;
   }
 
+  // Method to set the dateTime.
   public void setDateTime(Timestamp dateTime) {
     this.dateTime = dateTime;
   }
