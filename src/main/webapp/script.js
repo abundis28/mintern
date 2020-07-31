@@ -20,54 +20,70 @@ window.onload = function fetchLogin() {
     // If user is logged in, show logout button in navbar.
     if (user.loggedIn == true) {
       console.log("logged in");
+
+      // Delete signup button.
+      const signupButtonNavbar = document.getElementById('signup');
+      signupButtonNavbar.innerHTML = '';
+
       // Create logout button.
       const logoutButton = document.createElement('button');
       logoutButton.setAttribute('type', 'button');
+      const logoutUrl = 'window.location.href = \"' + user.authenticationUrl + '\"';
+      logoutButton.setAttribute('onclick', logoutUrl);
       logoutButton.classList.add('btn');
       logoutButton.classList.add('btn-outline-success');
       logoutButton.innerHTML = 'Log Out';
 
       // Create navbar item to hold logout button.
-      const logoutButtonNavbarItem = document.createElement('li');
-      logoutButtonNavbarItem.classList.add('nav-item');
-      logoutButtonNavbarItem.appendChild(logoutButton);
+      const logoutButtonItem = document.createElement('li');
+      logoutButtonItem.classList.add('nav-item');
+      logoutButtonItem.appendChild(logoutButton);
     
       // Append logout button to navbar.
-      const authenticationButtons = document.getElementById('authentication');
-      authenticationButtons.innerHTML = '';
-      authenticationButtons.appendChild(logoutButtonNavbarItem);
+      const logoutButtonNavbar = document.getElementById('login');
+      logoutButtonNavbar.innerHTML = '';
+      logoutButtonNavbar.appendChild(logoutButtonItem);
     // If user is logged out, show signup and login buttons in navbar.
     } else {
       console.log("logged out");
+
       // Create signup button.
       const signupButton = document.createElement('button');
       signupButton.setAttribute('type', 'button');
+      const signupUrl = 'window.location.href = \"' + user.authenticationUrl + '\"';
+      signupButton.setAttribute('onclick', signupUrl);
       signupButton.classList.add('btn');
       signupButton.classList.add('btn-success');
       signupButton.innerHTML = 'Sign Up';
 
       // Create navbar item to hold signup button.
-      const signupButtonNavbarItem = document.createElement('li');
-      signupButtonNavbarItem.classList.add('nav-item');
-      signupButtonNavbarItem.appendChild(signupButton);
+      const signupButtonItem = document.createElement('li');
+      signupButtonItem.classList.add('nav-item');
+      signupButtonItem.appendChild(signupButton);
+
+      // Append signup button to navbar.
+      const signupButtonNavbar = document.getElementById('signup');
+      signupButtonNavbar.innerHTML = '';
+      signupButtonNavbar.appendChild(signupButtonItem);
 
       // Create login button.
       const loginButton = document.createElement('button');
       loginButton.setAttribute('type', 'button');
+      const loginUrl = 'window.location.href = \"' + user.authenticationUrl + '\"';
+      loginButton.setAttribute('onclick', loginUrl);
       loginButton.classList.add('btn');
       loginButton.classList.add('btn-outline-success');
       loginButton.innerHTML = 'Log In';
 
       // Create navbar item to hold login button.
-      const loginButtonNavbarItem = document.createElement('li');
-      loginButtonNavbarItem.classList.add('nav-item');
-      loginButtonNavbarItem.appendChild(loginButton);
+      const loginButtonItem = document.createElement('li');
+      loginButtonItem.classList.add('nav-item');
+      loginButtonItem.appendChild(loginButton);
 
-      // Append signup and login buttons to navbar.
-      const authenticationButtons = document.getElementById('authentication');
-      authenticationButtons.innerHTML = '';
-      authenticationButtons.appendChild(signupButtonNavbarItem);
-      authenticationButtons.appendChild(loginButtonNavbarItem);
+      // Append login button to navbar.
+      const loginButtonNavbar = document.getElementById('login');
+      loginButtonNavbar.innerHTML = '';
+      loginButtonNavbar.appendChild(loginButtonItem);
     }
   })
 }
