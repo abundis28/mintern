@@ -12,10 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-function sayHi() {
-  console.log("hi");
-}
-
+/*
+ * Displays navbar authentication buttons according to login status.
+ */
 function fetchLogin() {
   fetch('/login').then(response => response.json()).then(user => {
     // If user is logged in, show logout button in navbar.
