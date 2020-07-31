@@ -14,7 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * This servlet is just to test a query on the Mintern database, and can be used as reference.
+ * This servlet is just to test a query on the Mintern database, and can be used as reference
  * for later use.
  */
 @WebServlet("/test")
