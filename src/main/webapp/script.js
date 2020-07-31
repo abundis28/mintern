@@ -34,10 +34,13 @@ function createListElement(question) {
   const liElement = document.createElement('li');
   liElement.setAttribute('class', 'list-group-item');
   liElement.innerText = question.title;
-  const smallElement = document.createElement('small');
-  smallElement.setAttribute('class', 'text-muted');
-  smallElement.innerText = question.body;
-  liElement.appendChild(document.createElement('br'));
-  liElement.appendChild(smallElement);
+  // If the question has a body, show it underneath.
+  if (question.body) {
+    const smallElement = document.createElement('small');
+    smallElement.setAttribute('class', 'text-muted');
+    smallElement.innerText = question.body;
+    liElement.appendChild(document.createElement('br'));
+    liElement.appendChild(smallElement);
+  }
   return liElement;
 }
