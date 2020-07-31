@@ -14,6 +14,7 @@
 
 package com.google.sps.servlets;
 
+import com.google.gson.Gson;
 import com.google.sps.classes.QuestionObject;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
@@ -26,7 +27,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.sql.Timestamp;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,20 +46,28 @@ public class FetchForumServlet extends HttpServlet {
 
   // This is the query that will be executed.
   String query = "SELECT * FROM Question";
+
+  // This is the list that will hold all the questions from the query.
+  List<QuestionObject> questions = new ArrayList<>();
   
   /** 
    * This method will get the forum questions from the query and return them as a JSON string.
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // We begin the JSON string.
-    String json = "{";
     // The connection and query are attempted.
     try (Connection connection = DriverManager.getConnection(url, user, password);
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         ResultSet queryResult = preparedStatement.executeQuery()) {
           // All of the rows from the query are looped if it goes through.
           while (queryResult.next()) {
+            QuestionObject question = new QuestionObject();
+            question.setTitle(queryResult.getString(2));
+            question.setBody(queryResult.getString(3));
+            question.setAskerId(queryResult.getInt(4));
+            question.setDateTime(queryResult.getTimestamp(5));
+
+            questions.add(question);
           }
           // Delete the last whitespace and comma that were added to the JSON string.
           json = json.substring(0, json.length() - 2);
@@ -65,9 +76,9 @@ public class FetchForumServlet extends HttpServlet {
           Logger logger = Logger.getLogger(TestServlet.class.getName());
           logger.log(Level.SEVERE, exception.getMessage(), exception);
         }
-    // We finish the JSON string.
-    json += "}";
+
+    Gson gson = new Gson();
     response.setContentType("application/json;");
-    response.getWriter().println(json);
+    response.getWriter().println(gson.toJson(questions));
   }
 }
