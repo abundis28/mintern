@@ -25,3 +25,19 @@ async function fetchForum() {
     questionsContainer.appendChild(createListElement(question));
   });
 }
+
+/** 
+ * Creates an <li> element with title and body. 
+ * Each element corresponds to a question to be displayed in the DOM.
+ */
+function createListElement(question) {
+  const liElement = document.createElement('li');
+  liElement.setAttribute('class', 'list-group-item');
+  liElement.innerText = question.title;
+  const smallElement = document.createElement('small');
+  smallElement.setAttribute('class', 'text-muted');
+  smallElement.innerText = question.body;
+  liElement.appendChild(document.createElement('br'));
+  liElement.appendChild(smallElement);
+  return liElement;
+}
