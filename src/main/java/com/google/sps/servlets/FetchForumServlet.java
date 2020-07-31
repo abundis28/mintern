@@ -69,8 +69,6 @@ public class FetchForumServlet extends HttpServlet {
 
             questions.add(question);
           }
-          // Delete the last whitespace and comma that were added to the JSON string.
-          json = json.substring(0, json.length() - 2);
         } catch (SQLException exception) {
           // If the connection or the query don't go through, we get the log of what happened.
           Logger logger = Logger.getLogger(TestServlet.class.getName());
