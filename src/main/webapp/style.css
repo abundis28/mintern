@@ -1,3 +1,7 @@
 .btn {
   margin-right: 10px;
 }
+
+#dropdown-override {
+  min-width: 25rem;
+} 
