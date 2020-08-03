@@ -39,8 +39,11 @@ public class QuestionObject {
   // Time when the question was posted.
   private Timestamp dateTime;
 
-  // Amount of people that follow a question.
+  // Amount of people that follow the question.
   private int numberOfFollowers;
+
+  // Amount of answers that the question has.
+  private int numberOfAnswers;  
 
   // Method to set the title.
   public void setTitle(String title) {
