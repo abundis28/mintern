@@ -34,7 +34,7 @@ VALUES
   (3, 'Somebody commented your answer', 'questions/2', '2020-07-29 19:00:00.000000'),
   (3, 'Somebody commented your answer', 'questions/2', '2020-07-29 20:00:00.000000');
 
-INSERT INTO Tag (title, color) 
+INSERT INTO SubjectTag (title, color) 
 VALUES 
   ('Documents', 'Red'),
   ('Google', 'Blue'),
@@ -70,7 +70,7 @@ VALUES
   (3, 4),
   (4, 6);
 
-INSERT INTO QuestionTag (question_id, tag_id) 
+INSERT INTO TagInQuestion (question_id, tag_id) 
 VALUES
   (1, 2),
   (1, 4),

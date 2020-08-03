@@ -34,7 +34,7 @@ CREATE TABLE Notification (
   REFERENCES User (id)
 );
 
-CREATE TABLE Tag (
+CREATE TABLE SubjectTag (
   id INT NOT NULL AUTO_INCREMENT,
   title VARCHAR(255),
   color VARCHAR(255),
@@ -49,7 +49,7 @@ CREATE TABLE MentorExperience (
   FOREIGN KEY (mentor_id) 
   REFERENCES User (id),
   FOREIGN KEY (tag_id) 
-  REFERENCES Tag (id)
+  REFERENCES SubjectTag (id)
 );
 
 CREATE TABLE Question (
@@ -74,7 +74,7 @@ CREATE TABLE QuestionFollower (
   REFERENCES User (id)
 );
 
-CREATE TABLE QuestionTag (
+CREATE TABLE TagInQuestion (
   id INT NOT NULL AUTO_INCREMENT,
   question_id INT NOT NULL,
   tag_id INT NOT NULL,
@@ -82,7 +82,7 @@ CREATE TABLE QuestionTag (
   FOREIGN KEY (question_id) 
   REFERENCES Question (id),
   FOREIGN KEY (tag_id) 
-  REFERENCES Tag (id)
+  REFERENCES SubjectTag (id)
 );
 
 CREATE TABLE Answer (
