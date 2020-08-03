@@ -34,7 +34,7 @@ VALUES
   (3, 'Somebody commented your answer', 'questions/2', '2020-07-29 19:00:00.000000'),
   (3, 'Somebody commented your answer', 'questions/2', '2020-07-29 20:00:00.000000');
 
-INSERT INTO SubjectTag (title, color) 
+INSERT INTO SubjectTag (subject, color) 
 VALUES 
   ('Documents', 'Red'),
   ('Google', 'Blue'),
