@@ -19,7 +19,60 @@
     
     <title>Mintern</title>
   </head>
+<<<<<<< HEAD
   <body onload="fetchForum()">
       <div id="forum"></div>
+=======
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <!-- Logo -->
+      <a class="navbar-brand" href="#">
+        <img src="images/mintern-logo.png" height="50" alt="Mintern logo">
+      </a>
+      <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarToggler"
+          aria-controls="navbarToggler"
+          aria-expanded="false"
+          aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarToggler">
+        <!-- Search Bar -->
+        <form class="form-inline my-2 my-lg-0 mr-auto">
+          <input class="form-control mr-sm-2" type="search" placeholder="Search">
+          <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Search</button>
+        </form>
+        <ul class="navbar-nav mt-2 mt-lg-0">
+          <!-- Sign Up Button -->
+          <li class="nav-item active">
+            <button type="button" class="btn btn-success">Sign Up</button>
+          </li>
+          <!-- Log In Button -->
+          <li class="nav-item">
+            <button type="button" class="btn btn-outline-success">Log In</button>
+          </li>
+          <!-- Notifications Dropdown -->
+          <li class="nav-item dropdown">
+            <!-- Notifications Icon -->
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <svg width="30px" height="30px" viewBox="0 0 16 16" class="bi bi-inbox-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M3.81 4.063A1.5 1.5 0 0 1 4.98 3.5h6.04a1.5 1.5 0 0 1 1.17.563l3.7 4.625a.5.5 0 0 1-.78.624l-3.7-4.624a.5.5 0 0 0-.39-.188H4.98a.5.5 0 0 0-.39.188L.89 9.312a.5.5 0 1 1-.78-.624l3.7-4.625z"/>
+                <path fill-rule="evenodd" d="M.125 8.67A.5.5 0 0 1 .5 8.5h5A.5.5 0 0 1 6 9c0 .828.625 2 2 2s2-1.172 2-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .496.562l-.39 3.124a1.5 1.5 0 0 1-1.489 1.314H1.883a1.5 1.5 0 0 1-1.489-1.314l-.39-3.124a.5.5 0 0 1 .121-.393z"/>
+              </svg>
+            </a>
+            <!-- Notifications Dropdown Hardcoded Items -->
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="#">Notification 1</a>
+              <a class="dropdown-item" href="#">Notification 2</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+>>>>>>> master
   </body>
 </html>
