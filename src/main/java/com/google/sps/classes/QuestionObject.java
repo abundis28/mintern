@@ -74,4 +74,9 @@ public class QuestionObject {
   public void setNumberOfFollowers(int numberOfFollowers) {
     this.numberOfFollowers = numberOfFollowers;
   }  
+
+  // Method to set the numberOfAnswers.
+  public void setNumberOfAnswers(int numberOfAnswers) {
+    this.numberOfAnswers = numberOfAnswers;
+  }  
 }
