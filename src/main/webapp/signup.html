@@ -44,35 +44,44 @@
     <div class="content">
       <h1>Welcome to Mintern!</h1>
       <h2>Fill the information to complete your profile.</h2>
-      <!-- Mentor/Mentee Tabs -->
-      <div class="mdc-tab-bar" role="tablist">
-        <div class="mdc-tab-scroller">
-          <div class="mdc-tab-scroller__scroll-area">
-            <div class="mdc-tab-scroller__scroll-content">
-              <button class="mdc-tab mdc-tab--active" role="tab" aria-selected="true" tabindex="0">
-                <span class="mdc-tab__content">
-                  <span class="mdc-tab__icon material-icons" aria-hidden="true">code</span>
-                  <span class="mdc-tab__text-label">Mentor</span>
-                </span>
-                <span class="mdc-tab-indicator mdc-tab-indicator--active">
-                  <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
-                </span>
-                <span class="mdc-tab__ripple"></span>
-              </button>
-              <button class="mdc-tab mdc-tab--active" role="tab" aria-selected="true" tabindex="0">
-                <span class="mdc-tab__content">
-                  <span class="mdc-tab__icon material-icons" aria-hidden="true">create</span>
-                  <span class="mdc-tab__text-label">Mentee</span>
-                </span>
-                <span class="mdc-tab-indicator mdc-tab-indicator--active">
-                  <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
-                </span>
-                <span class="mdc-tab__ripple"></span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- Mentor Sign Up -->
+      <h1>Mentor</h1>
+      <form method="POST" action="/mentor-signup">
+        <p>First Name</p>
+        <input name="first-name"/>
+        <p>Last Name</p>
+        <input name="last-name"/>
+        <p>Username</p>
+        <input name="username"/>
+        <p>Major</p>
+        <select name="major">
+          <option value="1">ITC</option>
+          <option value="2">INT</option>
+          <option value="3">ISD</option>
+          <option value="4">ITI</option>
+          <option value="5">IMT</option>
+        </select>
+        <button>Submit</button>
+      </form>
+      <!-- Mentee Sign Up -->
+      <h1>Mentee</h1>
+      <form method="POST" action="/mentee-signup">
+        <p>First Name</p>
+        <input name="first-name"/>
+        <p>Last Name</p>
+        <input name="last-name"/>
+        <p>Username</p>
+        <input name="username"/>
+        <p>Major</p>
+        <select name="major">
+          <option value="itc">ITC</option>
+          <option value="int">INT</option>
+          <option value="isd">ISD</option>
+          <option value="iti">ITI</option>
+          <option value="imt">IMT</option>
+        </select>
+        <button>Submit</button>
+      </form>
     </div>
   </body>
   
