@@ -69,6 +69,6 @@ public class QuestionObject {
 
   // Method to set the numberOfFollowers.
   public void setNumberOfFollowers(int numberOfFollowers) {
-    this.dateTnumberOfFollowersime = numberOfFollowers;
+    this.numberOfFollowers = numberOfFollowers;
   }  
 }
