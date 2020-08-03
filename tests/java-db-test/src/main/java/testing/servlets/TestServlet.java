@@ -26,11 +26,12 @@ public class TestServlet extends HttpServlet {
   String password = "";
 
   // This is the query that will be executed.
+  // Feel free to modify this value to match the query that you would like to test.
   String query = "SELECT * FROM User";
   
   /** 
-   * This method will get the ids and names of all users on the database and return it as
-   * a JSON string.
+   * This method runs the specified query above on the Mintern database and returns
+   * the result as a JSON string.
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
