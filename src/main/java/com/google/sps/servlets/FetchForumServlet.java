@@ -41,11 +41,11 @@ public class FetchForumServlet extends HttpServlet {
   // All the variables needed to connect to the local database.
   // P.S.: Change the timezone if needed (https://github.com/dbeaver/dbeaver/wiki/JDBC-Time-Zones).
   String url = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
-  String user = "root";
+String user = "root";
   String password = "";
 
   // This is the query that will be executed.
-  String query = "SELECT * FROM Question";
+  String query = "SELECT * FROM Question LEFT JOIN User ON Question.asker_id=User.id ORDER BY date_time DESC;";
 
   // This is the list that will hold all the questions from the query.
   List<QuestionObject> questions = new ArrayList<>();
@@ -65,6 +65,7 @@ public class FetchForumServlet extends HttpServlet {
             question.setTitle(queryResult.getString(2));
             question.setBody(queryResult.getString(3));
             question.setAskerId(queryResult.getInt(4));
+            question.setAskerName(queryResult.getString(7));
             question.setDateTime(queryResult.getTimestamp(5));
 
             questions.add(question);

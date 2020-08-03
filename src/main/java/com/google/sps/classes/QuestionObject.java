@@ -33,6 +33,9 @@ public class QuestionObject {
   // Id of the user who posted the question.
   private int askerId;
 
+  // Name of the user who posted the question.
+  private String askerName;
+
   // Time when the question was posted.
   private Timestamp dateTime;
 
@@ -49,6 +52,11 @@ public class QuestionObject {
   // Method to set the askerId.
   public void setAskerId(int askerId) {
     this.askerId = askerId;
+  }
+
+  // Method to set the askerName.
+  public void setAskerName(String askerName) {
+    this.askerName = askerName;
   }
 
   // Method to set the dateTime.
