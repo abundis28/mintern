@@ -14,7 +14,7 @@
 
 package com.google.sps.servlets;
 
-import com.google.gson.Gson;
+import com.google.sps.classes.Utility;
 import com.google.sps.classes.QuestionObject;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
@@ -75,8 +75,7 @@ public class FetchForumServlet extends HttpServlet {
           logger.log(Level.SEVERE, exception.getMessage(), exception);
         }
 
-    Gson gson = new Gson();
     response.setContentType("application/json;");
-    response.getWriter().println(gson.toJson(questions));
+    response.getWriter().println(Utility.convertToJsonUsingGson(questions));
   }
 }
