@@ -41,30 +41,41 @@ function createQuestionElement(question) {
   askerElement.innerText = '\t' + question.askerName;
   questionElement.appendChild(askerElement);
 
-  // Number of followers is placed to the right side.
+  // Number of followers is placed to the right side at the top.
   const followersElement = document.createElement('small');
   followersElement.setAttribute('class', 'float-right');
-  // Avoid writing '1 followers'.
-  if (question.numberOfFollowers !== 1) {
-    followersElement.innerText = question.numberOfFollowers + ' followers';
-  } else {
+  if (question.numberOfFollowers === 1) {
+    // Avoid writing '1 followers'.
     followersElement.innerText = question.numberOfFollowers + ' follower';
+  } else {
+    followersElement.innerText = question.numberOfFollowers + ' followers';
   }
   questionElement.appendChild(followersElement);
+
+  // Number of answers is placed to the right side at the bottom.
+  const answersElement = document.createElement('small');
+  answersElement.setAttribute('class', 'float-right');
+  if (question.numberOfAnswers === 1) {
+    // Avoid writing '1 answers'.
+    answersElement.innerText = question.numberOfAnswers + ' answer';
+  } else {
+    answersElement.innerText = question.numberOfAnswers + ' answers';
+  }
+  questionElement.appendChild(document.createElement('br'));
+  questionElement.appendChild(answersElement);
  
   // If the question has a body, show it underneath.
   if (question.body) {
     const bodyElement = document.createElement('small');
     bodyElement.innerText = question.body;
-    questionElement.appendChild(document.createElement('br'));
     questionElement.appendChild(bodyElement);
+    questionElement.appendChild(document.createElement('br'));
   } 
   
   // Date is placed beneath the body or title.
   const dateElement = document.createElement('small');
   dateElement.setAttribute('class', 'text-muted');
   dateElement.innerText = question.dateTime;
-  questionElement.appendChild(document.createElement('br'));
   questionElement.appendChild(dateElement);
 
   return questionElement;
