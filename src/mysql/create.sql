@@ -36,7 +36,7 @@ CREATE TABLE Notification (
 
 CREATE TABLE SubjectTag (
   id INT NOT NULL AUTO_INCREMENT,
-  title VARCHAR(255),
+  subject VARCHAR(255),
   color VARCHAR(255),
   PRIMARY KEY (id)
 );
