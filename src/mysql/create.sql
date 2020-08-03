@@ -1,4 +1,7 @@
--- This file will create the database and its tables
+-- This file will create the database and its tables.
+-- 
+-- For more context on the Mintern database design, 
+-- see https://docs.google.com/document/d/1P4eRQsu7TQHY4Sh1XZkc_zuKfa0XzJUfmSpnJDldYIY/edit?usp=sharing.
 
 CREATE DATABASE Mintern;
 USE Mintern;
