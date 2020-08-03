@@ -39,6 +39,9 @@ public class QuestionObject {
   // Time when the question was posted.
   private Timestamp dateTime;
 
+  // Amount of people that follow a question.
+  private int numberOfFollowers;
+
   // Method to set the title.
   public void setTitle(String title) {
     this.title = title;
@@ -63,4 +66,9 @@ public class QuestionObject {
   public void setDateTime(Timestamp dateTime) {
     this.dateTime = dateTime;
   }
+
+  // Method to set the numberOfFollowers.
+  public void setNumberOfFollowers(int numberOfFollowers) {
+    this.dateTnumberOfFollowersime = numberOfFollowers;
+  }  
 }
