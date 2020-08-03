@@ -45,7 +45,7 @@ public class FetchForumServlet extends HttpServlet {
   String password = "";
 
   // This is the query that will be executed.
-  String query = "SELECT * FROM Question LEFT JOIN (SELECT question_id, COUNT(follower_id) followers FROM QuestionFollower GROUP BY question_id) CountTable ON Question.id=CountTable.question_id LEFT JOIN (SELECT name, id AS asker_id FROM User) NameTable ON Question.asker_id=NameTable.asker_id;";
+  String query = "SELECT * FROM Question LEFT JOIN (SELECT question_id, COUNT(follower_id) followers FROM QuestionFollower GROUP BY question_id) CountTable ON Question.id=CountTable.question_id LEFT JOIN (SELECT name, id AS asker_id FROM User) NameTable ON Question.asker_id=NameTable.asker_id LEFT JOIN (SELECT question_id, COUNT(id) answers FROM Answer GROUP BY question_id) AnswerTable ON Question.id=AnswerTable.question_id;";
 
   // This is the list that will hold all the questions from the query.
   List<QuestionObject> questions = new ArrayList<>();
