@@ -1,4 +1,7 @@
--- This file will create the database and its tables
+-- This file will create the database and its tables.
+-- 
+-- For more context on the Mintern database design, 
+-- see https://docs.google.com/document/d/1P4eRQsu7TQHY4Sh1XZkc_zuKfa0XzJUfmSpnJDldYIY/edit?usp=sharing.
 
 CREATE DATABASE Mintern;
 USE Mintern;
@@ -31,9 +34,9 @@ CREATE TABLE Notification (
   REFERENCES User (id)
 );
 
-CREATE TABLE Tag (
+CREATE TABLE SubjectTag (
   id INT NOT NULL AUTO_INCREMENT,
-  title VARCHAR(255),
+  subject VARCHAR(255),
   color VARCHAR(255),
   PRIMARY KEY (id)
 );
@@ -46,7 +49,7 @@ CREATE TABLE MentorExperience (
   FOREIGN KEY (mentor_id) 
   REFERENCES User (id),
   FOREIGN KEY (tag_id) 
-  REFERENCES Tag (id)
+  REFERENCES SubjectTag (id)
 );
 
 CREATE TABLE Question (
@@ -71,7 +74,7 @@ CREATE TABLE QuestionFollower (
   REFERENCES User (id)
 );
 
-CREATE TABLE QuestionTag (
+CREATE TABLE TagInQuestion (
   id INT NOT NULL AUTO_INCREMENT,
   question_id INT NOT NULL,
   tag_id INT NOT NULL,
@@ -79,7 +82,7 @@ CREATE TABLE QuestionTag (
   FOREIGN KEY (question_id) 
   REFERENCES Question (id),
   FOREIGN KEY (tag_id) 
-  REFERENCES Tag (id)
+  REFERENCES SubjectTag (id)
 );
 
 CREATE TABLE Answer (

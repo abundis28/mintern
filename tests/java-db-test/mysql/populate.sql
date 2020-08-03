@@ -1,4 +1,7 @@
--- This file will populate the database with dummy data
+-- This file will populate the database with dummy data.
+-- 
+-- For more context on the Mintern database design, 
+-- see https://docs.google.com/document/d/1P4eRQsu7TQHY4Sh1XZkc_zuKfa0XzJUfmSpnJDldYIY/edit?usp=sharing.
 
 USE Mintern;
 
@@ -31,14 +34,14 @@ VALUES
   (3, 'Somebody commented your answer', 'questions/2', '2020-07-29 19:00:00.000000'),
   (3, 'Somebody commented your answer', 'questions/2', '2020-07-29 20:00:00.000000');
 
-INSERT INTO Tag (title, color) 
+INSERT INTO SubjectTag (subject, color) 
 VALUES 
-  ('Documents', 'Red'),
-  ('Google', 'Blue'),
-  ('Resume', 'Green'),
-  ('SWE', 'Yellow'),
-  ('Facebook', 'Purple'),
-  ('Uber', 'Brown');
+  ('Documents', '#6cb4b8'),
+  ('Google', '#da7015'),
+  ('Resume', '#eae8d3'),
+  ('SWE', '#6aaccb'),
+  ('Facebook', '#854c12'),
+  ('Uber', '#bf8293');
 
 INSERT INTO MentorExperience (mentor_id, tag_id) 
 VALUES 
@@ -67,7 +70,7 @@ VALUES
   (3, 4),
   (4, 6);
 
-INSERT INTO QuestionTag (question_id, tag_id) 
+INSERT INTO TagInQuestion (question_id, tag_id) 
 VALUES
   (1, 2),
   (1, 4),
