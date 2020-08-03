@@ -41,12 +41,11 @@ public class FetchForumServlet extends HttpServlet {
   // All the variables needed to connect to the local database.
   // P.S.: Change the timezone if needed (https://github.com/dbeaver/dbeaver/wiki/JDBC-Time-Zones).
   String url = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
-String user = "root";
+  String user = "root";
   String password = "";
 
   // This is the query that will be executed.
-  String query = "SELECT * FROM Question LEFT JOIN (SELECT question_id, COUNT(follower_id) followers FROM QuestionFollower GROUP BY question_id) CountTable ON Question.id=CountTable.question_id LEFT JOIN (SELECT name, id AS asker_id FROM User) NameTable ON Question.asker_id=NameTable.asker_id;
-";
+  String query = "SELECT * FROM Question LEFT JOIN (SELECT question_id, COUNT(follower_id) followers FROM QuestionFollower GROUP BY question_id) CountTable ON Question.id=CountTable.question_id LEFT JOIN (SELECT name, id AS asker_id FROM User) NameTable ON Question.asker_id=NameTable.asker_id;";
 
   // This is the list that will hold all the questions from the query.
   List<QuestionObject> questions = new ArrayList<>();
@@ -66,7 +65,7 @@ String user = "root";
             question.setTitle(queryResult.getString(2));
             question.setBody(queryResult.getString(3));
             question.setAskerId(queryResult.getInt(4));
-            question.setAskerName(queryResult.getString(7));
+            question.setAskerName(queryResult.getString(8));
             question.setDateTime(queryResult.getTimestamp(5));
 
             questions.add(question);
