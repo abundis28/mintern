@@ -34,10 +34,24 @@ function createQuestionElement(question) {
   const questionElement = document.createElement('li');
   questionElement.setAttribute('class', 'list-group-item');
   questionElement.innerText = question.title;
+  
+  // Asker name is placed besides the question.
   const askerElement = document.createElement('small');
   askerElement.setAttribute('class', 'text-muted');
   askerElement.innerText = '\t' + question.askerName;
   questionElement.appendChild(askerElement);
+
+  // Number of followers is placed to the right side.
+  const followersElement = document.createElement('small');
+  followersElement.setAttribute('class', 'float-right');
+  // Avoid writing '1 followers'.
+  if (question.numberOfFollowers !== 1) {
+    followersElement.innerText = question.numberOfFollowers + ' followers';
+  } else {
+    followersElement.innerText = question.numberOfFollowers + ' follower';
+  }
+  questionElement.appendChild(followersElement);
+ 
   // If the question has a body, show it underneath.
   if (question.body) {
     const bodyElement = document.createElement('small');
@@ -45,10 +59,13 @@ function createQuestionElement(question) {
     questionElement.appendChild(document.createElement('br'));
     questionElement.appendChild(bodyElement);
   } 
+  
+  // Date is placed beneath the body or title.
   const dateElement = document.createElement('small');
   dateElement.setAttribute('class', 'text-muted');
   dateElement.innerText = question.dateTime;
   questionElement.appendChild(document.createElement('br'));
   questionElement.appendChild(dateElement);
+
   return questionElement;
 }
