@@ -22,7 +22,7 @@ function loadNotifications(id) {
   });
 }
 
- /*
+/*
  * Appends child to navbar dropdown. Represents a notification.
  */
 function createListElement(notification) {
@@ -37,10 +37,10 @@ function createListElement(notification) {
 }
  
 /*
-* Loads back end data when home page loads.
-*/
-function loadHomePage() {
+ * Loads back end data when home page loads.
+ */
+function loadHomePage(userId) {
   // Fetch the current user's id.
   // Has hardcoded id to test.
-  loadNotifications(6);
+  loadNotifications(userId);
 }
