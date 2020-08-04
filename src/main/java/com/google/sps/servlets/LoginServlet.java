@@ -18,14 +18,15 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import com.google.sps.classes.UserAuthenticationData;
+import com.google.sps.classes.Utility;
 import java.io.IOException;
+import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.sql.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /*
  * Servlet that creates login or logout URL and sends it as response.
@@ -89,8 +90,8 @@ public class LoginServlet extends HttpServlet {
     UserAuthenticationData userAuthenticationData =
         new UserAuthenticationData(loggedIn, email, isUserRegistered, authenticationUrl);
 
-    Gson gson = new Gson();
+    String json = Utility.convertToJsonUsingGson(userAuthenticationData);
     response.setContentType("application/json");
-    response.getWriter().println(gson.toJson(userAuthenticationData));
+    response.getWriter().println(json);
   }
 }
