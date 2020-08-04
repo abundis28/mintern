@@ -14,7 +14,12 @@
 
 package com.google.sps.classes;
 
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
+import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 // TODO(aabundis): Add JUnit tests for utility functions.
 
@@ -28,5 +33,42 @@ public final class Utility {
   public static String convertToJsonUsingGson(Object object) {
     Gson gson = new Gson();
     return gson.toJson(object);
+  }
+
+  /*
+   * Class that returns the ID of a user using its email.
+   */
+  public static int getUserId(String email) {
+    int userId = -1;
+
+    // Set up variables needed to connect to MySQL database.
+    String url = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=PST8PDT";
+    String user = "root";
+    String password = "";
+
+    // Set up query to check if user is already registered.
+    String query = "SELECT id FROM User WHERE email = ?";
+
+    try {
+      // Establish connection to MySQL database.
+      Connection connection = DriverManager.getConnection(url, user, password);
+
+      // Create the MySQL prepared statement, execute it, and store the result.
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      preparedStatement.setString(1, email);
+      ResultSet queryResult = preparedStatement.executeQuery();
+
+      // If email is found, set userId to the ID retrieved from the database.
+      if (queryResult.next()) {
+        userId = queryResult.getInt(1);
+      } 
+      connection.close();
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, get the log of the error.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    return userId;
   }
 }
