@@ -18,9 +18,9 @@
 function fetchLogin() {
   fetch('/login').then(response => response.json()).then(user => {
     // If user is logged in, show logout button in navbar.
-    if (user.loggedIn == true) {
+    if (user.loggedIn) {
       // If logged in user has no nickname, redirect to nickname setup page.
-      if(user.isUserRegistered == false) {
+      if(!user.isUserRegistered) {
         window.location.replace(user.authenticationUrl);
       }
 
@@ -85,6 +85,14 @@ function fetchLogin() {
       const loginButtonNavbar = document.getElementById('login');
       loginButtonNavbar.innerHTML = '';
       loginButtonNavbar.appendChild(loginButtonItem);
+    }
+  })
+}
+
+function isUserRegistered() {
+  fetch('/login').then(response => response.json()).then(user => {
+    if (user.isUserRegistered) {
+      window.location.replace("/index.html");
     }
   })
 }
