@@ -36,10 +36,19 @@ public final class Utility {
   }
 
   /*
-   * Class that returns the ID of a user using its email.
+   * Class that returns the ID of a logged in user.
    */
-  public static int getUserId(String email) {
+  public static int getUserId() {
     int userId = -1;
+
+    // Get logged in user email.
+    UserService userService = UserServiceFactory.getUserService();
+    String email = userService.getCurrentUser().getEmail();
+
+    // If user is not logged in, return -1.
+    if (email = "") {
+      return userId;
+    }
 
     // Set up variables needed to connect to MySQL database.
     String url = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=PST8PDT";
