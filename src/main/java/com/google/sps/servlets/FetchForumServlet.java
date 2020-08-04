@@ -47,14 +47,14 @@ public class FetchForumServlet extends HttpServlet {
   // This is the query that will be executed.
   String query;
   
-  // This is the list that will hold all the questions from the query.
-  List<QuestionObject> questions = new ArrayList<>();
-  
   /** 
    * This method will get the forum questions from the query and return them as a JSON string.
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  // This is the list that will hold all the questions from the query.
+  List<QuestionObject> questions = new ArrayList<>();
+  
   query = "SELECT * FROM Question ";
   query = query.concat("LEFT JOIN ");
   query = query.concat("(SELECT question_id, COUNT(follower_id) followers FROM QuestionFollower ");
