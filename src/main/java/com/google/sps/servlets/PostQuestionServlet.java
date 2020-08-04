@@ -59,9 +59,10 @@ public class PostQuestionServlet extends HttpServlet {
     query = query.concat("VALUES (\"" + title + "\", \"" + body + "\", " + asked_id + ", NOW())");
 
     // The connection and query are attempted.
-    try { Connection connection = DriverManager.getConnection(url, user, password);
-        PreparedStatement preparedStatement = connection.prepareStatement(query);
-        preparedStatement.executeUpdate();
+    try {
+          Connection connection = DriverManager.getConnection(url, user, password);
+          PreparedStatement preparedStatement = connection.prepareStatement(query);
+          preparedStatement.executeUpdate();
         } catch (SQLException exception) {
           // If the connection or the query don't go through, we get the log of what happened.
           Logger logger = Logger.getLogger(PostQuestionServlet.class.getName());
