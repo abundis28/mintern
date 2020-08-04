@@ -56,14 +56,12 @@ public class PostQuestionServlet extends HttpServlet {
     int asked_id = 4;
     
     query = "INSERT INTO Question(title, body, asker_id, date_time) ";
-    query = query.concat("VALUES (" + title + "," + body + ", " + asked_id + ", NOW())");
+    query = query.concat("VALUES (\"" + title + "\", \"" + body + "\", " + asked_id + ", NOW())");
 
     // The connection and query are attempted.
-    try (Connection connection = DriverManager.getConnection(url, user, password);
+    try { Connection connection = DriverManager.getConnection(url, user, password);
         PreparedStatement preparedStatement = connection.prepareStatement(query);
-        ResultSet queryResult = preparedStatement.executeQuery()) {
-          // Message to verify the query went through.
-          System.out.println("Successfully posted the question.");
+        preparedStatement.executeUpdate();
         } catch (SQLException exception) {
           // If the connection or the query don't go through, we get the log of what happened.
           Logger logger = Logger.getLogger(PostQuestionServlet.class.getName());
