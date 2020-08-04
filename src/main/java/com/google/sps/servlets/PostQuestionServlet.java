@@ -34,7 +34,7 @@ import java.util.logging.Logger;
    * This servlet will post a question to the forum.
    */
 @WebServlet("/post-question")
-public class FetchForumServlet extends HttpServlet {
+public class PostQuestionServlet extends HttpServlet {
   // All the variables needed to connect to the local database.
   // P.S.: Change the timezone if needed (https://github.com/dbeaver/dbeaver/wiki/JDBC-Time-Zones).
   String url = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
@@ -66,7 +66,7 @@ public class FetchForumServlet extends HttpServlet {
           System.out.println("Successfully posted the question.");
         } catch (SQLException exception) {
           // If the connection or the query don't go through, we get the log of what happened.
-          Logger logger = Logger.getLogger(FetchForumServlet.class.getName());
+          Logger logger = Logger.getLogger(PostQuestionServlet.class.getName());
           logger.log(Level.SEVERE, exception.getMessage(), exception);
         }
     response.sendRedirect("/");
