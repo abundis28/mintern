@@ -20,12 +20,14 @@ package com.google.sps.classes;
 public final class UserAuthenticationData {
 
   private final boolean loggedIn;
-  private final String authenticationUrl;
   private final String email;
+  private final Boolean isUserRegistered;
+  private final String authenticationUrl;
 
-  public UserAuthenticationData(boolean loggedIn, String authenticationUrl, String email) {
+  public UserAuthenticationData(boolean loggedIn, String email, Boolean isUserRegistered, String authenticationUrl) {
     this.loggedIn = loggedIn;
-    this.authenticationUrl = authenticationUrl;
     this.email = email;
+    this.isUserRegistered = isUserRegistered;
+    this.authenticationUrl = authenticationUrl;
   }
 }

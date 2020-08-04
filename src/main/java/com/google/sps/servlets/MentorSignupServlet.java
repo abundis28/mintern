@@ -43,10 +43,12 @@ public class MentorSignupServlet extends HttpServlet {
     int major = Integer.parseInt(request.getParameter("major"));
     Boolean is_mentor = true;
 
-    // Set up query and variables needed to connect to MySQL database.
+    // Set up variables needed to connect to MySQL database.
     String url = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=PST8PDT";
     String user = "root";
     String password = "";
+
+    // Set up query to insert new user into database.
     String query = "INSERT INTO User (fname, lname, username, email, major_id, is_mentor) "
         + "VALUES (?, ?, ?, ?, ?, ?)";
 

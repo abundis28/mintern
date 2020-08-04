@@ -23,6 +23,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /*
  * Servlet that creates login or logout URL and sends it as response.
@@ -33,22 +36,58 @@ public class LoginServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
-
+    
+    // Set default variables to create UserAuthenticationData object.
     Boolean loggedIn = false;
+    String email = "";
+    Boolean isUserRegistered = false;
     String authenticationUrl = "";
-    String userEmail = "";
     String redirectUrl = "/";
 
+    // If user is logged in, udpate variables.
+    // Set authenticationUrl to either logout or login URL.
     if (userService.isUserLoggedIn()) {
       loggedIn = true;
-      userEmail = userService.getCurrentUser().getEmail();
+      email = userService.getCurrentUser().getEmail();
       authenticationUrl = userService.createLogoutURL(redirectUrl);
+
+      // Set up variables needed to connect to MySQL database.
+      String url = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=PST8PDT";
+      String user = "root";
+      String password = "";
+
+      // Set up query to check if user is already registered.
+      String query = "SELECT email FROM User WHERE email = ?";
+
+      try {
+        // Establish connection to MySQL database.
+        Connection connection = DriverManager.getConnection(url, user, password);
+
+        // Create the MySQL prepared statement, execute it, and store the result.
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, email);
+        ResultSet queryResult = preparedStatement.executeQuery();
+
+        // If user is registered, change isUserRegistered to true.
+        // If not, redirect user to signup page.
+        if (queryResult.next()) {
+          isUserRegistered = true;
+        } else {
+          authenticationUrl = "/signup.html";
+        }
+        connection.close();
+      } catch (SQLException exception) {
+        // If the connection or the query don't go through, get the log of the error.
+        Logger logger = Logger.getLogger(MentorSignupServlet.class.getName());
+        logger.log(Level.SEVERE, exception.getMessage(), exception);
+      }
     } else {
       authenticationUrl = userService.createLoginURL(redirectUrl);
     }
 
+    // Create UserAuthenticationData with updated variables and return as JSON.
     UserAuthenticationData userAuthenticationData =
-        new UserAuthenticationData(loggedIn, authenticationUrl, userEmail);
+        new UserAuthenticationData(loggedIn, email, isUserRegistered, authenticationUrl);
 
     Gson gson = new Gson();
     response.setContentType("application/json");

@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 /*
  * Servlet that inserts a new mentee and his information to the database.
  */
-@WebServlet("/mentor-signup")
+@WebServlet("/mentee-signup")
 public class MenteeSignupServlet extends HttpServlet {
 
   @Override
@@ -43,10 +43,12 @@ public class MenteeSignupServlet extends HttpServlet {
     int major = Integer.parseInt(request.getParameter("major"));
     Boolean is_mentor = false;
 
-    // Set up query and variables needed to connect to MySQL database.
+    // Set up variables needed to connect to MySQL database.
     String url = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=PST8PDT";
     String user = "root";
     String password = "";
+
+    // Set up query to insert new user into database.
     String query = "INSERT INTO User (fname, lname, username, email, major_id, is_mentor) "
         + "VALUES (?, ?, ?, ?, ?, ?)";
 

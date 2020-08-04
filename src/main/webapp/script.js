@@ -19,7 +19,10 @@ function fetchLogin() {
   fetch('/login').then(response => response.json()).then(user => {
     // If user is logged in, show logout button in navbar.
     if (user.loggedIn == true) {
-      console.log("logged in");
+      // If logged in user has no nickname, redirect to nickname setup page.
+      if(user.isUserRegistered == false) {
+        window.location.replace(user.authenticationUrl);
+      }
 
       // Delete signup button.
       const signupButtonNavbar = document.getElementById('signup');
@@ -45,8 +48,6 @@ function fetchLogin() {
       logoutButtonNavbar.appendChild(logoutButtonItem);
     // If user is logged out, show signup and login buttons in navbar.
     } else {
-      console.log("logged out");
-
       // Create signup button.
       const signupButton = document.createElement('button');
       signupButton.setAttribute('type', 'button');
