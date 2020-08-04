@@ -44,3 +44,12 @@ function loadHomePage(userId) {
   // Has hardcoded id to test.
   loadNotifications(userId);
 }
+
+/*
+ * Creates notification when an answer o comment is posted.
+ */
+function notify(type, id) {
+  fetch('notification?type=' + type + '&elementId=' + id, {
+    method: 'POST'
+  })
+}
