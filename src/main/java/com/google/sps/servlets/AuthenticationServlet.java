@@ -16,7 +16,6 @@ package com.google.sps.servlets;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.google.gson.Gson;
 import com.google.sps.classes.UserAuthenticationData;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
@@ -29,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet that creates login or logout URL and sends it as response.
+ * Servlet that verifies user login status.
  */
 @WebServlet("/authentication")
 public class AuthenticationServlet extends HttpServlet {
@@ -91,8 +90,12 @@ public class AuthenticationServlet extends HttpServlet {
 
     // Create UserAuthenticationData with updated variables and return as JSON.
     UserAuthenticationData userAuthenticationData =
+<<<<<<< HEAD:src/main/java/com/google/sps/servlets/AuthenticationServlet.java
         new UserAuthenticationData(isUserLoggedIn, email, isUserRegistered, authenticationUrl);
 
+=======
+        new UserAuthenticationData(loggedIn, email, isUserRegistered, authenticationUrl);
+>>>>>>> 02b67ea00619aea4a6cb15adc981158641c4cce5:src/main/java/com/google/sps/servlets/LoginServlet.java
     response.setContentType("application/json");
     response.getWriter().println(Utility.convertToJsonUsingGson(userAuthenticationData));
   }
