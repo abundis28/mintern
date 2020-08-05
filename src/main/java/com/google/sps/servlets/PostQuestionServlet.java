@@ -41,8 +41,9 @@ public class PostQuestionServlet extends HttpServlet {
   String user = "root";
   String password = "";
 
-  // This will be the query to be executed.
-  String query;
+  // These will be the queries to be executed.
+  String insertQuestionQuery;
+  String insertFollowerQuery;
   
   /** 
    * This method will execute the query to post a question to the database.
@@ -53,21 +54,44 @@ public class PostQuestionServlet extends HttpServlet {
     String title = request.getParameter("question-title");
     String body = request.getParameter("question-body");
     // Placeholder before integration with Users API.
-    int asked_id = 4;
+    int asker_id = 4;
     
-    query = "INSERT INTO Question(title, body, asker_id, date_time) ";
-    query = query.concat("VALUES (\"" + title + "\", \"" + body + "\", " + asked_id + ", NOW())");
+    insertQuestionQuery = "INSERT INTO Question(title, body, asker_id, date_time) VALUES (\"";
+    insertQuestionQuery = insertQuestionQuery.concat(title + "\", \"" + body + "\", " + asker_id);
+    insertQuestionQuery = insertQuestionQuery.concat(", NOW())");
 
-    // The connection and query are attempted.
+    insertFollowerQuery = "INSERT INTO QuestionFollower(question_id, follower_id) ";
+    insertFollowerQuery = insertQuestionQuery.concat("VALUES (" + title + ", " + asker_id + ")");
+
+    String maxIdQuery = "SELECT MAX(id) FROM Question;";
+
+    // First we query the number of questions that exist so that we can update the
+    // QuestionFollower table as well.
     try {
-          Connection connection = DriverManager.getConnection(url, user, password);
-          PreparedStatement preparedStatement = connection.prepareStatement(query);
-          preparedStatement.executeUpdate();
-        } catch (SQLException exception) {
-          // If the connection or the query don't go through, we get the log of what happened.
-          Logger logger = Logger.getLogger(PostQuestionServlet.class.getName());
-          logger.log(Level.SEVERE, exception.getMessage(), exception);
-        }
+        Connection connection = DriverManager.getConnection(url, user, password);
+        
+        // We first insert the new question.
+        PreparedStatement questionStatement = connection.prepareStatement(insertQuestionQuery);
+        questionStatement.executeUpdate();
+
+        PreparedStatement maxIdStatement = connection.prepareStatement(maxIdQuery);
+        ResultSet queryResult = maxIdStatement.executeQuery();
+        queryResult.next();
+        int newQuestionId = queryResult.getInt(1);
+
+        System.out.println(newQuestionId);
+
+        // We then update the follower table.
+        insertFollowerQuery = "INSERT INTO QuestionFollower(question_id, follower_id) VALUES (";
+        insertFollowerQuery = insertFollowerQuery.concat(newQuestionId + ", " + asker_id + ")");
+        PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
+        followerStatement.executeUpdate();
+      } 
+    catch (SQLException exception) {
+        // If the connection or the query don't go through, we get the log of what happened.
+        Logger logger = Logger.getLogger(PostQuestionServlet.class.getName());
+        logger.log(Level.SEVERE, exception.getMessage(), exception);
+      }
     response.sendRedirect("/");
   }
 }
