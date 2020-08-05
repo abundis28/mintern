@@ -15,8 +15,8 @@
 /*
  * Displays navbar authentication buttons according to login status.
  */
-function fetchLogin() {
-  fetch('/login').then(response => response.json()).then(user => {
+function fetchAuthentication() {
+  fetch('/authentication').then(response => response.json()).then(user => {
     // If user is logged in, show logout button in navbar.
     if (user.loggedIn) {
       // If logged in user has no nickname, redirect to nickname setup page.
@@ -90,7 +90,7 @@ function fetchLogin() {
 }
 
 function isUserRegistered() {
-  fetch('/login').then(response => response.json()).then(user => {
+  fetch('/authentication').then(response => response.json()).then(user => {
     if (user.isUserRegistered) {
       window.location.replace("/index.html");
     }

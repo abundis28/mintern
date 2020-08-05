@@ -31,8 +31,8 @@ import javax.servlet.http.HttpServletResponse;
 /*
  * Servlet that creates login or logout URL and sends it as response.
  */
-@WebServlet("/login")
-public class LoginServlet extends HttpServlet {
+@WebServlet("/authentication")
+public class AuthenticationServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
