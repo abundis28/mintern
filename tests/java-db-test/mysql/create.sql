@@ -28,9 +28,7 @@ CREATE TABLE Notification (
   message TEXT,
   url VARCHAR(255),
   date_time DATETIME,
-  PRIMARY KEY (id),
-  FOREIGN KEY (user_id) 
-  REFERENCES User (id)
+  PRIMARY KEY (id)
 );
 
 CREATE TABLE UserNotification (
