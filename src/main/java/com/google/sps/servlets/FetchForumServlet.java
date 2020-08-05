@@ -54,7 +54,7 @@ public class FetchForumServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
   // This is the list that will hold all the questions from the query.
   List<QuestionObject> questions = new ArrayList<>();
-  
+
   query = "SELECT * FROM Question ";
   query = query.concat("LEFT JOIN ");
   query = query.concat("(SELECT question_id, COUNT(follower_id) followers FROM QuestionFollower ");
