@@ -90,8 +90,7 @@ public class LoginServlet extends HttpServlet {
     UserAuthenticationData userAuthenticationData =
         new UserAuthenticationData(loggedIn, email, isUserRegistered, authenticationUrl);
 
-    String json = Utility.convertToJsonUsingGson(userAuthenticationData);
     response.setContentType("application/json");
-    response.getWriter().println(json);
+    response.getWriter().println(Utility.convertToJsonUsingGson(userAuthenticationData));
   }
 }
