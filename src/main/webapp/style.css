@@ -13,3 +13,8 @@
   margin: auto;
   margin-top: 20px;
 }
+
+#question-body {
+  box-sizing: border-box;
+  resize: none;
+}
