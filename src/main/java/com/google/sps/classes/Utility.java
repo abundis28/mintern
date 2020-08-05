@@ -27,6 +27,11 @@ import java.util.logging.Logger;
  * Utility methods used across classes. Just import class to access all methods.
  */
 public final class Utility {
+  // Variables needed to connect to MySQL database.
+  static final String URL = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=PST8PDT";
+  static final String USER = "root";
+  static final String PASSWORD = "";
+  
   /**
    * Converts objects to JSON using GSON class.
    */
@@ -35,8 +40,9 @@ public final class Utility {
     return gson.toJson(object);
   }
 
-  /*
-   * Class that returns the ID of a logged in user.
+  /**
+   * Returns the ID of a logged in user.
+   * If the user is not logged in or if no user ID is found, returns -1.
    */
   public static int getUserId() {
     int userId = -1;
@@ -50,19 +56,15 @@ public final class Utility {
       return userId;
     }
 
-    // Set up variables needed to connect to MySQL database.
-    String url = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=PST8PDT";
-    String user = "root";
-    String password = "";
-
     // Set up query to check if user is already registered.
     String query = "SELECT id FROM User WHERE email = ?";
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(url, user, password);
+      Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
 
-      // Create the MySQL prepared statement, execute it, and store the result.
+      // Create the MySQL prepared statement, add email variable to the query, execute it, and
+      // store the result.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
       preparedStatement.setString(1, email);
       ResultSet queryResult = preparedStatement.executeQuery();
