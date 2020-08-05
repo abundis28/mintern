@@ -67,7 +67,11 @@ function createQuestionElement(question) {
   // If the question has a body, show it underneath.
   if (question.body) {
     const bodyElement = document.createElement('small');
-    bodyElement.innerText = question.body;
+    if (question.body.length > 100) {
+      bodyElement.innerText = question.body.substring(0,100).replace(/(\r\n|\n|\r)/gm,"") + "...";
+    } else {
+      bodyElement.innerText = question.body.replace(/(\r\n|\n|\r)/gm," ");
+    }
     questionElement.appendChild(bodyElement);
     questionElement.appendChild(document.createElement('br'));
   } 
