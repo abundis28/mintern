@@ -38,7 +38,6 @@ public class LoginServlet extends HttpServlet {
     String authenticationUrl = "";
     String userEmail = "";
     String redirectUrl = "/";
-
     if (userService.isUserLoggedIn()) {
       loggedIn = true;
       userEmail = userService.getCurrentUser().getEmail();
