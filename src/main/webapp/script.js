@@ -41,7 +41,6 @@ function createListElement(notification) {
  */
 function loadHomePage(userId) {
   // Fetch the current user's id.
-  // Has hardcoded id to test.
   loadNotifications(userId);
 }
 
