@@ -41,7 +41,7 @@ public class PostQuestionServlet extends HttpServlet {
   String user = "root";
   String password = "";
 
-  // These will be the queries to be executed.
+  // These are the queries to be executed.
   String insertQuestionQuery;
   String insertFollowerQuery;
   String maxIdQuery;
