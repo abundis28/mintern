@@ -68,9 +68,16 @@ function createQuestionElement(question) {
   if (question.body) {
     const bodyElement = document.createElement('small');
     if (question.body.length > 100) {
-      bodyElement.innerText = question.body.substring(0,100).replace(/(\r\n|\n|\r)/gm,"") + "...";
+      // All of the body should not be displayed if it is very big.
+      bodyElement.innerText = question.body
+          // Reduce the preview of the body to 100 characters
+          .substring(0,100)
+          // Remove line breaks and add trailing dots
+          .replace(/(\r\n|\n|\r)/gm,"") + "...";
     } else {
-      bodyElement.innerText = question.body.replace(/(\r\n|\n|\r)/gm," ");
+      bodyElement.innerText = question.body
+          // Remove line breaks from the preview.
+          .replace(/(\r\n|\n|\r)/gm," ");
     }
     questionElement.appendChild(bodyElement);
     questionElement.appendChild(document.createElement('br'));
