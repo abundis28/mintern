@@ -28,12 +28,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/*
+/**
  * Servlet that creates login or logout URL and sends it as response.
  */
 @WebServlet("/authentication")
 public class AuthenticationServlet extends HttpServlet {
 
+  /**
+   * Sends information about the user's login status, including email and a login/logout link.
+   */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
@@ -79,7 +82,7 @@ public class AuthenticationServlet extends HttpServlet {
         connection.close();
       } catch (SQLException exception) {
         // If the connection or the query don't go through, get the log of the error.
-        Logger logger = Logger.getLogger(MentorSignupServlet.class.getName());
+        Logger logger = Logger.getLogger(AuthenticationServlet.class.getName());
         logger.log(Level.SEVERE, exception.getMessage(), exception);
       }
     } else {

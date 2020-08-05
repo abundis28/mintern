@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*
+/**
  * Displays navbar authentication buttons according to login status.
  */
 function fetchAuthentication() {
@@ -89,6 +89,9 @@ function fetchAuthentication() {
   })
 }
 
+/**
+ * Redirect user in signup page to index if they are already registered.
+ */
 function isUserRegistered() {
   fetch('/authentication').then(response => response.json()).then(user => {
     if (user.isUserRegistered) {

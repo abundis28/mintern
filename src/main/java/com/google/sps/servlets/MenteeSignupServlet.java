@@ -25,12 +25,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/*
+/**
  * Servlet that inserts a new mentee and his information to the database.
  */
 @WebServlet("/mentee-signup")
 public class MenteeSignupServlet extends HttpServlet {
 
+  /**
+   * Adds new mentee to MySQL database.
+   */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
@@ -49,7 +52,7 @@ public class MenteeSignupServlet extends HttpServlet {
     String password = "";
 
     // Set up query to insert new user into database.
-    String query = "INSERT INTO User (fname, lname, username, email, major_id, is_mentor) "
+    String query = "INSERT INTO User (fisrt_name, last_name, username, email, major_id, is_mentor) "
         + "VALUES (?, ?, ?, ?, ?, ?)";
 
     try {
@@ -73,7 +76,6 @@ public class MenteeSignupServlet extends HttpServlet {
       Logger logger = Logger.getLogger(MenteeSignupServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
-
     response.sendRedirect("/index.html");
   }
 }
