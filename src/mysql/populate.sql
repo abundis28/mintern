@@ -106,4 +106,3 @@ INSERT INTO Comment (answer_id, body, author_id, date_time)
 VALUES
   (3, 'And how much does it cost?', 7, '2020-07-29 19:00:00.000000'),
   (3, '50$', 1, '2020-07-29 20:00:00.000000');
-  
