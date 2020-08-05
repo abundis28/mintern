@@ -71,6 +71,11 @@ VALUES
 
 INSERT INTO QuestionFollower (question_id, follower_id) 
 VALUES
+  (1, 4),
+  (2, 6),
+  (3, 5),
+  (4, 7),
+  (5, 5),
   (1, 5),
   (1, 7),
   (2, 4),
@@ -98,6 +103,12 @@ VALUES
 
 INSERT INTO AnswerFollower (answer_id, follower_id) 
 VALUES
+  (1, 1),
+  (2, 2),
+  (2, 3),
+  (3, 3),
+  (4, 2),
+  (4, 1),
   (1, 5),
   (1, 7),
   (2, 4),
