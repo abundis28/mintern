@@ -95,6 +95,12 @@ VALUES
 
 INSERT INTO AnswerFollower (answer_id, follower_id) 
 VALUES
+  (1, 1),
+  (2, 2),
+  (2, 3),
+  (3, 3),
+  (4, 2),
+  (4, 1),
   (1, 5),
   (1, 7),
   (2, 4),
