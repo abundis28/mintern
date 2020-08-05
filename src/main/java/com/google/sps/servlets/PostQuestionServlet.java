@@ -51,17 +51,18 @@ public class PostQuestionServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Data to be inserted into the question.
-    String title = request.getParameter("question-title");
-    String body = request.getParameter("question-body");
+    String title = request.getParameter("question-title")
+        // Escaping special characters.
+        .replace("\\", "\\\\").replace("\"", "\\\"");
+    String body = request.getParameter("question-body")
+        // Escaping special characters.
+        .replace("\\", "\\\\").replace("\"", "\\\"");
     // Placeholder before integration with Users API.
     int asker_id = 4;
     
     insertQuestionQuery = "INSERT INTO Question(title, body, asker_id, date_time) VALUES (\"";
     insertQuestionQuery = insertQuestionQuery.concat(title + "\", \"" + body + "\", " + asker_id);
     insertQuestionQuery = insertQuestionQuery.concat(", NOW())");
-
-    insertFollowerQuery = "INSERT INTO QuestionFollower(question_id, follower_id) ";
-    insertFollowerQuery = insertQuestionQuery.concat("VALUES (" + title + ", " + asker_id + ")");
 
     String maxIdQuery = "SELECT MAX(id) FROM Question;";
 
@@ -78,8 +79,6 @@ public class PostQuestionServlet extends HttpServlet {
         ResultSet queryResult = maxIdStatement.executeQuery();
         queryResult.next();
         int newQuestionId = queryResult.getInt(1);
-
-        System.out.println(newQuestionId);
 
         // We then update the follower table.
         insertFollowerQuery = "INSERT INTO QuestionFollower(question_id, follower_id) VALUES (";
