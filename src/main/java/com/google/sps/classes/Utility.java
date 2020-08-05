@@ -28,9 +28,9 @@ import java.util.logging.Logger;
  */
 public final class Utility {
   // Variables needed to connect to MySQL database.
-  static final String URL = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=PST8PDT";
-  static final String USER = "root";
-  static final String PASSWORD = "";
+  static final String SQL_URL = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=PST8PDT";
+  static final String SQL_USER = "root";
+  static final String SQL_PASSWORD = "";
   
   /**
    * Converts objects to JSON using GSON class.
@@ -61,10 +61,10 @@ public final class Utility {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+      Connection connection = DriverManager.getConnection(SQL_URL, SQL_USER, SQL_PASSWORD);
 
-      // Create the MySQL prepared statement, add email variable to the query, execute it, and
-      // store the result.
+      // Create the MySQL prepared statement, execute it, and store the result.
+      // Takes the query specified above and sets the email field to the logged in user's email.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
       preparedStatement.setString(1, email);
       ResultSet queryResult = preparedStatement.executeQuery();
