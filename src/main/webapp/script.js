@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+function onBodyLoad() {
+  fetchForum();
+  addAutoResize();
+}
+
 /**
  * Fetches questions from server, wraps each in an <li> element, 
  * and adds them to the DOM.
