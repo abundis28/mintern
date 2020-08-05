@@ -44,8 +44,6 @@ public class FetchForumServlet extends HttpServlet {
   String user = "root";
   String password = "";
 
-
-
   // This is the query that will be executed.
   String query;
   
