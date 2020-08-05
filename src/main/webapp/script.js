@@ -20,7 +20,7 @@ async function fetchForum() {
   const response = await fetch('/fetch-forum');
   const questionsObject = await response.json();
   const questionsContainer = document.getElementById('forum');
-  questionsContainer.innerHTML = '';
+  // questionsContainer.innerHTML = '';
   questionsObject.forEach(question => {
     questionsContainer.appendChild(createQuestionElement(question));
   });
