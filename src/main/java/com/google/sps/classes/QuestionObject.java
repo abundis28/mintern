@@ -24,58 +24,38 @@ import java.sql.Timestamp;
  */
 public class QuestionObject {
 
-  // Title of the question.
   private String title;
-
-  // Body of the question.
   private String body;
-
-  // Id of the user who posted the question.
   private int askerId;
-
-  // Name of the user who posted the question.
   private String askerName;
-
-  // Time when the question was posted.
   private Timestamp dateTime;
-
-  // Amount of people that follow the question.
   private int numberOfFollowers;
-
-  // Amount of answers that the question has.
   private int numberOfAnswers;  
 
-  // Method to set the title.
   public void setTitle(String title) {
     this.title = title;
   }
 
-  // Method to set the body.
   public void setBody(String body) {
     this.body = body;
   }
 
-  // Method to set the askerId.
   public void setAskerId(int askerId) {
     this.askerId = askerId;
   }
 
-  // Method to set the askerName.
   public void setAskerName(String askerName) {
     this.askerName = askerName;
   }
 
-  // Method to set the dateTime.
   public void setDateTime(Timestamp dateTime) {
     this.dateTime = dateTime;
   }
 
-  // Method to set the numberOfFollowers.
   public void setNumberOfFollowers(int numberOfFollowers) {
     this.numberOfFollowers = numberOfFollowers;
   }  
 
-  // Method to set the numberOfAnswers.
   public void setNumberOfAnswers(int numberOfAnswers) {
     this.numberOfAnswers = numberOfAnswers;
   }  
