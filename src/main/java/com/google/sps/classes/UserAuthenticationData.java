@@ -20,7 +20,7 @@ package com.google.sps.classes;
 public final class UserAuthenticationData {
 
   private final boolean loggedIn;
-  private final String authenticationUrl;
+  private final String authenticationUrl; // URL to redirecto to login or logout page.
   private final String email;
 
   public UserAuthenticationData(boolean loggedIn, String authenticationUrl, String email) {
