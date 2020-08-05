@@ -16,6 +16,7 @@ package com.google.sps.servlets;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.sps.classes.Utility;
 import java.io.IOException;
 import java.sql.*;
 import java.util.logging.Level;
@@ -41,6 +42,7 @@ public class MentorSignupServlet extends HttpServlet {
     String username = request.getParameter("username");
     String email = userService.getCurrentUser().getEmail();
     int major = Integer.parseInt(request.getParameter("major"));
+    String[] experienceTags = request.getParameterValues("experience");
     Boolean is_mentor = true;
 
     // Set up variables needed to connect to MySQL database.
@@ -49,7 +51,7 @@ public class MentorSignupServlet extends HttpServlet {
     String password = "";
 
     // Set up query to insert new user into database.
-    String query = "INSERT INTO User (fname, lname, username, email, major_id, is_mentor) "
+    String query = "INSERT INTO User (first_name, last_name, username, email, major_id, is_mentor) "
         + "VALUES (?, ?, ?, ?, ?, ?)";
 
     try {
@@ -72,6 +74,27 @@ public class MentorSignupServlet extends HttpServlet {
       // If the connection or the query don't go through, get the log of the error.
       Logger logger = Logger.getLogger(MentorSignupServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    for (String tag : experienceTags) {
+      // Set up query to insert new experience tag to user.
+      query = "INSERT INTO MentorExperience (mentor_id, tag_id) VALUES (?, ?)";
+
+      try {
+      // Establish connection to MySQL database.
+      Connection connection = DriverManager.getConnection(url, user, password);
+
+      // Create the MySQL INSERT prepared statement.
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      preparedStatement.setInt(1, Utility.getUserId());
+      preparedStatement.setInt(2, Integer.parseInt(tag));
+      preparedStatement.execute();
+      connection.close();
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, get the log of the error.
+      Logger logger = Logger.getLogger(MentorSignupServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
     }
 
     response.sendRedirect("/index.html");

@@ -16,7 +16,6 @@ package com.google.sps.servlets;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.google.gson.Gson;
 import com.google.sps.classes.UserAuthenticationData;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
