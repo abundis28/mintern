@@ -41,7 +41,7 @@ function createListElement(notification) {
  */
 function loadHomePage(userId) {
   // Fetch the current user's id.
-  loadNotifications(userId);
+  loadNotifications(6);
 }
 
 /*
@@ -49,6 +49,18 @@ function loadHomePage(userId) {
  */
 function notify(type, id) {
   fetch('notification?type=' + type + '&elementId=' + id, {
+    method: 'POST'
+  })
+}
+
+function notifyQuestion(questionId) {
+  fetch('/notification?type=question&elementId=' + questionId, {
+    method: 'POST'
+  })
+}
+  
+function notifyAnswer(answerId) {
+  fetch('/notification?type=answer&elementId=' + answerId, {
     method: 'POST'
   })
 }
