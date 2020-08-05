@@ -39,7 +39,7 @@ public class LoginServlet extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
     
     // Set default variables to create UserAuthenticationData object.
-    Boolean loggedIn = false;
+    Boolean isUserLoggedIn = false;
     String email = "";
     Boolean isUserRegistered = false;
     String authenticationUrl = "";
@@ -48,7 +48,7 @@ public class LoginServlet extends HttpServlet {
     // If user is logged in, udpate variables.
     // Set authenticationUrl to either logout or login URL.
     if (userService.isUserLoggedIn()) {
-      loggedIn = true;
+      isUserLoggedIn = true;
       email = userService.getCurrentUser().getEmail();
       authenticationUrl = userService.createLogoutURL(redirectUrl);
 
@@ -88,7 +88,7 @@ public class LoginServlet extends HttpServlet {
 
     // Create UserAuthenticationData with updated variables and return as JSON.
     UserAuthenticationData userAuthenticationData =
-        new UserAuthenticationData(loggedIn, email, isUserRegistered, authenticationUrl);
+        new UserAuthenticationData(isUserLoggedIn, email, isUserRegistered, authenticationUrl);
 
     String json = Utility.convertToJsonUsingGson(userAuthenticationData);
     response.setContentType("application/json");
