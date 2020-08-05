@@ -44,13 +44,13 @@ public class PostQuestionServlet extends HttpServlet {
   // These will be the queries to be executed.
   String insertQuestionQuery;
   String insertFollowerQuery;
+  String maxIdQuery;
   
   /** 
    * This method will execute the query to post a question to the database.
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Data to be inserted into the question.
     String title = request.getParameter("question-title")
         // Escaping special characters.
         .replace("\\", "\\\\").replace("\"", "\\\"");
@@ -60,11 +60,10 @@ public class PostQuestionServlet extends HttpServlet {
     // Placeholder before integration with Users API.
     int asker_id = 4;
     
-    insertQuestionQuery = "INSERT INTO Question(title, body, asker_id, date_time) VALUES (\"";
-    insertQuestionQuery = insertQuestionQuery.concat(title + "\", \"" + body + "\", " + asker_id);
-    insertQuestionQuery = insertQuestionQuery.concat(", NOW())");
+    insertQuestionQuery = "INSERT INTO Question(title, body, asker_id, date_time) VALUES (\""
+        + title + "\", \"" + body + "\", " + asker_id + ", NOW())";
 
-    String maxIdQuery = "SELECT MAX(id) FROM Question;";
+    maxIdQuery = "SELECT MAX(id) FROM Question;";
 
     // First we query the number of questions that exist so that we can update the
     // QuestionFollower table as well.
@@ -75,14 +74,15 @@ public class PostQuestionServlet extends HttpServlet {
         PreparedStatement questionStatement = connection.prepareStatement(insertQuestionQuery);
         questionStatement.executeUpdate();
 
+        // We get the id of the new question.
         PreparedStatement maxIdStatement = connection.prepareStatement(maxIdQuery);
         ResultSet queryResult = maxIdStatement.executeQuery();
         queryResult.next();
         int newQuestionId = queryResult.getInt(1);
 
         // We then update the follower table.
-        insertFollowerQuery = "INSERT INTO QuestionFollower(question_id, follower_id) VALUES (";
-        insertFollowerQuery = insertFollowerQuery.concat(newQuestionId + ", " + asker_id + ")");
+        insertFollowerQuery = "INSERT INTO QuestionFollower(question_id, follower_id) VALUES ("
+            + newQuestionId + ", " + asker_id + ")";
         PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
         followerStatement.executeUpdate();
       } 
