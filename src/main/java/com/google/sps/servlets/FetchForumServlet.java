@@ -43,9 +43,6 @@ public class FetchForumServlet extends HttpServlet {
   String url = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
   String user = "root";
   String password = "";
-
-  // This is the query that will be executed.
-  String query;
   
   // Create list that will hold all of the questions from the query..
   List<QuestionObject> questions = new ArrayList<>();
@@ -55,21 +52,18 @@ public class FetchForumServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-  // This is the list that will hold all the questions from the query.
-  List<QuestionObject> questions = new ArrayList<>();
-
-  query = "SELECT * FROM Question ";
-  query = query.concat("LEFT JOIN ");
-  query = query.concat("(SELECT question_id, COUNT(follower_id) followers FROM QuestionFollower ");
-  query = query.concat("GROUP BY question_id) CountTable ");
-  query = query.concat("ON Question.id=CountTable.question_id ");
-  query = query.concat("LEFT JOIN ");
-  query = query.concat("(SELECT name, id AS asker_id FROM User) NameTable ");
-  query = query.concat("ON Question.asker_id=NameTable.asker_id ");
-  query = query.concat("LEFT JOIN ");
-  query = query.concat("(SELECT question_id, COUNT(id) answers FROM Answer ");
-  query = query.concat("GROUP BY question_id) AnswerTable ");
-  query = query.concat("ON Question.id=AnswerTable.question_id;");
+    String query = "SELECT * FROM Question ";
+    query = query.concat("LEFT JOIN ");
+    query = query.concat("(SELECT question_id, COUNT(follower_id) followers FROM QuestionFollower ");
+    query = query.concat("GROUP BY question_id) CountTable ");
+    query = query.concat("ON Question.id=CountTable.question_id ");
+    query = query.concat("LEFT JOIN ");
+    query = query.concat("(SELECT name, id AS asker_id FROM User) NameTable ");
+    query = query.concat("ON Question.asker_id=NameTable.asker_id ");
+    query = query.concat("LEFT JOIN ");
+    query = query.concat("(SELECT question_id, COUNT(id) answers FROM Answer ");
+    query = query.concat("GROUP BY question_id) AnswerTable ");
+    query = query.concat("ON Question.id=AnswerTable.question_id;");
 
     // The connection and query are attempted.
     try (Connection connection = DriverManager.getConnection(url, user, password);
