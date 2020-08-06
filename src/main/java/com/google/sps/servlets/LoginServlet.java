@@ -88,7 +88,6 @@ public class LoginServlet extends HttpServlet {
     // Create UserAuthenticationData with updated variables and return as JSON.
     UserAuthenticationData userAuthenticationData =
         new UserAuthenticationData(loggedIn, email, isUserRegistered, authenticationUrl);
-
     response.setContentType("application/json");
     response.getWriter().println(Utility.convertToJsonUsingGson(userAuthenticationData));
   }

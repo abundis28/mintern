@@ -19,11 +19,10 @@ function fetchLogin() {
   fetch('/login').then(response => response.json()).then(user => {
     // If user is logged in, show logout button in navbar.
     if (user.loggedIn == true) {
-      // If logged in user has no nickname, redirect to nickname setup page.
+      // If logged in user is not registered, redirect to signup page.
       if(user.isUserRegistered == false) {
         window.location.replace(user.authenticationUrl);
       }
-
       // Delete signup button.
       const signupButtonNavbar = document.getElementById('signup');
       signupButtonNavbar.innerHTML = '';
