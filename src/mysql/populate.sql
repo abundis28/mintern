@@ -23,16 +23,24 @@ VALUES
   ('Rodrigo', 'a01234245@itesm.mx', 1, FALSE),
   ('Daniel', 'a00825596@itesm.mx', 1, FALSE);
 
-INSERT INTO Notification (user_id, message, url, date_time) 
+INSERT INTO Notification (message, url, date_time) 
 VALUES
-  (4, 'You got an answer', 'questions/1', '2020-07-29 13:00:00.000000'),
-  (6, 'You got an answer', 'questions/2', '2020-07-29 14:00:00.000000'),
-  (6, 'You got an answer', 'questions/2', '2020-07-29 15:00:00.000000'),
-  (5, 'You got an answer', 'questions/3', '2020-07-29 16:00:00.000000'),
-  (7, 'You got an answer', 'questions/4', '2020-07-29 17:00:00.000000'),
-  (7, 'You got an answer', 'questions/4', '2020-07-29 18:00:00.000000'),
-  (3, 'Somebody commented your answer', 'questions/2', '2020-07-29 19:00:00.000000'),
-  (3, 'Somebody commented your answer', 'questions/2', '2020-07-29 20:00:00.000000');
+  ('You got an answer', 'questions/1', '2020-07-29 13:00:00.000000'),
+  ('You got an answer', 'questions/2', '2020-07-29 14:00:00.000000'),
+  ('You got an answer', 'questions/3', '2020-07-29 16:00:00.000000'),
+  ('You got an answer', 'questions/4', '2020-07-29 17:00:00.000000'),
+  ('Somebody commented your answer', 'questions/2', '2020-07-29 19:00:00.000000');
+
+INSERT INTO UserNotification (user_id, notification_id)
+VALUES
+  (4, 1),
+  (6, 2),
+  (4, 2),
+  (5, 3),
+  (7, 4),
+  (3, 4),
+  (7, 5),
+  (3, 5);
 
 INSERT INTO SubjectTag (subject, color) 
 VALUES 
