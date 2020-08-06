@@ -47,9 +47,8 @@ public class AuthenticationServlet extends HttpServlet {
     String authenticationUrl = "";
     String redirectUrl = "/";
 
-    // If user is logged in, udpate variables.
-    // Set authenticationUrl to either logout or login URL.
     if (userService.isUserLoggedIn()) {
+      // If user is logged in, udpate variables and set authenticationUrl to logout URL.
       isUserLoggedIn = true;
       email = userService.getCurrentUser().getEmail();
       authenticationUrl = userService.createLogoutURL(redirectUrl);
@@ -71,11 +70,11 @@ public class AuthenticationServlet extends HttpServlet {
         preparedStatement.setString(1, email);
         ResultSet queryResult = preparedStatement.executeQuery();
 
-        // If user is registered, change isUserRegistered to true.
-        // If not, redirect user to signup page.
         if (queryResult.next()) {
+          // If user is registered, change isUserRegistered to true.
           isUserRegistered = true;
         } else {
+          // If user is not registered, redirect user to signup page.
           authenticationUrl = "/signup.html";
         }
         connection.close();
@@ -85,17 +84,13 @@ public class AuthenticationServlet extends HttpServlet {
         logger.log(Level.SEVERE, exception.getMessage(), exception);
       }
     } else {
+      // If user is logged out, udpate variables and set authenticationUrl to login URL.
       authenticationUrl = userService.createLoginURL(redirectUrl);
     }
 
     // Create UserAuthenticationData with updated variables and return as JSON.
     UserAuthenticationData userAuthenticationData =
-<<<<<<< HEAD:src/main/java/com/google/sps/servlets/AuthenticationServlet.java
-        new UserAuthenticationData(isUserLoggedIn, email, isUserRegistered, authenticationUrl);
-
-=======
-        new UserAuthenticationData(loggedIn, email, isUserRegistered, authenticationUrl);
->>>>>>> 02b67ea00619aea4a6cb15adc981158641c4cce5:src/main/java/com/google/sps/servlets/LoginServlet.java
+        new UserAuthenticationData(email, isUserLoggedIn, isUserRegistered, authenticationUrl);
     response.setContentType("application/json");
     response.getWriter().println(Utility.convertToJsonUsingGson(userAuthenticationData));
   }

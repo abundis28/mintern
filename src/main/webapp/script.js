@@ -17,36 +17,26 @@
  */
 function fetchAuthentication() {
   fetch('/authentication').then(response => response.json()).then(user => {
-    // If user is logged in, show logout button in navbar.
     if (user.isUserloggedIn) {
-      // If logged in user is not registered, redirect to signup page.
-      if(!user.isUserRegistered) {
+      // If user is logged in, show logout button in navbar.
+      if (!user.isUserRegistered) {
+        // If logged in user is not registered, redirect to signup page.
         window.location.replace(user.authenticationUrl);
       }
+
       // Delete signup button.
       const signupButtonNavbar = document.getElementById('signup');
       signupButtonNavbar.innerHTML = '';
 
       // Add logout button to navbar.
       addAuthenticationButton(user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
-    // If user is logged out, show signup and login buttons in navbar.
     } else {
+      // If user is logged out, show signup and login buttons in navbar.
       // Add signup button to navbar.
       addAuthenticationButton(user.authenticationUrl, 'btn-success', 'Sign Up', 'signup');
 
       // Add login button to navbar.
       addAuthenticationButton(user.authenticationUrl, 'btn-outline-success', 'Log In', 'login');
-    }
-  })
-}
-
-/**
- * Redirect user in signup page to index if they are already registered.
- */
-function isUserRegistered() {
-  fetch('/authentication').then(response => response.json()).then(user => {
-    if (user.isUserRegistered) {
-      window.location.replace("/index.html");
     }
   })
 }
@@ -77,4 +67,15 @@ function addAuthenticationButton(authenticationUrl, buttonStyle, buttonText, nav
   const authenticationButtonNavbar = document.getElementById(navbarItem);
   authenticationButtonNavbar.innerHTML = '';
   authenticationButtonNavbar.appendChild(authenticationButtonItem);
+}
+
+/**
+ * Redirect user in signup page to index if they are already registered.
+ */
+function isUserRegistered() {
+  fetch('/authentication').then(response => response.json()).then(user => {
+    if (user.isUserRegistered) {
+      window.location.replace("/index.html");
+    }
+  })
 }
