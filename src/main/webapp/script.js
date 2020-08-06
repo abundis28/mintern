@@ -56,3 +56,12 @@ function addAuthenticationButton(authenticationUrl, buttonStyle, buttonText, nav
   authenticationButtonNavbar.innerHTML = '';
   authenticationButtonNavbar.appendChild(authenticationButtonItem);
 }
+
+/*
+ * Sends email to the followers of a modified question  or answer.
+ */
+function sendEmail(type, id) {
+  fetch('/email?type=' + type + '&elementId=' + id, {
+    method: 'POST'
+  })
+}
