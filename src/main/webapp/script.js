@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * Function that will call other functions when the page loads. 
+ */
 function onBodyLoad() {
   fetchForum();
   addAutoResize();
@@ -136,6 +139,9 @@ window.onload = function fetchLogin() {
   })
 }
 
+/**
+ * Adds the authentication button to the DOM.
+ */
 function addAuthenticationButton(authenticationUrl, buttonStyle, buttonText, navbarItem) {
   // Create button.
   const authenticationButton = document.createElement('button');
