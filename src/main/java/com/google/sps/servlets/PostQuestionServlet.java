@@ -57,32 +57,32 @@ public class PostQuestionServlet extends HttpServlet {
     // First we query the number of questions that exist so that we can update the
     // QuestionFollower table as well.
     try {
-        Connection connection = DriverManager.getConnection(url, user, password);
-        
-        // We first insert the new question.
-        String insertQuestionQuery = "INSERT INTO Question(title, body, asker_id, date_time) "
-            + "VALUES (\"" + title + "\", \"" + body + "\", " + asker_id + ", NOW())";
-        PreparedStatement questionStatement = connection.prepareStatement(insertQuestionQuery);
-        questionStatement.executeUpdate();
+      Connection connection = DriverManager.getConnection(url, user, password);
+      
+      // We first insert the new question.
+      String insertQuestionQuery = "INSERT INTO Question(title, body, asker_id, date_time) "
+          + "VALUES (\"" + title + "\", \"" + body + "\", " + asker_id + ", NOW())";
+      PreparedStatement questionStatement = connection.prepareStatement(insertQuestionQuery);
+      questionStatement.executeUpdate();
 
-        // We get the ID of the new question.
-        String maxIdQuery = "SELECT MAX(id) FROM Question;";
-        PreparedStatement maxIdStatement = connection.prepareStatement(maxIdQuery);
-        ResultSet queryResult = maxIdStatement.executeQuery();
-        queryResult.next();
-        int newQuestionId = queryResult.getInt(1);
+      // We get the ID of the new question.
+      String maxIdQuery = "SELECT MAX(id) FROM Question;";
+      PreparedStatement maxIdStatement = connection.prepareStatement(maxIdQuery);
+      ResultSet queryResult = maxIdStatement.executeQuery();
+      queryResult.next();
+      int newQuestionId = queryResult.getInt(1);
 
-        // We then update the follower table.
-        String insertFollowerQuery = "INSERT INTO QuestionFollower(question_id, follower_id) "
-            + "VALUES (" + newQuestionId + ", " + asker_id + ")";
-        PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
-        followerStatement.executeUpdate();
-      } 
+      // We then update the follower table.
+      String insertFollowerQuery = "INSERT INTO QuestionFollower(question_id, follower_id) "
+          + "VALUES (" + newQuestionId + ", " + asker_id + ")";
+      PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
+      followerStatement.executeUpdate();
+    } 
     catch (SQLException exception) {
-        // If the connection or the query don't go through, we get the log of what happened.
-        Logger logger = Logger.getLogger(PostQuestionServlet.class.getName());
-        logger.log(Level.SEVERE, exception.getMessage(), exception);
-      }
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(PostQuestionServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
     response.sendRedirect("/");
   }
 }
