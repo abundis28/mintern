@@ -61,8 +61,11 @@ public class PostQuestionServlet extends HttpServlet {
       
       // We first insert the new question.
       String insertQuestionQuery = "INSERT INTO Question(title, body, asker_id, date_time) "
-          + "VALUES (\"" + title + "\", \"" + body + "\", " + asker_id + ", NOW())";
+          + "VALUES (?,?,?,NOW())";
       PreparedStatement questionStatement = connection.prepareStatement(insertQuestionQuery);
+      questionStatement.setString(1, title);
+      questionStatement.setString(2, body);
+      questionStatement.setInt(3, asker_id);
       questionStatement.executeUpdate();
 
       // We get the ID of the new question.
@@ -74,8 +77,10 @@ public class PostQuestionServlet extends HttpServlet {
 
       // We then update the follower table.
       String insertFollowerQuery = "INSERT INTO QuestionFollower(question_id, follower_id) "
-          + "VALUES (" + newQuestionId + ", " + asker_id + ")";
+          + "VALUES ()";
       PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
+      followerStatement.setInt(1, newQuestionId);
+      followerStatement.setInt(2, asker_id);
       followerStatement.executeUpdate();
     } 
     catch (SQLException exception) {
