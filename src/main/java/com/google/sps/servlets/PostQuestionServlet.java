@@ -52,8 +52,7 @@ public class PostQuestionServlet extends HttpServlet {
     String body = request.getParameter("question-body")
         // Escaping special characters.
         .replace("\\", "\\\\").replace("\"", "\\\"");
-    // Placeholder before integration with Users API.
-    int asker_id = 4;
+    int asker_id = Utility.getUserId();
 
     // First we query the number of questions that exist so that we can update the
     // QuestionFollower table as well.
