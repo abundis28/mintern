@@ -133,3 +133,12 @@ function addAuthenticationButton(authenticationUrl, buttonStyle, buttonText, nav
   authenticationButtonNavbar.innerHTML = '';
   authenticationButtonNavbar.appendChild(authenticationButtonItem);
 }
+
+/**
+ * Fetches a single question and its answers from server, 
+ * wraps each in an <li> element, and adds them to the DOM.
+ */
+async function fetchQuestion() {
+  const response = await fetch('/question');
+  const questionsObject = await response.json();
+}
