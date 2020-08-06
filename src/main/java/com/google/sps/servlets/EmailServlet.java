@@ -46,11 +46,11 @@ public class EmailServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Get values from query string.
+    // Get type from query string.
     String typeOfElement = request.getParameter("type");
-    String stringElementId = request.getParameter("elementId");
-    // Turn string value of the id to int.
-    int elementId = Integer.parseInt(stringElementId);
+    // Get id from query string and convert to int.
+    int elementId = Integer.parseInt(request.getParameter("elementId"));
+
     // Create content for mail. Call functions to see which users have to be notified
     // and get their emails concatenated in a string.
     String userEmails = getUserEmails(getUsersToNotify(typeOfElement, elementId));
@@ -61,6 +61,7 @@ public class EmailServlet extends HttpServlet {
                      "internship-platform-step-2020.appspot.com/ .\n\n" +
                      "Best wishes!\n" + 
                      "The Mintern Team";
+    
     // Declares objects necesssary for the mail.
     Properties props = new Properties();
     Session session = Session.getDefaultInstance(props, null);
