@@ -43,9 +43,6 @@ public class FetchForumServlet extends HttpServlet {
   String url = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
   String user = "root";
   String password = "";
-
-  // This is the query that will be executed.
-  String query;
   
   // Create list that will hold all of the questions from the query..
   List<QuestionObject> questions = new ArrayList<>();
@@ -55,7 +52,7 @@ public class FetchForumServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-  query = "SELECT * FROM Question ";
+  String query = "SELECT * FROM Question ";
   query = query.concat("LEFT JOIN ");
   query = query.concat("(SELECT question_id, COUNT(follower_id) followers FROM QuestionFollower ");
   query = query.concat("GROUP BY question_id) CountTable ");
