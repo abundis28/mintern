@@ -60,3 +60,13 @@ function addAuthenticationButton(authenticationUrl, buttonStyle, buttonText, nav
   authenticationButtonNavbar.innerHTML = '';
   authenticationButtonNavbar.appendChild(authenticationButtonItem);
 }
+
+function loadSignup() {
+  fetchMentorExperience();
+}
+
+function fetchMentorExperience() {
+  fetch('/mentor-signup').then(response => response.json()).then(subjectTags => {
+    const mentorExperienceSelect = document.getElementById('experience');
+  })
+}
