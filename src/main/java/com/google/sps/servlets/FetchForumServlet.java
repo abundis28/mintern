@@ -34,8 +34,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** 
-   * This servlet will retrieve forum posts to be displayed on the page.
-   */
+ * This servlet will retrieve forum posts to be displayed on the page.
+ */
 @WebServlet("/fetch-forum")
 public class FetchForumServlet extends HttpServlet {
   // All the variables needed to connect to the local database.
