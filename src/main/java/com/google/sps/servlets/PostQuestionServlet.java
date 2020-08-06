@@ -46,12 +46,8 @@ public class PostQuestionServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String title = request.getParameter("question-title")
-        // Escaping special characters.
-        .replace("\\", "\\\\").replace("\"", "\\\"");
-    String body = request.getParameter("question-body")
-        // Escaping special characters.
-        .replace("\\", "\\\\").replace("\"", "\\\"");
+    String title = request.getParameter("question-title");
+    String body = request.getParameter("question-body");
     int asker_id = Utility.getUserId();
 
     // First we query the number of questions that exist so that we can update the
@@ -77,7 +73,7 @@ public class PostQuestionServlet extends HttpServlet {
 
       // We then update the follower table.
       String insertFollowerQuery = "INSERT INTO QuestionFollower(question_id, follower_id) "
-          + "VALUES ()";
+          + "VALUES (?,?)";
       PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
       followerStatement.setInt(1, newQuestionId);
       followerStatement.setInt(2, asker_id);
