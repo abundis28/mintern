@@ -31,8 +31,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** 
-   * This servlet will post a question to the forum.
-   */
+ * This servlet will post a question to the forum.
+ */
 @WebServlet("/post-question")
 public class PostQuestionServlet extends HttpServlet {
   // All the variables needed to connect to the local database.
