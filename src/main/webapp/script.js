@@ -12,8 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-function loadNotifications(id) {
-  fetch('/notification?id=' + id).then(response => response.json()).then((notificationsJson) => {
+/*
+ * Loads data that does need require interaction from user.
+ */
+function loadHomePage() {
+  // Fetch the current user's id.
+  loadNotifications();
+}
+
+/*
+ * Loads notifications of the signed in user.
+ */
+function loadNotifications() {
+  fetch('/notification').then(response => response.json()).then((notificationsJson) => {
     const notificationsElement = document.getElementById('inbox-dropdown');
     notificationsElement.innerHTML = '';
     for (const notification of notificationsJson) {
@@ -27,6 +38,7 @@ function loadNotifications(id) {
  */
 function createListElement(notification) {
   const liElement = document.createElement('li');
+  // Creates a link to redirect the user to the question that was answered or commented.
   const linkElement = document.createElement('a');
   linkElement.innerText = linkElement.innerText.concat(notification.message, " - ");
   linkElement.innerText = linkElement.innerText.concat(notification.timestamp.toString());
@@ -34,14 +46,6 @@ function createListElement(notification) {
   liElement.appendChild(linkElement);
   liElement.setAttribute("class","list-group-item");
   return liElement;
-}
- 
-/*
- * Loads back end data when home page loads.
- */
-function loadHomePage(userId) {
-  // Fetch the current user's id.
-  loadNotifications(6);
 }
 
 /*

@@ -42,8 +42,8 @@ public class NotificationServlet extends HttpServlet {
     String user = "root";
     String password = "";
 
-    // Convert string value of user's id to int.
-    int userId = Integer.parseInt(request.getParameter("id"));
+    // Get user's id from Users API using 
+    int userId = Utility.getUserId();
     // Definition of query.
     String query =  "SELECT message, url, date_time FROM Notification WHERE id = " + userId + " ORDER BY date_time DESC";
     List<Notification> notifications = new ArrayList<>();
