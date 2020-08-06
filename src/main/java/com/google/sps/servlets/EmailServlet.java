@@ -101,8 +101,8 @@ public class EmailServlet extends HttpServlet {
       String query =  "SELECT follower_id FROM QuestionFollower WHERE question_id = " + elementId;
       // Query the information from QuestionFollower table.
       try (Connection connection = DriverManager.getConnection(url, user, password);
-           PreparedStatement pst = connection.prepareStatement(query);
-           ResultSet rs = pst.executeQuery()) {
+          PreparedStatement pst = connection.prepareStatement(query);
+          ResultSet rs = pst.executeQuery()) {
         while(rs.next()){
           // Add the current ID (first column of ResultSet) to the list.
           usersToNotify.add(rs.getInt(1));
@@ -127,7 +127,7 @@ public class EmailServlet extends HttpServlet {
         // Close the connection once the query was performed have been performed.
         connection.close();
       } catch (SQLException ex) {
-          Logger lgr = Logger.getLogger(DataServlet.class.getName());
+          Logger lgr = Logger.getLogger(EmailServlet.class.getName());
           lgr.log(Level.SEVERE, ex.getMessage(), ex);
       }
     }
@@ -149,15 +149,15 @@ public class EmailServlet extends HttpServlet {
       // Query the email of the current user.
       String query = "SELECT email FROM User WHERE id = " + userId;
       try (Connection connection = DriverManager.getConnection(url, user, password);
-          PreparedStatement pst = connection.prepareStatement(query);
-          ResultSet rs = pst.executeQuery()) {
+        PreparedStatement pst = connection.prepareStatement(query);
+        ResultSet rs = pst.executeQuery()) {
         rs.next();
         // Concatenate the user's email and a comma for the InternetAddress parser to separate.
         userEmails = userEmails.concat(rs.getString(1));
         userEmails = userEmails.concat(",");
         connection.close();
       } catch (SQLException ex) {
-        Logger lgr = Logger.getLogger(DataServlet.class.getName());
+        Logger lgr = Logger.getLogger(EmailServlet.class.getName());
         lgr.log(Level.SEVERE, ex.getMessage(), ex);
       }
     }
