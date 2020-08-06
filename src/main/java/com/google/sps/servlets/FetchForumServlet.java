@@ -47,7 +47,7 @@ public class FetchForumServlet extends HttpServlet {
   // This is the query that will be executed.
   String query;
   
-  // This is the list that will hold all the questions from the query.
+  // Create list that will hold all of the questions from the query..
   List<QuestionObject> questions = new ArrayList<>();
   
   /** 
