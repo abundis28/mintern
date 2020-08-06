@@ -15,10 +15,24 @@
 package com.google.sps.servlets;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.Properties;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 
 @WebServlet("/email")
 public class EmailServlet extends HttpServlet {
@@ -33,5 +47,114 @@ public class EmailServlet extends HttpServlet {
     String stringElementId = request.getParameter("elementId");
     // Turn string value of the id to int.
     int elementId = Integer.parseInt(stringElementId);
+    // Create content for mail. Call functions to see which users have to be notified
+    // and get their emails concatenated in a string.
+    String userEmails = getUserEmails(getUsersToNotify(typeOfElement, elementId));
+    String subject = "Activity on Mintern!";
+    String message = "Dear mintern,\n" +
+                    "You have new notifications in Mintern!\n" + 
+                    "Feel free to login and check it at: internship-platform-step-2020.appspot.com/ .\n\n" +
+                    "Best wishes!\n" + 
+                    "The Mintern Team";
+    // Declares objects necesssary for the mail.
+    Properties props = new Properties();
+    Session session = Session.getDefaultInstance(props, null);
+    try {
+      // Set content for mail.
+      Message msg = new MimeMessage(session);
+      msg.setFrom(new InternetAddress("mintern@internship-platform-step-2020.appspotmail.com",
+          "Mintern"));
+      // Parse the concatenated string to convert it to an array of addresses.
+      msg.addRecipients(Message.RecipientType.TO, InternetAddress.parse(userEmails));
+      msg.setSubject(subject);
+      msg.setText(message);
+      // Send email.
+      Transport.send(msg);
+    } catch (AddressException e) {
+      System.out.println("Failed to set email address.");
+    } catch (MessagingException e) {
+      System.out.println("Failed to send email.");
+    } catch (UnsupportedEncodingException e) {
+      System.out.println("Failed to encode email.");
+    }
+  }
+
+  /*
+   * Queries ids of the author of the modified question/answer and its followers.
+   */
+  private List<Integer> getUsersToNotify (String type, int elementId){
+    // Defines the necessary data to access the server.
+    String url = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
+    String user = "root";
+    String password = "";
+
+    List<Integer> usersToNotify = new ArrayList<>();
+    if(type.equals("question")) {
+      // If the notification is for an anwer to a question.
+      String query =  "SELECT follower_id FROM QuestionFollower WHERE question_id = " + elementId;
+      // Query the information from QuestionFollower table.
+      try (Connection connection = DriverManager.getConnection(url, user, password);
+           PreparedStatement pst = connection.prepareStatement(query);
+           ResultSet rs = pst.executeQuery()) {
+        while(rs.next()){
+          // Add the current id (first column of ResultSet) to the list.
+          usersToNotify.add(rs.getInt(1));
+        }
+        // Close the connection once the query was performed have been performed.
+        connection.close();
+      } catch (SQLException ex) {
+        Logger lgr = Logger.getLogger(DataServlet.class.getName());
+        lgr.log(Level.SEVERE, ex.getMessage(), ex);
+      }
+    } else if (type.equals("answer")) {
+      // If the notification is for a new comment in an answer.
+      String query =  "SELECT follower_id FROM AnswerFollower WHERE answer_id = " + elementId;
+      // Query the information from AnswerFollower table.
+      try (Connection connection = DriverManager.getConnection(url, user, password);
+           PreparedStatement pst = connection.prepareStatement(query);
+           ResultSet rs = pst.executeQuery()) {
+        while(rs.next()){
+          // Add the current id (first column of ResultSet) to the list.
+          usersToNotify.add(rs.getInt(1));
+        }
+        // Close the connection once the query was performed have been performed.
+        connection.close();
+      } catch (SQLException ex) {
+          Logger lgr = Logger.getLogger(DataServlet.class.getName());
+          lgr.log(Level.SEVERE, ex.getMessage(), ex);
+      }
+    }
+    return usersToNotify;
+  }
+
+  /*
+   * Queries the mails of users to notify and returns them in a single string.
+   */
+  private String getUserEmails (List<Integer> userIds) {
+    // Defines the necessary data to access the server.
+    String url = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
+    String user = "root";
+    String password = "";
+
+    String userEmails = new String();
+    for(int userId : userIds){
+      // Query the email of the current user.
+      String query = "SELECT email FROM User WHERE id = " + userId;
+      try (Connection connection = DriverManager.getConnection(url, user, password);
+          PreparedStatement pst = connection.prepareStatement(query);
+          ResultSet rs = pst.executeQuery()) {
+        rs.next();
+        // Concatenate the user's email and a comma for the InternetAddress parser to separate.
+        userEmails = userEmails.concat(rs.getString(1));
+        userEmails = userEmails.concat(",");
+        connection.close();
+      } catch (SQLException ex) {
+        Logger lgr = Logger.getLogger(DataServlet.class.getName());
+        lgr.log(Level.SEVERE, ex.getMessage(), ex);
+      }
+    }
+    // Erase the last comma.
+    userEmails = userEmails.substring(0, userEmails.length() - 1);
+    return userEmails;
   }
 }
