@@ -90,11 +90,11 @@ public class MentorSignupServlet extends HttpServlet {
       preparedStatement.setInt(2, Integer.parseInt(tag));
       preparedStatement.execute();
       connection.close();
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, get the log of the error.
-      Logger logger = Logger.getLogger(MentorSignupServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
+      } catch (SQLException exception) {
+        // If the connection or the query don't go through, get the log of the error.
+        Logger logger = Logger.getLogger(MentorSignupServlet.class.getName());
+        logger.log(Level.SEVERE, exception.getMessage(), exception);
+      }
     }
 
     response.sendRedirect("/index.html");
