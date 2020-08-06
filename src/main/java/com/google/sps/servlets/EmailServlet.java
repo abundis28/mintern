@@ -84,9 +84,10 @@ public class EmailServlet extends HttpServlet {
    */
   private List<Integer> getUsersToNotify (String type, int elementId){
     // Defines the necessary data to access the server.
-    String url = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
+    String DB_NAME = "Mintern";
+    String url = String.format("jdbc:mysql:///%s", DB_NAME);
     String user = "root";
-    String password = "";
+    String password = "mintern";
 
     List<Integer> usersToNotify = new ArrayList<>();
     if(type.equals("question")) {
@@ -132,9 +133,10 @@ public class EmailServlet extends HttpServlet {
    */
   private String getUserEmails (List<Integer> userIds) {
     // Defines the necessary data to access the server.
-    String url = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
+    String DB_NAME = "Mintern";
+    String url = String.format("jdbc:mysql:///%s", DB_NAME);
     String user = "root";
-    String password = "";
+    String password = "mintern";
 
     String userEmails = new String();
     for(int userId : userIds){
