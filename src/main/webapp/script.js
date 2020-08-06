@@ -18,7 +18,6 @@
 function onBodyLoad() {
   fetchLogin();
   fetchForum();
-  addAutoResize();
 }
 
 /**
