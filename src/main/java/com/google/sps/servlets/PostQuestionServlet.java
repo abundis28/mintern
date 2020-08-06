@@ -65,7 +65,7 @@ public class PostQuestionServlet extends HttpServlet {
         PreparedStatement questionStatement = connection.prepareStatement(insertQuestionQuery);
         questionStatement.executeUpdate();
 
-        // We get the id of the new question.
+        // We get the ID of the new question.
         String maxIdQuery = "SELECT MAX(id) FROM Question;";
         PreparedStatement maxIdStatement = connection.prepareStatement(maxIdQuery);
         ResultSet queryResult = maxIdStatement.executeQuery();
