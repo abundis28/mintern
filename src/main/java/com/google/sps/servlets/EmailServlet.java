@@ -48,7 +48,7 @@ public class EmailServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get type from query string.
     String typeOfElement = request.getParameter("type");
-    // Get id from query string and convert to int.
+    // Get ID from query string and convert to int.
     int elementId = Integer.parseInt(request.getParameter("elementId"));
 
     // Create content for mail. Call functions to see which users have to be notified
@@ -61,7 +61,7 @@ public class EmailServlet extends HttpServlet {
                      "internship-platform-step-2020.appspot.com/ .\n\n" +
                      "Best wishes!\n" + 
                      "The Mintern Team";
-    
+
     // Declares objects necesssary for the mail.
     Properties props = new Properties();
     Session session = Session.getDefaultInstance(props, null);
@@ -86,9 +86,9 @@ public class EmailServlet extends HttpServlet {
   }
 
   /**
-   * Queries ids of the author of the modified question/answer and its followers.
+   * Queries IDs of the author of the modified question/answer and its followers.
    */
-  private List<Integer> getUsersToNotify (String type, int elementId){
+  private List<Integer> getUsersToNotify(String type, int elementId){
     // Defines the necessary data to access the server.
     String DB_NAME = "Mintern";
     String url = String.format("jdbc:mysql:///%s", DB_NAME);
@@ -104,7 +104,7 @@ public class EmailServlet extends HttpServlet {
            PreparedStatement pst = connection.prepareStatement(query);
            ResultSet rs = pst.executeQuery()) {
         while(rs.next()){
-          // Add the current id (first column of ResultSet) to the list.
+          // Add the current ID (first column of ResultSet) to the list.
           usersToNotify.add(rs.getInt(1));
         }
         // Close the connection once the query was performed have been performed.
@@ -121,7 +121,7 @@ public class EmailServlet extends HttpServlet {
            PreparedStatement pst = connection.prepareStatement(query);
            ResultSet rs = pst.executeQuery()) {
         while(rs.next()){
-          // Add the current id (first column of ResultSet) to the list.
+          // Add the current ID (first column of ResultSet) to the list.
           usersToNotify.add(rs.getInt(1));
         }
         // Close the connection once the query was performed have been performed.
@@ -137,7 +137,7 @@ public class EmailServlet extends HttpServlet {
   /**
    * Queries the mails of users to notify and returns them in a single string.
    */
-  private String getUserEmails (List<Integer> userIds) {
+  private String getUserEmails(List<Integer> userIds) {
     // Defines the necessary data to access the server.
     String DB_NAME = "Mintern";
     String url = String.format("jdbc:mysql:///%s", DB_NAME);
@@ -145,7 +145,7 @@ public class EmailServlet extends HttpServlet {
     String password = "mintern";
 
     String userEmails = new String();
-    for(int userId : userIds){
+    for (int userId : userIds){
       // Query the email of the current user.
       String query = "SELECT email FROM User WHERE id = " + userId;
       try (Connection connection = DriverManager.getConnection(url, user, password);
