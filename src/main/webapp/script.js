@@ -16,8 +16,9 @@
  * Function that will call other functions when the page loads. 
  */
 function onBodyLoad() {
-  fetchForum();
   addAutoResize();
+  fetchForum();
+  fetchLogin();
 }
 
 /**
@@ -118,7 +119,7 @@ function addAutoResize() {
 /*
  * Displays navbar authentication buttons according to login status.
  */
-window.onload = function fetchLogin() {
+function fetchLogin() {
   fetch('/login').then(response => response.json()).then(user => {
     // If user is logged in, show logout button in navbar.
     if (user.loggedIn == true) {
