@@ -17,25 +17,25 @@ package com.google.sps.servlets;
 import com.google.sps.classes.QuestionObject;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.sql.Timestamp;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /** 
-   * This servlet will retrieve forum posts to be displayed on the page.
-   */
+ * This servlet will retrieve forum posts to be displayed on the page.
+ */
 @WebServlet("/fetch-forum")
 public class FetchForumServlet extends HttpServlet {
   // All the variables needed to connect to the local database.
@@ -46,6 +46,9 @@ public class FetchForumServlet extends HttpServlet {
 
   // This is the query that will be executed.
   String query;
+  
+  // Create list that will hold all of the questions from the query..
+  List<QuestionObject> questions = new ArrayList<>();
   
   /** 
    * This method will get the forum questions from the query and return them as a JSON string.
