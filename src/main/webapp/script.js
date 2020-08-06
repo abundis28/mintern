@@ -16,6 +16,7 @@
  * Function that will call other functions when the page loads. 
  */
 function onBodyLoad() {
+  fetchLogin();
   fetchForum();
   addAutoResize();
 }
