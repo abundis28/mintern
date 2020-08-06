@@ -34,10 +34,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * Servlet that sends emails to the author and followers of an answered question or a commented
+ * answer.
+ */
 @WebServlet("/email")
 public class EmailServlet extends HttpServlet {
 
-  /*
+  /**
    * Sends a welcome email to the user after they register
    */
   @Override
@@ -52,10 +56,11 @@ public class EmailServlet extends HttpServlet {
     String userEmails = getUserEmails(getUsersToNotify(typeOfElement, elementId));
     String subject = "Activity on Mintern!";
     String message = "Dear mintern,\n" +
-                    "You have new notifications in Mintern!\n" + 
-                    "Feel free to login and check it at: internship-platform-step-2020.appspot.com/ .\n\n" +
-                    "Best wishes!\n" + 
-                    "The Mintern Team";
+                     "You have new notifications in Mintern!\n" + 
+                     "Feel free to login and check it at: " +
+                     "internship-platform-step-2020.appspot.com/ .\n\n" +
+                     "Best wishes!\n" + 
+                     "The Mintern Team";
     // Declares objects necesssary for the mail.
     Properties props = new Properties();
     Session session = Session.getDefaultInstance(props, null);
@@ -79,7 +84,7 @@ public class EmailServlet extends HttpServlet {
     }
   }
 
-  /*
+  /**
    * Queries ids of the author of the modified question/answer and its followers.
    */
   private List<Integer> getUsersToNotify (String type, int elementId){
@@ -128,7 +133,7 @@ public class EmailServlet extends HttpServlet {
     return usersToNotify;
   }
 
-  /*
+  /**
    * Queries the mails of users to notify and returns them in a single string.
    */
   private String getUserEmails (List<Integer> userIds) {
