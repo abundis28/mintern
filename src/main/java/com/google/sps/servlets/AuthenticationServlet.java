@@ -48,7 +48,7 @@ public class AuthenticationServlet extends HttpServlet {
     String redirectUrl = "/";
 
     if (userService.isUserLoggedIn()) {
-      // If user is logged in, udpate variables and set authenticationUrl to logout URL.
+      // If user is logged in, update variables and set authenticationUrl to logout URL.
       isUserLoggedIn = true;
       email = userService.getCurrentUser().getEmail();
       authenticationUrl = userService.createLogoutURL(redirectUrl);
