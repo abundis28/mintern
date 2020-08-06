@@ -25,13 +25,20 @@ CREATE TABLE User (
 
 CREATE TABLE Notification (
   id INT NOT NULL AUTO_INCREMENT,
-  user_id INT NOT NULL,
   message TEXT,
   url VARCHAR(255),
   date_time DATETIME,
-  PRIMARY KEY (id),
-  FOREIGN KEY (user_id) 
-  REFERENCES User (id)
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE UserNotification (
+  user_id INT NOT NULL,
+  notification_id INT NOT NULL,
+  PRIMARY KEY (user_id, notification_id),
+  FOREIGN KEY (user_id)
+  REFERENCES User (id),
+  FOREIGN KEY (notification_id)
+  REFERENCES Notification (id)
 );
 
 CREATE TABLE SubjectTag (

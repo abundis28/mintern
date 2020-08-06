@@ -28,63 +28,36 @@ function fetchLogin() {
       const signupButtonNavbar = document.getElementById('signup');
       signupButtonNavbar.innerHTML = '';
 
-      // Create logout button.
-      const logoutButton = document.createElement('button');
-      logoutButton.setAttribute('type', 'button');
-      const logoutUrl = 'window.location.href = \"' + user.authenticationUrl + '\"';
-      logoutButton.setAttribute('onclick', logoutUrl);
-      logoutButton.classList.add('btn');
-      logoutButton.classList.add('btn-outline-success');
-      logoutButton.innerHTML = 'Log Out';
-
-      // Create navbar item to hold logout button.
-      const logoutButtonItem = document.createElement('li');
-      logoutButtonItem.classList.add('nav-item');
-      logoutButtonItem.appendChild(logoutButton);
-    
-      // Append logout button to navbar.
-      const logoutButtonNavbar = document.getElementById('login');
-      logoutButtonNavbar.innerHTML = '';
-      logoutButtonNavbar.appendChild(logoutButtonItem);
+      // Add logout button to navbar.
+      addAuthenticationButton(user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
     // If user is logged out, show signup and login buttons in navbar.
     } else {
-      // Create signup button.
-      const signupButton = document.createElement('button');
-      signupButton.setAttribute('type', 'button');
-      const signupUrl = 'window.location.href = \"' + user.authenticationUrl + '\"';
-      signupButton.setAttribute('onclick', signupUrl);
-      signupButton.classList.add('btn');
-      signupButton.classList.add('btn-success');
-      signupButton.innerHTML = 'Sign Up';
+      // Add signup button to navbar.
+      addAuthenticationButton(user.authenticationUrl, 'btn-success', 'Sign Up', 'signup');
 
-      // Create navbar item to hold signup button.
-      const signupButtonItem = document.createElement('li');
-      signupButtonItem.classList.add('nav-item');
-      signupButtonItem.appendChild(signupButton);
-
-      // Append signup button to navbar.
-      const signupButtonNavbar = document.getElementById('signup');
-      signupButtonNavbar.innerHTML = '';
-      signupButtonNavbar.appendChild(signupButtonItem);
-
-      // Create login button.
-      const loginButton = document.createElement('button');
-      loginButton.setAttribute('type', 'button');
-      const loginUrl = 'window.location.href = \"' + user.authenticationUrl + '\"';
-      loginButton.setAttribute('onclick', loginUrl);
-      loginButton.classList.add('btn');
-      loginButton.classList.add('btn-outline-success');
-      loginButton.innerHTML = 'Log In';
-
-      // Create navbar item to hold login button.
-      const loginButtonItem = document.createElement('li');
-      loginButtonItem.classList.add('nav-item');
-      loginButtonItem.appendChild(loginButton);
-
-      // Append login button to navbar.
-      const loginButtonNavbar = document.getElementById('login');
-      loginButtonNavbar.innerHTML = '';
-      loginButtonNavbar.appendChild(loginButtonItem);
+      // Add login button to navbar.
+      addAuthenticationButton(user.authenticationUrl, 'btn-outline-success', 'Log In', 'login');
     }
   })
+}
+
+function addAuthenticationButton(authenticationUrl, buttonStyle, buttonText, navbarItem) {
+  // Create button.
+  const authenticationButton = document.createElement('button');
+  authenticationButton.setAttribute('type', 'button');
+  const buttonUrl = 'window.location.href = \"' + authenticationUrl + '\"';
+  authenticationButton.setAttribute('onclick', buttonUrl);
+  authenticationButton.classList.add('btn');
+  authenticationButton.classList.add(buttonStyle);
+  authenticationButton.innerHTML = buttonText;
+
+  // Create navbar item to hold button.
+  const authenticationButtonItem = document.createElement('li');
+  authenticationButtonItem.classList.add('nav-item');
+  authenticationButtonItem.appendChild(authenticationButton);
+
+  // Append button to navbar.
+  const authenticationButtonNavbar = document.getElementById(navbarItem);
+  authenticationButtonNavbar.innerHTML = '';
+  authenticationButtonNavbar.appendChild(authenticationButtonItem);
 }

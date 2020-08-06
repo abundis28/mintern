@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /*
- * Servlet that creates login or logout URL and sends it as response.
+ * Servlet that verifies user login status.
  */
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
