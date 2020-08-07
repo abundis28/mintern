@@ -26,12 +26,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/*
- * Servlet that inserts a new mentor and his information to the database.
+/**
+ * Servlet that inserts a new mentor to the database.
  */
 @WebServlet("/mentor-signup")
 public class MentorSignupServlet extends HttpServlet {
 
+  /**
+   * Receives information about a new mentor and stores it in the database.
+   */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
@@ -45,37 +48,10 @@ public class MentorSignupServlet extends HttpServlet {
     String[] experienceTags = request.getParameterValues("experience");
     Boolean is_mentor = true;
 
-    // Set up variables needed to connect to MySQL database.
-    String url = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=PST8PDT";
-    String user = "root";
-    String password = "";
-
-    // Set up query to insert new user into database.
-    String query = "INSERT INTO User (first_name, last_name, username, email, major_id, is_mentor) "
-        + "VALUES (?, ?, ?, ?, ?, ?)";
-
-    try {
-      // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(url, user, password);
-
-      // Create the MySQL INSERT prepared statement.
-      PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.setString(1, firstName);
-      preparedStatement.setString(2, lastName);
-      preparedStatement.setString(3, username);
-      preparedStatement.setString(4, email);
-      preparedStatement.setInt(5, major);
-      preparedStatement.setBoolean(6, is_mentor);
-
-      // Execute the prepared statement and close connection.
-      preparedStatement.execute();
-      connection.close();
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, get the log of the error.
-      Logger logger = Logger.getLogger(MentorSignupServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
-
+    // Insert user to the database.
+    Utility.addNewUser(firstName, lastName, username, email, major, is_mentor);
+    
+    // Insert all tags selected by mentor to MentorExperience table in database.
     for (String tag : experienceTags) {
       // Set up query to insert new experience tag to user.
       query = "INSERT INTO MentorExperience (mentor_id, tag_id) VALUES (?, ?)";
@@ -96,7 +72,6 @@ public class MentorSignupServlet extends HttpServlet {
         logger.log(Level.SEVERE, exception.getMessage(), exception);
       }
     }
-
     response.sendRedirect("/index.html");
   }
 }
