@@ -12,10 +12,87 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * Function that will call other functions when the page loads. 
+ */
+function onBodyLoad() {
+  fetchLogin();
+  fetchForum();
+}
+
+/**
+ * Fetches questions from server, wraps each in an <li> element, 
+ * and adds them to the DOM.
+ */
+async function fetchForum() {
+  const response = await fetch('/fetch-forum');
+  const questionsObject = await response.json();
+  const questionsContainer = document.getElementById('forum');
+  questionsContainer.innerHTML = '';
+  questionsObject.forEach(question => {
+    questionsContainer.appendChild(createQuestionElement(question));
+  });
+}
+
+/** 
+ * Creates an <li> element with question data. 
+ * Each element corresponds to a question to be displayed in the DOM.
+ */
+function createQuestionElement(question) {
+  const questionElement = document.createElement('li');
+  questionElement.setAttribute('class', 'list-group-item');
+  questionElement.innerText = question.title;
+  
+  // Asker name is placed besides the question.
+  const askerElement = document.createElement('small');
+  askerElement.setAttribute('class', 'text-muted');
+  askerElement.innerText = '\t' + question.askerName;
+  questionElement.appendChild(askerElement);
+
+  // Number of followers is placed to the right side at the top.
+  const followersElement = document.createElement('small');
+  followersElement.setAttribute('class', 'float-right');
+  if (question.numberOfFollowers === 1) {
+    // Avoid writing '1 followers'.
+    followersElement.innerText = question.numberOfFollowers + ' follower';
+  } else {
+    followersElement.innerText = question.numberOfFollowers + ' followers';
+  }
+  questionElement.appendChild(followersElement);
+
+  // Number of answers is placed to the right side at the bottom.
+  const answersElement = document.createElement('small');
+  answersElement.setAttribute('class', 'float-right');
+  if (question.numberOfAnswers === 1) {
+    // Avoid writing '1 answers'.
+    answersElement.innerText = question.numberOfAnswers + ' answer';
+  } else {
+    answersElement.innerText = question.numberOfAnswers + ' answers';
+  }
+  questionElement.appendChild(document.createElement('br'));
+  questionElement.appendChild(answersElement);
+ 
+  // If the question has a body, show it underneath.
+  if (question.body) {
+    const bodyElement = document.createElement('small');
+    bodyElement.innerText = question.body;
+    questionElement.appendChild(bodyElement);
+    questionElement.appendChild(document.createElement('br'));
+  } 
+  
+  // Date is placed beneath the body or title.
+  const dateElement = document.createElement('small');
+  dateElement.setAttribute('class', 'text-muted');
+  dateElement.innerText = question.dateTime;
+  questionElement.appendChild(dateElement);
+
+  return questionElement;
+}
+
 /*
  * Displays navbar authentication buttons according to login status.
  */
-window.onload = function fetchLogin() {
+function fetchLogin() {
   fetch('/login').then(response => response.json()).then(user => {
     // If user is logged in, show logout button in navbar.
     if (user.loggedIn == true) {
