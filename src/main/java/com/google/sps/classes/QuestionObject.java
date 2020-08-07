@@ -24,7 +24,6 @@ public class QuestionObject {
 
   private String title;
   private String body;
-  private int askerId;
   private String askerName;
   private Timestamp dateTime;
   private int numberOfFollowers;
@@ -36,10 +35,6 @@ public class QuestionObject {
 
   public void setBody(String body) {
     this.body = body;
-  }
-
-  public void setAskerId(int askerId) {
-    this.askerId = askerId;
   }
 
   public void setAskerName(String askerName) {

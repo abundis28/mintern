@@ -26,7 +26,6 @@ import java.util.List;
 public class AnswerObject {
 
   private String body;
-  private int authorId;
   private String authorName;
   private Timestamp dateTime;
   private int votes;
@@ -34,10 +33,6 @@ public class AnswerObject {
 
   public void setBody(String body) {
     this.body = body;
-  }
-
-  public void setAuthorId(int authorId) {
-    this.authorId = authorId;
   }
 
   public void setAuthorName(String authorName) {

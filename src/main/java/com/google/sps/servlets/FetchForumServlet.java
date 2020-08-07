@@ -64,7 +64,6 @@ public class FetchForumServlet extends HttpServlet {
           QuestionObject question = new QuestionObject();
           question.setTitle(queryResult.getString(2));
           question.setBody(queryResult.getString(3));
-          question.setAskerId(queryResult.getInt(4));
           question.setAskerName(queryResult.getString(8));
           question.setDateTime(queryResult.getTimestamp(5));
           question.setNumberOfFollowers(queryResult.getInt(7));
