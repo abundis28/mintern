@@ -14,7 +14,6 @@
 
 package com.google.sps.servlets;
 
-import com.google.sps.classes.QuestionObject;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
 import java.sql.Connection;
@@ -38,12 +37,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/question")
 public class SingleQuestionServlet extends HttpServlet {
-  // All the variables needed to connect to the local database.
-  // P.S.: Change the timezone if needed (https://github.com/dbeaver/dbeaver/wiki/JDBC-Time-Zones).
-  String url = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
-  String user = "root";
-  String password = "";
-  
+
   /** 
    * This method will get the answers for a single question and send them back as JSON.
    */
@@ -58,7 +52,8 @@ public class SingleQuestionServlet extends HttpServlet {
         + "WHERE Answer.question_id=?;";
 
     // The connection and query are attempted.
-    try (Connection connection = DriverManager.getConnection(url, user, password);
+    try (Connection connection = DriverManager
+        .getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_USER, Utility.SQL_PASSWORD);
       PreparedStatement preparedStatement = connection.prepareStatement(query);
       preparedStatement.setInt(1, question_id);
       ResultSet queryResult = preparedStatement.executeQuery()) {
