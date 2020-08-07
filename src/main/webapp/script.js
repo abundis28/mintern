@@ -16,7 +16,7 @@
  * Function that will call other functions when the page loads. 
  */
 function onBodyLoad() {
-  fetchLogin();
+  fetchAuthentication();
   fetchForum();
 }
 
@@ -92,18 +92,23 @@ function createQuestionElement(question) {
 /*
  * Displays navbar authentication buttons according to login status.
  */
-function fetchLogin() {
-  fetch('/login').then(response => response.json()).then(user => {
-    // If user is logged in, show logout button in navbar.
-    if (user.loggedIn == true) {
+function fetchAuthentication() {
+  fetch('/authentication').then(response => response.json()).then(user => {
+    if (user.isUserLoggedIn) {
+      // If user is logged in, show logout button in navbar.
+      if (!user.isUserRegistered) {
+        // If logged in user is not registered, redirect to signup page.
+        window.location.replace(user.authenticationUrl);
+      }
+
       // Delete signup button.
       const signupButtonNavbar = document.getElementById('signup');
       signupButtonNavbar.innerHTML = '';
 
       // Add logout button to navbar.
       addAuthenticationButton(user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
-    // If user is logged out, show signup and login buttons in navbar.
     } else {
+      // If user is logged out, show signup and login buttons in navbar.
       // Add signup button to navbar.
       addAuthenticationButton(user.authenticationUrl, 'btn-success', 'Sign Up', 'signup');
 
@@ -113,6 +118,13 @@ function fetchLogin() {
   })
 }
 
+/**
+ * Creates a signup, login, or logout button and appends it to navbar.
+ * @param {string} authenticationUrl 
+ * @param {string} buttonStyle 
+ * @param {string} buttonText 
+ * @param {string} navbarItem 
+ */
 function addAuthenticationButton(authenticationUrl, buttonStyle, buttonText, navbarItem) {
   // Create button.
   const authenticationButton = document.createElement('button');
@@ -141,4 +153,15 @@ function addAuthenticationButton(authenticationUrl, buttonStyle, buttonText, nav
 async function fetchQuestionAndAnswers() {
   const response = await fetch('/answers');
   const questionsObject = await response.json();
+}
+
+/**
+ * Redirect user in signup page to index if they are already registered.
+ */
+function isUserRegistered() {
+  fetch('/authentication').then(response => response.json()).then(user => {
+    if (user.isUserRegistered) {
+      window.location.replace("/index.html");
+    }
+  })
 }

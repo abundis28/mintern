@@ -16,39 +16,39 @@ package com.google.sps.servlets;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.google.sps.classes.UserAuthenticationData;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
+import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/*
- * Servlet that verifies user login status.
+/**
+ * Servlet that inserts a new mentor to the database.
  */
-@WebServlet("/login")
-public class LoginServlet extends HttpServlet {
+@WebServlet("/mentor-signup")
+public class MentorSignupServlet extends HttpServlet {
 
+  /**
+   * Receives information about a new mentor and stores it in the database.
+   */
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
 
-    Boolean loggedIn = false;
-    String authenticationUrl = "";
-    String userEmail = "";
-    String redirectUrl = "/";
-    if (userService.isUserLoggedIn()) {
-      loggedIn = true;
-      userEmail = userService.getCurrentUser().getEmail();
-      authenticationUrl = userService.createLogoutURL(redirectUrl);
-    } else {
-      authenticationUrl = userService.createLoginURL(redirectUrl);
-    }
+    // Get variables from HTML form.
+    String firstName = request.getParameter("first-name");
+    String lastName = request.getParameter("last-name");
+    String username = request.getParameter("username");
+    String email = userService.getCurrentUser().getEmail();
+    int major = Integer.parseInt(request.getParameter("major"));
+    Boolean is_mentor = true;
 
-    UserAuthenticationData userAuthenticationData =
-        new UserAuthenticationData(loggedIn, authenticationUrl, userEmail);
-    response.setContentType("application/json");
-    response.getWriter().println(Utility.convertToJsonUsingGson(userAuthenticationData));
+    // Insert user to the database.
+    Utility.addNewUser(firstName, lastName, username, email, major, is_mentor);
+    response.sendRedirect("/index.html");
   }
 }
