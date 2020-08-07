@@ -56,3 +56,11 @@ function addAuthenticationButton(authenticationUrl, buttonStyle, buttonText, nav
   authenticationButtonNavbar.innerHTML = '';
   authenticationButtonNavbar.appendChild(authenticationButtonItem);
 }
+
+/**
+ * Checks if the user is logged. Can be used to toggle displaying things.
+ */
+async function checkForLogin() {
+  const response = await fetch('/check-login');
+  const isLoggedIn = await response.json().loggedIn;
+}
