@@ -47,15 +47,15 @@ public final class Utility {
    */
   public static int getUserId() {
     int userId = -1;
-
-    // Get logged in user email.
     UserService userService = UserServiceFactory.getUserService();
-    String email = userService.getCurrentUser().getEmail();
 
     // If user is not logged in, return -1.
-    if (email.equals("")) {
+    if (!userService.isUserLoggedIn()) {
       return userId;
     }
+
+    // Get logged in user email.
+    String email = userService.getCurrentUser().getEmail();
 
     // Set up query to check if user is already registered.
     String query = "SELECT id FROM User WHERE email = ?";
@@ -82,5 +82,36 @@ public final class Utility {
     }
 
     return userId;
+  }
+  
+  /**
+   * Receives the attributes necessary to insert a new user into the database and inserts it to the User table.
+   */
+  public static void addNewUser(String firstName, String lastName, String username, String email, int major, boolean is_mentor) {
+    // Set up query to insert new user into database.
+    String query = "INSERT INTO User (fname, lname, username, email, major_id, is_mentor) "
+        + "VALUES (?, ?, ?, ?, ?, ?)";
+
+    try {
+      // Establish connection to MySQL database.
+      Connection connection = DriverManager.getConnection(SQL_LOCAL_URL, SQL_USER, SQL_PASSWORD);
+
+      // Create the MySQL INSERT prepared statement.
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      preparedStatement.setString(1, firstName);
+      preparedStatement.setString(2, lastName);
+      preparedStatement.setString(3, username);
+      preparedStatement.setString(4, email);
+      preparedStatement.setInt(5, major);
+      preparedStatement.setBoolean(6, is_mentor);
+
+      // Execute the prepared statement and close connection.
+      preparedStatement.execute();
+      connection.close();
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, get the log of the error.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
   }
 }

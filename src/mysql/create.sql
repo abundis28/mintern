@@ -14,7 +14,9 @@ CREATE TABLE Major (
 
 CREATE TABLE User (
   id INT NOT NULL AUTO_INCREMENT,
-  name VARCHAR(255),
+  fname VARCHAR(255),
+  lname VARCHAR(255),
+  username VARCHAR(255),
   email VARCHAR(255),
   major_id INT NOT NULL,
   is_mentor BOOLEAN,
