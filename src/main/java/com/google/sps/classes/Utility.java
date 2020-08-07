@@ -52,7 +52,7 @@ public final class Utility {
     String email = userService.getCurrentUser().getEmail();
 
     // If user is not logged in, return -1.
-    if (email == "") {
+    if (email.equals("")) {
       return userId;
     }
 
