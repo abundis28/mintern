@@ -44,48 +44,25 @@ public class LoginServlet extends HttpServlet {
     String authenticationUrl = "";
     String redirectUrl = "/";
 
-    // If user is logged in, udpate variables.
-    // Set authenticationUrl to either logout or login URL.
     if (userService.isUserLoggedIn()) {
+      // If user is logged in, update variables and set authenticationUrl to logout URL.
       loggedIn = true;
       email = userService.getCurrentUser().getEmail();
       authenticationUrl = userService.createLogoutURL(redirectUrl);
 
-      // Set up variables needed to connect to MySQL database.
-      String url = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=PST8PDT";
-      String user = "root";
-      String password = "";
-
-      // Set up query to check if user is already registered.
-      String query = "SELECT email FROM User WHERE email = ?";
-
-      try {
-        // Establish connection to MySQL database.
-        Connection connection = DriverManager.getConnection(url, user, password);
-
-        // Create the MySQL prepared statement, execute it, and store the result.
-        PreparedStatement preparedStatement = connection.prepareStatement(query);
-        preparedStatement.setString(1, email);
-        ResultSet queryResult = preparedStatement.executeQuery();
-
+      int userId = Utility.getUserId();
+      if (userId == -1) {
+        // If user is not registered, redirect user to signup page.
+        authenticationUrl = "/signup.html";
+      } else {
         // If user is registered, change isUserRegistered to true.
-        // If not, redirect user to signup page.
-        if (queryResult.next()) {
-          isUserRegistered = true;
-        } else {
-          authenticationUrl = "/signup.html";
-        }
-        connection.close();
-      } catch (SQLException exception) {
-        // If the connection or the query don't go through, get the log of the error.
-        Logger logger = Logger.getLogger(MentorSignupServlet.class.getName());
-        logger.log(Level.SEVERE, exception.getMessage(), exception);
+        isUserRegistered = true;
       }
     } else {
+      // If user is logged out, set authenticationUrl to login URL.
       authenticationUrl = userService.createLoginURL(redirectUrl);
     }
 
-    // Create UserAuthenticationData with updated variables and return as JSON.
     UserAuthenticationData userAuthenticationData =
         new UserAuthenticationData(loggedIn, email, isUserRegistered, authenticationUrl);
     response.setContentType("application/json");

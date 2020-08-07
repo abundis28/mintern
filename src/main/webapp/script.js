@@ -18,9 +18,9 @@
 function fetchLogin() {
   fetch('/login').then(response => response.json()).then(user => {
     // If user is logged in, show logout button in navbar.
-    if (user.loggedIn == true) {
+    if (user.loggedIn) {
       // If logged in user is not registered, redirect to signup page.
-      if(user.isUserRegistered == false) {
+      if(!user.isUserRegistered) {
         window.location.replace(user.authenticationUrl);
       }
       // Delete signup button.

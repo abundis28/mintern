@@ -13,17 +13,17 @@ VALUES
   ('ITI'),
   ('IMT');
 
-INSERT INTO User (name, email, major_id, is_mentor) 
+INSERT INTO User (fname, lname, username, email, major_id, is_mentor) 
 VALUES 
-  ('Shaar', 'a00825287@itesm.mx', 1, TRUE),
-  ('Andres', 'a01283152@itesm.mx', 3, TRUE),
-  ('Omar', 'a01206177@itesm.mx', 1, TRUE),
-  ('Ernesto', 'a00825923@itesm.mx', 1, FALSE),
-  ('Diego', 'a00824758@itesm.mx', 1, FALSE),
-  ('Rodrigo', 'a01234245@itesm.mx', 1, FALSE),
-  ('Daniel', 'a00825596@itesm.mx', 1, FALSE);
+  ('Mariano', 'Shaar', 'shaargtz', 'a00825287@itesm.mx', 1, TRUE),
+  ('Andres', 'Abundis', 'aabundis', 'a01283152@itesm.mx', 3, TRUE),
+  ('Omar', 'Montiel', 'oumontiel', 'a01206177@itesm.mx', 1, TRUE),
+  ('Ernesto', 'Garcia', 'ernestognw', 'a00825923@itesm.mx', 1, FALSE),
+  ('Diego', 'Gomez', 'dgomez', 'a00824758@itesm.mx', 1, FALSE),
+  ('Rodrigo', 'Ayup', 'ayup', 'a01234245@itesm.mx', 1, FALSE),
+  ('Daniel', 'Trevino', 'danieltrevino', 'a00825596@itesm.mx', 1, FALSE);
 
-INSERT INTO Notification (user_id, message, url, date_time) 
+INSERT INTO Notification (message, url, date_time) 
 VALUES
   ('You got an answer', 'questions/1', '2020-07-29 13:00:00.000000'),
   ('You got an answer', 'questions/2', '2020-07-29 14:00:00.000000'),
@@ -71,6 +71,11 @@ VALUES
 
 INSERT INTO QuestionFollower (question_id, follower_id) 
 VALUES
+  (1, 4),
+  (2, 6),
+  (3, 5),
+  (4, 7),
+  (5, 5),
   (1, 5),
   (1, 7),
   (2, 4),
@@ -98,6 +103,12 @@ VALUES
 
 INSERT INTO AnswerFollower (answer_id, follower_id) 
 VALUES
+  (1, 1),
+  (2, 2),
+  (2, 3),
+  (3, 3),
+  (4, 2),
+  (4, 1),
   (1, 5),
   (1, 7),
   (2, 4),
