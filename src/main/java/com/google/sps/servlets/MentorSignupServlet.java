@@ -45,10 +45,45 @@ public class MentorSignupServlet extends HttpServlet {
     String username = request.getParameter("username");
     String email = userService.getCurrentUser().getEmail();
     int major = Integer.parseInt(request.getParameter("major"));
+    String[] experienceTags = request.getParameterValues("experience");
     Boolean is_mentor = true;
 
-    // Insert user to the database.
+    // Insert user and mentor experience to the database.
     Utility.addNewUser(firstName, lastName, username, email, major, is_mentor);
+    addMentorExperience(experienceTags);
     response.sendRedirect("/index.html");
+  }
+
+  /**
+   * Inserts experience tags with corresponding user to MentorExperience table in database.
+   */
+  private void addMentorExperience(String[] experienceTags) {
+    int userId = Utility.getUserId();
+    
+    // Variables needed to connect to MySQL database.
+    String url = Utility.SQL_LOCAL_URL;
+    String user = Utility.SQL_USER;
+    String password = Utility.SQL_PASSWORD;
+    
+    for (String tag : experienceTags) {
+      // Set up query to insert new experience tag to user.
+      String query = "INSERT INTO MentorExperience (mentor_id, tag_id) VALUES (?, ?)";
+
+      try {
+        // Establish connection to MySQL database.
+        Connection connection = DriverManager.getConnection(url, user, password);
+
+        // Create the MySQL INSERT prepared statement.
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(1, userId);
+        preparedStatement.setInt(2, Integer.parseInt(tag));
+        preparedStatement.execute();
+        connection.close();
+      } catch (SQLException exception) {
+        // If the connection or the query don't go through, get the log of the error.
+        Logger logger = Logger.getLogger(MentorSignupServlet.class.getName());
+        logger.log(Level.SEVERE, exception.getMessage(), exception);
+      }
+    }
   }
 }
