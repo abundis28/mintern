@@ -17,6 +17,7 @@
  */
 function onBodyLoad() {
   addAutoResize();
+  fetchAuthentication();
   fetchForum();
   fetchLogin();
 }
@@ -119,14 +120,15 @@ function addAutoResize() {
 /*
  * Displays navbar authentication buttons according to login status.
  */
-function fetchLogin() {
-  fetch('/login').then(response => response.json()).then(user => {
-    // If user is logged in, show logout button in navbar.
-    if (user.loggedIn) {
-      // If logged in user is not registered, redirect to signup page.
-      if(!user.isUserRegistered) {
+function fetchAuthentication() {
+  fetch('/authentication').then(response => response.json()).then(user => {
+    if (user.isUserLoggedIn) {
+      // If user is logged in, show logout button in navbar.
+      if (!user.isUserRegistered) {
+        // If logged in user is not registered, redirect to signup page.
         window.location.replace(user.authenticationUrl);
       }
+
       // Delete signup button.
       const signupButtonNavbar = document.getElementById('signup');
       signupButtonNavbar.innerHTML = '';
@@ -153,7 +155,11 @@ function fetchLogin() {
 }
 
 /**
- * Adds the authentication button to the DOM.
+ * Creates a signup, login, or logout button and appends it to navbar.
+ * @param {string} authenticationUrl 
+ * @param {string} buttonStyle 
+ * @param {string} buttonText 
+ * @param {string} navbarItem 
  */
 function addAuthenticationButton(authenticationUrl, buttonStyle, buttonText, navbarItem) {
   // Create button.
@@ -174,4 +180,15 @@ function addAuthenticationButton(authenticationUrl, buttonStyle, buttonText, nav
   const authenticationButtonNavbar = document.getElementById(navbarItem);
   authenticationButtonNavbar.innerHTML = '';
   authenticationButtonNavbar.appendChild(authenticationButtonItem);
+}
+
+/**
+ * Redirect user in signup page to index if they are already registered.
+ */
+function isUserRegistered() {
+  fetch('/authentication').then(response => response.json()).then(user => {
+    if (user.isUserRegistered) {
+      window.location.replace("/index.html");
+    }
+  })
 }
