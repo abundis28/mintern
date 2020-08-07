@@ -47,15 +47,15 @@ public final class Utility {
    */
   public static int getUserId() {
     int userId = -1;
-
-    // Get logged in user email.
     UserService userService = UserServiceFactory.getUserService();
-    String email = userService.getCurrentUser().getEmail();
 
     // If user is not logged in, return -1.
-    if (email.equals("")) {
+    if (!userService.isUserLoggedIn()) {
       return userId;
     }
+
+    // Get logged in user email.
+    String email = userService.getCurrentUser().getEmail();
 
     // Set up query to check if user is already registered.
     String query = "SELECT id FROM User WHERE email = ?";
