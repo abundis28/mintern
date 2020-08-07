@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServletResponse;
  * This servlet will retrieve the answers to be displayed on the page.
  */
 @WebServlet("/question")
-public class SingleQuestionServlet extends HttpServlet {
+public class FetchAnswersServlet extends HttpServlet {
 
   /** 
    * This method will get the answers for a single question and send them back as JSON.
@@ -63,7 +63,7 @@ public class SingleQuestionServlet extends HttpServlet {
         }
       } catch (SQLException exception) {
         // If the connection or the query don't go through, we get the log of what happened.
-        Logger logger = Logger.getLogger(SingleQuestionServlet.class.getName());
+        Logger logger = Logger.getLogger(FetchAnswersServlet.class.getName());
         logger.log(Level.SEVERE, exception.getMessage(), exception);
       }
 
