@@ -40,9 +40,9 @@ import javax.servlet.http.HttpServletResponse;
 public class FetchForumServlet extends HttpServlet {
   // All the variables needed to connect to the local database.
   // P.S.: Change the timezone if needed (https://github.com/dbeaver/dbeaver/wiki/JDBC-Time-Zones).
-  String url = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
+  String url = String.format("jdbc:mysql:///%s", "Mintern");
   String user = "root";
-  String password = "";
+  String password = "mintern";
   
   /** 
    * This method will get the forum questions from the query and return them as a JSON string.
