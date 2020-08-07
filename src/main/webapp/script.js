@@ -60,3 +60,31 @@ function addAuthenticationButton(authenticationUrl, buttonStyle, buttonText, nav
   authenticationButtonNavbar.innerHTML = '';
   authenticationButtonNavbar.appendChild(authenticationButtonItem);
 }
+
+function loadSignup() {
+  fetchMajor();
+}
+
+function fetchMajor() {
+  fetch('/mentee-signup').then(response => response.json()).then(majors => {
+    // Get select containers where new options will be appended.
+    const mentorMajorSelect = document.getElementById('mentor-major');
+    mentorMajorSelect.innerHTML = '';
+    const menteeMajorSelect = document.getElementById('mentee-major');
+    menteeMajorSelect.innerHTML = '';
+
+    for (let major in majors) {
+      console.log(majors[major]);
+      console.log(major);
+      // Create option for major and append it to select containers.
+      const selectOption = document.createElement('option');
+      selectOption.appendChild(document.createTextNode(majors[major]));
+      selectOption.value = major;
+      mentorMajorSelect.appendChild(selectOption);
+      menteeMajorSelect.appendChild(selectOption.cloneNode(true));
+    }
+
+    // Refresh select container to show options.
+    $('.selectpicker').selectpicker('refresh');
+  })
+}
