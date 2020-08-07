@@ -15,9 +15,7 @@
 package com.google.sps.classes;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Class to create a question for the forum. It will be used for Gson conversion.
