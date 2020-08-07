@@ -88,7 +88,7 @@ public class EmailServlet extends HttpServlet {
   /**
    * Queries IDs of the author of the modified question/answer and its followers.
    */
-  private List<Integer> getUsersToNotify(String type, int elementId){
+  private List<Integer> getUsersToNotify(String type, int elementId) {
     // Defines the necessary data to access the server.
     String DB_NAME = "Mintern";
     String url = String.format("jdbc:mysql:///%s", DB_NAME);
@@ -145,7 +145,7 @@ public class EmailServlet extends HttpServlet {
     String password = "mintern";
 
     String userEmails = new String();
-    for (int userId : userIds){
+    for (int userId : userIds) {
       // Query the email of the current user.
       String query = "SELECT email FROM User WHERE id = " + userId;
       try (Connection connection = DriverManager.getConnection(url, user, password);
