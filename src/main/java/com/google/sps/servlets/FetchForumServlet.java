@@ -38,35 +38,25 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/fetch-forum")
 public class FetchForumServlet extends HttpServlet {
-  // All the variables needed to connect to the local database.
-  // P.S.: Change the timezone if needed (https://github.com/dbeaver/dbeaver/wiki/JDBC-Time-Zones).
-  String url = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
-  String user = "root";
-  String password = "";
-  
+
   /** 
    * This method will get the forum questions from the query and return them as a JSON string.
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Create list that will hold all of the questions from the query..
     List<QuestionObject> questions = new ArrayList<>();
     
-    String query = "SELECT * FROM Question ";
-    query = query.concat("LEFT JOIN ");
-    query = query.concat("(SELECT question_id, COUNT(follower_id) followers FROM QuestionFollower ");
-    query = query.concat("GROUP BY question_id) CountTable ");
-    query = query.concat("ON Question.id=CountTable.question_id ");
-    query = query.concat("LEFT JOIN ");
-    query = query.concat("(SELECT name, id AS asker_id FROM User) NameTable ");
-    query = query.concat("ON Question.asker_id=NameTable.asker_id ");
-    query = query.concat("LEFT JOIN ");
-    query = query.concat("(SELECT question_id, COUNT(id) answers FROM Answer ");
-    query = query.concat("GROUP BY question_id) AnswerTable ");
-    query = query.concat("ON Question.id=AnswerTable.question_id;");
+    String query = "SELECT * FROM Question "
+        + "LEFT JOIN (SELECT question_id, COUNT(follower_id) followers FROM QuestionFollower "
+        + "GROUP BY question_id) CountTable ON Question.id=CountTable.question_id "
+        + "LEFT JOIN (SELECT name, id AS asker_id FROM User) NameTable "
+        + "ON Question.asker_id=NameTable.asker_id "
+        + "LEFT JOIN (SELECT question_id, COUNT(id) answers FROM Answer "
+        + "GROUP BY question_id) AnswerTable ON Question.id=AnswerTable.question_id;";
 
     // The connection and query are attempted.
-    try (Connection connection = DriverManager.getConnection(url, user, password);
+    try (Connection connection = DriverManager
+        .getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_USER, Utility.SQL_PASSWORD);
       PreparedStatement preparedStatement = connection.prepareStatement(query);
       ResultSet queryResult = preparedStatement.executeQuery()) {
         // All of the rows from the query are looped if it goes through.
