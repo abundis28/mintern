@@ -28,7 +28,8 @@ import java.util.logging.Logger;
  */
 public final class Utility {
   // Variables needed to connect to MySQL database.
-  public static final String SQL_LOCAL_URL = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
+  public static final String SQL_LOCAL_URL =
+      "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
   public static final String SQL_USER = "root";
   public static final String SQL_PASSWORD = "";
   
@@ -52,7 +53,7 @@ public final class Utility {
     String email = userService.getCurrentUser().getEmail();
 
     // If user is not logged in, return -1.
-    if (email.equals("")) {=
+    if (email.equals("")) {
       return userId;
     }
 
@@ -86,7 +87,8 @@ public final class Utility {
   /**
    * Receives the attributes necessary to insert a new user into the database and inserts it to the User table.
    */
-  public static void addNewUser(String firstName, String lastName, String username, String email, int major, boolean is_mentor) {
+  public static void addNewUser(String firstName, String lastName, String username, String email,
+      int major, boolean is_mentor) {
     // Set up query to insert new user into database.
     String query = "INSERT INTO User (fname, lname, username, email, major_id, is_mentor) "
         + "VALUES (?, ?, ?, ?, ?, ?)";
