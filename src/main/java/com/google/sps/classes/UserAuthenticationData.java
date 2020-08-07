@@ -19,14 +19,14 @@ package com.google.sps.classes;
  */
 public final class UserAuthenticationData {
 
-  private final boolean loggedIn;
   private final String email;
+  private final boolean isUserLoggedIn;
   private final boolean isUserRegistered;
   private final String authenticationUrl; // URL to redirect to login or logout page.
 
-  public UserAuthenticationData(boolean loggedIn, String email, boolean isUserRegistered, String authenticationUrl) {
-    this.loggedIn = loggedIn;
+  public UserAuthenticationData(String email, boolean isUserLoggedIn, boolean isUserRegistered, String authenticationUrl) {
     this.email = email;
+    this.isUserLoggedIn = isUserLoggedIn;
     this.isUserRegistered = isUserRegistered;
     this.authenticationUrl = authenticationUrl;
   }

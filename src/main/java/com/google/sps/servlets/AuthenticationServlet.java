@@ -27,18 +27,21 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/*
+/**
  * Servlet that verifies user login status.
  */
-@WebServlet("/login")
-public class LoginServlet extends HttpServlet {
+@WebServlet("/authentication")
+public class AuthenticationServlet extends HttpServlet {
 
+  /**
+   * Sends information about the user's login status, including email and a login/logout link.
+   */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
     
     // Set default variables to create UserAuthenticationData object.
-    Boolean loggedIn = false;
+    Boolean isUserLoggedIn = false;
     String email = "";
     Boolean isUserRegistered = false;
     String authenticationUrl = "";
@@ -46,7 +49,7 @@ public class LoginServlet extends HttpServlet {
 
     if (userService.isUserLoggedIn()) {
       // If user is logged in, update variables and set authenticationUrl to logout URL.
-      loggedIn = true;
+      isUserLoggedIn = true;
       email = userService.getCurrentUser().getEmail();
       authenticationUrl = userService.createLogoutURL(redirectUrl);
 
@@ -64,7 +67,7 @@ public class LoginServlet extends HttpServlet {
     }
 
     UserAuthenticationData userAuthenticationData =
-        new UserAuthenticationData(loggedIn, email, isUserRegistered, authenticationUrl);
+        new UserAuthenticationData(email, isUserLoggedIn, isUserRegistered, authenticationUrl);
     response.setContentType("application/json");
     response.getWriter().println(Utility.convertToJsonUsingGson(userAuthenticationData));
   }

@@ -13,7 +13,7 @@ VALUES
   ('ITI'),
   ('IMT');
 
-INSERT INTO User (fname, lname, username, email, major_id, is_mentor) 
+INSERT INTO User (first_name, last_name, username, email, major_id, is_mentor) 
 VALUES 
   ('Mariano', 'Shaar', 'shaargtz', 'a00825287@itesm.mx', 1, TRUE),
   ('Andres', 'Abundis', 'aabundis', 'a01283152@itesm.mx', 3, TRUE),

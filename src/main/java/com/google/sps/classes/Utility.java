@@ -89,7 +89,7 @@ public final class Utility {
    */
   public static void addNewUser(String firstName, String lastName, String username, String email, int major, boolean is_mentor) {
     // Set up query to insert new user into database.
-    String query = "INSERT INTO User (fname, lname, username, email, major_id, is_mentor) "
+    String query = "INSERT INTO User (first_name, last_name, username, email, major_id, is_mentor) "
         + "VALUES (?, ?, ?, ?, ?, ?)";
 
     try {
