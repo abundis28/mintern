@@ -28,7 +28,8 @@ import java.util.logging.Logger;
  */
 public final class Utility {
   // Variables needed to connect to MySQL database.
-  public static final String SQL_LOCAL_URL = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
+  public static final String SQL_LOCAL_URL =
+      "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
   public static final String SQL_USER = "root";
   public static final String SQL_PASSWORD = "";
   
@@ -52,7 +53,7 @@ public final class Utility {
     String email = userService.getCurrentUser().getEmail();
 
     // If user is not logged in, return -1.
-    if (email == "") {
+    if (email.equals("")) {
       return userId;
     }
 
