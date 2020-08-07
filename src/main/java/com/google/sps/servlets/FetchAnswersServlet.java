@@ -46,10 +46,12 @@ public class FetchAnswersServlet extends HttpServlet {
     int question_id = request.getParameter("question_id");
 
     // Create list that will hold all of the questions from the query.
-    List<QuestionObject> answers = new ArrayList<>();
+    List<CommentObject> answers = new ArrayList<>();
 
-    String query = "SELECT * FROM Answer LEFT JOIN Comment ON Answer.id=Comment.answer_id "
-        + "WHERE Answer.question_id=?;";
+    String query = "SELECT * FROM Answer LEFT JOIN (SELECT id, name FROM User) AnswerNameTable " 
+        + "ON Answer.author_id=AnswerNameTable.id LEFT JOIN Comment ON Answer.id=Comment.answer_id"
+        + " LEFT JOIN (SELECT id, name FROM User) CommentNameTable "
+        + "ON Answer.author_id=CommentNameTable.id WHERE Answer.question_id=?;"
 
     // The connection and query are attempted.
     try (Connection connection = DriverManager
