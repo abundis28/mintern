@@ -38,12 +38,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/fetch-forum")
 public class FetchForumServlet extends HttpServlet {
-  // All the variables needed to connect to the local database.
-  // P.S.: Change the timezone if needed (https://github.com/dbeaver/dbeaver/wiki/JDBC-Time-Zones).
-  String url = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
-  String user = "root";
-  String password = "";
-  
+
   /** 
    * This method will get the forum questions from the query and return them as a JSON string.
    */
@@ -60,7 +55,8 @@ public class FetchForumServlet extends HttpServlet {
         + "GROUP BY question_id) AnswerTable ON Question.id=AnswerTable.question_id;";
 
     // The connection and query are attempted.
-    try (Connection connection = DriverManager.getConnection(url, user, password);
+    try (Connection connection = DriverManager
+        .getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_USER, Utility.SQL_PASSWORD);
       PreparedStatement preparedStatement = connection.prepareStatement(query);
       ResultSet queryResult = preparedStatement.executeQuery()) {
         // All of the rows from the query are looped if it goes through.
