@@ -121,21 +121,31 @@ function addAutoResize() {
  */
 function fetchLogin() {
   fetch('/login').then(response => response.json()).then(user => {
-    // If user is logged in, show logout button in navbar.
     if (user.loggedIn == true) {
+      // If user is logged in, show logout button in navbar and the 
+      // question submission box.
+      
       // Delete signup button.
       const signupButtonNavbar = document.getElementById('signup');
       signupButtonNavbar.innerHTML = '';
 
       // Add logout button to navbar.
-      addAuthenticationButton(user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
-    // If user is logged out, show signup and login buttons in navbar.
+      addAuthenticationButton(
+          user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
+
+      // Show question submission box.
+      const questionSubmission = document.getElementById('post-question');
+      questionSubmission.style.display = "block";
     } else {
+      // If user is logged out, show signup and login buttons in navbar.
+
       // Add signup button to navbar.
-      addAuthenticationButton(user.authenticationUrl, 'btn-success', 'Sign Up', 'signup');
+      addAuthenticationButton(
+          user.authenticationUrl, 'btn-success', 'Sign Up', 'signup');
 
       // Add login button to navbar.
-      addAuthenticationButton(user.authenticationUrl, 'btn-outline-success', 'Log In', 'login');
+      addAuthenticationButton(
+          user.authenticationUrl, 'btn-outline-success', 'Log In', 'login');
     }
   })
 }
