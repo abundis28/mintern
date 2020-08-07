@@ -3,6 +3,8 @@
 -- For more context on the Mintern database design, 
 -- see https://docs.google.com/document/d/1P4eRQsu7TQHY4Sh1XZkc_zuKfa0XzJUfmSpnJDldYIY/edit?usp=sharing.
 
+/* TODO(oumontiel): Add comments to describe each table. */
+
 CREATE DATABASE Mintern;
 USE Mintern;
 
@@ -14,7 +16,9 @@ CREATE TABLE Major (
 
 CREATE TABLE User (
   id INT NOT NULL AUTO_INCREMENT,
-  name VARCHAR(255),
+  first_name VARCHAR(255),
+  last_name VARCHAR(255),
+  username VARCHAR(255),
   email VARCHAR(255),
   major_id INT NOT NULL,
   is_mentor BOOLEAN,

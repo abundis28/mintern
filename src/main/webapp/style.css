@@ -5,3 +5,10 @@
 #dropdown-override {
   min-width: 25rem;
 } 
+
+#forum {
+  width: 60%;
+  margin: auto;
+  margin-top: 20px;
+}
+
