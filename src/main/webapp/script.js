@@ -67,6 +67,19 @@ function loadSignup() {
 
 function fetchMentorExperience() {
   fetch('/mentor-signup').then(response => response.json()).then(subjectTags => {
+    // Get select container where new options will be appended.
     const mentorExperienceSelect = document.getElementById('experience');
+    mentorExperienceSelect.innerHTML = '';
+
+    subjectTags.forEach(subjectTag => {
+      // Create option for subject tag and append it to select container.
+      const selectOption = document.createElement('option');
+      selectOption.appendChild(document.createTextNode(subjectTag.subject));
+      selectOption.value = subjectTag.id;
+      mentorExperienceSelect.appendChild(selectOption);
+    })
+
+    // Refresh select container to show options.
+    $('.selectpicker').selectpicker('refresh');
   })
 }
