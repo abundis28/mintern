@@ -121,19 +121,12 @@ function addAutoResize() {
  */
 function fetchLogin() {
   fetch('/login').then(response => response.json()).then(user => {
-<<<<<<< HEAD
-    if (user.loggedIn == true) {
-      // If user is logged in, show logout button in navbar and the 
-      // question submission box.
-      
-=======
     // If user is logged in, show logout button in navbar.
     if (user.loggedIn) {
       // If logged in user is not registered, redirect to signup page.
       if(!user.isUserRegistered) {
         window.location.replace(user.authenticationUrl);
       }
->>>>>>> master
       // Delete signup button.
       const signupButtonNavbar = document.getElementById('signup');
       signupButtonNavbar.innerHTML = '';
