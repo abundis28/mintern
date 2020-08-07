@@ -18,7 +18,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 /**
- * Class to create a question for the forum. It will be used for Gson conversion.
+ * Class to create a comment for the forum. It will be used for Gson conversion.
  */
 public class CommentObject {
 

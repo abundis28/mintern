@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Class to create a question for the forum. It will be used for Gson conversion.
+ * Class to create an answer for the forum. It will be used for Gson conversion.
  */
 public class AnswerObject {
 
