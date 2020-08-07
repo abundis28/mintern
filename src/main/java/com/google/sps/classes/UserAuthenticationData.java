@@ -22,7 +22,7 @@ public final class UserAuthenticationData {
   private final String email;
   private final boolean isUserLoggedIn;
   private final boolean isUserRegistered;
-  private final String authenticationUrl;
+  private final String authenticationUrl; // URL to redirect to login or logout page.
 
   public UserAuthenticationData(String email, boolean isUserLoggedIn, boolean isUserRegistered, String authenticationUrl) {
     this.email = email;

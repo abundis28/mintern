@@ -53,42 +53,19 @@ public class AuthenticationServlet extends HttpServlet {
       email = userService.getCurrentUser().getEmail();
       authenticationUrl = userService.createLogoutURL(redirectUrl);
 
-      // Set up variables needed to connect to MySQL database.
-      String url = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=PST8PDT";
-      String user = "root";
-      String password = "";
-
-      // Set up query to check if user is already registered.
-      String query = "SELECT email FROM User WHERE email = ?";
-
-      try {
-        // Establish connection to MySQL database.
-        Connection connection = DriverManager.getConnection(url, user, password);
-
-        // Create the MySQL prepared statement, execute it, and store the result.
-        PreparedStatement preparedStatement = connection.prepareStatement(query);
-        preparedStatement.setString(1, email);
-        ResultSet queryResult = preparedStatement.executeQuery();
-
-        if (queryResult.next()) {
-          // If user is registered, change isUserRegistered to true.
-          isUserRegistered = true;
-        } else {
-          // If user is not registered, redirect user to signup page.
-          authenticationUrl = "/signup.html";
-        }
-        connection.close();
-      } catch (SQLException exception) {
-        // If the connection or the query don't go through, get the log of the error.
-        Logger logger = Logger.getLogger(AuthenticationServlet.class.getName());
-        logger.log(Level.SEVERE, exception.getMessage(), exception);
+      int userId = Utility.getUserId();
+      if (userId == -1) {
+        // If user is not registered, redirect user to signup page.
+        authenticationUrl = "/signup.html";
+      } else {
+        // If user is registered, change isUserRegistered to true.
+        isUserRegistered = true;
       }
     } else {
-      // If user is logged out, udpate variables and set authenticationUrl to login URL.
+      // If user is logged out, set authenticationUrl to login URL.
       authenticationUrl = userService.createLoginURL(redirectUrl);
     }
 
-    // Create UserAuthenticationData with updated variables and return as JSON.
     UserAuthenticationData userAuthenticationData =
         new UserAuthenticationData(email, isUserLoggedIn, isUserRegistered, authenticationUrl);
     response.setContentType("application/json");
