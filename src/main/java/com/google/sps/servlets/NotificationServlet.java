@@ -116,7 +116,7 @@ public class NotificationServlet extends HttpServlet {
                     "(SELECT notification_id FROM UserNotification WHERE user_id = " + userId +
                     ") ORDER BY date_time DESC";
     List<Notification> notifications = new ArrayList<>();
-    // Query the information from tables and create notification object to be store in ArrayList.
+    // Query the information from tables and create notification object to be stored in ArrayList.
     try (Connection con = DriverManager.getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_USER,
                                                       Utility.SQL_PASSWORD);
         PreparedStatement pst = con.prepareStatement(query);
