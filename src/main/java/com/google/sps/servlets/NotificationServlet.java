@@ -11,9 +11,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
+ 
 package com.google.sps.servlets;
-
+ 
 import com.google.sps.classes.Notification;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
@@ -28,68 +28,36 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+ 
+/**
+* Servlet that handles the fetching and posting of notifications.
+*/
 @WebServlet("/notification")
 public class NotificationServlet extends HttpServlet {
-
-  /*
-   * Fetch the notifications of a specific user.
-   */
+  /**
+  * Fetch the notifications of a specific user.
+  */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Defines the necessary data to access the server.
-    String url = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
-    String user = "root";
-    String password = "";
-
-    // Get user's id from Users API using 
-    int userId = Utility.getUserId();
-    // Definition of query.
-    String query =  "SELECT message, url, date_time FROM Notification WHERE id = " + userId + " ORDER BY date_time DESC";
-    List<Notification> notifications = new ArrayList<>();
-    // Query the information from tables and create notification object to be store in ArrayList.
-    try (Connection con = DriverManager.getConnection(url, user, password);
-        PreparedStatement pst = con.prepareStatement(query);
-        ResultSet rs = pst.executeQuery()) {
-      // Iterate through the result of the query to populate the ArrayList and return it as JSON.
-      while (rs.next()) {
-        Notification notification = new Notification();
-        notification.message = rs.getString(1);
-        notification.url = rs.getString(2);
-        notification.timestamp = rs.getTimestamp(3);
-        // Stores object in ArrayList.
-        notifications.add(notification);
-      }
-    } catch (SQLException ex) {
-        Logger lgr = Logger.getLogger(DataServlet.class.getName());
-        lgr.log(Level.SEVERE, ex.getMessage(), ex);
-    }
-
-    // Convert notification ArrayList to JSON using GSON method in Utility class.
-    String json = Utility.convertToJsonUsingGson(notifications);
+    // Get user's id from Utility method. Fetch notifications and convert the ArrayList to JSON
+    // using Utility method.
+    String json = Utility.convertToJsonUsingGson(getNotifications(7));
     response.setContentType("application/json;");
     response.getWriter().println(json);
   }
 
-  /*
-   * Post a new notification for all followers of a modified question or answer.
-   */
+  /**
+  * Post a new notification for all followers of a modified question or answer.
+  */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Defines the necessary data to access the server.
-    String url = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
-    String user = "root";
-    String password = "";
-
     // Define local time for the new entries in the server.
     LocalDateTime localDateTime = LocalDateTime.now();
     Timestamp localTimestamp = Timestamp.valueOf(localDateTime);
 
     // Get values from query string.
     String typeOfElement = request.getParameter("type");
-    String stringElementId = request.getParameter("elementId");
-    // Turn string value of the id to int.
-    int elementId = Integer.parseInt(stringElementId);
+    int elementId = Integer.parseInt(request.getParameter("elementId"));
     // Defines the url to which the user will be redirected.
     String elementUrl = "/questions.html?id=" + elementId;
     // Open connection to server.
@@ -98,9 +66,10 @@ public class NotificationServlet extends HttpServlet {
       // If the notification is for an anwer to a question.
       String query =  "SELECT follower_id FROM QuestionFollower WHERE question_id = " + elementId;
       // Query the information from QuestionFollower table.
-      try (Connection connection = DriverManager.getConnection(url, user, password);
-           PreparedStatement pst = connection.prepareStatement(query);
-           ResultSet rs = pst.executeQuery()) {
+      try (Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_USER,
+                                                              Utility.SQL_PASSWORD);
+          PreparedStatement pst = connection.prepareStatement(query);
+          ResultSet rs = pst.executeQuery()) {
         // Insert notification and get its id to relate in UserNotification table.
         insertToNotification(connection, "You got an answer", elementUrl, localTimestamp);
         int notificationId = getNotificationId(connection, localTimestamp);
@@ -118,9 +87,10 @@ public class NotificationServlet extends HttpServlet {
       // If the notification is for a new comment in an answer.
       String query =  "SELECT follower_id FROM AnswerFollower WHERE answer_id = " + elementId;
       // Query the information from QuestionFollower table.
-      try (Connection connection = DriverManager.getConnection(url, user, password);
-           PreparedStatement pst = connection.prepareStatement(query);
-           ResultSet rs = pst.executeQuery()) {
+      try (Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_USER,
+                                                              Utility.SQL_PASSWORD);
+          PreparedStatement pst = connection.prepareStatement(query);
+          ResultSet rs = pst.executeQuery()) {
         // Insert notification and get its id to relate in UserNotification table.
         insertToNotification(connection, "Somebody commented your answer", elementUrl, localTimestamp);
         int notificationId = getNotificationId(connection, localTimestamp);
@@ -137,10 +107,41 @@ public class NotificationServlet extends HttpServlet {
     }
   }
 
-  /*
-   * Function that receives the data for a notification and inserts it into the Notification table.
-   */
-  private void insertToNotification (Connection connection, String message, String elementUrl, Timestamp dateTime) {
+  /**
+  * Fetches notifications with the user id.
+  */
+  private List<Notification> getNotifications(int userId) {
+    // Prepares query to select notifications by the subquery of notifications IDs selected by user ID.
+    String query =  "SELECT message, url, date_time FROM Notification WHERE id IN " +
+                    "(SELECT notification_id FROM UserNotification WHERE user_id = " + userId +
+                    ") ORDER BY date_time DESC";
+    List<Notification> notifications = new ArrayList<>();
+    // Query the information from tables and create notification object to be store in ArrayList.
+    try (Connection con = DriverManager.getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_USER,
+                                                      Utility.SQL_PASSWORD);
+        PreparedStatement pst = con.prepareStatement(query);
+        ResultSet rs = pst.executeQuery()) {
+      // Iterate through the result of the query to populate the ArrayList and return it as JSON.
+      while(rs.next()){
+        Notification notification = new Notification();
+        notification.message = rs.getString(1);
+        notification.url = rs.getString(2);
+        notification.timestamp = rs.getTimestamp(3);
+        // Stores object in ArrayList.
+        notifications.add(notification);
+      }
+    } catch (SQLException ex) {
+        Logger lgr = Logger.getLogger(DataServlet.class.getName());
+        lgr.log(Level.SEVERE, ex.getMessage(), ex);
+    }
+    return notifications;
+  }
+
+  /**
+  * Function that receives the data for a notification and inserts it into the Notification table.
+  */
+  private void insertToNotification(Connection connection, String message, String elementUrl,
+        Timestamp dateTime) {
     String query = "INSERT INTO Notification(message, url, date_time) VALUES(?,?,?)";
     try {
       // Prepare the statement to be inserted.
@@ -154,11 +155,11 @@ public class NotificationServlet extends HttpServlet {
     }
   }
 
-  /*
-   * Function that receives the data for a notification-user relation and inserts it into
-   * UserNotification.
-   */
-  private void insertToUserNotification (Connection connection, int userId, int notificationId) {
+  /**
+  * Function that receives the data for a notification-user relation and inserts it into
+  * UserNotification.
+  */
+  private void insertToUserNotification(Connection connection, int userId, int notificationId) {
     String query = "INSERT INTO UserNotification(user_id, notification_id) VALUES(?,?)";
     try {
       // Prepare the statement to be inserted.
@@ -171,15 +172,17 @@ public class NotificationServlet extends HttpServlet {
     }
   }
 
-  /*
-   * Return the id of a just inserted notification.
-   */
-  private int getNotificationId (Connection connection, Timestamp date) {
-    String query =  "SELECT notification_id FROM Notification WHERE date_time =  " + date;
+  /**
+  * Return the id of a just inserted notification.
+  */
+  private int getNotificationId(Connection connection, Timestamp date) {
+    String query =  "SELECT id FROM Notification ORDER BY date_time";
     // Query the information from Notification table.
     int notificationId = 0;
     try (PreparedStatement pst = connection.prepareStatement(query);
           ResultSet rs = pst.executeQuery()) {
+      // Select the id of the last notification to be inserted.
+      rs.last();
       notificationId = rs.getInt(1);
     } catch (SQLException ex) {
       Logger lgr = Logger.getLogger(DataServlet.class.getName());

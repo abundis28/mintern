@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*
+/**
  * Loads data that does need require interaction from user.
  */
 function loadHomePage() {
@@ -20,7 +20,7 @@ function loadHomePage() {
   loadNotifications();
 }
 
-/*
+/**
  * Loads notifications of the signed in user.
  */
 function loadNotifications() {
@@ -33,7 +33,7 @@ function loadNotifications() {
   });
 }
 
-/*
+/**
  * Appends child to navbar dropdown. Represents a notification.
  */
 function createListElement(notification) {
@@ -48,7 +48,7 @@ function createListElement(notification) {
   return liElement;
 }
 
-/*
+/**
  * Creates notification when an answer o comment is posted.
  */
 function notify(type, id) {
@@ -60,7 +60,7 @@ function notify(type, id) {
 /*
  * Displays navbar authentication buttons according to login status.
  */
-window.onload = function fetchLogin() {
+function fetchLogin() {
   fetch('/login').then(response => response.json()).then(user => {
     // If user is logged in, show logout button in navbar.
     if (user.loggedIn == true) {
