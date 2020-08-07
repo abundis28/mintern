@@ -13,15 +13,15 @@ VALUES
   ('ITI'),
   ('IMT');
 
-INSERT INTO User (name, email, major_id, is_mentor) 
+INSERT INTO User (fname, lname, username, email, major_id, is_mentor) 
 VALUES 
-  ('Shaar', 'a00825287@itesm.mx', 1, TRUE),
-  ('Andres', 'a01283152@itesm.mx', 3, TRUE),
-  ('Omar', 'a01206177@itesm.mx', 1, TRUE),
-  ('Ernesto', 'a00825923@itesm.mx', 1, FALSE),
-  ('Diego', 'a00824758@itesm.mx', 1, FALSE),
-  ('Rodrigo', 'a01234245@itesm.mx', 1, FALSE),
-  ('Daniel', 'a00825596@itesm.mx', 1, FALSE);
+  ('Mariano', 'Shaar', 'shaargtz', 'a00825287@itesm.mx', 1, TRUE),
+  ('Andres', 'Abundis', 'aabundis', 'a01283152@itesm.mx', 3, TRUE),
+  ('Omar', 'Montiel', 'oumontiel', 'a01206177@itesm.mx', 1, TRUE),
+  ('Ernesto', 'Garcia', 'ernestognw', 'a00825923@itesm.mx', 1, FALSE),
+  ('Diego', 'Gomez', 'dgomez', 'a00824758@itesm.mx', 1, FALSE),
+  ('Rodrigo', 'Ayup', 'ayup', 'a01234245@itesm.mx', 1, FALSE),
+  ('Daniel', 'Trevino', 'danieltrevino', 'a00825596@itesm.mx', 1, FALSE);
 
 INSERT INTO Notification (message, url, date_time) 
 VALUES
