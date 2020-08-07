@@ -28,9 +28,9 @@ import java.util.logging.Logger;
  */
 public final class Utility {
   // Variables needed to connect to MySQL database.
-  static final String SQL_URL = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=PST8PDT";
-  static final String SQL_USER = "root";
-  static final String SQL_PASSWORD = "";
+  public static final String SQL_LOCAL_URL = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
+  public static final String SQL_USER = "root";
+  public static final String SQL_PASSWORD = "";
   
   /**
    * Converts objects to JSON using GSON class.
