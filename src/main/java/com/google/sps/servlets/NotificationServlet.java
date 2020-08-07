@@ -39,11 +39,16 @@ public class NotificationServlet extends HttpServlet {
   */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Get user's id from Utility method. Fetch notifications and convert the ArrayList to JSON
-    // using Utility method.
-    String json = Utility.convertToJsonUsingGson(getNotifications(7));
-    response.setContentType("application/json;");
-    response.getWriter().println(json);
+    // Get user's ID from Utility method.
+    int userId = Utility.getUserId();
+    // If the user is signed in then fetch notifications.
+    if (userId != -1) {
+      // If the user is logged in, fetch notifications and convert the ArrayList to JSON
+      // using Utility method.
+      String json = Utility.convertToJsonUsingGson(getNotifications(userId));
+      response.setContentType("application/json;");
+      response.getWriter().println(json); 
+    }
   }
 
   /**
@@ -55,19 +60,21 @@ public class NotificationServlet extends HttpServlet {
     LocalDateTime localDateTime = LocalDateTime.now();
     Timestamp localTimestamp = Timestamp.valueOf(localDateTime);
 
-    // Get values from query string.
-    String typeOfElement = request.getParameter("type");
-    int elementId = Integer.parseInt(request.getParameter("elementId"));
+    // Get if notification is question answered or answered commented and the id of the element.
+    String typeOfNotification = request.getParameter("type");
+    int modifiedElementId = Integer.parseInt(request.getParameter("modifiedElementId"));
     // Defines the url to which the user will be redirected.
-    String elementUrl = "/questions.html?id=" + elementId;
+    String elementUrl = "/questions.html?id=" + modifiedElementId;
     // Open connection to server.
 
-    if(typeOfElement.equals("question")) {
+    if(typeOfNotification.equals("question")) {
       // If the notification is for an anwer to a question.
-      String query =  "SELECT follower_id FROM QuestionFollower WHERE question_id = " + elementId;
+      String query =  "SELECT follower_id FROM QuestionFollower WHERE question_id = " +
+                       modifiedElementId;
       // Query the information from QuestionFollower table.
-      try (Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_USER,
-                                                              Utility.SQL_PASSWORD);
+      try (Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL, 
+                                                               Utility.SQL_USER,
+                                                               Utility.SQL_PASSWORD);
           PreparedStatement pst = connection.prepareStatement(query);
           ResultSet rs = pst.executeQuery()) {
         // Insert notification and get its id to relate in UserNotification table.
@@ -83,16 +90,19 @@ public class NotificationServlet extends HttpServlet {
         Logger lgr = Logger.getLogger(DataServlet.class.getName());
         lgr.log(Level.SEVERE, ex.getMessage(), ex);
       }
-    } else if (typeOfElement.equals("answer")) {
+    } else if (typeOfNotification.equals("answer")) {
       // If the notification is for a new comment in an answer.
-      String query =  "SELECT follower_id FROM AnswerFollower WHERE answer_id = " + elementId;
+      String query =  "SELECT follower_id FROM AnswerFollower WHERE answer_id = " +
+                       modifiedElementId;
       // Query the information from QuestionFollower table.
-      try (Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_USER,
-                                                              Utility.SQL_PASSWORD);
+      try (Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL,
+                                                               Utility.SQL_USER,
+                                                               Utility.SQL_PASSWORD);
           PreparedStatement pst = connection.prepareStatement(query);
           ResultSet rs = pst.executeQuery()) {
         // Insert notification and get its id to relate in UserNotification table.
-        insertToNotification(connection, "Somebody commented your answer", elementUrl, localTimestamp);
+        insertToNotification(connection, "Somebody commented your answer", elementUrl, 
+                             localTimestamp);
         int notificationId = getNotificationId(connection, localTimestamp);
         // Iterate through the query's result set to insert all notifications.
         while (rs.next()) {
@@ -111,15 +121,17 @@ public class NotificationServlet extends HttpServlet {
   * Fetches notifications with the user id.
   */
   private List<Notification> getNotifications(int userId) {
-    // Prepares query to select notifications by the subquery of notifications IDs selected by user ID.
+    // Prepares query to select notifications by the subquery of notifications IDs selected by 
+    // user ID.
     String query =  "SELECT message, url, date_time FROM Notification WHERE id IN " +
                     "(SELECT notification_id FROM UserNotification WHERE user_id = " + userId +
                     ") ORDER BY date_time DESC";
     List<Notification> notifications = new ArrayList<>();
     // Query the information from tables and create notification object to be stored in ArrayList.
-    try (Connection con = DriverManager.getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_USER,
-                                                      Utility.SQL_PASSWORD);
-        PreparedStatement pst = con.prepareStatement(query);
+    try (Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL,
+                                                             Utility.SQL_USER,
+                                                             Utility.SQL_PASSWORD);
+        PreparedStatement pst = connection.prepareStatement(query);
         ResultSet rs = pst.executeQuery()) {
       // Iterate through the result of the query to populate the ArrayList and return it as JSON.
       while(rs.next()){
@@ -130,6 +142,7 @@ public class NotificationServlet extends HttpServlet {
         // Stores object in ArrayList.
         notifications.add(notification);
       }
+      connection.close();
     } catch (SQLException ex) {
         Logger lgr = Logger.getLogger(DataServlet.class.getName());
         lgr.log(Level.SEVERE, ex.getMessage(), ex);
