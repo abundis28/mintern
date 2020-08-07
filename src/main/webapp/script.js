@@ -16,7 +16,7 @@
  * Function that will call other functions when the page loads. 
  */
 function onBodyLoad() {
-  fetchLogin();
+  fetchAuthentication();
   fetchForum();
 }
 
@@ -94,7 +94,7 @@ function createQuestionElement(question) {
  */
 function fetchAuthentication() {
   fetch('/authentication').then(response => response.json()).then(user => {
-    if (user.isUserloggedIn) {
+    if (user.isUserLoggedIn) {
       // If user is logged in, show logout button in navbar.
       if (!user.isUserRegistered) {
         // If logged in user is not registered, redirect to signup page.
