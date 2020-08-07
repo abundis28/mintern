@@ -138,7 +138,7 @@ function addAuthenticationButton(authenticationUrl, buttonStyle, buttonText, nav
  * Fetches a single question and its answers from server, 
  * wraps each in an <li> element, and adds them to the DOM.
  */
-async function fetchQuestion() {
-  const response = await fetch('/question');
+async function fetchQuestionAndAnswers() {
+  const response = await fetch('/answers');
   const questionsObject = await response.json();
 }
