@@ -73,8 +73,8 @@ public class NotificationServlet extends HttpServlet {
                        modifiedElementId;
       // Query the information from QuestionFollower table.
       try (Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL, 
-                                                               Utility.SQL_USER,
-                                                               Utility.SQL_PASSWORD);
+                                                               Utility.SQL_LOCAL_USER,
+                                                               Utility.SQL_LOCAL_PASSWORD);
           PreparedStatement pst = connection.prepareStatement(query);
           ResultSet rs = pst.executeQuery()) {
         // Insert notification and get its id to relate in UserNotification table.
@@ -96,8 +96,8 @@ public class NotificationServlet extends HttpServlet {
                        modifiedElementId;
       // Query the information from QuestionFollower table.
       try (Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL,
-                                                               Utility.SQL_USER,
-                                                               Utility.SQL_PASSWORD);
+                                                               Utility.SQL_LOCAL_USER,
+                                                               Utility.SQL_LOCAL_PASSWORD);
           PreparedStatement pst = connection.prepareStatement(query);
           ResultSet rs = pst.executeQuery()) {
         // Insert notification and get its id to relate in UserNotification table.
@@ -129,8 +129,8 @@ public class NotificationServlet extends HttpServlet {
     List<Notification> notifications = new ArrayList<>();
     // Query the information from tables and create notification object to be stored in ArrayList.
     try (Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL,
-                                                             Utility.SQL_USER,
-                                                             Utility.SQL_PASSWORD);
+                                                             Utility.SQL_LOCAL_USER,
+                                                             Utility.SQL_LOCAL_PASSWORD);
         PreparedStatement pst = connection.prepareStatement(query);
         ResultSet rs = pst.executeQuery()) {
       // Iterate through the result of the query to populate the ArrayList and return it as JSON.
