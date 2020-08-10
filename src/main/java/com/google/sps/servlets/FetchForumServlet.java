@@ -56,7 +56,7 @@ public class FetchForumServlet extends HttpServlet {
 
     // The connection and query are attempted.
     try (Connection connection = DriverManager
-        .getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_USER, Utility.SQL_PASSWORD);
+        .getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
       PreparedStatement preparedStatement = connection.prepareStatement(query);
       ResultSet queryResult = preparedStatement.executeQuery()) {
         // All of the rows from the query are looped if it goes through.
