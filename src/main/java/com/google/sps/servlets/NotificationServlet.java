@@ -188,7 +188,7 @@ public class NotificationServlet extends HttpServlet {
   }
 
   /**
-   * Returns the id of a just inserted notification.
+   * Returns the ID of a just inserted notification.
    */
   private int getNotificationId(Connection connection, Timestamp date) {
     String query =  "SELECT id FROM Notification ORDER BY date_time";
