@@ -3,6 +3,10 @@
 -- For more context on the Mintern database design, 
 -- see https://docs.google.com/document/d/1P4eRQsu7TQHY4Sh1XZkc_zuKfa0XzJUfmSpnJDldYIY/edit?usp=sharing.
 
+/* TODO(oumontiel): Make sure it is clear this is dummy data.
+                    Either include this file in a testdata directory
+                    or add references that it is populating dummy data. */
+
 USE Mintern;
 
 INSERT INTO Major (name) 
@@ -71,13 +75,13 @@ VALUES
 
 INSERT INTO QuestionFollower (question_id, follower_id) 
 VALUES
-  (1, 4),
+  (1, 1),
   (2, 6),
   (3, 5),
   (4, 7),
   (5, 5),
-  (1, 5),
-  (1, 7),
+  (1, 2),
+  (1, 3),
   (2, 4),
   (2, 7),
   (3, 4),
@@ -114,7 +118,7 @@ VALUES
   (2, 4),
   (2, 7),
   (3, 4),
-  (4, 6);
+  (4, 3);
 
 INSERT INTO Comment (answer_id, body, author_id, date_time) 
 VALUES
