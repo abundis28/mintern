@@ -18,11 +18,11 @@ package com.google.sps.classes;
  * Constants used throughout different queries.
  */
 public final class Constants {
-  public final int QUESTION_FETCH_TITLE_COLUMN = 2;
-  public final int QUESTION_FETCH_BODY_COLUMN = 3;
-  public final int QUESTION_FETCH_ASKERID_COLUMN = 5;
-  public final int QUESTION_FETCH_AKSERNAME_COLUMN = 8;
-  public final int QUESTION_FETCH_DATETIME_COLUMN = 5;
-  public final int QUESTION_FETCH_NUMBEROFFOLLOWERS_COLUMN = 7;
-  public final int QUESTION_FETCH_NUMBEROFANSWERS_COLUMN = 11;
+  public static final int QUESTION_FETCH_TITLE_COLUMN = 2;
+  public static final int QUESTION_FETCH_BODY_COLUMN = 3;
+  public static final int QUESTION_FETCH_ASKERID_COLUMN = 4;
+  public static final int QUESTION_FETCH_AKSERNAME_COLUMN = 8;
+  public static final int QUESTION_FETCH_DATETIME_COLUMN = 5;
+  public static final int QUESTION_FETCH_NUMBEROFFOLLOWERS_COLUMN = 7;
+  public static final int QUESTION_FETCH_NUMBEROFANSWERS_COLUMN = 11;
 }
