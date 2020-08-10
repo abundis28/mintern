@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet that inserts a new mentor to the database.
+ * Servlet that inserts a new mentee to the database.
  */
 @WebServlet("/mentee-signup")
 public class MenteeSignupServlet extends HttpServlet {

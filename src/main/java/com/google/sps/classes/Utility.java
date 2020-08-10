@@ -27,10 +27,11 @@ import java.util.logging.Logger;
  * Utility methods used across classes. Just import class to access all methods.
  */
 public final class Utility {
-  // Variables needed to connect to MySQL database.
-  public static final String SQL_LOCAL_URL = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
-  public static final String SQL_USER = "root";
-  public static final String SQL_PASSWORD = "";
+  // Variables needed to connect to the local MySQL database.
+  public static final String SQL_LOCAL_URL =
+      "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
+  public static final String SQL_LOCAL_USER = "root";
+  public static final String SQL_LOCAL_PASSWORD = "";
   
   /**
    * Converts objects to JSON using GSON class.
@@ -46,22 +47,22 @@ public final class Utility {
    */
   public static int getUserId() {
     int userId = -1;
-
-    // Get logged in user email.
     UserService userService = UserServiceFactory.getUserService();
-    String email = userService.getCurrentUser().getEmail();
 
     // If user is not logged in, return -1.
-    if (email == "") {
+    if (!userService.isUserLoggedIn()) {
       return userId;
     }
+
+    // Get logged in user email.
+    String email = userService.getCurrentUser().getEmail();
 
     // Set up query to check if user is already registered.
     String query = "SELECT id FROM User WHERE email = ?";
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(SQL_LOCAL_URL, SQL_USER, SQL_PASSWORD);
+      Connection connection = DriverManager.getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
 
       // Create the MySQL prepared statement, execute it, and store the result.
       // Takes the query specified above and sets the email field to the logged in user's email.
@@ -86,9 +87,10 @@ public final class Utility {
   /**
    * Receives the attributes necessary to insert a new user into the database and inserts it to the User table.
    */
-  public static void addNewUser(String firstName, String lastName, String username, String email, int major, boolean is_mentor) {
+  public static void addNewUser(String firstName, String lastName, String username, String email,
+      int major, boolean is_mentor) {
     // Set up query to insert new user into database.
-    String query = "INSERT INTO User (fname, lname, username, email, major_id, is_mentor) "
+    String query = "INSERT INTO User (first_name, last_name, username, email, major_id, is_mentor) "
         + "VALUES (?, ?, ?, ?, ?, ?)";
 
     try {
