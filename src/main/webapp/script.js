@@ -148,9 +148,11 @@ function addAuthenticationButton(authenticationUrl, buttonStyle, buttonText, nav
 
 /**
  * Sends email to the followers of a modified question  or answer.
+ * @param {string} type
+ * @param {int} id
  */
 function sendEmail(type, id) {
-  fetch('/email?type=' + type + '&elementId=' + id, {
+  fetch('/email?typeOfNotification=' + type + '&modifiedElementId=' + id, {
     method: 'POST'
   })
 }
