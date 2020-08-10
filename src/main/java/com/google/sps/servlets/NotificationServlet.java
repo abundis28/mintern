@@ -35,8 +35,8 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/notification")
 public class NotificationServlet extends HttpServlet {
   /**
-  * Fetch the notifications of a specific user.
-  */
+   * Fetch the notifications of a specific user.
+   */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get user's ID from Utility method.
@@ -52,8 +52,8 @@ public class NotificationServlet extends HttpServlet {
   }
 
   /**
-  * Post a new notification for all followers of a modified question or answer.
-  */
+   * Post a new notification for all followers of a modified question or answer.
+   */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Define local time for the new entries in the server.
@@ -121,8 +121,8 @@ public class NotificationServlet extends HttpServlet {
   }
 
   /**
-  * Fetches notifications with the user id.
-  */
+   * Fetches notifications with the user id.
+   */
   private List<Notification> getNotifications(int userId) {
     // Prepare query to select notifications by the subquery of notifications IDs selected by 
     // user ID.
@@ -154,8 +154,8 @@ public class NotificationServlet extends HttpServlet {
   }
 
   /**
-  * Receives the data for a notification and inserts it into the Notification table.
-  */
+   * Receives the data for a notification and inserts it into the Notification table.
+   */
   private void insertToNotification(Connection connection, String message, String elementUrl,
         Timestamp dateTime) {
     String query = "INSERT INTO Notification(message, url, date_time) VALUES(?,?,?)";
@@ -172,9 +172,9 @@ public class NotificationServlet extends HttpServlet {
   }
 
   /**
-  * Receives the data for a notification-user relation and inserts it into
-  * UserNotification.
-  */
+   * Receives the data for a notification-user relation and inserts it into
+   * UserNotification.
+   */
   private void insertToUserNotification(Connection connection, int userId, int notificationId) {
     String query = "INSERT INTO UserNotification(user_id, notification_id) VALUES(?,?)";
     try {
@@ -189,8 +189,8 @@ public class NotificationServlet extends HttpServlet {
   }
 
   /**
-  * Return the id of a just inserted notification.
-  */
+   * Return the id of a just inserted notification.
+   */
   private int getNotificationId(Connection connection, Timestamp date) {
     String query =  "SELECT id FROM Notification ORDER BY date_time";
     // Query the information from Notification table.
