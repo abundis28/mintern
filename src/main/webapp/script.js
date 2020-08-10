@@ -48,7 +48,7 @@ function createNotificationsElement(notification) {
  * @param {int} id
  */
 function notify(type, id) {
-  fetch('notification?type=' + type + '&elementId=' + id, {
+  fetch('notification?type=' + type + '&modifiedElementId=' + id, {
     method: 'POST'
   })
 }

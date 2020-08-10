@@ -58,11 +58,12 @@ public class NotificationServlet extends HttpServlet {
     LocalDateTime localDateTime = LocalDateTime.now();
     Timestamp localTimestamp = Timestamp.valueOf(localDateTime);
 
-    // Get if notification is question answered or answered commented and the id of the element.
+    // Check if notification is about a question answered or answer commented, along the id of the 
+    // question/answer.
     String typeOfNotification = request.getParameter("type");
     int modifiedElementId = Integer.parseInt(request.getParameter("modifiedElementId"));
     
-    if(typeOfNotification.equals("question")) {
+    if (typeOfNotification.equals("question")) {
       // If the notification is for an anwer to a question.
       String query =  "SELECT follower_id FROM QuestionFollower WHERE question_id = " +
                        modifiedElementId;
@@ -135,7 +136,7 @@ public class NotificationServlet extends HttpServlet {
         PreparedStatement pst = connection.prepareStatement(query);
         ResultSet rs = pst.executeQuery()) {
       // Iterate through the result of the query to populate the ArrayList and return it as JSON.
-      while(rs.next()){
+      while (rs.next()){
         Notification notification = new Notification();
         notification.message = rs.getString(1);
         notification.url = rs.getString(2);
