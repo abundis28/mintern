@@ -56,28 +56,13 @@ public class PostQuestionServlet extends HttpServlet {
       Connection connection = DriverManager.getConnection(url, user, password);
       
       // We first insert the new question.
-      String insertQuestionQuery = "INSERT INTO Question(title, body, asker_id, date_time) "
-          + "VALUES (?,?,?,NOW())";
-      PreparedStatement questionStatement = connection.prepareStatement(insertQuestionQuery);
-      questionStatement.setString(1, title);
-      questionStatement.setString(2, body);
-      questionStatement.setInt(3, asker_id);
-      questionStatement.executeUpdate();
+      insertNewQuestion(connection);
 
       // We get the ID of the new question.
-      String maxIdQuery = "SELECT MAX(id) FROM Question;";
-      PreparedStatement maxIdStatement = connection.prepareStatement(maxIdQuery);
-      ResultSet queryResult = maxIdStatement.executeQuery();
-      queryResult.next();
-      int newQuestionId = queryResult.getInt(1);
+      getNewQuestionId(connection);
 
       // We then update the follower table.
-      String insertFollowerQuery = "INSERT INTO QuestionFollower(question_id, follower_id) "
-          + "VALUES (?,?)";
-      PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
-      followerStatement.setInt(1, newQuestionId);
-      followerStatement.setInt(2, asker_id);
-      followerStatement.executeUpdate();
+      insertNewFollower(connection);
     } 
     catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
@@ -85,5 +70,32 @@ public class PostQuestionServlet extends HttpServlet {
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
     response.sendRedirect("/");
+  }
+
+  private void insertNewQuestion(Connection connection) {
+    String insertQuestionQuery = "INSERT INTO Question(title, body, asker_id, date_time) "
+        + "VALUES (?,?,?,NOW())";
+    PreparedStatement questionStatement = connection.prepareStatement(insertQuestionQuery);
+    questionStatement.setString(1, title);
+    questionStatement.setString(2, body);
+    questionStatement.setInt(3, asker_id);
+    questionStatement.executeUpdate();
+  }
+
+  private int getNewQuestionId(Connection connection) {
+    String maxIdQuery = "SELECT MAX(id) FROM Question;";
+    PreparedStatement maxIdStatement = connection.prepareStatement(maxIdQuery);
+    ResultSet queryResult = maxIdStatement.executeQuery();
+    queryResult.next();
+    return queryResult.getInt(1);
+  }
+
+  private void insertNewFollower(Connection connection) {
+    String insertFollowerQuery = "INSERT INTO QuestionFollower(question_id, follower_id) "
+        + "VALUES (?,?)";
+    PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
+    followerStatement.setInt(1, newQuestionId);
+    followerStatement.setInt(2, asker_id);
+    followerStatement.executeUpdate();
   }
 }
