@@ -52,17 +52,13 @@ public class EmailServlet extends HttpServlet {
     // Get ID of modified element from query string and convert to int.
     int modifiedElementId = Integer.parseInt(request.getParameter("modifiedElementId"));
 
-    // Define SQL access variables to avoid repetition.
-    String SQL_URL = Utility.SQL_CLOUD_URL;
-    String SQL_USER = Utility.SQL_CLOUD_USER;
-    String SQL_PASSWORD = Utility.SQL_CLOUD_PASSWORD;
-
     // Create content for mail. Call functions to see which users have to be notified
     // and get their emails concatenated in a string.
     String userEmails =
         Utility.getUserEmailsAsString(Utility.getUsersToNotify(typeOfNotification, modifiedElementId,
-                                              SQL_URL, SQL_USER, SQL_PASSWORD), SQL_URL, SQL_USER,
-                                              SQL_PASSWORD);
+                                              Utility.SQL_CLOUD_URL, Utility.SQL_CLOUD_USER, 
+                                              Utility.SQL_CLOUD_PASSWORD), Utility.SQL_CLOUD_URL, 
+                                              Utility.SQL_CLOUD_USER, Utility.SQL_CLOUD_PASSWORD);
     String subject = "Activity on Mintern!";
     String message = "Dear mintern,\n" +
                      "You have new notifications in Mintern!\n" + 
