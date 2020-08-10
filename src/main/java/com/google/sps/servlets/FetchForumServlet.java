@@ -49,14 +49,14 @@ public class FetchForumServlet extends HttpServlet {
     String query = "SELECT * FROM Question "
         + "LEFT JOIN (SELECT question_id, COUNT(follower_id) followers FROM QuestionFollower "
         + "GROUP BY question_id) CountTable ON Question.id=CountTable.question_id "
-        + "LEFT JOIN (SELECT name, id AS asker_id FROM User) NameTable "
+        + "LEFT JOIN (SELECT first_name, id AS asker_id FROM User) NameTable "
         + "ON Question.asker_id=NameTable.asker_id "
         + "LEFT JOIN (SELECT question_id, COUNT(id) answers FROM Answer "
         + "GROUP BY question_id) AnswerTable ON Question.id=AnswerTable.question_id;";
 
     // The connection and query are attempted.
     try (Connection connection = DriverManager
-        .getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_USER, Utility.SQL_PASSWORD);
+        .getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
       PreparedStatement preparedStatement = connection.prepareStatement(query);
       ResultSet queryResult = preparedStatement.executeQuery()) {
         // All of the rows from the query are looped if it goes through.
