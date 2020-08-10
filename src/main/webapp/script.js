@@ -36,17 +36,20 @@ function onBodyLoadQuestion() {
 async function fetchQuestions(type) {
   let question_id;
   let questionsContainer;
+  let hasRedirect;
   if (type === 'forum') {
     question_id = -1;
     questionsContainer = document.getElementById('forum');
+    hasRedirect = true;
   } else if (type === 'question') {
     question_id = (new URL(document.location)).searchParams.get("id");
     questionsContainer = document.getElementById('question');
+    hasRedirect = false;
   }
   const response = await fetch('/fetch-questions?id=' + question_id);
   const questionsObject = await response.json();
   questionsObject.forEach(question => {
-    questionsContainer.appendChild(createQuestionElement(question));
+    questionsContainer.appendChild(createQuestionElement(question, hasRedirect));
   });
 }
 
@@ -54,10 +57,18 @@ async function fetchQuestions(type) {
  * Creates an <li> element with question data. 
  * Each element corresponds to a question to be displayed in the DOM.
  */
-function createQuestionElement(question) {
+function createQuestionElement(question, hasRedirect) {
   const questionElement = document.createElement('li');
   questionElement.setAttribute('class', 'list-group-item');
-  questionElement.innerText = question.title;
+
+  if (hasRedirect) {
+    const questionTitle = document.createElement('a');
+    questionTitle.setAttribute('href', '/question.html?id=' + question.id);
+    questionTitle.innerText = question.title;
+    questionElement.appendChild(questionTitle);
+  } else {
+    questionElement.innerText = question.title;
+  }
   
   // Asker name is placed besides the question.
   const askerElement = document.createElement('small');
