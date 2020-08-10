@@ -3,8 +3,6 @@
 -- For more context on the Mintern database design, 
 -- see https://docs.google.com/document/d/1P4eRQsu7TQHY4Sh1XZkc_zuKfa0XzJUfmSpnJDldYIY/edit?usp=sharing.
 
-/* TODO(oumontiel): Add comments to describe each table. */
-
 CREATE DATABASE Mintern;
 USE Mintern;
 
