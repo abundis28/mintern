@@ -30,12 +30,13 @@ function loadNotifications() {
  * @param {Notification} notification
  */
 function createListElement(notification) {
-  const liElement = document.createElement('li');
   // Create a link to redirect the user to the question that was answered or commented.
   const linkElement = document.createElement('a');
   linkElement.innerText = linkElement.innerText.concat(notification.message, " - ");
   linkElement.innerText = linkElement.innerText.concat(notification.timestamp.toString());
   linkElement.setAttribute("href", notification.url);
+  // Create list element.
+  const liElement = document.createElement('li');
   liElement.appendChild(linkElement);
   liElement.setAttribute("class","list-group-item");
   return liElement;
