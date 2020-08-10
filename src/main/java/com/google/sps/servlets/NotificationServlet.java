@@ -35,24 +35,22 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/notification")
 public class NotificationServlet extends HttpServlet {
   /**
-   * Fetch the notifications of a specific user.
+   * Fetches the notifications of a specific user.
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get user's ID from Utility method.
     int userId = Utility.getUserId();
-    // If the user is signed in then fetch notifications.
     if (userId != -1) {
       // Fetch notifications if user is signed in and convert the ArrayList to JSON
       // using Utility method.
-      String json = Utility.convertToJsonUsingGson(getNotifications(userId));
       response.setContentType("application/json;");
-      response.getWriter().println(json); 
+      response.getWriter().println(Utility.convertToJsonUsingGson(getNotifications(userId));); 
     }
   }
 
   /**
-   * Post a new notification for all followers of a modified question or answer.
+   * Posts a new notification for all followers of a modified question or answer.
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -189,7 +187,7 @@ public class NotificationServlet extends HttpServlet {
   }
 
   /**
-   * Return the id of a just inserted notification.
+   * Returns the id of a just inserted notification.
    */
   private int getNotificationId(Connection connection, Timestamp date) {
     String query =  "SELECT id FROM Notification ORDER BY date_time";
