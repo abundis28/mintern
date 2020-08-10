@@ -8,6 +8,12 @@
   margin-top: 70px;
 }
 
+#question {
+  width: 60%;
+  margin: auto;
+  margin-top: 100px;
+}
+
 #post-question {
   width: 60%;
   margin: auto;
