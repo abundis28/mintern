@@ -56,18 +56,7 @@ public class FetchForumServlet extends HttpServlet {
       ResultSet queryResult = preparedStatement.executeQuery()) {
         // All of the rows from the query are looped if it goes through.
         while (queryResult.next()) {
-          QuestionObject question = new QuestionObject();
-          question.setTitle(queryResult.getString(Constants.QUESTION_FETCH_TITLE_COLUMN));
-          question.setBody(queryResult.getString(Constants.QUESTION_FETCH_BODY_COLUMN));
-          question.setAskerId(queryResult.getInt(Constants.QUESTION_FETCH_ASKERID_COLUMN));
-          question.setAskerName(queryResult.getString(Constants.QUESTION_FETCH_AKSERNAME_COLUMN));
-          question.setDateTime(queryResult.getTimestamp(Constants.QUESTION_FETCH_DATETIME_COLUMN));
-          question.setNumberOfFollowers(queryResult.getInt(
-              Constants.QUESTION_FETCH_NUMBEROFFOLLOWERS_COLUMN));
-          question.setNumberOfAnswers(queryResult.getInt(
-              Constants.QUESTION_FETCH_NUMBEROFANSWERS_COLUMN));
-
-          questions.add(question);
+          questions.add(buildQuestion(queryResult));
         }
       } catch (SQLException exception) {
         // If the connection or the query don't go through, we get the log of what happened.
@@ -77,5 +66,20 @@ public class FetchForumServlet extends HttpServlet {
 
     response.setContentType("application/json;");
     response.getWriter().println(Utility.convertToJsonUsingGson(questions));
+  }
+
+  private QuestionObject buildQuestion(ResultSet queryResult) {
+    QuestionObject question = new QuestionObject();
+    question.setTitle(queryResult.getString(Constants.QUESTION_FETCH_TITLE_COLUMN));
+    question.setBody(queryResult.getString(Constants.QUESTION_FETCH_BODY_COLUMN));
+    question.setAskerId(queryResult.getInt(Constants.QUESTION_FETCH_ASKERID_COLUMN));
+    question.setAskerName(queryResult.getString(Constants.QUESTION_FETCH_AKSERNAME_COLUMN));
+    question.setDateTime(queryResult.getTimestamp(Constants.QUESTION_FETCH_DATETIME_COLUMN));
+    question.setNumberOfFollowers(queryResult.getInt(
+        Constants.QUESTION_FETCH_NUMBEROFFOLLOWERS_COLUMN));
+    question.setNumberOfAnswers(queryResult.getInt(
+        Constants.QUESTION_FETCH_NUMBEROFANSWERS_COLUMN));
+    
+    return question;
   }
 }
