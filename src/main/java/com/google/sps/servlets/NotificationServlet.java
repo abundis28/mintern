@@ -71,8 +71,8 @@ public class NotificationServlet extends HttpServlet {
       try (Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL, 
                                                                Utility.SQL_LOCAL_USER,
                                                                Utility.SQL_LOCAL_PASSWORD);
-          PreparedStatement pst = connection.prepareStatement(query);
-          ResultSet rs = pst.executeQuery()) {
+           PreparedStatement pst = connection.prepareStatement(query);
+           ResultSet rs = pst.executeQuery()) {
         // Define the url to which the user will be redirected. Will be defined each case because
         // URL will change once notifications for approvals and meetings are enabled.
         String elementUrl = "/questions.html?id=" + modifiedElementId;
