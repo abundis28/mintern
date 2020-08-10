@@ -26,6 +26,7 @@ public class QuestionObject {
   private String title;
   private String body;
   private String askerName;
+  private int askerId;
   private Timestamp dateTime;
   private int numberOfFollowers;
   private int numberOfAnswers;  
@@ -44,6 +45,10 @@ public class QuestionObject {
 
   public void setAskerName(String askerName) {
     this.askerName = askerName;
+  }
+
+    public void setAskerId(int askerId) {
+    this.askerId = askerId;
   }
 
   public void setDateTime(Timestamp dateTime) {
