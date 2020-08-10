@@ -22,12 +22,17 @@ import java.util.Date;
  */
 public class QuestionObject {
 
+  private int id;
   private String title;
   private String body;
   private String askerName;
   private Timestamp dateTime;
   private int numberOfFollowers;
   private int numberOfAnswers;  
+
+  public void setId(int id) {
+    this.id = id;
+  }
 
   public void setTitle(String title) {
     this.title = title;
