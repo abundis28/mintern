@@ -43,7 +43,7 @@ public class NotificationServlet extends HttpServlet {
     int userId = Utility.getUserId();
     // If the user is signed in then fetch notifications.
     if (userId != -1) {
-      // If the user is logged in, fetch notifications and convert the ArrayList to JSON
+      // Fetch notifications if user is signed in and convert the ArrayList to JSON
       // using Utility method.
       String json = Utility.convertToJsonUsingGson(getNotifications(userId));
       response.setContentType("application/json;");
@@ -74,7 +74,7 @@ public class NotificationServlet extends HttpServlet {
                                                                Utility.SQL_LOCAL_PASSWORD);
           PreparedStatement pst = connection.prepareStatement(query);
           ResultSet rs = pst.executeQuery()) {
-        // Defines the url to which the user will be redirected. Will be defined each case because
+        // Define the url to which the user will be redirected. Will be defined each case because
         // URL will change once notifications for approvals and meetings are enabled.
         String elementUrl = "/questions.html?id=" + modifiedElementId;
         // Insert notification and get its id to relate in UserNotification table.
@@ -100,7 +100,7 @@ public class NotificationServlet extends HttpServlet {
                                                                Utility.SQL_LOCAL_PASSWORD);
           PreparedStatement pst = connection.prepareStatement(query);
           ResultSet rs = pst.executeQuery()) {
-        // Defines the url to which the user will be redirected. Will be defined each case because
+        // Define the url to which the user will be redirected. Will be defined each case because
         // URL will change once notifications for approvals and meetings are enabled.
         String elementUrl = "/questions.html?id=" + modifiedElementId;
         // Insert notification and get its id to relate in UserNotification table.
@@ -124,7 +124,7 @@ public class NotificationServlet extends HttpServlet {
   * Fetches notifications with the user id.
   */
   private List<Notification> getNotifications(int userId) {
-    // Prepares query to select notifications by the subquery of notifications IDs selected by 
+    // Prepare query to select notifications by the subquery of notifications IDs selected by 
     // user ID.
     String query =  "SELECT message, url, date_time FROM Notification WHERE id IN " +
                     "(SELECT notification_id FROM UserNotification WHERE user_id = " + userId +
@@ -142,7 +142,7 @@ public class NotificationServlet extends HttpServlet {
         notification.message = rs.getString(1);
         notification.url = rs.getString(2);
         notification.timestamp = rs.getTimestamp(3);
-        // Stores object in ArrayList.
+        // Store object in ArrayList.
         notifications.add(notification);
       }
       connection.close();
@@ -154,7 +154,7 @@ public class NotificationServlet extends HttpServlet {
   }
 
   /**
-  * Function that receives the data for a notification and inserts it into the Notification table.
+  * Receives the data for a notification and inserts it into the Notification table.
   */
   private void insertToNotification(Connection connection, String message, String elementUrl,
         Timestamp dateTime) {
@@ -172,7 +172,7 @@ public class NotificationServlet extends HttpServlet {
   }
 
   /**
-  * Function that receives the data for a notification-user relation and inserts it into
+  * Receives the data for a notification-user relation and inserts it into
   * UserNotification.
   */
   private void insertToUserNotification(Connection connection, int userId, int notificationId) {
