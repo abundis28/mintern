@@ -18,6 +18,8 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,7 +36,7 @@ public final class Utility {
   public static final String SQL_LOCAL_PASSWORD = "";
 
   private static final String dataBaseName = "Mintern";
-  public static final String SQL_CLOUD_URL = String.format("jdbc:mysql:///%s", DB_NAME);
+  public static final String SQL_CLOUD_URL = String.format("jdbc:mysql:///%s", dataBaseName);
   public static final String SQL_CLOUD_USER = "root";
   public static final String SQL_CLOUD_PASSWORD = "mintern";
   
@@ -67,8 +69,8 @@ public final class Utility {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, 
-                                                          SQL_LOCAL_PASSWORD);
+      Connection connection = DriverManager.getConnection(SQL_CLOUD_URL, SQL_CLOUD_USER, 
+                                                          SQL_CLOUD_PASSWORD);
 
       // Create the MySQL prepared statement, execute it, and store the result.
       // Takes the query specified above and sets the email field to the logged in user's email.
@@ -102,8 +104,8 @@ public final class Utility {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, 
-                                                          SQL_LOCAL_PASSWORD);
+      Connection connection = DriverManager.getConnection(SQL_CLOUD_URL, SQL_CLOUD_USER, 
+                                                          SQL_CLOUD_PASSWORD);
 
       // Create the MySQL INSERT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -128,7 +130,7 @@ public final class Utility {
    * Queries the mails of users to notify and returns them in a single string. Includes url, user
    * and password to give the user the ability to choose between local and cloud SQL variables.
    */
-  private String getUserEmailsAsString(List<Integer> userIds, String SQL_URL, String SQL_USER, 
+  public static String getUserEmailsAsString(List<Integer> userIds, String SQL_URL, String SQL_USER, 
                                        String SQL_PASSWORD) {
     String userEmails = new String();
     for (int userId : userIds) {
@@ -143,7 +145,7 @@ public final class Utility {
         userEmails = userEmails.concat(",");
         connection.close();
       } catch (SQLException ex) {
-        Logger lgr = Logger.getLogger(EmailServlet.class.getName());
+        Logger lgr = Logger.getLogger(Utility.class.getName());
         lgr.log(Level.SEVERE, ex.getMessage(), ex);
       }
     }
@@ -157,7 +159,7 @@ public final class Utility {
    * user and password to give the user the ability to choose between local and cloud SQL 
    * variables.
    */
-  private List<Integer> getUsersToNotify(String typeOfNotification, int modifiedElementId,
+  public static List<Integer> getUsersToNotify(String typeOfNotification, int modifiedElementId,
                                          String SQL_URL, String SQL_USER, String SQL_PASSWORD) {
     List<Integer> usersToNotify = new ArrayList<>();
     if(typeOfNotification.equals("question")) {
@@ -175,7 +177,7 @@ public final class Utility {
         // Close the connection once the query was performed have been performed.
         connection.close();
       } catch (SQLException ex) {
-        Logger lgr = Logger.getLogger(DataServlet.class.getName());
+        Logger lgr = Logger.getLogger(Utility.class.getName());
         lgr.log(Level.SEVERE, ex.getMessage(), ex);
       }
     } else if (typeOfNotification.equals("answer")) {
@@ -193,7 +195,7 @@ public final class Utility {
         // Close the connection once the query was performed have been performed.
         connection.close();
       } catch (SQLException ex) {
-          Logger lgr = Logger.getLogger(EmailServlet.class.getName());
+          Logger lgr = Logger.getLogger(Utility.class.getName());
           lgr.log(Level.SEVERE, ex.getMessage(), ex);
       }
     }

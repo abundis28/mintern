@@ -14,6 +14,7 @@
 
 package com.google.sps.servlets;
 
+import com.google.sps.classes.Utility;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.*;
@@ -54,14 +55,14 @@ public class EmailServlet extends HttpServlet {
     // Define SQL access variables to avoid repetition.
     String SQL_URL = Utility.SQL_CLOUD_URL;
     String SQL_USER = Utility.SQL_CLOUD_USER;
-    String SQL_PASSWORDD = Utility.SQL_CLOUD_PASSWORD;
+    String SQL_PASSWORD = Utility.SQL_CLOUD_PASSWORD;
 
     // Create content for mail. Call functions to see which users have to be notified
     // and get their emails concatenated in a string.
     String userEmails =
-        getUserEmailsAsString(getUsersToNotify(typeOfNotification, modifiedElementId, SQL_URL, 
-                                               SQL_USER, SQL_PASSWORD), SQL_URL, SQL_USER, 
-                                               SQL_PASSWORD);
+        Utility.getUserEmailsAsString(Utility.getUsersToNotify(typeOfNotification, modifiedElementId,
+                                              SQL_URL, SQL_USER, SQL_PASSWORD), SQL_URL, SQL_USER,
+                                              SQL_PASSWORD);
     String subject = "Activity on Mintern!";
     String message = "Dear mintern,\n" +
                      "You have new notifications in Mintern!\n" + 
