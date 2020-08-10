@@ -3,6 +3,10 @@
 -- For more context on the Mintern database design, 
 -- see https://docs.google.com/document/d/1P4eRQsu7TQHY4Sh1XZkc_zuKfa0XzJUfmSpnJDldYIY/edit?usp=sharing.
 
+/* TODO(oumontiel): Make sure it is clear this is dummy data.
+                    Either include this file in a testdata directory
+                    or add references that it is populating dummy data. */
+
 USE Mintern;
 
 INSERT INTO Major (name) 
