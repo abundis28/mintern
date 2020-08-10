@@ -33,6 +33,14 @@ public final class Utility {
   public static final String SQL_LOCAL_USER = "root";
   public static final String SQL_LOCAL_PASSWORD = "";
   
+  public static final String fetchQuestionQuery = "SELECT * FROM Question "
+      + "LEFT JOIN (SELECT question_id, COUNT(follower_id) followers FROM QuestionFollower "
+      + "GROUP BY question_id) CountTable ON Question.id=CountTable.question_id "
+      + "LEFT JOIN (SELECT username, id AS asker_id FROM User) NameTable "
+      + "ON Question.asker_id=NameTable.asker_id "
+      + "LEFT JOIN (SELECT question_id, COUNT(id) answers FROM Answer "
+      + "GROUP BY question_id) AnswerTable ON Question.id=AnswerTable.question_id;";
+  
   /**
    * Converts objects to JSON using GSON class.
    */
