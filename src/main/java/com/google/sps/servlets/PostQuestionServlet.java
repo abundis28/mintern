@@ -77,9 +77,9 @@ public class PostQuestionServlet extends HttpServlet {
     String insertQuestionQuery = "INSERT INTO Question(title, body, asker_id, date_time) "
         + "VALUES (?,?,?,NOW())";
     PreparedStatement questionStatement = connection.prepareStatement(insertQuestionQuery);
-    questionStatement.setString(1, title);
-    questionStatement.setString(2, body);
-    questionStatement.setInt(3, asker_id);
+    questionStatement.setString(Utility.QUESTION_INSERT_TITLE_COLUMN, title);
+    questionStatement.setString(Utility.QUESTION_INSERT_BODY_COLUMN, body);
+    questionStatement.setInt(Utility.QUESTION_INSERT_ASKERID_COLUMN, asker_id);
     questionStatement.executeUpdate();
   }
 
@@ -88,15 +88,15 @@ public class PostQuestionServlet extends HttpServlet {
     PreparedStatement maxIdStatement = connection.prepareStatement(maxIdQuery);
     ResultSet queryResult = maxIdStatement.executeQuery();
     queryResult.next();
-    return queryResult.getInt(1);
+    return queryResult.getInt(Utility.QUESTION_FETCH_MAXID_COLUMN);
   }
 
   private void insertNewFollower(Connection connection, int newQuestionId) {
     String insertFollowerQuery = "INSERT INTO QuestionFollower(question_id, follower_id) "
         + "VALUES (?,?)";
     PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
-    followerStatement.setInt(1, newQuestionId);
-    followerStatement.setInt(2, asker_id);
+    followerStatement.setInt(Utility.FOLLOWER_INSERT_QUESTIONID_COLUMN, newQuestionId);
+    followerStatement.setInt(Utility.FOLLOWER_INSERT_ASKERID_COLUMN, asker_id);
     followerStatement.executeUpdate();
   }
 }
