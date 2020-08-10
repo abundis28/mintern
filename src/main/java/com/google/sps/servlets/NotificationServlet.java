@@ -73,10 +73,10 @@ public class NotificationServlet extends HttpServlet {
                                                                Utility.SQL_LOCAL_PASSWORD);
            PreparedStatement pst = connection.prepareStatement(query);
            ResultSet rs = pst.executeQuery()) {
-        // Define the url to which the user will be redirected. Will be defined each case because
+        // Define the URL to which the user will be redirected. Will be defined each case because
         // URL will change once notifications for approvals and meetings are enabled.
         String elementUrl = "/questions.html?id=" + modifiedElementId;
-        // Insert notification and get its id to relate in UserNotification table.
+        // Insert notification and get its ID to relate in UserNotification table.
         insertToNotification(connection, "You got an answer", elementUrl, localTimestamp);
         int notificationId = getNotificationId(connection, localTimestamp);
         // Iterate through the query's result set to insert all notifications.
@@ -86,8 +86,8 @@ public class NotificationServlet extends HttpServlet {
         // Close the connection once all insertions have been performed.
         connection.close();
       } catch (SQLException ex) {
-        Logger lgr = Logger.getLogger(DataServlet.class.getName());
-        lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        Logger logger = Logger.getLogger(DataServlet.class.getName());
+        logger.log(Level.SEVERE, ex.getMessage(), ex);
       }
     } else if (typeOfNotification.equals("answer")) {
       // If the notification is for a new comment in an answer.
@@ -113,14 +113,14 @@ public class NotificationServlet extends HttpServlet {
         // Close the connection once all insertions have been performed.
         connection.close();
       } catch (SQLException ex) {
-          Logger lgr = Logger.getLogger(DataServlet.class.getName());
-          lgr.log(Level.SEVERE, ex.getMessage(), ex);
+          Logger logger = Logger.getLogger(NotificationServlet.class.getName());
+          logger.log(Level.SEVERE, ex.getMessage(), ex);
       }
     }
   }
 
   /**
-   * Fetches notifications with the user id.
+   * Fetches notifications with the user ID.
    */
   private List<Notification> getNotifications(int userId) {
     // Prepare query to select notifications by the subquery of notifications IDs selected by 
@@ -146,8 +146,8 @@ public class NotificationServlet extends HttpServlet {
       }
       connection.close();
     } catch (SQLException ex) {
-        Logger lgr = Logger.getLogger(DataServlet.class.getName());
-        lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        Logger logger = Logger.getLogger(DataServlet.class.getName());
+        logger.log(Level.SEVERE, ex.getMessage(), ex);
     }
     return notifications;
   }
@@ -200,8 +200,8 @@ public class NotificationServlet extends HttpServlet {
       rs.last();
       notificationId = rs.getInt(1);
     } catch (SQLException ex) {
-      Logger lgr = Logger.getLogger(DataServlet.class.getName());
-      lgr.log(Level.SEVERE, ex.getMessage(), ex);
+      Logger logger = Logger.getLogger(DataServlet.class.getName());
+      logger.log(Level.SEVERE, ex.getMessage(), ex);
     }
     return notificationId;
   }
