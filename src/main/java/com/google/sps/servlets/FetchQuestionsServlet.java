@@ -35,13 +35,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** 
- * This servlet will retrieve forum posts to be displayed on the page.
+ * This servlet will retrieve questions to be displayed on the page.
  */
-@WebServlet("/fetch-forum")
-public class FetchForumServlet extends HttpServlet {
+@WebServlet("/fetch-questions")
+public class FetchQuestionsServlet extends HttpServlet {
 
   /** 
-   * This method will get the forum questions from the query and return them as a JSON string.
+   * This method will get the questions from the query and return them as a JSON string.
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -65,7 +65,7 @@ public class FetchForumServlet extends HttpServlet {
       }
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(FetchForumServlet.class.getName());
+      Logger logger = Logger.getLogger(FetchQuestionsServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
     response.setContentType("application/json;");
@@ -90,7 +90,7 @@ public class FetchForumServlet extends HttpServlet {
           Constants.QUESTION_FETCH_NUMBEROFANSWERS_COLUMN));
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(FetchForumServlet.class.getName());
+      Logger logger = Logger.getLogger(FetchQuestionsServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
     

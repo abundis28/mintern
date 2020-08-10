@@ -13,20 +13,20 @@
 // limitations under the License.
 
 /**
- * Function that will call other functions when the page loads. 
+ * Function that will call other functions when the index page loads. 
  */
-function onBodyLoad() {
+function onBodyLoadIndex() {
   addAutoResize();
   fetchAuthentication();
-  fetchForum();
+  fetchQuestions();
 }
 
 /**
  * Fetches questions from server, wraps each in an <li> element, 
  * and adds them to the DOM.
  */
-async function fetchForum() {
-  const response = await fetch('/fetch-forum');
+async function fetchQuestions() {
+  const response = await fetch('/fetch-questions');
   const questionsObject = await response.json();
   const questionsContainer = document.getElementById('forum');
   questionsObject.forEach(question => {
