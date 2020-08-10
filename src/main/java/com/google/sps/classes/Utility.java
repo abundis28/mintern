@@ -35,8 +35,8 @@ public final class Utility {
   public static final String SQL_LOCAL_USER = "root";
   public static final String SQL_LOCAL_PASSWORD = "";
 
-  private static final String dataBaseName = "Mintern";
-  public static final String SQL_CLOUD_URL = String.format("jdbc:mysql:///%s", dataBaseName);
+  private static final String DATABASE_NAME = "Mintern";
+  public static final String SQL_CLOUD_URL = String.format("jdbc:mysql:///%s", DATABASE_NAME);
   public static final String SQL_CLOUD_USER = "root";
   public static final String SQL_CLOUD_PASSWORD = "mintern";
   
