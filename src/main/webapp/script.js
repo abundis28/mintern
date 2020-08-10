@@ -17,7 +17,7 @@
  */
 function onBodyLoadIndex() {
   addAutoResize();
-  fetchAuthentication();
+  fetchAuthentication('forum');
   fetchQuestions('forum');
 }
 
@@ -25,7 +25,7 @@ function onBodyLoadIndex() {
  * Function that will call other functions when the question page loads. 
  */
 function onBodyLoadQuestion() {
-  fetchAuthentication();
+  fetchAuthentication('question');
   fetchQuestions('question');
 }
 
@@ -33,15 +33,15 @@ function onBodyLoadQuestion() {
  * Fetches questions from server, wraps each in an <li> element, 
  * and adds them to the DOM.
  */
-async function fetchQuestions(type) {
+async function fetchQuestions(page) {
   let question_id;
   let questionsContainer;
   let hasRedirect;
-  if (type === 'forum') {
+  if (page === 'forum') {
     question_id = -1;
     questionsContainer = document.getElementById('forum');
     hasRedirect = true;
-  } else if (type === 'question') {
+  } else if (page === 'question') {
     question_id = (new URL(document.location)).searchParams.get("id");
     questionsContainer = document.getElementById('question');
     hasRedirect = false;
@@ -146,7 +146,7 @@ function addAutoResize() {
 /*
  * Displays navbar authentication buttons according to login status.
  */
-function fetchAuthentication() {
+function fetchAuthentication(page) {
   fetch('/authentication').then(response => response.json()).then(user => {
     if (user.isUserLoggedIn) {
       // If user is logged in, show logout button in navbar.
@@ -163,9 +163,11 @@ function fetchAuthentication() {
       addAuthenticationButton(
           user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
 
-      // Show question submission box.
-      const questionSubmission = document.getElementById('post-question');
-      questionSubmission.style.display = "block";
+      if (page === 'forum') {
+        // Show question submission box.
+        const questionSubmission = document.getElementById('post-question');
+        questionSubmission.style.display = "block";
+      }
     } else {
       // If user is logged out, show signup and login buttons in navbar.
 
