@@ -57,7 +57,6 @@ public class FetchForumServlet extends HttpServlet {
 
       // Condition to fetch all questions.
       preparedStatement.setString(1, "1=1");
-
       ResultSet queryResult = preparedStatement.executeQuery();
       
       // All of the rows from the query are looped if it goes through.
@@ -69,11 +68,13 @@ public class FetchForumServlet extends HttpServlet {
       Logger logger = Logger.getLogger(FetchForumServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
-
     response.setContentType("application/json;");
     response.getWriter().println(Utility.convertToJsonUsingGson(questions));
   }
 
+  /** 
+   * Create a question object using the results from a query.
+   */
   private QuestionObject buildQuestion(ResultSet queryResult) {
     QuestionObject question = new QuestionObject();
     try {

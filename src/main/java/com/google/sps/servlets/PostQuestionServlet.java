@@ -73,6 +73,9 @@ public class PostQuestionServlet extends HttpServlet {
     response.sendRedirect("/");
   }
 
+  /** 
+   * Inserts a question into the database.
+   */
   private void insertNewQuestion(Connection connection, String title, String body, int asker_id) {
     try {
       String insertQuestionQuery = "INSERT INTO Question(title, body, asker_id, date_time) "
@@ -89,6 +92,9 @@ public class PostQuestionServlet extends HttpServlet {
     }
   }
 
+  /** 
+   * Gets the ID from the last question posted.
+   */
   private int getNewQuestionId(Connection connection) {
     int id = -1;
     try {
@@ -106,6 +112,9 @@ public class PostQuestionServlet extends HttpServlet {
     return id;
   }
 
+  /** 
+   * Makes the author of the recently added question a follower of said question.
+   */
   private void insertNewFollower(Connection connection, int newQuestionId, int asker_id) {
     try {
       String insertFollowerQuery = "INSERT INTO QuestionFollower(question_id, follower_id) "
