@@ -74,7 +74,8 @@ public class NotificationServlet extends HttpServlet {
                                                                Utility.SQL_LOCAL_PASSWORD);
           PreparedStatement pst = connection.prepareStatement(query);
           ResultSet rs = pst.executeQuery()) {
-        // Defines the url to which the user will be redirected.
+        // Defines the url to which the user will be redirected. Will be defined each case because
+        // URL will change once notifications for approvals and meetings are enabled.
         String elementUrl = "/questions.html?id=" + modifiedElementId;
         // Insert notification and get its id to relate in UserNotification table.
         insertToNotification(connection, "You got an answer", elementUrl, localTimestamp);
@@ -99,7 +100,8 @@ public class NotificationServlet extends HttpServlet {
                                                                Utility.SQL_LOCAL_PASSWORD);
           PreparedStatement pst = connection.prepareStatement(query);
           ResultSet rs = pst.executeQuery()) {
-        // Defines the url to which the user will be redirected.
+        // Defines the url to which the user will be redirected. Will be defined each case because
+        // URL will change once notifications for approvals and meetings are enabled.
         String elementUrl = "/questions.html?id=" + modifiedElementId;
         // Insert notification and get its id to relate in UserNotification table.
         insertToNotification(connection, "Somebody commented your answer", elementUrl, 
