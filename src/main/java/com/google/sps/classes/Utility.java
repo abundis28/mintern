@@ -36,7 +36,7 @@ public final class Utility {
   // Query to retrieve data from a question. The ? at the end must be replaced in the
   // prepared statement, can be '1=1' for all questions or a different condition to match
   // the questions that are needed.
-  public static final String fetchQuestionQuery = "SELECT * FROM Question "
+  public static final String fetchQuestionsQuery = "SELECT * FROM Question "
       + "LEFT JOIN (SELECT question_id, COUNT(follower_id) followers FROM QuestionFollower "
       + "GROUP BY question_id) CountTable ON Question.id=CountTable.question_id "
       + "LEFT JOIN (SELECT username, id AS asker_id FROM User) NameTable "

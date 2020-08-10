@@ -47,7 +47,7 @@ public class FetchQuestionsServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     List<QuestionObject> questions = new ArrayList<>();
     
-    String query = Utility.fetchQuestionQuery;
+    String query = Utility.fetchQuestionsQuery;
 
     // The connection and query are attempted.
     try {
