@@ -133,8 +133,8 @@ public class NotificationServlet extends HttpServlet {
     try (Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL,
                                                              Utility.SQL_LOCAL_USER,
                                                              Utility.SQL_LOCAL_PASSWORD);
-        PreparedStatement pst = connection.prepareStatement(query);
-        ResultSet rs = pst.executeQuery()) {
+         PreparedStatement pst = connection.prepareStatement(query);
+         ResultSet rs = pst.executeQuery()) {
       // Iterate through the result of the query to populate the ArrayList and return it as JSON.
       while (rs.next()){
         Notification notification = new Notification();
@@ -195,7 +195,7 @@ public class NotificationServlet extends HttpServlet {
     // Query the information from Notification table.
     int notificationId = 0;
     try (PreparedStatement pst = connection.prepareStatement(query);
-          ResultSet rs = pst.executeQuery()) {
+         ResultSet rs = pst.executeQuery()) {
       // Select the id of the last notification to be inserted.
       rs.last();
       notificationId = rs.getInt(1);
