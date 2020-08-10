@@ -62,8 +62,8 @@ public class MentorSignupServlet extends HttpServlet {
     
     // Variables needed to connect to MySQL database.
     String url = Utility.SQL_LOCAL_URL;
-    String user = Utility.SQL_USER;
-    String password = Utility.SQL_PASSWORD;
+    String user = Utility.SQL_LOCAL_USER;
+    String password = Utility.SQL_LOCAL_PASSWORD;
     
     for (String tag : experienceTags) {
       // Set up query to insert new experience tag to user.

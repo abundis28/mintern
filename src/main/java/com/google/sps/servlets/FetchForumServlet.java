@@ -50,9 +50,8 @@ public class FetchForumServlet extends HttpServlet {
     String query = Utility.fetchQuestionQuery;
 
     // The connection and query are attempted.
-    try {
-      Connection connection = DriverManager
-        .getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_USER, Utility.SQL_PASSWORD);
+    try (Connection connection = DriverManager
+        .getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
       PreparedStatement preparedStatement = connection.prepareStatement(query);
       // Condition for the query to return all questions.
       preparedStatement.setString(1, "1=1");
