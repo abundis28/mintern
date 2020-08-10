@@ -131,7 +131,7 @@ public final class Utility {
    * and password to give the user the ability to choose between local and cloud SQL variables.
    */
   public static String getUserEmailsAsString(List<Integer> userIds, String SQL_URL, String SQL_USER, 
-                                       String SQL_PASSWORD) {
+                                             String SQL_PASSWORD) {
     String userEmails = new String();
     for (int userId : userIds) {
       // Query the email of the current user.
@@ -162,42 +162,30 @@ public final class Utility {
   public static List<Integer> getUsersToNotify(String typeOfNotification, int modifiedElementId,
                                          String SQL_URL, String SQL_USER, String SQL_PASSWORD) {
     List<Integer> usersToNotify = new ArrayList<>();
+    String query = "";
     if (typeOfNotification.equals("question")) {
       // If the notification is for an anwer to a question.
-      String query =  "SELECT follower_id FROM QuestionFollower WHERE question_id = " +
+      query =  "SELECT follower_id FROM QuestionFollower WHERE question_id = " +
                       modifiedElementId;
-      // Query the information from QuestionFollower table.
-      try (Connection connection = DriverManager.getConnection(SQL_URL, SQL_USER, SQL_PASSWORD);
-          PreparedStatement pst = connection.prepareStatement(query);
-          ResultSet rs = pst.executeQuery()) {
-        while(rs.next()){
-          // Add the current ID (first column of ResultSet) to the list.
-          usersToNotify.add(rs.getInt(1));
-        }
-        // Close the connection once the query was performed have been performed.
-        connection.close();
-      } catch (SQLException ex) {
-        Logger lgr = Logger.getLogger(Utility.class.getName());
-        lgr.log(Level.SEVERE, ex.getMessage(), ex);
-      }
     } else if (typeOfNotification.equals("answer")) {
       // If the notification is for a new comment in an answer.
-      String query =  "SELECT follower_id FROM AnswerFollower WHERE answer_id = " +
+      query =  "SELECT follower_id FROM AnswerFollower WHERE answer_id = " +
                       modifiedElementId;
-      // Query the information from AnswerFollower table.
-      try (Connection connection = DriverManager.getConnection(SQL_URL, SQL_USER, SQL_PASSWORD);
-           PreparedStatement pst = connection.prepareStatement(query);
-           ResultSet rs = pst.executeQuery()) {
-        while(rs.next()){
-          // Add the current ID (first column of ResultSet) to the list.
-          usersToNotify.add(rs.getInt(1));
-        }
-        // Close the connection once the query was performed have been performed.
-        connection.close();
-      } catch (SQLException ex) {
-          Logger lgr = Logger.getLogger(Utility.class.getName());
-          lgr.log(Level.SEVERE, ex.getMessage(), ex);
+    }
+    if (query.equals("")) { return usersToNotify; }
+    // Query the infor1mation from the corresponding table defined in the query.
+    try (Connection connection = DriverManager.getConnection(SQL_URL, SQL_USER, SQL_PASSWORD);
+        PreparedStatement pst = connection.prepareStatement(query);
+        ResultSet rs = pst.executeQuery()) {
+      while(rs.next()){
+        // Add the current ID (first column of ResultSet) to the list.
+        usersToNotify.add(rs.getInt(1));
       }
+      // Close the connection once the query was performed have been performed.
+      connection.close();
+    } catch (SQLException ex) {
+      Logger lgr = Logger.getLogger(Utility.class.getName());
+      lgr.log(Level.SEVERE, ex.getMessage(), ex);
     }
     return usersToNotify;
   }
