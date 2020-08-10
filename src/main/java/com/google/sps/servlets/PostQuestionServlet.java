@@ -59,10 +59,10 @@ public class PostQuestionServlet extends HttpServlet {
       insertNewQuestion(connection);
 
       // We get the ID of the new question.
-      getNewQuestionId(connection);
+      int newQuestionId = getNewQuestionId(connection);
 
       // We then update the follower table.
-      insertNewFollower(connection);
+      insertNewFollower(connection, newQuestionId);
     } 
     catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
@@ -90,7 +90,7 @@ public class PostQuestionServlet extends HttpServlet {
     return queryResult.getInt(1);
   }
 
-  private void insertNewFollower(Connection connection) {
+  private void insertNewFollower(Connection connection, int newQuestionId) {
     String insertFollowerQuery = "INSERT INTO QuestionFollower(question_id, follower_id) "
         + "VALUES (?,?)";
     PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
