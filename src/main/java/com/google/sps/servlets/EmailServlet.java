@@ -47,13 +47,13 @@ public class EmailServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get type from query string.
-    String typeOfElement = request.getParameter("type");
+    String typeOfNotification = request.getParameter("typeOfNotification");
     // Get ID from query string and convert to int.
-    int elementId = Integer.parseInt(request.getParameter("elementId"));
+    int modifiedElementId = Integer.parseInt(request.getParameter("modifiedElementId"));
 
     // Create content for mail. Call functions to see which users have to be notified
     // and get their emails concatenated in a string.
-    String userEmails = getUserEmails(getUsersToNotify(typeOfElement, elementId));
+    String userEmails = getUserEmails(getUsersToNotify(typeOfNotification, modifiedElementId));
     String subject = "Activity on Mintern!";
     String message = "Dear mintern,\n" +
                      "You have new notifications in Mintern!\n" + 
@@ -62,9 +62,8 @@ public class EmailServlet extends HttpServlet {
                      "Best wishes!\n" + 
                      "The Mintern Team";
 
-    // Declares objects necesssary for the mail.
-    Properties props = new Properties();
-    Session session = Session.getDefaultInstance(props, null);
+    // Declares object necesssary for mail.
+    Session session = Session.getDefaultInstance(new Properties(), null);
     try {
       // Set content for mail.
       Message msg = new MimeMessage(session);
@@ -88,7 +87,7 @@ public class EmailServlet extends HttpServlet {
   /**
    * Queries IDs of the author of the modified question/answer and its followers.
    */
-  private List<Integer> getUsersToNotify(String type, int elementId) {
+  private List<Integer> getUsersToNotify(String type, int modifiedElementId) {
     // Defines the necessary data to access the server.
     String DB_NAME = "Mintern";
     String url = String.format("jdbc:mysql:///%s", DB_NAME);
@@ -98,7 +97,7 @@ public class EmailServlet extends HttpServlet {
     List<Integer> usersToNotify = new ArrayList<>();
     if(type.equals("question")) {
       // If the notification is for an anwer to a question.
-      String query =  "SELECT follower_id FROM QuestionFollower WHERE question_id = " + elementId;
+      String query =  "SELECT follower_id FROM QuestionFollower WHERE question_id = " + modifiedElementId;
       // Query the information from QuestionFollower table.
       try (Connection connection = DriverManager.getConnection(url, user, password);
           PreparedStatement pst = connection.prepareStatement(query);
@@ -115,7 +114,7 @@ public class EmailServlet extends HttpServlet {
       }
     } else if (type.equals("answer")) {
       // If the notification is for a new comment in an answer.
-      String query =  "SELECT follower_id FROM AnswerFollower WHERE answer_id = " + elementId;
+      String query =  "SELECT follower_id FROM AnswerFollower WHERE answer_id = " + modifiedElementId;
       // Query the information from AnswerFollower table.
       try (Connection connection = DriverManager.getConnection(url, user, password);
            PreparedStatement pst = connection.prepareStatement(query);
