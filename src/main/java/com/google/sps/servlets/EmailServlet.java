@@ -42,7 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 public class EmailServlet extends HttpServlet {
 
   /**
-   * Sends a welcome email to the user after they register
+   * Sends email push notifications when an question is answered or an answer is commented.
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
