@@ -78,6 +78,7 @@ public class FetchForumServlet extends HttpServlet {
   private QuestionObject buildQuestion(ResultSet queryResult) {
     QuestionObject question = new QuestionObject();
     try {
+      question.setId(queryResult.getInt(Constants.QUESTION_FETCH_ID_COLUMN));
       question.setTitle(queryResult.getString(Constants.QUESTION_FETCH_TITLE_COLUMN));
       question.setBody(queryResult.getString(Constants.QUESTION_FETCH_BODY_COLUMN));
       question.setAskerId(queryResult.getInt(Constants.QUESTION_FETCH_ASKERID_COLUMN));

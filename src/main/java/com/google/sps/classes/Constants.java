@@ -18,6 +18,7 @@ package com.google.sps.classes;
  * Constants used throughout different queries.
  */
 public final class Constants {
+  public static final int QUESTION_FETCH_ID_COLUMN = 2;
   public static final int QUESTION_FETCH_TITLE_COLUMN = 2;
   public static final int QUESTION_FETCH_BODY_COLUMN = 3;
   public static final int QUESTION_FETCH_ASKERID_COLUMN = 4;
