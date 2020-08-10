@@ -8,12 +8,14 @@
 CREATE DATABASE Mintern;
 USE Mintern;
 
+-- Majors from Tec de Monterrey.
 CREATE TABLE Major (
   id INT NOT NULL AUTO_INCREMENT,
   name VARCHAR(255),
   PRIMARY KEY (id)
 );
 
+-- A user, either mentor or mentee, with their essential information and their majors.
 CREATE TABLE User (
   id INT NOT NULL AUTO_INCREMENT,
   first_name VARCHAR(255),
@@ -27,6 +29,7 @@ CREATE TABLE User (
   REFERENCES Major (id)
 );
 
+-- A notification that has a message, URL and the time it was created.
 CREATE TABLE Notification (
   id INT NOT NULL AUTO_INCREMENT,
   message TEXT,
@@ -35,6 +38,7 @@ CREATE TABLE Notification (
   PRIMARY KEY (id)
 );
 
+-- Links a specific user with a specific notification.
 CREATE TABLE UserNotification (
   user_id INT NOT NULL,
   notification_id INT NOT NULL,
@@ -45,6 +49,7 @@ CREATE TABLE UserNotification (
   REFERENCES Notification (id)
 );
 
+-- Tags used to differentiate questions by subject. Also used to determine mentor experience.
 CREATE TABLE SubjectTag (
   id INT NOT NULL AUTO_INCREMENT,
   subject VARCHAR(255),
@@ -52,17 +57,18 @@ CREATE TABLE SubjectTag (
   PRIMARY KEY (id)
 );
 
+-- Links a specific mentor with a specific subject tag.
 CREATE TABLE MentorExperience (
-  id INT NOT NULL AUTO_INCREMENT,
   mentor_id INT NOT NULL,
   tag_id INT NOT NULL,
-  PRIMARY KEY (id),
+  PRIMARY KEY (mentor_id, tag_id),
   FOREIGN KEY (mentor_id) 
   REFERENCES User (id),
   FOREIGN KEY (tag_id) 
   REFERENCES SubjectTag (id)
 );
 
+-- A question to be posted in the forum.
 CREATE TABLE Question (
   id INT NOT NULL AUTO_INCREMENT,
   title VARCHAR(255),
@@ -74,28 +80,29 @@ CREATE TABLE Question (
   REFERENCES User (id)
 );
 
+-- Links a specific user to a specific question, so questions can have identifiable followers.
 CREATE TABLE QuestionFollower (
-  id INT NOT NULL AUTO_INCREMENT,
   question_id INT NOT NULL,
   follower_id INT NOT NULL,
-  PRIMARY KEY (id),
+  PRIMARY KEY (question_id, follower_id),
   FOREIGN KEY (question_id) 
   REFERENCES Question (id),
   FOREIGN KEY (follower_id) 
   REFERENCES User (id)
 );
 
+-- Links a specific tag to a specific question, to determine the subjects a question is related to.
 CREATE TABLE TagInQuestion (
-  id INT NOT NULL AUTO_INCREMENT,
   question_id INT NOT NULL,
   tag_id INT NOT NULL,
-  PRIMARY KEY (id),
+  PRIMARY KEY (question_id, tag_id),
   FOREIGN KEY (question_id) 
   REFERENCES Question (id),
   FOREIGN KEY (tag_id) 
   REFERENCES SubjectTag (id)
 );
 
+-- One answer to a question. Will be displayed by number of votes.
 CREATE TABLE Answer (
   id INT NOT NULL AUTO_INCREMENT,
   question_id INT NOT NULL,
@@ -110,17 +117,18 @@ CREATE TABLE Answer (
   REFERENCES User (id)
 );
 
+-- Links a specific user to a specific answer, so answers can have identifiable followers.
 CREATE TABLE AnswerFollower (
-  id INT NOT NULL AUTO_INCREMENT,
   answer_id INT NOT NULL,
   follower_id INT NOT NULL,
-  PRIMARY KEY (id),
+  PRIMARY KEY (answer_id, follower_id),
   FOREIGN KEY (answer_id) 
   REFERENCES Answer (id),
   FOREIGN KEY (follower_id) 
   REFERENCES User (id)
 );
 
+-- Comments to a specific answer of a question. Will be displayed chronologically.
 CREATE TABLE Comment (
   id INT NOT NULL AUTO_INCREMENT,
   answer_id INT NOT NULL,
