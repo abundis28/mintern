@@ -46,9 +46,9 @@ public class EmailServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Get type from query string.
+    // Get type of notification to create from query string.
     String typeOfNotification = request.getParameter("typeOfNotification");
-    // Get ID from query string and convert to int.
+    // Get ID of modified element from query string and convert to int.
     int modifiedElementId = Integer.parseInt(request.getParameter("modifiedElementId"));
 
     // Create content for mail. Call functions to see which users have to be notified
