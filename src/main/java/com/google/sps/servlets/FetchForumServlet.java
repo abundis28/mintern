@@ -47,13 +47,7 @@ public class FetchForumServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     List<QuestionObject> questions = new ArrayList<>();
     
-    String query = "SELECT * FROM Question "
-        + "LEFT JOIN (SELECT question_id, COUNT(follower_id) followers FROM QuestionFollower "
-        + "GROUP BY question_id) CountTable ON Question.id=CountTable.question_id "
-        + "LEFT JOIN (SELECT username, id AS asker_id FROM User) NameTable "
-        + "ON Question.asker_id=NameTable.asker_id "
-        + "LEFT JOIN (SELECT question_id, COUNT(id) answers FROM Answer "
-        + "GROUP BY question_id) AnswerTable ON Question.id=AnswerTable.question_id;";
+    String query = Utility.fetchQuestionQuery;
 
     // The connection and query are attempted.
     try (Connection connection = DriverManager
