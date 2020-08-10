@@ -70,7 +70,7 @@ public class EmailServlet extends HttpServlet {
       msg.setFrom(new InternetAddress("mintern@internship-platform-step-2020.appspotmail.com",
           "Mintern"));
       // Parse the concatenated string to convert it to an array of addresses.
-      msg.addRecipients(Message.RecipientType.TO, InternetAddress.parse(userEmails));
+      msg.addRecipients(Message.RecipientType.BCC, InternetAddress.parse(userEmails));
       msg.setSubject(subject);
       msg.setText(message);
       // Send email.
