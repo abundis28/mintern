@@ -162,7 +162,7 @@ public final class Utility {
   public static List<Integer> getUsersToNotify(String typeOfNotification, int modifiedElementId,
                                          String SQL_URL, String SQL_USER, String SQL_PASSWORD) {
     List<Integer> usersToNotify = new ArrayList<>();
-    if(typeOfNotification.equals("question")) {
+    if (typeOfNotification.equals("question")) {
       // If the notification is for an anwer to a question.
       String query =  "SELECT follower_id FROM QuestionFollower WHERE question_id = " +
                       modifiedElementId;
