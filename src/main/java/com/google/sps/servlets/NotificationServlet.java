@@ -63,10 +63,7 @@ public class NotificationServlet extends HttpServlet {
     // Get if notification is question answered or answered commented and the id of the element.
     String typeOfNotification = request.getParameter("type");
     int modifiedElementId = Integer.parseInt(request.getParameter("modifiedElementId"));
-    // Defines the url to which the user will be redirected.
-    String elementUrl = "/questions.html?id=" + modifiedElementId;
-    // Open connection to server.
-
+    
     if(typeOfNotification.equals("question")) {
       // If the notification is for an anwer to a question.
       String query =  "SELECT follower_id FROM QuestionFollower WHERE question_id = " +
@@ -77,6 +74,8 @@ public class NotificationServlet extends HttpServlet {
                                                                Utility.SQL_LOCAL_PASSWORD);
           PreparedStatement pst = connection.prepareStatement(query);
           ResultSet rs = pst.executeQuery()) {
+        // Defines the url to which the user will be redirected.
+        String elementUrl = "/questions.html?id=" + modifiedElementId;
         // Insert notification and get its id to relate in UserNotification table.
         insertToNotification(connection, "You got an answer", elementUrl, localTimestamp);
         int notificationId = getNotificationId(connection, localTimestamp);
@@ -100,6 +99,8 @@ public class NotificationServlet extends HttpServlet {
                                                                Utility.SQL_LOCAL_PASSWORD);
           PreparedStatement pst = connection.prepareStatement(query);
           ResultSet rs = pst.executeQuery()) {
+        // Defines the url to which the user will be redirected.
+        String elementUrl = "/questions.html?id=" + modifiedElementId;
         // Insert notification and get its id to relate in UserNotification table.
         insertToNotification(connection, "Somebody commented your answer", elementUrl, 
                              localTimestamp);

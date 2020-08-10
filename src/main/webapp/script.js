@@ -27,6 +27,7 @@ function loadNotifications() {
 
 /**
  * Appends child to navbar dropdown. Represents a notification.
+ * @param {Notification} notification
  */
 function createListElement(notification) {
   const liElement = document.createElement('li');
@@ -41,7 +42,9 @@ function createListElement(notification) {
 }
 
 /**
- * Creates notification when an answer o comment is posted.
+ * Creates notification when an answer or comment is posted.
+ * @param {string} type
+ * @param {int} id
  */
 function notify(type, id) {
   fetch('notification?type=' + type + '&elementId=' + id, {
