@@ -20,7 +20,7 @@ function loadNotifications() {
     const notificationsElement = document.getElementById('inbox-dropdown');
     notificationsElement.innerHTML = '';
     for (const notification of notificationsJson) {
-      notificationsElement.appendChild(createListElement(notification));
+      notificationsElement.appendChild(createNotificationsElement(notification));
     }
   });
 }
@@ -29,7 +29,7 @@ function loadNotifications() {
  * Appends child to navbar dropdown. Represents a notification.
  * @param {Notification} notification
  */
-function createListElement(notification) {
+function createNotificationsElement(notification) {
   // Create a link to redirect the user to the question that was answered or commented.
   const linkElement = document.createElement('a');
   linkElement.innerText = linkElement.innerText.concat(notification.message, " - ");
