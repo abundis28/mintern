@@ -26,7 +26,7 @@ function onBodyLoadIndex() {
  * and adds them to the DOM.
  */
 async function fetchQuestions() {
-  const response = await fetch('/fetch-questions');
+  const response = await fetch('/fetch-questions?id=-1');
   const questionsObject = await response.json();
   const questionsContainer = document.getElementById('forum');
   questionsObject.forEach(question => {
