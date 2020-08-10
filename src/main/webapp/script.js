@@ -18,17 +18,33 @@
 function onBodyLoadIndex() {
   addAutoResize();
   fetchAuthentication();
-  fetchQuestions();
+  fetchQuestions('forum');
+}
+
+/**
+ * Function that will call other functions when the question page loads. 
+ */
+function onBodyLoadQuestion() {
+  fetchAuthentication();
+  fetchQuestions('question');
 }
 
 /**
  * Fetches questions from server, wraps each in an <li> element, 
  * and adds them to the DOM.
  */
-async function fetchQuestions() {
-  const response = await fetch('/fetch-questions?id=-1');
+async function fetchQuestions(type) {
+  let question_id;
+  let questionsContainer;
+  if (type === 'forum') {
+    question_id = -1;
+    questionsContainer = document.getElementById('forum');
+  } else if (type === 'question') {
+    question_id = (new URL(document.location)).searchParams.get("id");
+    questionsContainer = document.getElementById('question');
+  }
+  const response = await fetch('/fetch-questions?id=' + question_id);
   const questionsObject = await response.json();
-  const questionsContainer = document.getElementById('forum');
   questionsObject.forEach(question => {
     questionsContainer.appendChild(createQuestionElement(question));
   });
