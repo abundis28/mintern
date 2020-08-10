@@ -56,7 +56,7 @@ public class FetchQuestionsServlet extends HttpServlet {
       PreparedStatement preparedStatement = connection.prepareStatement(query);
 
       // ID of the question to query. -1 means that all questions are to be queried.
-      int question_id = Int.parseInt(request.getParameter("id"));
+      int question_id = Integer.parseInt(request.getParameter("id"));
 
       if (question_id.equals(-1)) {
         // Condition to fetch all questions.
