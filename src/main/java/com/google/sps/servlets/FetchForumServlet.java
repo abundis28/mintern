@@ -63,13 +63,15 @@ public class FetchForumServlet extends HttpServlet {
         // All of the rows from the query are looped if it goes through.
         while (queryResult.next()) {
           QuestionObject question = new QuestionObject();
-          question.setTitle(queryResult.getString(2));
-          question.setBody(queryResult.getString(3));
-          question.setAskerId(queryResult.getInt(4));
-          question.setAskerName(queryResult.getString(8));
-          question.setDateTime(queryResult.getTimestamp(5));
-          question.setNumberOfFollowers(queryResult.getInt(7));
-          question.setNumberOfAnswers(queryResult.getInt(11));
+          question.setTitle(queryResult.getString(Constants.QUESTION_FETCH_TITLE_COLUMN));
+          question.setBody(queryResult.getString(Constants.QUESTION_FETCH_BODY_COLUMN));
+          question.setAskerId(queryResult.getInt(Constants.QUESTION_FETCH_ASKERID_COLUMN));
+          question.setAskerName(queryResult.getString(Constants.QUESTION_FETCH_AKSERNAME_COLUMN));
+          question.setDateTime(queryResult.getTimestamp(Constants.QUESTION_FETCH_DATETIME_COLUMN));
+          question.setNumberOfFollowers(queryResult.getInt(
+              Constants.QUESTION_FETCH_NUMBEROFFOLLOWERS_COLUMN));
+          question.setNumberOfAnswers(queryResult.getInt(
+              Constants.QUESTION_FETCH_NUMBEROFANSWERS_COLUMN));
 
           questions.add(question);
         }
