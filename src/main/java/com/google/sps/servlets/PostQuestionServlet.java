@@ -57,13 +57,13 @@ public class PostQuestionServlet extends HttpServlet {
       Connection connection = DriverManager.getConnection(url, user, password);
       
       // We first insert the new question.
-      insertNewQuestion(connection);
+      insertNewQuestion(connection, title, body, asker_id);
 
       // We get the ID of the new question.
       int newQuestionId = getNewQuestionId(connection);
 
       // We then update the follower table.
-      insertNewFollower(connection, newQuestionId);
+      insertNewFollower(connection, newQuestionId, asker_id);
     } 
     catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
@@ -73,30 +73,51 @@ public class PostQuestionServlet extends HttpServlet {
     response.sendRedirect("/");
   }
 
-  private void insertNewQuestion(Connection connection) {
-    String insertQuestionQuery = "INSERT INTO Question(title, body, asker_id, date_time) "
-        + "VALUES (?,?,?,NOW())";
-    PreparedStatement questionStatement = connection.prepareStatement(insertQuestionQuery);
-    questionStatement.setString(Utility.QUESTION_INSERT_TITLE_COLUMN, title);
-    questionStatement.setString(Utility.QUESTION_INSERT_BODY_COLUMN, body);
-    questionStatement.setInt(Utility.QUESTION_INSERT_ASKERID_COLUMN, asker_id);
-    questionStatement.executeUpdate();
+  private void insertNewQuestion(Connection connection, String title, String body, int asker_id) {
+    try {
+      String insertQuestionQuery = "INSERT INTO Question(title, body, asker_id, date_time) "
+          + "VALUES (?,?,?,NOW())";
+      PreparedStatement questionStatement = connection.prepareStatement(insertQuestionQuery);
+      questionStatement.setString(Constants.QUESTION_INSERT_TITLE_COLUMN, title);
+      questionStatement.setString(Constants.QUESTION_INSERT_BODY_COLUMN, body);
+      questionStatement.setInt(Constants.QUESTION_INSERT_ASKERID_COLUMN, asker_id);
+      questionStatement.executeUpdate();
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(PostQuestionServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
   }
 
   private int getNewQuestionId(Connection connection) {
-    String maxIdQuery = "SELECT MAX(id) FROM Question;";
-    PreparedStatement maxIdStatement = connection.prepareStatement(maxIdQuery);
-    ResultSet queryResult = maxIdStatement.executeQuery();
-    queryResult.next();
-    return queryResult.getInt(Utility.QUESTION_FETCH_MAXID_COLUMN);
+    int id = -1;
+    try {
+      String maxIdQuery = "SELECT MAX(id) FROM Question;";
+      PreparedStatement maxIdStatement = connection.prepareStatement(maxIdQuery);
+      ResultSet queryResult = maxIdStatement.executeQuery();
+      queryResult.next();
+      id = queryResult.getInt(Constants.QUESTION_FETCH_MAXID_COLUMN);
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(PostQuestionServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    return id;
   }
 
-  private void insertNewFollower(Connection connection, int newQuestionId) {
-    String insertFollowerQuery = "INSERT INTO QuestionFollower(question_id, follower_id) "
-        + "VALUES (?,?)";
-    PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
-    followerStatement.setInt(Utility.FOLLOWER_INSERT_QUESTIONID_COLUMN, newQuestionId);
-    followerStatement.setInt(Utility.FOLLOWER_INSERT_ASKERID_COLUMN, asker_id);
-    followerStatement.executeUpdate();
+  private void insertNewFollower(Connection connection, int newQuestionId, int asker_id) {
+    try {
+      String insertFollowerQuery = "INSERT INTO QuestionFollower(question_id, follower_id) "
+          + "VALUES (?,?)";
+      PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
+      followerStatement.setInt(Constants.FOLLOWER_INSERT_QUESTIONID_COLUMN, newQuestionId);
+      followerStatement.setInt(Constants.FOLLOWER_INSERT_ASKERID_COLUMN, asker_id);
+      followerStatement.executeUpdate();
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(PostQuestionServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
   }
 }
