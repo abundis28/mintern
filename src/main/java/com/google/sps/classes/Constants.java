@@ -25,4 +25,13 @@ public final class Constants {
   public static final int QUESTION_FETCH_DATETIME_COLUMN = 5;
   public static final int QUESTION_FETCH_NUMBEROFFOLLOWERS_COLUMN = 7;
   public static final int QUESTION_FETCH_NUMBEROFANSWERS_COLUMN = 11;
+
+  public static final int QUESTION_INSERT_TITLE_COLUMN = 1;
+  public static final int QUESTION_INSERT_BODY_COLUMN = 2;
+  public static final int QUESTION_INSERT_ASKERID_COLUMN = 3;
+
+  public static final int QUESTION_FETCH_MAXID_COLUMN = 1;
+
+  public static final int FOLLOWER_INSERT_QUESTIONID_COLUMN = 1;
+  public static final int FOLLOWER_INSERT_ASKERID_COLUMN = 2;
 }
