@@ -32,6 +32,11 @@ public final class Utility {
       "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
   public static final String SQL_LOCAL_USER = "root";
   public static final String SQL_LOCAL_PASSWORD = "";
+
+  private static final String dataBaseName = "Mintern";
+  public static final String SQL_CLOUD_URL = String.format("jdbc:mysql:///%s", DB_NAME);
+  public static final String SQL_CLOUD_USER = "root";
+  public static final String SQL_CLOUD_PASSWORD = "mintern";
   
   /**
    * Converts objects to JSON using GSON class.
@@ -62,7 +67,8 @@ public final class Utility {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
+      Connection connection = DriverManager.getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, 
+                                                          SQL_LOCAL_PASSWORD);
 
       // Create the MySQL prepared statement, execute it, and store the result.
       // Takes the query specified above and sets the email field to the logged in user's email.
@@ -85,17 +91,19 @@ public final class Utility {
   }
   
   /**
-   * Receives the attributes necessary to insert a new user into the database and inserts it to the User table.
+   * Receives the attributes necessary to insert a new user into the database and inserts it to the
+   * User table.
    */
   public static void addNewUser(String firstName, String lastName, String username, String email,
       int major, boolean is_mentor) {
     // Set up query to insert new user into database.
-    String query = "INSERT INTO User (first_name, last_name, username, email, major_id, is_mentor) "
-        + "VALUES (?, ?, ?, ?, ?, ?)";
+    String query = "INSERT INTO User (first_name, last_name, username, email, major_id, is_mentor)"
+        + " VALUES (?, ?, ?, ?, ?, ?)";
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(SQL_LOCAL_URL, SQL_USER, SQL_PASSWORD);
+      Connection connection = DriverManager.getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, 
+                                                          SQL_LOCAL_PASSWORD);
 
       // Create the MySQL INSERT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -114,5 +122,81 @@ public final class Utility {
       Logger logger = Logger.getLogger(Utility.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
+  }
+
+  /**
+   * Queries the mails of users to notify and returns them in a single string. Includes url, user
+   * and password to give the user the ability to choose between local and cloud SQL variables.
+   */
+  private String getUserEmailsAsString(List<Integer> userIds, String SQL_URL, String SQL_USER, 
+                                       String SQL_PASSWORD) {
+    String userEmails = new String();
+    for (int userId : userIds) {
+      // Query the email of the current user.
+      String query = "SELECT email FROM User WHERE id = " + userId;
+      try (Connection connection = DriverManager.getConnection(SQL_URL, SQL_USER, SQL_PASSWORD);
+        PreparedStatement pst = connection.prepareStatement(query);
+        ResultSet rs = pst.executeQuery()) {
+        rs.next();
+        // Concatenate the user's email and a comma for the InternetAddress parser to separate.
+        userEmails = userEmails.concat(rs.getString(1));
+        userEmails = userEmails.concat(",");
+        connection.close();
+      } catch (SQLException ex) {
+        Logger lgr = Logger.getLogger(EmailServlet.class.getName());
+        lgr.log(Level.SEVERE, ex.getMessage(), ex);
+      }
+    }
+    // Erase the last comma.
+    userEmails = userEmails.substring(0, userEmails.length() - 1);
+    return userEmails;
+  }
+
+  /**
+   * Queries IDs of the author of the modified question/answer and its followers. Includes url, 
+   * user and password to give the user the ability to choose between local and cloud SQL 
+   * variables.
+   */
+  private List<Integer> getUsersToNotify(String typeOfNotification, int modifiedElementId,
+                                         String SQL_URL, String SQL_USER, String SQL_PASSWORD) {
+    List<Integer> usersToNotify = new ArrayList<>();
+    if(typeOfNotification.equals("question")) {
+      // If the notification is for an anwer to a question.
+      String query =  "SELECT follower_id FROM QuestionFollower WHERE question_id = " +
+                      modifiedElementId;
+      // Query the information from QuestionFollower table.
+      try (Connection connection = DriverManager.getConnection(SQL_URL, SQL_USER, SQL_PASSWORD);
+          PreparedStatement pst = connection.prepareStatement(query);
+          ResultSet rs = pst.executeQuery()) {
+        while(rs.next()){
+          // Add the current ID (first column of ResultSet) to the list.
+          usersToNotify.add(rs.getInt(1));
+        }
+        // Close the connection once the query was performed have been performed.
+        connection.close();
+      } catch (SQLException ex) {
+        Logger lgr = Logger.getLogger(DataServlet.class.getName());
+        lgr.log(Level.SEVERE, ex.getMessage(), ex);
+      }
+    } else if (typeOfNotification.equals("answer")) {
+      // If the notification is for a new comment in an answer.
+      String query =  "SELECT follower_id FROM AnswerFollower WHERE answer_id = " +
+                      modifiedElementId;
+      // Query the information from AnswerFollower table.
+      try (Connection connection = DriverManager.getConnection(SQL_URL, SQL_USER, SQL_PASSWORD);
+           PreparedStatement pst = connection.prepareStatement(query);
+           ResultSet rs = pst.executeQuery()) {
+        while(rs.next()){
+          // Add the current ID (first column of ResultSet) to the list.
+          usersToNotify.add(rs.getInt(1));
+        }
+        // Close the connection once the query was performed have been performed.
+        connection.close();
+      } catch (SQLException ex) {
+          Logger lgr = Logger.getLogger(EmailServlet.class.getName());
+          lgr.log(Level.SEVERE, ex.getMessage(), ex);
+      }
+    }
+    return usersToNotify;
   }
 }
