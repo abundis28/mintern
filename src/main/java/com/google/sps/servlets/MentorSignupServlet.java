@@ -54,7 +54,7 @@ public class MentorSignupServlet extends HttpServlet {
       PreparedStatement preparedStatement = connection.prepareStatement(query);
       ResultSet queryResult = preparedStatement.executeQuery();
 
-      // Store queryResult in map and close connection to database.
+      // Store queryResult in list of SubjectTag objects and close connection to database.
       while (queryResult.next()) {
         subjectTags.add(new SubjectTag(
             queryResult.getInt(1), queryResult.getString(2), queryResult.getString(3)));
@@ -94,11 +94,6 @@ public class MentorSignupServlet extends HttpServlet {
    */
   private void addMentorExperience(String[] experienceTags) {
     int userId = Utility.getUserId();
-    
-    // Variables needed to connect to MySQL database.
-    String url = Utility.SQL_LOCAL_URL;
-    String user = Utility.SQL_LOCAL_USER;
-    String password = Utility.SQL_LOCAL_PASSWORD;
     
     for (String tag : experienceTags) {
       // Set up query to insert new experience tag to user.

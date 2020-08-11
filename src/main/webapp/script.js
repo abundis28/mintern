@@ -15,7 +15,7 @@
 /**
  * Function that will call other functions when the page loads. 
  */
-function onBodyLoad() {
+function loadIndex() {
   fetchAuthentication();
   fetchForum();
 }
