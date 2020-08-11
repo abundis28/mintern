@@ -52,11 +52,11 @@ public class FetchQuestionsServlet extends HttpServlet {
     // ID of the question to query. -1 means that all questions are to be queried.
     int question_id = Integer.parseInt(request.getParameter("id"));
 
-    if (question_id == -1) {
-      // Condition to fetch all questions.
-      query = Utility.fetchQuestionsQuery + "1=1;";
+    if (question_id != -1) {
+      // Condition to fetch only one question.
+      query.append("WHERE Question.id=" + question_id + ";");
     } else {
-      query = Utility.fetchQuestionsQuery + "Question.id=" + question_id + ";";
+      query.append(";");
     }
 
     // The connection and query are attempted.
