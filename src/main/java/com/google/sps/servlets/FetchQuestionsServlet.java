@@ -54,7 +54,9 @@ public class FetchQuestionsServlet extends HttpServlet {
 
     if (question_id != -1) {
       // Condition to fetch only one question.
-      query.append("WHERE Question.id=" + question_id + ";")
+      query.append("WHERE Question.id=" + question_id + ";");
+    } else {
+      query.append(";");
     }
 
     // The connection and query are attempted.
