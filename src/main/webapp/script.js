@@ -89,7 +89,7 @@ function createQuestionElement(question) {
   return questionElement;
 }
 
-/*
+/**
  * Displays navbar authentication buttons according to login status.
  */
 function fetchAuthentication() {
@@ -152,7 +152,7 @@ function loadSignup() {
 }
 
 /**
- * Redirect user in signup page to index if they are already registered.
+ * Redirects user in signup page to index if they are already registered.
  */
 function isUserRegistered() {
   fetch('/authentication').then(response => response.json()).then(user => {
@@ -162,6 +162,9 @@ function isUserRegistered() {
   })
 }
 
+/**
+ * Gets majors from database and appends them to select container in mentor and mentee signup form.
+ */
 function fetchMajor() {
   fetch('/mentee-signup').then(response => response.json()).then(majors => {
     // Get select containers where new options will be appended.
@@ -171,8 +174,6 @@ function fetchMajor() {
     menteeMajorSelect.innerHTML = '';
 
     for (let major in majors) {
-      console.log(majors[major]);
-      console.log(major);
       // Create option for major and append it to select containers.
       const selectOption = document.createElement('option');
       selectOption.appendChild(document.createTextNode(majors[major]));

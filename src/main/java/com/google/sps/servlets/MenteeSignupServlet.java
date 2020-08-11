@@ -43,8 +43,8 @@ public class MenteeSignupServlet extends HttpServlet {
     
     // Set up variables needed to connect to MySQL database.
     String url = Utility.SQL_LOCAL_URL;
-    String user = Utility.SQL_USER;
-    String password = Utility.SQL_PASSWORD;
+    String user = Utility.SQL_LOCAL_USER;
+    String password = Utility.SQL_LOCAL_PASSWORD;
 
     // Set up query to retrieve all subject tags.
     String query = "SELECT * FROM Major";
