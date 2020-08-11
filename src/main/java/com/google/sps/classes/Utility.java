@@ -29,9 +29,8 @@ import java.util.logging.Logger;
  * Utility methods used across classes. Just import class to access all methods.
  */
 public final class Utility {
-  // Variables needed to connect to the local MySQL database.
-  public static final String SQL_LOCAL_URL =
-      "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
+  // Variables needed to connect to MySQL database.
+  public static final String SQL_LOCAL_URL = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
   public static final String SQL_LOCAL_USER = "root";
   public static final String SQL_LOCAL_PASSWORD = "";
 
@@ -40,6 +39,17 @@ public final class Utility {
   public static final String SQL_CLOUD_USER = "root";
   public static final String SQL_CLOUD_PASSWORD = "mintern";
   
+  // Query to retrieve data from a question. The ? at the end must be replaced in the
+  // prepared statement, can be '1=1' for all questions or a different condition to match
+  // the questions that are needed.
+  public static final String fetchQuestionQuery = "SELECT * FROM Question "
+      + "LEFT JOIN (SELECT question_id, COUNT(follower_id) followers FROM QuestionFollower "
+      + "GROUP BY question_id) CountTable ON Question.id=CountTable.question_id "
+      + "LEFT JOIN (SELECT username, id AS asker_id FROM User) NameTable "
+      + "ON Question.asker_id=NameTable.asker_id "
+      + "LEFT JOIN (SELECT question_id, COUNT(id) answers FROM Answer "
+      + "GROUP BY question_id) AnswerTable ON Question.id=AnswerTable.question_id ";
+
   /**
    * Converts objects to JSON using GSON class.
    */

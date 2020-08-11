@@ -19,7 +19,7 @@
     
     <title>Mintern</title>
   </head>
-  <body onload="onBodyLoad()">
+  <body onload="loadIndex()">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <!-- Logo -->
@@ -64,10 +64,20 @@
         </ul>
       </div>
     </nav>
-    <!-- Following buttons for dev testing purposes. -->
-    <!-- <button type="button" class="btn btn-dark" onclick="emailQuestion(1)">Question</button> -->
-    <!-- <button type="button" class="btn btn-dark" onclick="emailAnswer(4)">Answer</button> -->
+    <!-- Question submission -->
+    <div id="post-question" style="display: none;">
+      <h4>Ask a question</h4>
+      <form action=/post-question method="POST">
+        <div class="form-group">
+          <textarea class="form-control" style="resize: none;" name="question-title" id="question-title" placeholder="What is your question?" data-autoresize rows="1"></textarea>
+          <textarea class="form-control form-control-sm" name="question-body" id="question-body" placeholder="Elaborate on your question (optional)" data-autoresize rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-outline-info float-right">Submit</button>
+      </form>
+    </div>
     <!-- Forum -->
-    <div id="forum"></div>
+    <div id="forum">
+      <h4>Browse questions</h4>
+    </div>
   </body>
 </html>
