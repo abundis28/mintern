@@ -28,7 +28,8 @@ import java.util.logging.Logger;
  */
 public final class Utility {
   // Variables needed to connect to MySQL database.
-  public static final String SQL_LOCAL_URL = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
+  public static final String SQL_LOCAL_URL = 
+      "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
   public static final String SQL_LOCAL_USER = "root";
   public static final String SQL_LOCAL_PASSWORD = "";
   
@@ -77,7 +78,8 @@ public final class Utility {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
+      Connection connection = DriverManager
+          .getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
 
       // Create the MySQL prepared statement, execute it, and store the result.
       // Takes the query specified above and sets the email field to the logged in user's email.
@@ -100,17 +102,19 @@ public final class Utility {
   }
   
   /**
-   * Receives the attributes necessary to insert a new user into the database and inserts it to the User table.
+   * Receives the attributes necessary to insert a new user into the database and inserts it to 
+   * the User table.
    */
   public static void addNewUser(String firstName, String lastName, String username, String email,
       int major, boolean is_mentor) {
     // Set up query to insert new user into database.
-    String query = "INSERT INTO User (first_name, last_name, username, email, major_id, is_mentor) "
-        + "VALUES (?, ?, ?, ?, ?, ?)";
+    String query = "INSERT INTO User (first_name, last_name, username, email, major_id, is_mentor)"
+        + " VALUES (?, ?, ?, ?, ?, ?)";
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
+      Connection connection = DriverManager
+          .getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
 
       // Create the MySQL INSERT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
