@@ -15,7 +15,7 @@
 /**
  * Function that will call other functions when the page loads. 
  */
-function onBodyLoad() {
+function loadIndex() {
   fetchAuthentication();
   fetchForum();
 }
@@ -149,6 +149,7 @@ function addAuthenticationButton(authenticationUrl, buttonStyle, buttonText, nav
 function loadSignup() {
   isUserRegistered();
   fetchMajor();
+  fetchMentorExperience();
 }
 
 /**
@@ -163,7 +164,8 @@ function isUserRegistered() {
 }
 
 /**
- * Gets majors from database and appends them to select container in mentor and mentee signup form.
+ * Gets majors from database and appends them to select container in mentor and mentee signup
+ * forms.
  */
 function fetchMajor() {
   fetch('/mentee-signup').then(response => response.json()).then(majors => {
@@ -181,6 +183,29 @@ function fetchMajor() {
       mentorMajorSelect.appendChild(selectOption);
       menteeMajorSelect.appendChild(selectOption.cloneNode(true));
     }
+
+    // Refresh select container to show options.
+    $('.selectpicker').selectpicker('refresh');
+  })
+}
+
+/**
+ * Gets subject tags from database and appends them to select container of mentor experience in
+ * mentor signup form.
+ */
+function fetchMentorExperience() {
+  fetch('/mentor-signup').then(response => response.json()).then(subjectTags => {
+    // Get select container where new options will be appended.
+    const mentorExperienceSelect = document.getElementById('experience');
+    mentorExperienceSelect.innerHTML = '';
+
+    subjectTags.forEach(subjectTag => {
+      // Create option for subject tag and append it to select container.
+      const selectOption = document.createElement('option');
+      selectOption.appendChild(document.createTextNode(subjectTag.subject));
+      selectOption.value = subjectTag.id;
+      mentorExperienceSelect.appendChild(selectOption);
+    })
 
     // Refresh select container to show options.
     $('.selectpicker').selectpicker('refresh');
