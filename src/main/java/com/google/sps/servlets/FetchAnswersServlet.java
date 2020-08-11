@@ -22,11 +22,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.annotation.WebServlet;
@@ -47,8 +45,10 @@ public class FetchAnswersServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     int question_id = request.getParameter("question_id");
 
-    // Create list that will hold all of the questions from the query.
-    List<CommentObject> answers = new ArrayList<>();
+    // Create a map that will hold all of the answers from the query.
+    // Each <int> will be an answer's id, and will be used to avoid creating duplicate
+    // answers and easily add a <CommentObject> to the correspondind <AnswerObject>.
+    Map<int, AnswerObject> answers = new HashMap<>();
 
     String query = "SELECT * FROM Answer LEFT JOIN (SELECT id, name FROM User) AnswerNameTable " 
         + "ON Answer.author_id=AnswerNameTable.id LEFT JOIN Comment ON Answer.id=Comment.answer_id"
