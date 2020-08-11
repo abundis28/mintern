@@ -53,13 +53,24 @@ function notify(type, id) {
   })
 }
 
+function notifyQuestion(id) {
+  fetch('notification?type=question&modifiedElementId=' + id, {
+    method: 'POST'
+  })
+}
+
+function notifyAnswer(id) {
+  fetch('notification?type=answer&modifiedElementId=' + id, {
+    method: 'POST'
+  })
+}
+
 /**
  * Function that will call other functions when the page loads. 
  */
 function onBodyLoad() {
   fetchAuthentication();
   fetchForum();
-  loadNotifications();
 }
 
 /**
@@ -137,6 +148,7 @@ function createQuestionElement(question) {
 function fetchAuthentication() {
   fetch('/authentication').then(response => response.json()).then(user => {
     if (user.isUserLoggedIn) {
+      loadNotifications();
       // If user is logged in, show logout button in navbar.
       if (!user.isUserRegistered) {
         // If logged in user is not registered, redirect to signup page.

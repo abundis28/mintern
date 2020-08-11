@@ -45,7 +45,7 @@ public class NotificationServlet extends HttpServlet {
       // Fetch notifications if user is signed in and convert the ArrayList to JSON
       // using Utility method.
       response.setContentType("application/json;");
-      response.getWriter().println(Utility.convertToJsonUsingGson(getNotifications(userId));); 
+      response.getWriter().println(Utility.convertToJsonUsingGson(getNotifications(userId))); 
     }
   }
 
@@ -86,7 +86,7 @@ public class NotificationServlet extends HttpServlet {
         // Close the connection once all insertions have been performed.
         connection.close();
       } catch (SQLException ex) {
-        Logger logger = Logger.getLogger(DataServlet.class.getName());
+        Logger logger = Logger.getLogger(NotificationServlet.class.getName());
         logger.log(Level.SEVERE, ex.getMessage(), ex);
       }
     } else if (typeOfNotification.equals("answer")) {
@@ -146,7 +146,7 @@ public class NotificationServlet extends HttpServlet {
       }
       connection.close();
     } catch (SQLException ex) {
-        Logger logger = Logger.getLogger(DataServlet.class.getName());
+        Logger logger = Logger.getLogger(NotificationServlet.class.getName());
         logger.log(Level.SEVERE, ex.getMessage(), ex);
     }
     return notifications;
@@ -200,7 +200,7 @@ public class NotificationServlet extends HttpServlet {
       rs.last();
       notificationId = rs.getInt(1);
     } catch (SQLException ex) {
-      Logger logger = Logger.getLogger(DataServlet.class.getName());
+      Logger logger = Logger.getLogger(NotificationServlet.class.getName());
       logger.log(Level.SEVERE, ex.getMessage(), ex);
     }
     return notificationId;
