@@ -61,14 +61,14 @@
                   <label for="mentor-first-name">First name</label>
                   <input type="text" name="first-name" id="mentor-first-name" class="form-control" placeholder="Enter first name" pattern="[a-zA-Z\s]*" required>
                   <div class="valid-feedback">Looks good!</div>
-                  <div class="invalid-feedback">Please provide your first name.</div>
+                  <div class="invalid-feedback">Please provide your first name (letters and spaces only).</div>
                 </div>
                 <!-- Last Name -->
                 <div class="form-group col-md-6">
                   <label for="mentor-last-name">Last name</label>
                   <input type="text" name="last-name" id="mentor-last-name" class="form-control" placeholder="Enter last name" pattern="[a-zA-Z\s]*" required>
                   <div class="valid-feedback">Looks good!</div>
-                  <div class="invalid-feedback">Please provide your last name.</div>
+                  <div class="invalid-feedback">Please provide your last name (letters and spaces only).</div>
                 </div>
               </div>
               <!-- Username -->
@@ -76,7 +76,7 @@
                 <label for="mentor-username">Username</label>
                 <input type="text" name="username" id="mentor-username" class="form-control" placeholder="Enter username" pattern="[a-zA-Z0-9_-]*" required>
                 <div class="valid-feedback">Looks good!</div>
-                <div class="invalid-feedback">Please provide a unique username.</div>
+                <div class="invalid-feedback">Please provide a unique username (letters, numbers, hyphens, or underscores only).</div>
               </div>
               <!-- Major Select -->
               <div class="form-group">
@@ -102,14 +102,14 @@
                   <label for="mentee-first-name">First name</label>
                   <input type="text" name="first-name" id="mentee-first-name" class="form-control" placeholder="Enter first name" pattern="[a-zA-Z\s]*" required>
                   <div class="valid-feedback">Looks good!</div>
-                  <div class="invalid-feedback">Please provide your first name.</div>
+                  <div class="invalid-feedback">Please provide your first name (letters and spaces only).</div>
                 </div>
                 <!-- Last Name -->
                 <div class="form-group col-md-6">
                   <label for="mentee-last-name">Last name</label>
                   <input type="text" name="last-name" id="mentee-last-name" class="form-control" placeholder="Enter last name" pattern="[a-zA-Z\s]*" required>
                   <div class="valid-feedback">Looks good!</div>
-                  <div class="invalid-feedback">Please provide your last name.</div>
+                  <div class="invalid-feedback">Please provide your last name (letters and spaces only).</div>
                 </div>
               </div>
               <!-- Username -->
@@ -117,7 +117,7 @@
                 <label for="mentee-username">Username</label>
                 <input type="text" name="username" id="mentee-username" class="form-control" placeholder="Enter username" pattern="[a-zA-Z0-9_-]*" required>
                 <div class="valid-feedback">Looks good!</div>
-                <div class="invalid-feedback">Please provide a unique username.</div>
+                <div class="invalid-feedback">Please provide a unique username (letters, numbers, hyphens, or underscores only).</div>
               </div>
               <!-- Major Select -->
               <div class="form-group">
@@ -125,7 +125,6 @@
                 <select name="major" id="mentee-major" class="selectpicker" data-live-search="true" required>
                   <option selected disabled value="">Nothing selected</option>
                 </select>
-                <div class="invalid-feedback">Please select a valid major.</div>
               </div>
               <button type="submit" class="btn btn-primary">Submit</button>
             </form>
