@@ -41,12 +41,10 @@ public class NotificationServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get user's ID from Utility method.
     int userId = Utility.getUserId();
-    if (userId != -1) {
-      // Fetch notifications if user is signed in and convert the ArrayList to JSON
-      // using Utility method.
-      response.setContentType("application/json;");
-      response.getWriter().println(Utility.convertToJsonUsingGson(getNotifications(userId))); 
-    }
+    // Fetch notifications if user is signed in and convert the ArrayList to JSON
+    // using Utility method.
+    response.setContentType("application/json;");
+    response.getWriter().println(Utility.convertToJsonUsingGson(getNotifications(userId)));
   }
 
   /**
@@ -75,6 +73,7 @@ public class NotificationServlet extends HttpServlet {
       notificationUrl = "/question.html?id=" + modifiedElementId;
       notificationMessage = "Your answer was commented.";
     }
+    // Creates notification and relationship between its ID and the ID of the concerned users.
     createNotification(query, notificationUrl, notificationMessage, localTimestamp);
   }
 
