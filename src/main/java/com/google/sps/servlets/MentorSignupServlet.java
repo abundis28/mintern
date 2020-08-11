@@ -60,18 +60,13 @@ public class MentorSignupServlet extends HttpServlet {
   private void addMentorExperience(String[] experienceTags) {
     int userId = Utility.getUserId();
     
-    // Variables needed to connect to MySQL database.
-    String url = Utility.SQL_LOCAL_URL;
-    String user = Utility.SQL_LOCAL_USER;
-    String password = Utility.SQL_LOCAL_PASSWORD;
-    
     for (String tag : experienceTags) {
       // Set up query to insert new experience tag to user.
       String query = "INSERT INTO MentorExperience (mentor_id, tag_id) VALUES (?, ?)";
 
       try {
         // Establish connection to MySQL database.
-        Connection connection = DriverManager.getConnection(url, user, password);
+        Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
 
         // Create the MySQL INSERT prepared statement.
         PreparedStatement preparedStatement = connection.prepareStatement(query);
