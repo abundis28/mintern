@@ -24,9 +24,10 @@ function loadIndex() {
 /**
  * Function that will call other functions when the question page loads. 
  */
-function onBodyLoadQuestion() {
+function loadQuestion() {
   fetchAuthentication('question');
   fetchQuestions('question');
+  fetchAnswers();
 }
 
 /**
@@ -219,7 +220,7 @@ function loadSignup() {
  * Fetches a single question and its answers from server, 
  * wraps each in an <li> element, and adds them to the DOM.
  */
-async function fetchQuestionAndAnswers() {
+async function fetchAnswers() {
   const response = await fetch('/answers');
   const questionsObject = await response.json();
 }
