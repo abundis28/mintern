@@ -16,6 +16,9 @@ package com.google.sps.classes;
 
 import java.sql.Timestamp;
 
+/**
+ * Class to represent notifications and sent them to front end as converted JSON.
+ */
 public class Notification {
   public String message = "";
   public String url = "";
