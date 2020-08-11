@@ -79,13 +79,15 @@ public class MentorSignupServlet extends HttpServlet {
     String lastName = request.getParameter("last-name");
     String username = request.getParameter("username");
     String email = userService.getCurrentUser().getEmail();
-    int major = Integer.parseInt(request.getParameter("major"));
+    int major = Utility.tryParseInt(request.getParameter("major"));
     String[] experienceTags = request.getParameterValues("experience");
     Boolean is_mentor = true;
 
     // Insert user and mentor experience to the database.
     Utility.addNewUser(firstName, lastName, username, email, major, is_mentor);
-    addMentorExperience(experienceTags);
+    if (experienceTags != null) {
+      addMentorExperience(experienceTags);
+    }
     response.sendRedirect("/index.html");
   }
 
@@ -106,7 +108,7 @@ public class MentorSignupServlet extends HttpServlet {
         // Create the MySQL INSERT prepared statement.
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setInt(1, userId);
-        preparedStatement.setInt(2, Integer.parseInt(tag));
+        preparedStatement.setInt(2, Utility.tryParseInt(tag));
         preparedStatement.execute();
         connection.close();
       } catch (SQLException exception) {

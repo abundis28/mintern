@@ -41,17 +41,12 @@ public class MenteeSignupServlet extends HttpServlet {
     // Set up map to store majors.
     Map<Integer, String> majors = new HashMap<Integer, String>();
     
-    // Set up variables needed to connect to MySQL database.
-    String url = Utility.SQL_LOCAL_URL;
-    String user = Utility.SQL_LOCAL_USER;
-    String password = Utility.SQL_LOCAL_PASSWORD;
-
     // Set up query to retrieve all subject tags.
     String query = "SELECT * FROM Major";
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(url, user, password);
+      Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
 
       // Create the MySQL prepared statement, execute it, and store the result.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -84,7 +79,7 @@ public class MenteeSignupServlet extends HttpServlet {
     String lastName = request.getParameter("last-name");
     String username = request.getParameter("username");
     String email = userService.getCurrentUser().getEmail();
-    int major = Integer.parseInt(request.getParameter("major"));
+    int major = Utility.tryParseInt(request.getParameter("major"));
     Boolean is_mentor = false;
 
     // Insert user to the database.

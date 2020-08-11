@@ -114,4 +114,18 @@ public final class Utility {
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
   }
+
+  /**
+   * Tries to convert a string to an integer and returns 0 if not possible.
+   */
+  public static int tryParseInt(String string) {
+    try {
+      return Integer.parseInt(string);
+    } catch (NumberFormatException exception) {
+      // If string parameter was not a number, get the log of the error and return 0.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+      return 0;
+    }
+  }
 }
