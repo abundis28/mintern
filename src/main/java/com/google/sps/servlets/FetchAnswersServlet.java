@@ -53,14 +53,24 @@ public class FetchAnswersServlet extends HttpServlet {
     String query = Utility.fetchAnswersAndCommentsQuery;
 
     // The connection and query are attempted.
-    try (Connection connection = DriverManager
-            .getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+    try (Connection connection = DriverManager.getConnection(
+            Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setInt(1, question_id);
         ResultSet queryResult = preparedStatement.executeQuery()) {
         // All of the rows from the query are looped if it goes through.
         while (queryResult.next()) {
-          
+          int currentAnswerId = queryResult.getInt(1);
+          if (answers.containsKey(currentAnswerId)) {
+            // The comment of the current row corresponds to a previous answer, 
+            // so we add it to its corresponding answer object.
+            answers.get(currentAnswerId).addComment(buildComment(queryResult));
+          } else {
+            // The comment of the current row corresponds to a new answer,
+            // so we create that answer along with its comment and add it to
+            // the map.
+            answers.put(currentAnswerId, buildAnswer(queryResult));
+          }
         }
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
