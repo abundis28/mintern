@@ -52,8 +52,7 @@ public class PostQuestionServlet extends HttpServlet {
       Connection connection = DriverManager
           .getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
       insertNewQuestion(connection, title, body, asker_id);
-      int newQuestionId = getNewQuestionId(connection);
-      insertNewFollower(connection, newQuestionId, asker_id);
+      insertNewFollower(connection, asker_id);
     } 
     catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
@@ -83,9 +82,9 @@ public class PostQuestionServlet extends HttpServlet {
   }
 
   /** 
-   * Gets the ID from the last question posted.
+   * Gets the ID from the last question posted. Returns -1 on query failure.
    */
-  private int getNewQuestionId(Connection connection) {
+  private int getLatestQuestionId(Connection connection) {
     int id = -1;
     try {
       String maxIdQuery = "SELECT MAX(id) FROM Question;";
@@ -104,13 +103,15 @@ public class PostQuestionServlet extends HttpServlet {
 
   /** 
    * Makes the author of the recently added question a follower of said question.
+   * TODO(shaargtz): Move function to Utiliy class to be reused.
    */
-  private void insertNewFollower(Connection connection, int newQuestionId, int asker_id) {
+  private void insertNewFollower(Connection connection, int asker_id) {
     try {
+      int latestQuestionId = getLatestQuestionId(connection);
       String insertFollowerQuery = "INSERT INTO QuestionFollower(question_id, follower_id) "
           + "VALUES (?,?)";
       PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
-      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_QUESTIONID_COLUMN, newQuestionId);
+      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_QUESTIONID_COLUMN, latestQuestionId);
       followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_ASKERID_COLUMN, asker_id);
       followerStatement.executeUpdate();
     } catch (SQLException exception) {
