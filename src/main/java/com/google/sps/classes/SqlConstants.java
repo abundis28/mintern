@@ -15,10 +15,15 @@
 package com.google.sps.classes;
 
 /**
- * Constants used throughout different queries.
+ * SQL constants used throughout different queries.
  */
+<<<<<<< HEAD:src/main/java/com/google/sps/classes/Constants.java
 public final class Constants {
   public static final int QUESTION_FETCH_ID_COLUMN = 1;
+=======
+public final class SqlConstants {
+  // Constants used for querying a question.
+>>>>>>> mvp/post-questions:src/main/java/com/google/sps/classes/SqlConstants.java
   public static final int QUESTION_FETCH_TITLE_COLUMN = 2;
   public static final int QUESTION_FETCH_BODY_COLUMN = 3;
   public static final int QUESTION_FETCH_ASKERID_COLUMN = 4;
@@ -27,12 +32,13 @@ public final class Constants {
   public static final int QUESTION_FETCH_NUMBEROFFOLLOWERS_COLUMN = 7;
   public static final int QUESTION_FETCH_NUMBEROFANSWERS_COLUMN = 11;
 
+  // Constants used for inserting a question.
   public static final int QUESTION_INSERT_TITLE_COLUMN = 1;
   public static final int QUESTION_INSERT_BODY_COLUMN = 2;
   public static final int QUESTION_INSERT_ASKERID_COLUMN = 3;
 
+  // Constants used for inserting a follower.
   public static final int QUESTION_FETCH_MAXID_COLUMN = 1;
-
   public static final int FOLLOWER_INSERT_QUESTIONID_COLUMN = 1;
   public static final int FOLLOWER_INSERT_ASKERID_COLUMN = 2;
 }

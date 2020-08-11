@@ -27,9 +27,8 @@ import java.util.logging.Logger;
  * Utility methods used across classes. Just import class to access all methods.
  */
 public final class Utility {
-  // Variables needed to connect to the local MySQL database.
-  public static final String SQL_LOCAL_URL =
-      "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
+  // Variables needed to connect to MySQL database.
+  public static final String SQL_LOCAL_URL = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
   public static final String SQL_LOCAL_USER = "root";
   public static final String SQL_LOCAL_PASSWORD = "";
   
@@ -42,9 +41,8 @@ public final class Utility {
       + "LEFT JOIN (SELECT username, id AS asker_id FROM User) NameTable "
       + "ON Question.asker_id=NameTable.asker_id "
       + "LEFT JOIN (SELECT question_id, COUNT(id) answers FROM Answer "
-      + "GROUP BY question_id) AnswerTable ON Question.id=AnswerTable.question_id "
-      + "WHERE ";
-  
+      + "GROUP BY question_id) AnswerTable ON Question.id=AnswerTable.question_id ";
+
   /**
    * Converts objects to JSON using GSON class.
    */

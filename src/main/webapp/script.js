@@ -15,7 +15,7 @@
 /**
  * Function that will call other functions when the index page loads. 
  */
-function onBodyLoadIndex() {
+function loadIndex() {
   addAutoResize();
   fetchAuthentication('forum');
   fetchQuestions('forum');
@@ -210,7 +210,13 @@ function addAuthenticationButton(authenticationUrl, buttonStyle, buttonText, nav
   authenticationButtonNavbar.appendChild(authenticationButtonItem);
 }
 
+function loadSignup() {
+  isUserRegistered();
+  fetchMentorExperience();
+}
+
 /**
+<<<<<<< HEAD
  * Fetches a single question and its answers from server, 
  * wraps each in an <li> element, and adds them to the DOM.
  */
@@ -221,6 +227,9 @@ async function fetchQuestionAndAnswers() {
 
 /**
  * Redirect user in signup page to index if they are already registered.
+=======
+ * Redirects user in signup page to index if they are already registered.
+>>>>>>> mvp/post-questions
  */
 function isUserRegistered() {
   fetch('/authentication').then(response => response.json()).then(user => {
@@ -229,3 +238,27 @@ function isUserRegistered() {
     }
   })
 }
+
+/**
+ * Gets subject tags from database and appends them to select container of mentor experience in
+ * mentor signup form.
+ */
+function fetchMentorExperience() {
+  fetch('/mentor-signup').then(response => response.json()).then(subjectTags => {
+    // Get select container where new options will be appended.
+    const mentorExperienceSelect = document.getElementById('experience');
+    mentorExperienceSelect.innerHTML = '';
+
+    subjectTags.forEach(subjectTag => {
+      // Create option for subject tag and append it to select container.
+      const selectOption = document.createElement('option');
+      selectOption.appendChild(document.createTextNode(subjectTag.subject));
+      selectOption.value = subjectTag.id;
+      mentorExperienceSelect.appendChild(selectOption);
+    })
+
+    // Refresh select container to show options.
+    $('.selectpicker').selectpicker('refresh');
+  })
+}
+
