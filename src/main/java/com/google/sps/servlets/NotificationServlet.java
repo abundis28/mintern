@@ -125,7 +125,7 @@ public class NotificationServlet extends HttpServlet {
       prepStatement.executeUpdate();
     } catch (SQLException ex) {
       Logger logger = Logger.getLogger(NotificationServlet.class.getName());
-      logger.log(Level.SEVERE, ex.getMessage(), ex)
+      logger.log(Level.SEVERE, ex.getMessage(), ex);
     }
   }
 
@@ -143,7 +143,7 @@ public class NotificationServlet extends HttpServlet {
       prepStatement.executeUpdate();
     } catch (SQLException ex) {
       Logger logger = Logger.getLogger(NotificationServlet.class.getName());
-      logger.log(Level.SEVERE, ex.getMessage(), ex)
+      logger.log(Level.SEVERE, ex.getMessage(), ex);
     }
   }
 
