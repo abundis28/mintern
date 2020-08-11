@@ -56,7 +56,8 @@ function notify(type, id) {
 /**
  * Function that will call other functions when the page loads. 
  */
-function onBodyLoad() {
+function loadIndex() {
+  addAutoResize();
   fetchAuthentication();
   fetchForum();
   loadNotifications();
@@ -70,7 +71,6 @@ async function fetchForum() {
   const response = await fetch('/fetch-forum');
   const questionsObject = await response.json();
   const questionsContainer = document.getElementById('forum');
-  questionsContainer.innerHTML = '';
   questionsObject.forEach(question => {
     questionsContainer.appendChild(createQuestionElement(question));
   });
@@ -117,7 +117,18 @@ function createQuestionElement(question) {
   // If the question has a body, show it underneath.
   if (question.body) {
     const bodyElement = document.createElement('small');
-    bodyElement.innerText = question.body;
+    if (question.body.length > 100) {
+      // All of the body should not be displayed if it is very big.
+      bodyElement.innerText = question.body
+          // Reduce the preview of the body to 100 characters
+          .substring(0,100)
+          // Remove line breaks and add trailing dots
+          .replace(/(\r\n|\n|\r)/gm,"") + "...";
+    } else {
+      bodyElement.innerText = question.body
+          // Remove line breaks from the preview.
+          .replace(/(\r\n|\n|\r)/gm," ");
+    }
     questionElement.appendChild(bodyElement);
     questionElement.appendChild(document.createElement('br'));
   } 
@@ -129,6 +140,22 @@ function createQuestionElement(question) {
   questionElement.appendChild(dateElement);
 
   return questionElement;
+}
+
+/** 
+ * Sets all textarea elements with the data-autoresize attribute to be
+ * responsive with its size as the user writes more text. 
+ */
+function addAutoResize() {
+  document.querySelectorAll('[data-autoresize]').forEach(function (element) {
+    element.style.boxSizing = 'border-box';
+    var offset = element.offsetHeight - element.clientHeight;
+    element.addEventListener('input', function (event) {
+      event.target.style.height = 'auto';
+      event.target.style.height = event.target.scrollHeight + offset + 'px';
+    });
+    element.removeAttribute('data-autoresize');
+  });
 }
 
 /*
@@ -147,14 +174,22 @@ function fetchAuthentication() {
       signupButtonNavbar.innerHTML = '';
 
       // Add logout button to navbar.
-      addAuthenticationButton(user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
+      addAuthenticationButton(
+          user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
+
+      // Show question submission box.
+      const questionSubmission = document.getElementById('post-question');
+      questionSubmission.style.display = "block";
     } else {
       // If user is logged out, show signup and login buttons in navbar.
+
       // Add signup button to navbar.
-      addAuthenticationButton(user.authenticationUrl, 'btn-success', 'Sign Up', 'signup');
+      addAuthenticationButton(
+          user.authenticationUrl, 'btn-success', 'Sign Up', 'signup');
 
       // Add login button to navbar.
-      addAuthenticationButton(user.authenticationUrl, 'btn-outline-success', 'Log In', 'login');
+      addAuthenticationButton(
+          user.authenticationUrl, 'btn-outline-success', 'Log In', 'login');
     }
   })
 }
@@ -187,8 +222,13 @@ function addAuthenticationButton(authenticationUrl, buttonStyle, buttonText, nav
   authenticationButtonNavbar.appendChild(authenticationButtonItem);
 }
 
+function loadSignup() {
+  isUserRegistered();
+  fetchMentorExperience();
+}
+
 /**
- * Redirect user in signup page to index if they are already registered.
+ * Redirects user in signup page to index if they are already registered.
  */
 function isUserRegistered() {
   fetch('/authentication').then(response => response.json()).then(user => {
@@ -197,3 +237,27 @@ function isUserRegistered() {
     }
   })
 }
+
+/**
+ * Gets subject tags from database and appends them to select container of mentor experience in
+ * mentor signup form.
+ */
+function fetchMentorExperience() {
+  fetch('/mentor-signup').then(response => response.json()).then(subjectTags => {
+    // Get select container where new options will be appended.
+    const mentorExperienceSelect = document.getElementById('experience');
+    mentorExperienceSelect.innerHTML = '';
+
+    subjectTags.forEach(subjectTag => {
+      // Create option for subject tag and append it to select container.
+      const selectOption = document.createElement('option');
+      selectOption.appendChild(document.createTextNode(subjectTag.subject));
+      selectOption.value = subjectTag.id;
+      mentorExperienceSelect.appendChild(selectOption);
+    })
+
+    // Refresh select container to show options.
+    $('.selectpicker').selectpicker('refresh');
+  })
+}
+

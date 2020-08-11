@@ -9,5 +9,16 @@
 #forum {
   width: 60%;
   margin: auto;
+  margin-top: 70px;
+}
+
+#post-question {
+  width: 60%;
+  margin: auto;
   margin-top: 20px;
+}
+
+#question-body {
+  box-sizing: border-box;
+  resize: none;
 }

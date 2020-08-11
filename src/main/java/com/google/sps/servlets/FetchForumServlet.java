@@ -14,6 +14,7 @@
 
 package com.google.sps.servlets;
 
+import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.QuestionObject;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
@@ -45,40 +46,49 @@ public class FetchForumServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     List<QuestionObject> questions = new ArrayList<>();
-    
-    String query = "SELECT * FROM Question "
-        + "LEFT JOIN (SELECT question_id, COUNT(follower_id) followers FROM QuestionFollower "
-        + "GROUP BY question_id) CountTable ON Question.id=CountTable.question_id "
-        + "LEFT JOIN (SELECT first_name, id AS asker_id FROM User) NameTable "
-        + "ON Question.asker_id=NameTable.asker_id "
-        + "LEFT JOIN (SELECT question_id, COUNT(id) answers FROM Answer "
-        + "GROUP BY question_id) AnswerTable ON Question.id=AnswerTable.question_id;";
+    String query = Utility.fetchQuestionQuery;
 
     // The connection and query are attempted.
-    try (Connection connection = DriverManager
-        .getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+    try {
+      Connection connection = DriverManager
+          .getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
       PreparedStatement preparedStatement = connection.prepareStatement(query);
-      ResultSet queryResult = preparedStatement.executeQuery()) {
-        // All of the rows from the query are looped if it goes through.
-        while (queryResult.next()) {
-          QuestionObject question = new QuestionObject();
-          question.setTitle(queryResult.getString(2));
-          question.setBody(queryResult.getString(3));
-          question.setAskerId(queryResult.getInt(4));
-          question.setAskerName(queryResult.getString(8));
-          question.setDateTime(queryResult.getTimestamp(5));
-          question.setNumberOfFollowers(queryResult.getInt(7));
-          question.setNumberOfAnswers(queryResult.getInt(11));
-
-          questions.add(question);
-        }
-      } catch (SQLException exception) {
-        // If the connection or the query don't go through, we get the log of what happened.
-        Logger logger = Logger.getLogger(FetchForumServlet.class.getName());
-        logger.log(Level.SEVERE, exception.getMessage(), exception);
+      ResultSet queryResult = preparedStatement.executeQuery();
+      
+      // All of the rows from the query are looped if it goes through.
+      while (queryResult.next()) {
+        questions.add(buildQuestion(queryResult));
       }
-
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(FetchForumServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
     response.setContentType("application/json;");
     response.getWriter().println(Utility.convertToJsonUsingGson(questions));
+  }
+
+  /** 
+   * Create a question object using the results from a query.
+   */
+  private QuestionObject buildQuestion(ResultSet queryResult) {
+    QuestionObject question = new QuestionObject();
+    try {
+      question.setTitle(queryResult.getString(SqlConstants.QUESTION_FETCH_TITLE_COLUMN));
+      question.setBody(queryResult.getString(SqlConstants.QUESTION_FETCH_BODY_COLUMN));
+      question.setAskerId(queryResult.getInt(SqlConstants.QUESTION_FETCH_ASKERID_COLUMN));
+      question.setAskerName(queryResult.getString(SqlConstants.QUESTION_FETCH_AKSERNAME_COLUMN));
+      question.setDateTime(queryResult.getTimestamp(SqlConstants.QUESTION_FETCH_DATETIME_COLUMN));
+      question.setNumberOfFollowers(queryResult.getInt(
+          SqlConstants.QUESTION_FETCH_NUMBEROFFOLLOWERS_COLUMN));
+      question.setNumberOfAnswers(queryResult.getInt(
+          SqlConstants.QUESTION_FETCH_NUMBEROFANSWERS_COLUMN));
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(FetchForumServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+    
+    return question;
   }
 }
