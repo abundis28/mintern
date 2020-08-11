@@ -159,12 +159,15 @@ function addAutoResize() {
 }
 
 /*
- * Displays navbar authentication buttons according to login status.
+ * Displays navbar authentication and inbox buttons according to login status.
  */
 function fetchAuthentication() {
   fetch('/authentication').then(response => response.json()).then(user => {
+    const inboxButton = document.getElementById("notificationsDropdown");
     if (user.isUserLoggedIn) {
-      // If user is logged in, show logout button in navbar.
+      // If user is logged in, show logout and inbox buttons in navbar.
+      inboxButton.style.display = "block";
+      loadNotifications(); 
       if (!user.isUserRegistered) {
         // If logged in user is not registered, redirect to signup page.
         window.location.replace(user.authenticationUrl);

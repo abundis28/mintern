@@ -22,3 +22,7 @@
   box-sizing: border-box;
   resize: none;
 }
+
+#notificationsDropdown {
+  display: none;
+}
