@@ -50,10 +50,10 @@ public class FetchAnswersServlet extends HttpServlet {
     // answers and easily add a <CommentObject> to the correspondind <AnswerObject>.
     Map<int, AnswerObject> answers = new HashMap<>();
 
-    String query = "SELECT * FROM Answer LEFT JOIN (SELECT id, name FROM User) AnswerNameTable " 
-        + "ON Answer.author_id=AnswerNameTable.id LEFT JOIN Comment ON Answer.id=Comment.answer_id"
-        + " LEFT JOIN (SELECT id, name FROM User) CommentNameTable "
-        + "ON Answer.author_id=CommentNameTable.id WHERE Answer.question_id=?;"
+    String query = "SELECT * FROM Answer LEFT JOIN (SELECT id, username FROM User) " 
+        + "AnswerNameTable ON Answer.author_id=AnswerNameTable.id LEFT JOIN Comment "
+        + "ON Answer.id=Comment.answer_id LEFT JOIN (SELECT id, username FROM User) "
+        + "CommentNameTable ON Answer.author_id=CommentNameTable.id WHERE Answer.question_id=?;";
 
     // The connection and query are attempted.
     try (Connection connection = DriverManager
