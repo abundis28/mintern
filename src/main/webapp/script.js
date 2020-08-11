@@ -164,7 +164,8 @@ function isUserRegistered() {
 }
 
 /**
- * Gets majors from database and appends them to select container in mentor and mentee signup form.
+ * Gets majors from database and appends them to select container in mentor and mentee signup
+ * forms.
  */
 function fetchMajor() {
   fetch('/mentee-signup').then(response => response.json()).then(majors => {
@@ -210,4 +211,3 @@ function fetchMentorExperience() {
     $('.selectpicker').selectpicker('refresh');
   })
 }
-
