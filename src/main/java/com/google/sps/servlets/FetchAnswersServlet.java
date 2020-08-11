@@ -65,11 +65,11 @@ public class FetchAnswersServlet extends HttpServlet {
         while (queryResult.next()) {
           
         }
-      } catch (SQLException exception) {
-        // If the connection or the query don't go through, we get the log of what happened.
-        Logger logger = Logger.getLogger(FetchAnswersServlet.class.getName());
-        logger.log(Level.SEVERE, exception.getMessage(), exception);
-      }
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(FetchAnswersServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
 
     response.setContentType("application/json;");
     response.getWriter().println(Utility.convertToJsonUsingGson(answers));
