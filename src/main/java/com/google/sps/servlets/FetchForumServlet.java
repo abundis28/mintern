@@ -14,7 +14,7 @@
 
 package com.google.sps.servlets;
 
-import com.google.sps.classes.Constants;
+import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.QuestionObject;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
