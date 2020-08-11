@@ -16,8 +16,8 @@
  * Function that will call other functions when the page loads. 
  */
 function onBodyLoad() {
-  fetchAuthentication();
-  fetchForum();
+  // fetchAuthentication();
+  // fetchForum();
 }
 
 /**
@@ -159,17 +159,17 @@ function sendEmail(type, id) {
 
 // Following functions for dev testing purposes.
 
-// function emailQuestion(questionId) {
-//   fetch('/email?type=question&elementId=' + questionId, {
-//     method: 'POST'
-//   })
-// }
+function emailQuestion(questionId) {
+  fetch('/email?type=question&elementId=' + questionId, {
+    method: 'POST'
+  })
+}
 
-// function emailAnswer(answerId) {
-//   fetch('/email?type=answer&elementId=' + answerId, {
-//     method: 'POST'
-//   })
-// } 
+function emailAnswer(answerId) {
+  fetch('/email?type=answer&elementId=' + answerId, {
+    method: 'POST'
+  })
+} 
 
 /**
  * Redirect user in signup page to index if they are already registered.

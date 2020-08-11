@@ -48,17 +48,17 @@ public class EmailServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get type of notification to create from query string.
-    String typeOfNotification = request.getParameter("typeOfNotification");
-    // Get ID of modified element from query string and convert to int.
-    int modifiedElementId = Integer.parseInt(request.getParameter("modifiedElementId"));
+    // String typeOfNotification = request.getParameter("typeOfNotification");
+    // // Get ID of modified element from query string and convert to int.
+    // int modifiedElementId = Integer.parseInt(request.getParameter("modifiedElementId"));
 
     // Create content for mail. Call functions to see which users have to be notified
     // and get their emails concatenated in a string.
-    String userEmails =
-        Utility.getUserEmailsAsString(Utility.getUsersToNotify(typeOfNotification, modifiedElementId,
-                                              Utility.SQL_CLOUD_URL, Utility.SQL_CLOUD_USER, 
-                                              Utility.SQL_CLOUD_PASSWORD), Utility.SQL_CLOUD_URL, 
-                                              Utility.SQL_CLOUD_USER, Utility.SQL_CLOUD_PASSWORD);
+    // String userEmails =
+    //     Utility.getUserEmailsAsString(Utility.getUsersToNotify(typeOfNotification, modifiedElementId,
+    //                                           Utility.SQL_CLOUD_URL, Utility.SQL_CLOUD_USER, 
+    //                                           Utility.SQL_CLOUD_PASSWORD), Utility.SQL_CLOUD_URL, 
+    //                                           Utility.SQL_CLOUD_USER, Utility.SQL_CLOUD_PASSWORD);
     String subject = "Activity on Mintern!";
     String message = "Dear mintern,\n" +
                      "You have new notifications in Mintern!\n" + 
@@ -75,7 +75,10 @@ public class EmailServlet extends HttpServlet {
       msg.setFrom(new InternetAddress("mintern@internship-platform-step-2020.appspotmail.com",
           "Mintern"));
       // Parse the concatenated string to convert it to an array of addresses.
-      msg.addRecipients(Message.RecipientType.BCC, InternetAddress.parse(userEmails));
+      msg.addRecipients(Message.RecipientType.BCC,
+                        InternetAddress.parse("aabundis@google.com, gloriapark@google.com, " +
+                                              "shaargtz@google.com, timothyallen@google.com, " +
+                                              "oumontiel@google.com"));
       msg.setSubject(subject);
       msg.setText(message);
       // Send email.
