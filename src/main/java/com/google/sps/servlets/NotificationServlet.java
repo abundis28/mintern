@@ -123,8 +123,9 @@ public class NotificationServlet extends HttpServlet {
       prepStatement.setString(2, notificationUrl);
       prepStatement.setTimestamp(3, dateTime);
       prepStatement.executeUpdate();
-    } catch (SQLException e) {
-      System.out.println(e.getMessage());
+    } catch (SQLException ex) {
+      Logger logger = Logger.getLogger(NotificationServlet.class.getName());
+      logger.log(Level.SEVERE, ex.getMessage(), ex)
     }
   }
 
@@ -140,8 +141,9 @@ public class NotificationServlet extends HttpServlet {
       prepStatement.setInt(1, userId);
       prepStatement.setInt(2, notificationId);
       prepStatement.executeUpdate();
-    } catch (SQLException e) {
-      System.out.println(e.getMessage());
+    } catch (SQLException ex) {
+      Logger logger = Logger.getLogger(NotificationServlet.class.getName());
+      logger.log(Level.SEVERE, ex.getMessage(), ex)
     }
   }
 
