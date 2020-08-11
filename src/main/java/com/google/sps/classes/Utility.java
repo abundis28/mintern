@@ -41,9 +41,8 @@ public final class Utility {
       + "LEFT JOIN (SELECT username, id AS asker_id FROM User) NameTable "
       + "ON Question.asker_id=NameTable.asker_id "
       + "LEFT JOIN (SELECT question_id, COUNT(id) answers FROM Answer "
-      + "GROUP BY question_id) AnswerTable ON Question.id=AnswerTable.question_id "
-      + "WHERE ?";
-  
+      + "GROUP BY question_id) AnswerTable ON Question.id=AnswerTable.question_id ";
+
   /**
    * Converts objects to JSON using GSON class.
    */
