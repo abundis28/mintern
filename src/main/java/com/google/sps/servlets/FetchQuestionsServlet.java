@@ -62,7 +62,7 @@ public class FetchQuestionsServlet extends HttpServlet {
         // Condition to fetch all questions.
         preparedStatement.setString(1, "1=1;");
       } else {
-        preparedStatement.setString(1, "id=" + question_id + ";");
+        preparedStatement.setString(1, "Question.id=" + question_id + ";");
       }
 
       ResultSet queryResult = preparedStatement.executeQuery();
