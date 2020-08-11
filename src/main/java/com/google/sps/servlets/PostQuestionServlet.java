@@ -36,11 +36,6 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/post-question")
 public class PostQuestionServlet extends HttpServlet {
-  // All the variables needed to connect to the local database.
-  // P.S.: Change the timezone if needed (https://github.com/dbeaver/dbeaver/wiki/JDBC-Time-Zones).
-  String url = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
-  String user = "root";
-  String password = "";
 
   /** 
    * This method will execute the query to post a question to the database.
@@ -54,15 +49,10 @@ public class PostQuestionServlet extends HttpServlet {
     // First we query the number of questions that exist so that we can update the
     // QuestionFollower table as well.
     try {
-      Connection connection = DriverManager.getConnection(url, user, password);
-      
-      // We first insert the new question.
+      Connection connection = DriverManager
+          .getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
       insertNewQuestion(connection, title, body, asker_id);
-
-      // We get the ID of the new question.
       int newQuestionId = getNewQuestionId(connection);
-
-      // We then update the follower table.
       insertNewFollower(connection, newQuestionId, asker_id);
     } 
     catch (SQLException exception) {
