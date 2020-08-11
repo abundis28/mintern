@@ -29,9 +29,8 @@ import java.util.logging.Logger;
  * Utility methods used across classes. Just import class to access all methods.
  */
 public final class Utility {
-  // Variables needed to connect to the local MySQL database.
-  public static final String SQL_LOCAL_URL =
-      "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
+  // Variables needed to connect to MySQL database.
+  public static final String SQL_LOCAL_URL = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
   public static final String SQL_LOCAL_USER = "root";
   public static final String SQL_LOCAL_PASSWORD = "";
 

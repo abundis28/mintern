@@ -15,7 +15,7 @@
 /**
  * Function that will call other functions when the page loads. 
  */
-function onBodyLoad() {
+function loadIndex() {
   fetchAuthentication();
   fetchForum();
 }
@@ -146,6 +146,11 @@ function addAuthenticationButton(authenticationUrl, buttonStyle, buttonText, nav
   authenticationButtonNavbar.appendChild(authenticationButtonItem);
 }
 
+function loadSignup() {
+  isUserRegistered();
+  fetchMentorExperience();
+}
+
 /**
  * Sends email to the followers of a modified question  or answer.
  * @param {string} type
@@ -157,22 +162,8 @@ function sendEmail(type, id) {
   })
 }
 
-// Following functions for dev testing purposes.
-
-// function emailQuestion(questionId) {
-//   fetch('/email?type=question&elementId=' + questionId, {
-//     method: 'POST'
-//   })
-// }
-
-// function emailAnswer(answerId) {
-//   fetch('/email?type=answer&elementId=' + answerId, {
-//     method: 'POST'
-//   })
-// } 
-
 /**
- * Redirect user in signup page to index if they are already registered.
+ * Redirects user in signup page to index if they are already registered.
  */
 function isUserRegistered() {
   fetch('/authentication').then(response => response.json()).then(user => {
@@ -181,3 +172,27 @@ function isUserRegistered() {
     }
   })
 }
+
+/**
+ * Gets subject tags from database and appends them to select container of mentor experience in
+ * mentor signup form.
+ */
+function fetchMentorExperience() {
+  fetch('/mentor-signup').then(response => response.json()).then(subjectTags => {
+    // Get select container where new options will be appended.
+    const mentorExperienceSelect = document.getElementById('experience');
+    mentorExperienceSelect.innerHTML = '';
+
+    subjectTags.forEach(subjectTag => {
+      // Create option for subject tag and append it to select container.
+      const selectOption = document.createElement('option');
+      selectOption.appendChild(document.createTextNode(subjectTag.subject));
+      selectOption.value = subjectTag.id;
+      mentorExperienceSelect.appendChild(selectOption);
+    })
+
+    // Refresh select container to show options.
+    $('.selectpicker').selectpicker('refresh');
+  })
+}
+
