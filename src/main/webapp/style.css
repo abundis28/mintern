@@ -7,3 +7,26 @@
   margin: auto;
   margin-top: 20px;
 }
+
+.signup-subtitle {
+  font-weight: 200;
+}
+
+.nav-pills a {
+  font-size: xx-large;
+  color: #6cb4b8ff
+}
+
+.nav-pills .nav-link.active {
+  background-color: #6cb4b8ff!important;
+}
+
+.signup-title {
+  text-transform: uppercase;
+  font-weight: 200;
+}
+
+.signup-title .name {
+  color: #6cb4b8ff;
+  font-weight: 400;
+}
