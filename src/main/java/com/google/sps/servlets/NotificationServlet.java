@@ -149,7 +149,7 @@ public class NotificationServlet extends HttpServlet {
   /**
    * Returns the ID of a just inserted notification.
    */
-  private int getNotificationId(Connection connection) {
+  private int getLastInsertedNotificationId(Connection connection) {
     String query =  "SELECT id FROM Notification ORDER BY date_time";
     // Query the information from Notification table.
     int notificationId = 0;
@@ -178,7 +178,7 @@ public class NotificationServlet extends HttpServlet {
           ResultSet rs = pst.executeQuery()) {
       // Insert notification and get its ID to relate in UserNotification table.
       insertToNotification(connection, notificationMessage, notificationUrl, localTimestamp);
-      int notificationId = getNotificationId(connection);
+      int notificationId = getLastInsertedNotificationId(connection);
       // Iterate through the query's result set to insert all notifications.
       while (rs.next()) {
         insertToUserNotification(connection, rs.getInt(1), notificationId);
