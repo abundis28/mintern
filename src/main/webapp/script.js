@@ -152,7 +152,7 @@ function loadSignup() {
 }
 
 /**
- * Redirect user in signup page to index if they are already registered.
+ * Redirects user in signup page to index if they are already registered.
  */
 function isUserRegistered() {
   fetch('/authentication').then(response => response.json()).then(user => {
@@ -162,6 +162,10 @@ function isUserRegistered() {
   })
 }
 
+/**
+ * Gets subject tags from database and appends them to select container of mentor experience in
+ * mentor signup form.
+ */
 function fetchMentorExperience() {
   fetch('/mentor-signup').then(response => response.json()).then(subjectTags => {
     // Get select container where new options will be appended.

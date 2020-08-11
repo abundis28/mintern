@@ -35,11 +35,6 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/mentor-signup")
 public class MentorSignupServlet extends HttpServlet {
 
-  // Set up variables needed to connect to MySQL database.
-  String url = Utility.SQL_URL;
-  String user = Utility.SQL_USER;
-  String password = Utility.SQL_PASSWORD;
-
   /**
    * Gets mentor experience tags from database and returns as JSON.
    */
@@ -53,7 +48,7 @@ public class MentorSignupServlet extends HttpServlet {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(url, user, password);
+      Connection connection = DriverManager.getConnection(Utility.SQL_URL, Utility.SQL_USER, Utility.SQL_PASSWORD);
 
       // Create the MySQL prepared statement, execute it, and store the result.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -111,7 +106,7 @@ public class MentorSignupServlet extends HttpServlet {
 
       try {
         // Establish connection to MySQL database.
-        Connection connection = DriverManager.getConnection(url, user, password);
+        Connection connection = DriverManager.getConnection(Utility.SQL_URL, Utility.SQL_USER, Utility.SQL_PASSWORD);
 
         // Create the MySQL INSERT prepared statement.
         PreparedStatement preparedStatement = connection.prepareStatement(query);
