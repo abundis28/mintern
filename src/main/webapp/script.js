@@ -171,9 +171,7 @@ function fetchMajor() {
   fetch('/mentee-signup').then(response => response.json()).then(majors => {
     // Get select containers where new options will be appended.
     const mentorMajorSelect = document.getElementById('mentor-major');
-    mentorMajorSelect.innerHTML = '';
     const menteeMajorSelect = document.getElementById('mentee-major');
-    menteeMajorSelect.innerHTML = '';
 
     for (let major in majors) {
       // Create option for major and append it to select containers.
@@ -197,7 +195,6 @@ function fetchMentorExperience() {
   fetch('/mentor-signup').then(response => response.json()).then(subjectTags => {
     // Get select container where new options will be appended.
     const mentorExperienceSelect = document.getElementById('mentor-experience');
-    mentorExperienceSelect.innerHTML = '';
 
     subjectTags.forEach(subjectTag => {
       // Create option for subject tag and append it to select container.
@@ -211,3 +208,22 @@ function fetchMentorExperience() {
     $('.selectpicker').selectpicker('refresh');
   })
 }
+
+// Example starter JavaScript for disabling form submissions if there are invalid fields
+(function() {
+  'use strict';
+  window.addEventListener('load', function() {
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    var forms = document.getElementsByClassName('needs-validation');
+    // Loop over them and prevent submission
+    var validation = Array.prototype.filter.call(forms, function(form) {
+      form.addEventListener('submit', function(event) {
+        if (form.checkValidity() === false) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  }, false);
+})();

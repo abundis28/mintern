@@ -54,61 +54,78 @@
         <div class="tab-content">
           <!-- Mentor Sign Up -->
           <div class="tab-pane fade show active" id="mentor-form">
-            <form method="POST" action="/mentor-signup">
+            <form method="POST" action="/mentor-signup" class="needs-validation" novalidate>
               <div class="form-row">
                 <!-- First Name -->
                 <div class="form-group col-md-6">
                   <label for="mentor-first-name">First name</label>
-                  <input name="first-name" id="mentor-first-name" class="form-control" placeholder="Enter first name"> 
+                  <input type="text" name="first-name" id="mentor-first-name" class="form-control" placeholder="Enter first name" pattern="[a-zA-Z\s]*" required>
+                  <div class="valid-feedback">Looks good!</div>
+                  <div class="invalid-feedback">Please provide your first name.</div>
                 </div>
                 <!-- Last Name -->
                 <div class="form-group col-md-6">
                   <label for="mentor-last-name">Last name</label>
-                  <input name="last-name" id="mentor-last-name" class="form-control" placeholder="Enter last name"> 
+                  <input type="text" name="last-name" id="mentor-last-name" class="form-control" placeholder="Enter last name" pattern="[a-zA-Z\s]*" required>
+                  <div class="valid-feedback">Looks good!</div>
+                  <div class="invalid-feedback">Please provide your last name.</div>
                 </div>
               </div>
               <!-- Username -->
               <div class="form-group">
                 <label for="mentor-username">Username</label>
-                <input name="username" id="mentor-username" class="form-control" placeholder="Enter username"> 
+                <input type="text" name="username" id="mentor-username" class="form-control" placeholder="Enter username" pattern="[a-zA-Z0-9_-]*" required>
+                <div class="valid-feedback">Looks good!</div>
+                <div class="invalid-feedback">Please provide a unique username.</div>
               </div>
               <!-- Major Select -->
               <div class="form-group">
                 <label for="mentor-major">Major</label><br>
-                <select name="major" id="mentor-major" class="selectpicker" data-live-search="true"></select>
+                <select name="major" id="mentor-major" class="selectpicker" data-live-search="true" required>
+                  <option selected disabled value="">Nothing selected</option>
+                </select>
               </div>
               <!-- Experience Select -->
               <div class="form-group">
                 <label for="mentor-experience">Experience</label><br>
-                <select name="experience" id="mentor-experience" name="experience" class="selectpicker" multiple data-live-search="true"></select>
+                <select name="experience" name="experience" id="mentor-experience" class="selectpicker" multiple data-live-search="true" required></select>
               </div>
               <button type="submit" class="btn btn-primary">Submit</button>
             </form>
           </div>
           <!-- Mentee Sign Up -->
           <div class="tab-pane fade" id="mentee-form">
-            <form method="POST" action="/mentee-signup">
+            <form method="POST" action="/mentee-signup" class="needs-validation" novalidate>
               <div class="form-row">
                 <!-- First Name -->
                 <div class="form-group col-md-6">
                   <label for="mentee-first-name">First name</label>
-                  <input name="first-name" id="mentee-first-name" class="form-control" placeholder="Enter first name"> 
+                  <input type="text" name="first-name" id="mentee-first-name" class="form-control" placeholder="Enter first name" pattern="[a-zA-Z\s]*" required>
+                  <div class="valid-feedback">Looks good!</div>
+                  <div class="invalid-feedback">Please provide your first name.</div>
                 </div>
                 <!-- Last Name -->
                 <div class="form-group col-md-6">
                   <label for="mentee-last-name">Last name</label>
-                  <input name="last-name" id="mentee-last-name" class="form-control" placeholder="Enter last name"> 
+                  <input type="text" name="last-name" id="mentee-last-name" class="form-control" placeholder="Enter last name" pattern="[a-zA-Z\s]*" required>
+                  <div class="valid-feedback">Looks good!</div>
+                  <div class="invalid-feedback">Please provide your last name.</div>
                 </div>
               </div>
               <!-- Username -->
               <div class="form-group">
                 <label for="mentee-username">Username</label>
-                <input name="username" id="mentee-username" class="form-control" placeholder="Enter username"> 
+                <input type="text" name="username" id="mentee-username" class="form-control" placeholder="Enter username" pattern="[a-zA-Z0-9_-]*" required>
+                <div class="valid-feedback">Looks good!</div>
+                <div class="invalid-feedback">Please provide a unique username.</div>
               </div>
               <!-- Major Select -->
               <div class="form-group">
                 <label for="mentee-major">Major</label><br>
-                <select name="major" id="mentee-major" class="selectpicker" data-live-search="true"></select>
+                <select name="major" id="mentee-major" class="selectpicker" data-live-search="true" required>
+                  <option selected disabled value="">Nothing selected</option>
+                </select>
+                <div class="invalid-feedback">Please select a valid major.</div>
               </div>
               <button type="submit" class="btn btn-primary">Submit</button>
             </form>
