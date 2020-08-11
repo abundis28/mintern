@@ -45,7 +45,7 @@ public class NotificationServlet extends HttpServlet {
       // Fetch notifications if user is signed in and convert the ArrayList to JSON
       // using Utility method.
       response.setContentType("application/json;");
-      response.getWriter().println(Utility.convertToJsonUsingGson(getNotifications(userId));); 
+      response.getWriter().println(Utility.convertToJsonUsingGson(getNotifications(userId))); 
     }
   }
 
@@ -55,68 +55,27 @@ public class NotificationServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Define local time for the new entries in the server.
-    LocalDateTime localDateTime = LocalDateTime.now();
-    Timestamp localTimestamp = Timestamp.valueOf(localDateTime);
-
-    // Check if notification is about a question answered or answer commented, along the id of the 
-    // question/answer.
+    Timestamp localTimestamp = Timestamp.valueOf(LocalDateTime.now());
+    // Check if notification is about a question answered or answer commented, along with its id.
     String typeOfNotification = request.getParameter("type");
     int modifiedElementId = Integer.parseInt(request.getParameter("modifiedElementId"));
-    
+
+    // URL to which the user will be redirected.
+    String notificationUrl = "";
+    String notificationMessage = "";
+    String query = "";
     if (typeOfNotification.equals("question")) {
       // If the notification is for an anwer to a question.
-      String query =  "SELECT follower_id FROM QuestionFollower WHERE question_id = " +
-                       modifiedElementId;
-      // Query the information from QuestionFollower table.
-      try (Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL, 
-                                                               Utility.SQL_LOCAL_USER,
-                                                               Utility.SQL_LOCAL_PASSWORD);
-           PreparedStatement pst = connection.prepareStatement(query);
-           ResultSet rs = pst.executeQuery()) {
-        // Define the URL to which the user will be redirected. Will be defined each case because
-        // URL will change once notifications for approvals and meetings are enabled.
-        String elementUrl = "/question.html?id=" + modifiedElementId;
-        // Insert notification and get its ID to relate in UserNotification table.
-        insertToNotification(connection, "You got an answer", elementUrl, localTimestamp);
-        int notificationId = getNotificationId(connection, localTimestamp);
-        // Iterate through the query's result set to insert all notifications.
-        while (rs.next()) {
-          insertToUserNotification(connection, rs.getInt(1), notificationId);
-        }
-        // Close the connection once all insertions have been performed.
-        connection.close();
-      } catch (SQLException ex) {
-        Logger logger = Logger.getLogger(DataServlet.class.getName());
-        logger.log(Level.SEVERE, ex.getMessage(), ex);
-      }
+      query =  "SELECT follower_id FROM QuestionFollower WHERE question_id = " + modifiedElementId;
+      notificationUrl = "/question.html?id=" + modifiedElementId;
+      notificationMessage = "Your question was answered.";
     } else if (typeOfNotification.equals("answer")) {
       // If the notification is for a new comment in an answer.
-      String query =  "SELECT follower_id FROM AnswerFollower WHERE answer_id = " +
-                       modifiedElementId;
-      // Query the information from QuestionFollower table.
-      try (Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL,
-                                                               Utility.SQL_LOCAL_USER,
-                                                               Utility.SQL_LOCAL_PASSWORD);
-          PreparedStatement pst = connection.prepareStatement(query);
-          ResultSet rs = pst.executeQuery()) {
-        // Define the url to which the user will be redirected. Will be defined each case because
-        // URL will change once notifications for approvals and meetings are enabled.
-        String elementUrl = "/question.html?id=" + modifiedElementId;
-        // Insert notification and get its id to relate in UserNotification table.
-        insertToNotification(connection, "Somebody commented your answer", elementUrl, 
-                             localTimestamp);
-        int notificationId = getNotificationId(connection, localTimestamp);
-        // Iterate through the query's result set to insert all notifications.
-        while (rs.next()) {
-          insertToUserNotification(connection, rs.getInt(1), notificationId);
-        }
-        // Close the connection once all insertions have been performed.
-        connection.close();
-      } catch (SQLException ex) {
-          Logger logger = Logger.getLogger(NotificationServlet.class.getName());
-          logger.log(Level.SEVERE, ex.getMessage(), ex);
-      }
+      query =  "SELECT follower_id FROM AnswerFollower WHERE answer_id = " + modifiedElementId;
+      notificationUrl = "/question.html?id=" + modifiedElementId;
+      notificationMessage = "Your answer was commented.";
     }
+    createNotification(query, notificationUrl, notificationMessage, localTimestamp);
   }
 
   /**
@@ -146,7 +105,7 @@ public class NotificationServlet extends HttpServlet {
       }
       connection.close();
     } catch (SQLException ex) {
-        Logger logger = Logger.getLogger(DataServlet.class.getName());
+        Logger logger = Logger.getLogger(NotificationServlet.class.getName());
         logger.log(Level.SEVERE, ex.getMessage(), ex);
     }
     return notifications;
@@ -155,14 +114,14 @@ public class NotificationServlet extends HttpServlet {
   /**
    * Receives the data for a notification and inserts it into the Notification table.
    */
-  private void insertToNotification(Connection connection, String message, String elementUrl,
+  private void insertToNotification(Connection connection, String message, String notificationUrl,
         Timestamp dateTime) {
     String query = "INSERT INTO Notification(message, url, date_time) VALUES(?,?,?)";
     try {
       // Prepare the statement to be inserted.
       PreparedStatement prepStatement = connection.prepareStatement(query);
       prepStatement.setString(1, message);
-      prepStatement.setString(2, elementUrl);
+      prepStatement.setString(2, notificationUrl);
       prepStatement.setTimestamp(3, dateTime);
       prepStatement.executeUpdate();
     } catch (SQLException e) {
@@ -190,7 +149,7 @@ public class NotificationServlet extends HttpServlet {
   /**
    * Returns the ID of a just inserted notification.
    */
-  private int getNotificationId(Connection connection, Timestamp date) {
+  private int getNotificationId(Connection connection) {
     String query =  "SELECT id FROM Notification ORDER BY date_time";
     // Query the information from Notification table.
     int notificationId = 0;
@@ -200,9 +159,35 @@ public class NotificationServlet extends HttpServlet {
       rs.last();
       notificationId = rs.getInt(1);
     } catch (SQLException ex) {
-      Logger logger = Logger.getLogger(DataServlet.class.getName());
+      Logger logger = Logger.getLogger(NotificationServlet.class.getName());
       logger.log(Level.SEVERE, ex.getMessage(), ex);
     }
     return notificationId;
+  }
+
+  /**
+   * Inserts new row to Notification table and adds row to UserNotification of the author's and 
+   * following users' IDs relationship with the last inserted Notification.
+   */
+  private void createNotification(String query, String notificationUrl, String notificationMessage,
+                                  Timestamp localTimestamp) {
+    // Set up connection for insertions and query IDs of users to notify with same connection.
+    try (Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL, 
+            Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+          PreparedStatement pst = connection.prepareStatement(query);
+          ResultSet rs = pst.executeQuery()) {
+      // Insert notification and get its ID to relate in UserNotification table.
+      insertToNotification(connection, notificationMessage, notificationUrl, localTimestamp);
+      int notificationId = getNotificationId(connection);
+      // Iterate through the query's result set to insert all notifications.
+      while (rs.next()) {
+        insertToUserNotification(connection, rs.getInt(1), notificationId);
+      }
+      // Close the connection once all insertions have been performed.
+      connection.close();
+    } catch (SQLException ex) {
+      Logger logger = Logger.getLogger(NotificationServlet.class.getName());
+      logger.log(Level.SEVERE, ex.getMessage(), ex);
+    }
   }
 }
