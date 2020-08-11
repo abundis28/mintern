@@ -106,8 +106,8 @@ public class PostQuestionServlet extends HttpServlet {
    * TODO(shaargtz): Move function to Utiliy class to be reused.
    */
   private void insertNewFollower(Connection connection, int asker_id) {
-    int latestQuestionId = getLatestQuestionId(connection);
     try {
+      int latestQuestionId = getLatestQuestionId(connection);
       String insertFollowerQuery = "INSERT INTO QuestionFollower(question_id, follower_id) "
           + "VALUES (?,?)";
       PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
