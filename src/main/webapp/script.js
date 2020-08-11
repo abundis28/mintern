@@ -216,7 +216,6 @@ function loadSignup() {
 }
 
 /**
-<<<<<<< HEAD
  * Fetches a single question and its answers from server, 
  * wraps each in an <li> element, and adds them to the DOM.
  */
@@ -227,9 +226,6 @@ async function fetchQuestionAndAnswers() {
 
 /**
  * Redirect user in signup page to index if they are already registered.
-=======
- * Redirects user in signup page to index if they are already registered.
->>>>>>> mvp/post-questions
  */
 function isUserRegistered() {
   fetch('/authentication').then(response => response.json()).then(user => {
