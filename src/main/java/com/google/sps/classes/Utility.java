@@ -32,9 +32,8 @@ public final class Utility {
   public static final String SQL_LOCAL_USER = "root";
   public static final String SQL_LOCAL_PASSWORD = "";
   
-  // Query to retrieve data from a question. The ? at the end must be replaced in the
-  // prepared statement, can be '1=1' for all questions or a different condition to match
-  // the questions that are needed.
+  // Query to retrieve data from all questions. Can be appended a WHERE condition to select
+  // specific questions.
   public static final String fetchQuestionsQuery = "SELECT * FROM Question "
       + "LEFT JOIN (SELECT question_id, COUNT(follower_id) followers FROM QuestionFollower "
       + "GROUP BY question_id) CountTable ON Question.id=CountTable.question_id "
