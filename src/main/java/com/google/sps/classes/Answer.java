@@ -14,7 +14,7 @@
 
 package com.google.sps.classes;
 
-import com.google.sps.classes.CommentObject;
+import com.google.sps.classes.Comment;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,7 +30,7 @@ public class Answer {
   private String authorName;
   private Timestamp dateTime;
   private int votes;
-  private List<CommentObject> commentList = new ArrayList<>();
+  private List<Comment> commentList = new ArrayList<>();
 
   public void setId(int id) {
     this.id = id;
@@ -52,7 +52,7 @@ public class Answer {
     this.votes = votes;
   }  
 
-  public void addComment(CommentObject comment) {
+  public void addComment(Comment comment) {
     this.commentList.add(comment);
   }
 }
