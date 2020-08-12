@@ -52,7 +52,7 @@ public final class Utility {
   public static final String fetchAnswersAndCommentsQuery = "SELECT * FROM Answer LEFT JOIN " 
       + "(SELECT id, username FROM User) AnswerUsername ON Answer.author_id=AnswerUsername.id "
       + "LEFT JOIN Comment ON Answer.id=Comment.answer_id LEFT JOIN "
-      + "(SELECT id, username FROM User) CommentUsername ON Answer.author_id=CommentUsername.id"
+      + "(SELECT id, username FROM User) CommentUsername ON Comment.author_id=CommentUsername.id"
       + " WHERE Answer.question_id=?;";
 
   /**
