@@ -32,8 +32,8 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet that inserts a new mentor to the database.
  */
-@WebServlet("/mentor-signup")
-public class MentorSignupServlet extends HttpServlet {
+@WebServlet("/signup-mentor")
+public class SignupMentorServlet extends HttpServlet {
 
   /**
    * Gets mentor experience tags from database and returns as JSON.
