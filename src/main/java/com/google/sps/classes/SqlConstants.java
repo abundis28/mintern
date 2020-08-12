@@ -37,4 +37,7 @@ public final class SqlConstants {
   public static final int QUESTION_FETCH_MAXID_COLUMN = 1;
   public static final int FOLLOWER_INSERT_QUESTIONID_COLUMN = 1;
   public static final int FOLLOWER_INSERT_ASKERID_COLUMN = 2;
+
+  // Constant to check for login.
+  public static final int USER_NOT_LOGGED_IN = -1;
 }
