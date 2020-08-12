@@ -222,8 +222,13 @@ function loadSignup() {
  * wraps each in an <li> element, and adds them to the DOM.
  */
 function fetchAnswers() {
-  question_id = (new URL(document.location)).searchParams.get("id");
-  fetch('/answers?id=' + question_id).then(response => response.json()).then(user => console.log(user));
+  const question_id = (new URL(document.location)).searchParams.get("id");
+  const response = await fetch('/fetch-answers?id=' + question_id);
+  const answersObject = await response.json();
+  const answersContainer = document.getElementById('answers');
+  answersObject.forEach(answer => {
+    answersContainer.appendChild(createAnswerElement(answer));
+  });
 }
 
 /**
