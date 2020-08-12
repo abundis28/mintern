@@ -14,8 +14,8 @@
 
 package com.google.sps.servlets;
 
-import com.google.sps.classes.AnswerObject;
-import com.google.sps.classes.CommentObject;
+import com.google.sps.classes.Answer;
+import com.google.sps.classes.Comment;
 import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
@@ -51,8 +51,8 @@ public class FetchAnswersServlet extends HttpServlet {
 
     // Create a map that will hold all of the answers from the query.
     // Each <int> will be an answer's id, and will be used to avoid creating duplicate
-    // answers and easily add a <CommentObject> to the correspondind <AnswerObject>.
-    Map<Integer, AnswerObject> answers = new HashMap<>();
+    // answers and easily add a <Comment> to the correspondind <Answer>.
+    Map<Integer, Answer> answers = new HashMap<>();
 
     String query = Utility.fetchAnswersAndCommentsQuery;
 
@@ -87,8 +87,8 @@ public class FetchAnswersServlet extends HttpServlet {
     response.getWriter().println(Utility.convertToJsonUsingGson(answers));
   }
 
-  private AnswerObject buildAnswer(ResultSet queryResult) {
-    AnswerObject answer = new AnswerObject();
+  private Answer buildAnswer(ResultSet queryResult) {
+    Answer answer = new Answer();
     try {
       answer.setId(queryResult.getInt(SqlConstants.ANSWER_FETCH_ID_COLUMN));
       answer.setBody(queryResult.getString(SqlConstants.ANSWER_FETCH_BODY_COLUMN));
@@ -109,8 +109,8 @@ public class FetchAnswersServlet extends HttpServlet {
     return answer;
   }
 
-  private CommentObject buildComment(ResultSet queryResult) {
-    CommentObject comment = new CommentObject();
+  private Comment buildComment(ResultSet queryResult) {
+    Comment comment = new Comment();
     try {
       comment.setBody(queryResult.getString(SqlConstants.COMMENT_FETCH_BODY_COLUMN));
       comment.setAuthorName(queryResult.getString(SqlConstants.COMMENT_FETCH_AUTHORNAME_COLUMN));

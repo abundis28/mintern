@@ -15,7 +15,7 @@
 package com.google.sps.servlets;
 
 import com.google.sps.classes.SqlConstants;
-import com.google.sps.classes.QuestionObject;
+import com.google.sps.classes.Question;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
 import java.sql.Connection;
@@ -45,7 +45,7 @@ public class FetchQuestionsServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    List<QuestionObject> questions = new ArrayList<>();
+    List<Question> questions = new ArrayList<>();
     
     String query = Utility.fetchQuestionsQuery;
 
@@ -82,8 +82,8 @@ public class FetchQuestionsServlet extends HttpServlet {
   /** 
    * Create a question object using the results from a query.
    */
-  private QuestionObject buildQuestion(ResultSet queryResult) {
-    QuestionObject question = new QuestionObject();
+  private Question buildQuestion(ResultSet queryResult) {
+    Question question = new Question();
     try {
       question.setId(queryResult.getInt(SqlConstants.QUESTION_FETCH_ID_COLUMN));
       question.setTitle(queryResult.getString(SqlConstants.QUESTION_FETCH_TITLE_COLUMN));
