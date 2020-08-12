@@ -17,13 +17,9 @@ package com.google.sps.classes;
 /**
  * SQL constants used throughout different queries.
  */
-<<<<<<< HEAD:src/main/java/com/google/sps/classes/Constants.java
-public final class Constants {
-  public static final int QUESTION_FETCH_ID_COLUMN = 1;
-=======
 public final class SqlConstants {
   // Constants used for querying a question.
->>>>>>> mvp/post-questions:src/main/java/com/google/sps/classes/SqlConstants.java
+  public static final int QUESTION_FETCH_ID_COLUMN = 1;
   public static final int QUESTION_FETCH_TITLE_COLUMN = 2;
   public static final int QUESTION_FETCH_BODY_COLUMN = 3;
   public static final int QUESTION_FETCH_ASKERID_COLUMN = 4;

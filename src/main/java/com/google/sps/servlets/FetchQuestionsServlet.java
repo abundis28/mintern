@@ -54,9 +54,9 @@ public class FetchQuestionsServlet extends HttpServlet {
 
     if (question_id != -1) {
       // Condition to fetch only one question.
-      query.append("WHERE Question.id=" + question_id + ";");
+      query = Utility.fetchQuestionsQuery + "WHERE Question.id=" + question_id + ";";
     } else {
-      query.append(";");
+      query = Utility.fetchQuestionsQuery + ";";
     }
 
     // The connection and query are attempted.
@@ -85,6 +85,7 @@ public class FetchQuestionsServlet extends HttpServlet {
   private QuestionObject buildQuestion(ResultSet queryResult) {
     QuestionObject question = new QuestionObject();
     try {
+      question.setId(queryResult.getInt(SqlConstants.QUESTION_FETCH_ID_COLUMN));
       question.setTitle(queryResult.getString(SqlConstants.QUESTION_FETCH_TITLE_COLUMN));
       question.setBody(queryResult.getString(SqlConstants.QUESTION_FETCH_BODY_COLUMN));
       question.setAskerId(queryResult.getInt(SqlConstants.QUESTION_FETCH_ASKERID_COLUMN));
