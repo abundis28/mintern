@@ -48,9 +48,9 @@ public class EmailServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
+    // 
     DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
-
+    System.out.println("Pool created successfully!");
     // Get type of notification to create from query string.
     String typeOfNotification = request.getParameter("typeOfNotification");
     // Get ID of modified element from query string and convert to int.
@@ -60,7 +60,7 @@ public class EmailServlet extends HttpServlet {
     // and get their emails concatenated in a string.
     String userEmails =
         Utility.getUserEmailsAsString(Utility.getUsersToNotify(typeOfNotification, modifiedElementId,
-                                              pool), pool);
+            pool), pool);
     String subject = "Activity on Mintern!";
     String message = "Dear mintern,\n" +
                      "You have new notifications in Mintern!\n" + 

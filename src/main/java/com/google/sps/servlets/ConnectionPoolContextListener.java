@@ -50,10 +50,10 @@ public class ConnectionPoolContextListener implements ServletContextListener {
 
     // maximumPoolSize limits the total number of concurrent connections this pool will keep. Ideal
     // values for this setting are highly variable on app design, infrastructure, and database.
-    config.setMaximumPoolSize(5);
+    config.setMaximumPoolSize(20);
     // minimumIdle is the minimum number of idle connections Hikari maintains in the pool.
     // Additional connections will be established to meet this value unless the pool is full.
-    config.setMinimumIdle(5);
+    config.setMinimumIdle(10);
 
     // setConnectionTimeout is the maximum number of milliseconds to wait for a connection checkout.
     // Any attempt to retrieve a connection from this pool that exceeds the set limit will throw an

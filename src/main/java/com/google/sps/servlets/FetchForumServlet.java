@@ -33,26 +33,28 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 /** 
  * This servlet will retrieve forum posts to be displayed on the page.
  */
 @WebServlet("/fetch-forum")
 public class FetchForumServlet extends HttpServlet {
-
   /** 
    * This method will get the forum questions from the query and return them as a JSON string.
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // 
+    DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
+    System.out.println("Pool created successfully!");
     List<QuestionObject> questions = new ArrayList<>();
     
     String query = Utility.fetchQuestionQuery;
 
     // The connection and query are attempted.
     try {
-      Connection connection = DriverManager
-          .getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+      Connection connection = pool.getConnection();
       PreparedStatement preparedStatement = connection.prepareStatement(query);
       ResultSet queryResult = preparedStatement.executeQuery();
       
