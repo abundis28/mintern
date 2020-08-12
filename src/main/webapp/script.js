@@ -222,7 +222,7 @@ function loadSignup() {
  * wraps each in an <li> element, and adds them to the DOM.
  */
 function fetchAnswers() {
-  fetch('/authentication').then(response => response.json()).then(user => console.log(user));
+  fetch('/answers').then(response => response.json()).then(user => console.log(user));
 }
 
 /**
