@@ -38,6 +38,6 @@ public final class SqlConstants {
   public static final int FOLLOWER_INSERT_QUESTIONID_COLUMN = 1;
   public static final int FOLLOWER_INSERT_ASKERID_COLUMN = 2;
 
-  // Constant to check for login.
-  public static final int USER_NOT_LOGGED_IN = -1;
+  // Constant used in the forum.
+  public static final int FETCH_ALL_QUESTIONS = -1;
 }
