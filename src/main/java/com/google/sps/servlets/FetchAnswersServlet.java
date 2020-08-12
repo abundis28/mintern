@@ -85,15 +85,38 @@ public class FetchAnswersServlet extends HttpServlet {
   private AnswerObject buildAnswer(ResultSet queryResult) {
     AnswerObject answer = new AnswerObject();
     try {
+      answer.setId(queryResult.getInt(SqlConstants.ANSWER_FETCH_ID_COLUMN));
+      answer.setBody(queryResult.getString(SqlConstants.ANSWER_FETCH_BODY_COLUMN));
+      answer.setAuthorName(queryResult.getString(SqlConstants.ANSWER_FETCH_AUTHORNAME_COLUMN));
+      answer.setDateTime(queryResult.getTimestamp(SqlConstants.ANSWER_FETCH_DATETIME_COLUMN));
+
+      answer.addComment(buildComment(queryResult));
+
+      // TODO(shaargtz): Implement voting system.
+      // answer.setVotes(queryResult.getInt(SqlConstants.ANSWER_FETCH_VOTES_COLUMN));
 
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
       Logger logger = Logger.getLogger(FetchAnswersServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
+
+    return answer;
   }
 
   private CommentObject buildComment(ResultSet queryResult) {
+    CommentObject comment = new CommentObject();
+    try {
+      comment.setBody(queryResult.getString(SqlConstants.COMMENT_FETCH_BODY_COLUMN));
+      comment.setAuthorName(queryResult.getString(SqlConstants.COMMENT_FETCH_AUTHORNAME_COLUMN));
+      comment.setDateTime(queryResult.getTimestamp(SqlConstants.COMMENT_FETCH_DATETIME_COLUMN));
 
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(FetchAnswersServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    return comment;
   }
 }
