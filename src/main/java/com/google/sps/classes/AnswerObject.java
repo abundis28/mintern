@@ -30,7 +30,7 @@ public class AnswerObject {
   private String authorName;
   private Timestamp dateTime;
   private int votes;
-  private List<CommentObject> commentList;
+  private List<CommentObject> commentList = new ArrayList<>();
 
   public void setId(int id) {
     this.id = id;
