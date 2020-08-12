@@ -143,7 +143,7 @@ function addAutoResize() {
   });
 }
 
-/*
+/**
  * Displays navbar authentication buttons according to login status.
  */
 function fetchAuthentication(page) {
@@ -212,6 +212,7 @@ function addAuthenticationButton(authenticationUrl, buttonStyle, buttonText, nav
 
 function loadSignup() {
   isUserRegistered();
+  fetchMajors();
   fetchMentorExperience();
 }
 
@@ -236,13 +237,39 @@ function isUserRegistered() {
 }
 
 /**
+ * Gets majors from database and appends them to select container in mentor and mentee signup
+ * forms.
+ */
+function fetchMajors() {
+  fetch('/signup').then(response => response.json()).then(majors => {
+    // Get select containers where new options will be appended.
+    const mentorMajorSelect = document.getElementById('mentor-major');
+    mentorMajorSelect.innerHTML = '';
+    const menteeMajorSelect = document.getElementById('mentee-major');
+    menteeMajorSelect.innerHTML = '';
+
+    for (let major in majors) {
+      // Create option for major and append it to select containers.
+      const selectOption = document.createElement('option');
+      selectOption.appendChild(document.createTextNode(majors[major]));
+      selectOption.value = major;
+      mentorMajorSelect.appendChild(selectOption);
+      menteeMajorSelect.appendChild(selectOption.cloneNode(true));
+    }
+
+    // Refresh select container to show options.
+    $('.selectpicker').selectpicker('refresh');
+  })
+}
+
+/**
  * Gets subject tags from database and appends them to select container of mentor experience in
  * mentor signup form.
  */
 function fetchMentorExperience() {
   fetch('/mentor-signup').then(response => response.json()).then(subjectTags => {
     // Get select container where new options will be appended.
-    const mentorExperienceSelect = document.getElementById('experience');
+    const mentorExperienceSelect = document.getElementById('mentor-experience');
     mentorExperienceSelect.innerHTML = '';
 
     subjectTags.forEach(subjectTag => {
@@ -257,4 +284,3 @@ function fetchMentorExperience() {
     $('.selectpicker').selectpicker('refresh');
   })
 }
-
