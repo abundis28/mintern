@@ -148,7 +148,7 @@ function addAuthenticationButton(authenticationUrl, buttonStyle, buttonText, nav
 
 function loadSignup() {
   isUserRegistered();
-  fetchMajor();
+  fetchMajors();
   fetchMentorExperience();
 }
 
@@ -167,8 +167,8 @@ function isUserRegistered() {
  * Gets majors from database and appends them to select container in mentor and mentee signup
  * forms.
  */
-function fetchMajor() {
-  fetch('/mentee-signup').then(response => response.json()).then(majors => {
+function fetchMajors() {
+  fetch('/signup').then(response => response.json()).then(majors => {
     // Get select containers where new options will be appended.
     const mentorMajorSelect = document.getElementById('mentor-major');
     mentorMajorSelect.innerHTML = '';
