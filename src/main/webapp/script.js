@@ -30,6 +30,12 @@ function loadQuestion() {
   fetchAnswers();
 }
 
+function loadSignup() {
+  isUserRegistered();
+  fetchMajors();
+  fetchMentorExperience();
+}
+
 /**
  * Fetches questions from server, wraps each in an <li> element, 
  * and adds them to the DOM.
@@ -52,6 +58,108 @@ async function fetchQuestions(page) {
   questionsObject.forEach(question => {
     questionsContainer.appendChild(createQuestionElement(question, hasRedirect));
   });
+}
+
+/**
+ * Fetches a single question and its answers from server, 
+ * wraps each in an <li> element, and adds them to the DOM.
+ */
+function fetchAnswers() {
+  const question_id = (new URL(document.location)).searchParams.get("id");
+  const response = await fetch('/fetch-answers?id=' + question_id);
+  const answersObject = await response.json();
+  const answersContainer = document.getElementById('answers');
+  answersObject.forEach(answer => {
+    answersContainer.appendChild(createAnswerElement(answer));
+  });
+}
+
+/**
+ * Displays navbar authentication buttons according to login status.
+ */
+function fetchAuthentication(page) {
+  fetch('/authentication').then(response => response.json()).then(user => {
+    if (user.isUserLoggedIn) {
+      // If user is logged in, show logout button in navbar.
+      if (!user.isUserRegistered) {
+        // If logged in user is not registered, redirect to signup page.
+        window.location.replace(user.authenticationUrl);
+      }
+
+      // Delete signup button.
+      const signupButtonNavbar = document.getElementById('signup');
+      signupButtonNavbar.innerHTML = '';
+
+      // Add logout button to navbar.
+      addAuthenticationButton(
+          user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
+
+      if (page === 'forum') {
+        // Show question submission box.
+        const questionSubmission = document.getElementById('post-question');
+        questionSubmission.style.display = "block";
+      }
+    } else {
+      // If user is logged out, show signup and login buttons in navbar.
+
+      // Add signup button to navbar.
+      addAuthenticationButton(
+          user.authenticationUrl, 'btn-success', 'Sign Up', 'signup');
+
+      // Add login button to navbar.
+      addAuthenticationButton(
+          user.authenticationUrl, 'btn-outline-success', 'Log In', 'login');
+    }
+  })
+}
+
+/**
+ * Gets majors from database and appends them to select container in mentor and mentee signup
+ * forms.
+ */
+function fetchMajors() {
+  fetch('/signup').then(response => response.json()).then(majors => {
+    // Get select containers where new options will be appended.
+    const mentorMajorSelect = document.getElementById('mentor-major');
+    mentorMajorSelect.innerHTML = '';
+    const menteeMajorSelect = document.getElementById('mentee-major');
+    menteeMajorSelect.innerHTML = '';
+
+    for (let major in majors) {
+      // Create option for major and append it to select containers.
+      const selectOption = document.createElement('option');
+      selectOption.appendChild(document.createTextNode(majors[major]));
+      selectOption.value = major;
+      mentorMajorSelect.appendChild(selectOption);
+      menteeMajorSelect.appendChild(selectOption.cloneNode(true));
+    }
+
+    // Refresh select container to show options.
+    $('.selectpicker').selectpicker('refresh');
+  })
+}
+
+/**
+ * Gets subject tags from database and appends them to select container of mentor experience in
+ * mentor signup form.
+ */
+function fetchMentorExperience() {
+  fetch('/mentor-signup').then(response => response.json()).then(subjectTags => {
+    // Get select container where new options will be appended.
+    const mentorExperienceSelect = document.getElementById('mentor-experience');
+    mentorExperienceSelect.innerHTML = '';
+
+    subjectTags.forEach(subjectTag => {
+      // Create option for subject tag and append it to select container.
+      const selectOption = document.createElement('option');
+      selectOption.appendChild(document.createTextNode(subjectTag.subject));
+      selectOption.value = subjectTag.id;
+      mentorExperienceSelect.appendChild(selectOption);
+    })
+
+    // Refresh select container to show options.
+    $('.selectpicker').selectpicker('refresh');
+  })
 }
 
 /** 
@@ -129,6 +237,15 @@ function createQuestionElement(question, hasRedirect) {
 }
 
 /** 
+ * Creates an element with answer and comment data. 
+ * Each element corresponds to an answer and its comments 
+ * to be displayed in the DOM.
+ */
+function createAnswerElement(answer) {
+
+}
+
+/** 
  * Sets all textarea elements with the data-autoresize attribute to be
  * responsive with its size as the user writes more text. 
  */
@@ -142,45 +259,6 @@ function addAutoResize() {
     });
     element.removeAttribute('data-autoresize');
   });
-}
-
-/**
- * Displays navbar authentication buttons according to login status.
- */
-function fetchAuthentication(page) {
-  fetch('/authentication').then(response => response.json()).then(user => {
-    if (user.isUserLoggedIn) {
-      // If user is logged in, show logout button in navbar.
-      if (!user.isUserRegistered) {
-        // If logged in user is not registered, redirect to signup page.
-        window.location.replace(user.authenticationUrl);
-      }
-
-      // Delete signup button.
-      const signupButtonNavbar = document.getElementById('signup');
-      signupButtonNavbar.innerHTML = '';
-
-      // Add logout button to navbar.
-      addAuthenticationButton(
-          user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
-
-      if (page === 'forum') {
-        // Show question submission box.
-        const questionSubmission = document.getElementById('post-question');
-        questionSubmission.style.display = "block";
-      }
-    } else {
-      // If user is logged out, show signup and login buttons in navbar.
-
-      // Add signup button to navbar.
-      addAuthenticationButton(
-          user.authenticationUrl, 'btn-success', 'Sign Up', 'signup');
-
-      // Add login button to navbar.
-      addAuthenticationButton(
-          user.authenticationUrl, 'btn-outline-success', 'Log In', 'login');
-    }
-  })
 }
 
 /**
@@ -211,26 +289,6 @@ function addAuthenticationButton(authenticationUrl, buttonStyle, buttonText, nav
   authenticationButtonNavbar.appendChild(authenticationButtonItem);
 }
 
-function loadSignup() {
-  isUserRegistered();
-  fetchMajors();
-  fetchMentorExperience();
-}
-
-/**
- * Fetches a single question and its answers from server, 
- * wraps each in an <li> element, and adds them to the DOM.
- */
-function fetchAnswers() {
-  const question_id = (new URL(document.location)).searchParams.get("id");
-  const response = await fetch('/fetch-answers?id=' + question_id);
-  const answersObject = await response.json();
-  const answersContainer = document.getElementById('answers');
-  answersObject.forEach(answer => {
-    answersContainer.appendChild(createAnswerElement(answer));
-  });
-}
-
 /**
  * Redirect user in signup page to index if they are already registered.
  */
@@ -239,54 +297,5 @@ function isUserRegistered() {
     if (user.isUserRegistered) {
       window.location.replace("/index.html");
     }
-  })
-}
-
-/**
- * Gets majors from database and appends them to select container in mentor and mentee signup
- * forms.
- */
-function fetchMajors() {
-  fetch('/signup').then(response => response.json()).then(majors => {
-    // Get select containers where new options will be appended.
-    const mentorMajorSelect = document.getElementById('mentor-major');
-    mentorMajorSelect.innerHTML = '';
-    const menteeMajorSelect = document.getElementById('mentee-major');
-    menteeMajorSelect.innerHTML = '';
-
-    for (let major in majors) {
-      // Create option for major and append it to select containers.
-      const selectOption = document.createElement('option');
-      selectOption.appendChild(document.createTextNode(majors[major]));
-      selectOption.value = major;
-      mentorMajorSelect.appendChild(selectOption);
-      menteeMajorSelect.appendChild(selectOption.cloneNode(true));
-    }
-
-    // Refresh select container to show options.
-    $('.selectpicker').selectpicker('refresh');
-  })
-}
-
-/**
- * Gets subject tags from database and appends them to select container of mentor experience in
- * mentor signup form.
- */
-function fetchMentorExperience() {
-  fetch('/mentor-signup').then(response => response.json()).then(subjectTags => {
-    // Get select container where new options will be appended.
-    const mentorExperienceSelect = document.getElementById('mentor-experience');
-    mentorExperienceSelect.innerHTML = '';
-
-    subjectTags.forEach(subjectTag => {
-      // Create option for subject tag and append it to select container.
-      const selectOption = document.createElement('option');
-      selectOption.appendChild(document.createTextNode(subjectTag.subject));
-      selectOption.value = subjectTag.id;
-      mentorExperienceSelect.appendChild(selectOption);
-    })
-
-    // Refresh select container to show options.
-    $('.selectpicker').selectpicker('refresh');
   })
 }
