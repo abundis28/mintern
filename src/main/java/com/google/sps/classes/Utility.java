@@ -28,10 +28,22 @@ import java.util.logging.Logger;
  */
 public final class Utility {
   // Variables needed to connect to MySQL database.
-  public static final String SQL_LOCAL_URL = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
+  public static final String SQL_LOCAL_URL =
+      "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
   public static final String SQL_LOCAL_USER = "root";
   public static final String SQL_LOCAL_PASSWORD = "";
   
+  // Query to retrieve data from a question. The ? at the end must be replaced in the
+  // prepared statement, can be '1=1' for all questions or a different condition to match
+  // the questions that are needed.
+  public static final String fetchQuestionQuery = "SELECT * FROM Question "
+      + "LEFT JOIN (SELECT question_id, COUNT(follower_id) followers FROM QuestionFollower "
+      + "GROUP BY question_id) CountTable ON Question.id=CountTable.question_id "
+      + "LEFT JOIN (SELECT username, id AS asker_id FROM User) NameTable "
+      + "ON Question.asker_id=NameTable.asker_id "
+      + "LEFT JOIN (SELECT question_id, COUNT(id) answers FROM Answer "
+      + "GROUP BY question_id) AnswerTable ON Question.id=AnswerTable.question_id ";
+
   /**
    * Converts objects to JSON using GSON class.
    */
@@ -61,7 +73,8 @@ public final class Utility {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
+      Connection connection = DriverManager.getConnection(
+          SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
 
       // Create the MySQL prepared statement, execute it, and store the result.
       // Takes the query specified above and sets the email field to the logged in user's email.
@@ -84,17 +97,19 @@ public final class Utility {
   }
   
   /**
-   * Receives the attributes necessary to insert a new user into the database and inserts it to the User table.
+   * Receives the attributes necessary to insert a new user into the database and inserts it to the
+   * User table.
    */
   public static void addNewUser(String firstName, String lastName, String username, String email,
       int major, boolean is_mentor) {
     // Set up query to insert new user into database.
-    String query = "INSERT INTO User (first_name, last_name, username, email, major_id, is_mentor) "
-        + "VALUES (?, ?, ?, ?, ?, ?)";
+    String query = "INSERT INTO User (first_name, last_name, username, email, major_id, is_mentor)"
+        + " VALUES (?, ?, ?, ?, ?, ?)";
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
+      Connection connection = DriverManager.getConnection(
+          SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
 
       // Create the MySQL INSERT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);

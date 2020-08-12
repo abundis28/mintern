@@ -32,40 +32,6 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/mentee-signup")
 public class MenteeSignupServlet extends HttpServlet {
-
-  /**
-   * Gets majors from database and returns as JSON.
-   */
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Set up map to store majors.
-    Map<Integer, String> majors = new HashMap<Integer, String>();
-    
-    // Set up query to retrieve all subject tags.
-    String query = "SELECT * FROM Major";
-
-    try {
-      // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
-
-      // Create the MySQL prepared statement, execute it, and store the result.
-      PreparedStatement preparedStatement = connection.prepareStatement(query);
-      ResultSet queryResult = preparedStatement.executeQuery();
-
-      // Store queryResult in map and close connection to database.
-      while (queryResult.next()) {
-        majors.put(new Integer(queryResult.getInt(1)), queryResult.getString(2));
-      }
-      connection.close();
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, get the log of the error.
-      Logger logger = Logger.getLogger(MentorSignupServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
-
-    response.setContentType("application/json");
-    response.getWriter().println(Utility.convertToJsonUsingGson(majors));
-  }
   
   /**
    * Receives information about a new mentee and stores it in the database.
