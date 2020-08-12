@@ -257,3 +257,18 @@ function fetchMentorExperience() {
     $('.selectpicker').selectpicker('refresh');
   })
 }
+
+// Following functions for dev testing purposes.
+ 
+function emailQuestion(questionId) {
+  fetch('/email?type=question&elementId=' + questionId, {
+    method: 'POST'
+  })
+ }
+  
+ function emailAnswer(answerId) {
+  fetch('/email?type=answer&elementId=' + answerId, {
+    method: 'POST'
+  })
+ }
+ 
