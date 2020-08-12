@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * Function that will call other functions when the page loads. 
+ * Function that will call other functions when the index page loads. 
  */
 function loadIndex() {
   addAutoResize();
-  fetchAuthentication();
+  fetchAuthenticationForIndex();
   fetchForum();
 }
 
@@ -117,15 +117,15 @@ function addAutoResize() {
 }
 
 /**
- * Displays navbar authentication buttons according to login status.
+ * Displays navbar authentication buttons according to login status in index page.
  */
-function fetchAuthentication() {
+function fetchAuthenticationForIndex() {
   fetch('/authentication').then(response => response.json()).then(user => {
     if (user.isUserLoggedIn) {
       // If user is logged in, show logout button in navbar.
       if (!user.isUserRegistered) {
         // If logged in user is not registered, redirect to signup page.
-        window.location.replace(user.authenticationUrl);
+        window.location.replace('/signup.html');
       }
 
       // Delete signup button.
@@ -181,6 +181,9 @@ function addAuthenticationButton(authenticationUrl, buttonStyle, buttonText, nav
   authenticationButtonNavbar.appendChild(authenticationButtonItem);
 }
 
+/**
+ * Function that will call other functions when the signup page loads. 
+ */
 function loadSignup() {
   isUserRegistered();
   fetchMajors();
@@ -244,5 +247,39 @@ function fetchMentorExperience() {
 
     // Refresh select container to show options.
     $('.selectpicker').selectpicker('refresh');
+  })
+}
+
+/**
+ * Function that will call other functions when the verification page loads. 
+ */
+function loadVerification() {
+  fetchAuthenticationForVerification();
+}
+
+
+/**
+ * Displays logout button or redirects to index in verification page.
+ */
+function fetchAuthenticationForVerification() {
+  fetch('/authentication').then(response => response.json()).then(user => {
+    if (user.isUserLoggedIn) {
+      // If user is logged in, show logout button in navbar.
+      if (!user.isUserRegistered) {
+        // If logged in user is not registered, redirect to signup page.
+        window.location.replace('/signup.html');
+      }
+
+      // Add logout button to navbar.
+      addAuthenticationButton(
+          user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
+
+      // Show question submission box.
+      const questionSubmission = document.getElementById('post-question');
+      questionSubmission.style.display = "block";
+    } else {
+      // If user is logged out, show signup and login buttons in navbar.
+      window.location.replace('/index.html');
+    }
   })
 }
