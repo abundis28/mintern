@@ -221,9 +221,8 @@ function loadSignup() {
  * Fetches a single question and its answers from server, 
  * wraps each in an <li> element, and adds them to the DOM.
  */
-async function fetchAnswers() {
-  const response = await fetch('/answers');
-  const questionsObject = await response.json();
+function fetchAnswers() {
+  fetch('/authentication').then(response => response.json()).then(user => console.log(user));
 }
 
 /**
