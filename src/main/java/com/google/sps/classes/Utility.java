@@ -130,7 +130,7 @@ public final class Utility {
   /** 
    * Create a question object using the results from a query.
    */
-  private QuestionObject buildQuestion(ResultSet queryResult) {
+  public static QuestionObject buildQuestion(ResultSet queryResult) {
     QuestionObject question = new QuestionObject();
     try {
       question.setTitle(queryResult.getString(SqlConstants.QUESTION_FETCH_TITLE_COLUMN));
@@ -144,7 +144,7 @@ public final class Utility {
           SqlConstants.QUESTION_FETCH_NUMBEROFANSWERS_COLUMN));
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(FetchForumServlet.class.getName());
+      Logger logger = Logger.getLogger(Utility.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
     
