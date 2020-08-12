@@ -34,6 +34,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 /**
  * Servlet that sends emails to the author and followers of an answered question or a commented
@@ -47,6 +48,9 @@ public class EmailServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+    DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
+
     // Get type of notification to create from query string.
     String typeOfNotification = request.getParameter("typeOfNotification");
     // Get ID of modified element from query string and convert to int.
@@ -56,9 +60,7 @@ public class EmailServlet extends HttpServlet {
     // and get their emails concatenated in a string.
     String userEmails =
         Utility.getUserEmailsAsString(Utility.getUsersToNotify(typeOfNotification, modifiedElementId,
-                                              Utility.SQL_CLOUD_URL, Utility.SQL_CLOUD_USER, 
-                                              Utility.SQL_CLOUD_PASSWORD), Utility.SQL_CLOUD_URL, 
-                                              Utility.SQL_CLOUD_USER, Utility.SQL_CLOUD_PASSWORD);
+                                              pool), pool);
     String subject = "Activity on Mintern!";
     String message = "Dear mintern,\n" +
                      "You have new notifications in Mintern!\n" + 
