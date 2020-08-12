@@ -26,9 +26,15 @@ public class CommentObject {
   private String authorName;
   private Timestamp dateTime;
 
-  public CommentObject(String body, String authorName, Timestamp dateTime) {
+  public void setBody(String body) {
     this.body = body;
+  }
+
+  public void setAuthorName(String authorName) {
     this.authorName = authorName;
+  }
+
+  public void setDateTime(Timestamp dateTime) {
     this.dateTime = dateTime;
   }
 }
