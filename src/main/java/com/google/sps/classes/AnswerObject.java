@@ -53,6 +53,6 @@ public class AnswerObject {
   }  
 
   public void addComment(CommentObject comment) {
-    commentList.add(comment);
+    this.commentList.add(comment);
   }
 }
