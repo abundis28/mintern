@@ -34,7 +34,12 @@ public final class Utility {
   public static final String SQL_LOCAL_PASSWORD = "";
   
   // Query to retrieve data from all questions. Can be appended a WHERE condition to select
-  // specific questions.
+  // specific questions. Generates the following table:
+  //
+  // |-----------------Question-----------------|----FollowerCount--------|-----GetUsername-----|------AnswerCount------|
+  // +----+-------+------+----------+-----------+-------------+-----------+----------+----------+-------------+---------+
+  // | id | title | body | asker_id | date_time | question_id | followers | username | asker_id | question_id | answers |
+  // +----+-------+------+----------+-----------+-------------+-----------+----------+----------+-------------+---------+
   public static final String fetchQuestionsQuery = "SELECT * FROM Question "
       + "LEFT JOIN (SELECT question_id, COUNT(follower_id) followers FROM QuestionFollower "
       + "GROUP BY question_id) CountTable ON Question.id=CountTable.question_id "
