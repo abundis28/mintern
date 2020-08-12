@@ -33,13 +33,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** 
- * This servlet will retrieve the answers to be displayed on the page.
+ * Retrieves the answers to be displayed on the page.
  */
 @WebServlet("/answers")
 public class FetchAnswersServlet extends HttpServlet {
 
   /** 
-   * This method will get the answers for a single question and send them back as JSON.
+   * Gets the answers for a single question and send them back as JSON.
    * TODO(shaargtz): Modify to get style and functionality right.
    */
   @Override
