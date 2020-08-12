@@ -89,7 +89,7 @@ public class MentorSignupServlet extends HttpServlet {
     // Insert user and mentor experience to the database.
     Utility.addNewUser(firstName, lastName, username, email, major, is_mentor);
     addMentorExperience(experienceTags);
-    response.sendRedirect("/index.html");
+    response.sendRedirect("/verification.html");
   }
 
   /**
