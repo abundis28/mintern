@@ -37,12 +37,28 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarToggler">
-        <ul class="navbar-nav mt-2 mt-lg-0">
-          <!-- Logout Buttons -->
+        <ul class="navbar-nav mt-2 mt-lg-0 ml-auto">
+          <!-- Logout Button -->
           <div id="login"></div>
         </ul>
       </div>
     </nav>
-    
+    <!-- Sign Up -->
+    <div class="content m-5">
+      <div class="container text-center">
+        <h1 class="signup-title">Internship Verification</h1>
+        <h2 class="signup-subtitle text-muted">Please help us recognize you as a previous intern.</h2> 
+      </div>
+      <!-- Mentor Evidence Submissions -->
+      <div class="container">
+        <form method="POST" action="/mentor-evidence">
+            <!-- Paragraph -->
+            <div class="form-group">
+              <label for="evidence-paragraph">Write a short paragraph explaining your experience as an intern.</label>
+              <textarea name="paragraph" id="evidence-paragraph" class="form-control" placeholder="Write here" rows="5"></textarea>
+            </div>
+        </form>
+      </div>
+    </div>
   </body>
 </html>

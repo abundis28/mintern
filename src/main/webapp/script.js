@@ -273,10 +273,6 @@ function fetchAuthenticationForVerification() {
       // Add logout button to navbar.
       addAuthenticationButton(
           user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
-
-      // Show question submission box.
-      const questionSubmission = document.getElementById('post-question');
-      questionSubmission.style.display = "block";
     } else {
       // If user is logged out, show signup and login buttons in navbar.
       window.location.replace('/index.html');
