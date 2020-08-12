@@ -58,7 +58,7 @@ public class FetchForumServlet extends HttpServlet {
       
       // All of the rows from the query are looped if it goes through.
       while (queryResult.next()) {
-        questions.add(buildQuestion(queryResult));
+        questions.add(Utility.buildQuestion(queryResult));
       }
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
@@ -67,29 +67,5 @@ public class FetchForumServlet extends HttpServlet {
     }
     response.setContentType("application/json;");
     response.getWriter().println(Utility.convertToJsonUsingGson(questions));
-  }
-
-  /** 
-   * Create a question object using the results from a query.
-   */
-  private QuestionObject buildQuestion(ResultSet queryResult) {
-    QuestionObject question = new QuestionObject();
-    try {
-      question.setTitle(queryResult.getString(SqlConstants.QUESTION_FETCH_TITLE_COLUMN));
-      question.setBody(queryResult.getString(SqlConstants.QUESTION_FETCH_BODY_COLUMN));
-      question.setAskerId(queryResult.getInt(SqlConstants.QUESTION_FETCH_ASKERID_COLUMN));
-      question.setAskerName(queryResult.getString(SqlConstants.QUESTION_FETCH_AKSERNAME_COLUMN));
-      question.setDateTime(queryResult.getTimestamp(SqlConstants.QUESTION_FETCH_DATETIME_COLUMN));
-      question.setNumberOfFollowers(queryResult.getInt(
-          SqlConstants.QUESTION_FETCH_NUMBEROFFOLLOWERS_COLUMN));
-      question.setNumberOfAnswers(queryResult.getInt(
-          SqlConstants.QUESTION_FETCH_NUMBEROFANSWERS_COLUMN));
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(FetchForumServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
-    
-    return question;
   }
 }
