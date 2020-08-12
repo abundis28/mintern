@@ -17,7 +17,7 @@
  */
 function loadIndex() {
   addAutoResize();
-  fetchAuthentication('forum');
+  fetchAuthentication();
   fetchQuestions('forum');
 }
 
@@ -25,7 +25,7 @@ function loadIndex() {
  * Function that will call other functions when the question page loads. 
  */
 function loadQuestion() {
-  fetchAuthentication('question');
+  fetchAuthentication();
   fetchQuestions('question');
   fetchAnswers();
 }
@@ -64,12 +64,12 @@ async function fetchQuestions(page) {
  * Fetches a single question and its answers from server, 
  * wraps each in an <li> element, and adds them to the DOM.
  */
-function fetchAnswers() {
+async function fetchAnswers() {
   const question_id = (new URL(document.location)).searchParams.get("id");
   const response = await fetch('/fetch-answers?id=' + question_id);
   const answersObject = await response.json();
   const answersContainer = document.getElementById('answers');
-  answersObject.forEach(answer => {
+  Object.values(answersObject).forEach(answer => {
     answersContainer.appendChild(createAnswerElement(answer));
   });
 }
@@ -77,7 +77,7 @@ function fetchAnswers() {
 /**
  * Displays navbar authentication buttons according to login status.
  */
-function fetchAuthentication(page) {
+function fetchAuthentication() {
   fetch('/authentication').then(response => response.json()).then(user => {
     if (user.isUserLoggedIn) {
       // If user is logged in, show logout button in navbar.
@@ -94,9 +94,9 @@ function fetchAuthentication(page) {
       addAuthenticationButton(
           user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
 
-      if (page === 'forum') {
-        // Show question submission box.
-        const questionSubmission = document.getElementById('post-question');
+
+      const questionSubmission = document.getElementById('post-question');
+      if (questionSubmission) {
         questionSubmission.style.display = "block";
       }
     } else {
