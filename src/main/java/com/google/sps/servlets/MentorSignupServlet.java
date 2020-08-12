@@ -70,6 +70,9 @@ public class MentorSignupServlet extends HttpServlet {
     response.getWriter().println(Utility.convertToJsonUsingGson(subjectTags));
   }
   
+  /**
+   * Receives information about a new mentor and stores it in the database.
+   */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
