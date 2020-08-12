@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 /** 
  * This servlet will retrieve the answers to be displayed on the page.
  */
-@WebServlet("/answers")
+@WebServlet("/fetch-answers")
 public class FetchAnswersServlet extends HttpServlet {
 
   /** 
