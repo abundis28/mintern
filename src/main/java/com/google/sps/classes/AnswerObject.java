@@ -25,11 +25,16 @@ import java.util.List;
  */
 public class AnswerObject {
 
+  private int id;
   private String body;
   private String authorName;
   private Timestamp dateTime;
   private int votes;
   private List<CommentObject> commentList;
+
+  public void setId(int id) {
+    this.id = id;
+  }  
 
   public void setBody(String body) {
     this.body = body;

@@ -82,11 +82,11 @@ public class FetchAnswersServlet extends HttpServlet {
     response.getWriter().println(Utility.convertToJsonUsingGson(answers));
   }
 
-  private CommentObject buildComment(ResultSet queryResult) {
+  private AnswerObject buildAnswer(ResultSet queryResult) {
 
   }
-
-  private AnswerObject buildAnswer(ResultSet queryResult) {
+  
+  private CommentObject buildComment(ResultSet queryResult) {
 
   }
 }
