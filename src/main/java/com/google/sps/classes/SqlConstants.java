@@ -37,4 +37,16 @@ public final class SqlConstants {
   public static final int QUESTION_FETCH_MAXID_COLUMN = 1;
   public static final int FOLLOWER_INSERT_QUESTIONID_COLUMN = 1;
   public static final int FOLLOWER_INSERT_ASKERID_COLUMN = 2;
+
+  // Constants used for querying an answer.
+  public static final int ANSWER_FETCH_ID_COLUMN = 1;
+  public static final int ANSWER_FETCH_BODY_COLUMN = 3;
+  public static final int ANSWER_FETCH_AUTHORNAME_COLUMN = 8;
+  public static final int ANSWER_FETCH_DATETIME_COLUMN = 5;
+  public static final int ANSWER_FETCH_VOTES_COLUMN = 6;
+
+  // Constants used for querying a comment.
+  public static final int COMMENT_FETCH_BODY_COLUMN = 11;
+  public static final int COMMENT_FETCH_AUTHORNAME_COLUMN = 15;
+  public static final int COMMENT_FETCH_DATETIME_COLUMN = 13;
 }

@@ -83,9 +83,16 @@ public class FetchAnswersServlet extends HttpServlet {
   }
 
   private AnswerObject buildAnswer(ResultSet queryResult) {
+    AnswerObject answer = new AnswerObject();
+    try {
 
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(FetchAnswersServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
   }
-  
+
   private CommentObject buildComment(ResultSet queryResult) {
 
   }
