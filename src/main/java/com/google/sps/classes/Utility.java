@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.sql.DataSource;
 
 // TODO(aabundis): Add JUnit tests for utility functions.
 
@@ -140,13 +141,12 @@ public final class Utility {
    * Queries the mails of users to notify and returns them in a single string. Includes url, user
    * and password to give the user the ability to choose between local and cloud SQL variables.
    */
-  public static String getUserEmailsAsString(List<Integer> userIds, String SQL_URL, String SQL_USER, 
-                                             String SQL_PASSWORD) {
+  public static String getUserEmailsAsString(List<Integer> userIds, DataSource pool) {
     String userEmails = new String();
     for (int userId : userIds) {
       // Query the email of the current user.
       String query = "SELECT email FROM User WHERE id = " + userId;
-      try (Connection connection = DriverManager.getConnection(SQL_URL, SQL_USER, SQL_PASSWORD);
+      try (Connection connection = pool.getConnection();
         PreparedStatement pst = connection.prepareStatement(query);
         ResultSet rs = pst.executeQuery()) {
         rs.next();
@@ -170,7 +170,7 @@ public final class Utility {
    * variables.
    */
   public static List<Integer> getUsersToNotify(String typeOfNotification, int modifiedElementId,
-                                         String SQL_URL, String SQL_USER, String SQL_PASSWORD) {
+                                         DataSource pool) {
     List<Integer> usersToNotify = new ArrayList<>();
     String query = "";
     if (typeOfNotification.equals("question")) {
@@ -184,7 +184,7 @@ public final class Utility {
     }
     if (query.equals("")) { return usersToNotify; }
     // Query the infor1mation from the corresponding table defined in the query.
-    try (Connection connection = DriverManager.getConnection(SQL_URL, SQL_USER, SQL_PASSWORD);
+    try (Connection connection = pool.getConnection();
         PreparedStatement pst = connection.prepareStatement(query);
         ResultSet rs = pst.executeQuery()) {
       while(rs.next()){
