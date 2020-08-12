@@ -43,10 +43,16 @@ public final class Utility {
       + "LEFT JOIN (SELECT question_id, COUNT(id) answers FROM Answer "
       + "GROUP BY question_id) AnswerTable ON Question.id=AnswerTable.question_id ";
 
+  // Query to get answers and comments from a question. Generates the following table:
+  //
+  // |-------------------------Answer--------------------------|AnswerUsername-|---------------------Comment-------------------|CommentUsername|
+  // +----+-------------+------+-----------+-----------+-------+----+----------+----+-----------+------+-----------+-----------+----+----------+
+  // | id | question_id | body | author_id | date_time | votes | id | username | id | answer_id | body | author_id | date_time | id | username |
+  // +----+-------------+------+-----------+-----------+-------+----+----------+----+-----------+------+-----------+-----------+----+----------+
   public static final String fetchAnswersAndCommentsQuery = "SELECT * FROM Answer LEFT JOIN " 
-      + "(SELECT id, username FROM User) AnswerNameTable ON Answer.author_id=AnswerNameTable.id "
+      + "(SELECT id, username FROM User) AnswerUsername ON Answer.author_id=AnswerUsername.id "
       + "LEFT JOIN Comment ON Answer.id=Comment.answer_id LEFT JOIN "
-      + "(SELECT id, username FROM User) CommentNameTable ON Answer.author_id=CommentNameTable.id"
+      + "(SELECT id, username FROM User) CommentUsername ON Answer.author_id=CommentUsername.id"
       + " WHERE Answer.question_id=?;";
 
   /**
