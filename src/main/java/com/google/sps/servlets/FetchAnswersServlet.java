@@ -14,6 +14,8 @@
 
 package com.google.sps.servlets;
 
+import com.google.sps.classes.AnswerObject;
+import com.google.sps.classes.CommentObject;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
 import java.sql.Connection;
@@ -53,11 +55,12 @@ public class FetchAnswersServlet extends HttpServlet {
     String query = Utility.fetchAnswersAndCommentsQuery;
 
     // The connection and query are attempted.
-    try (Connection connection = DriverManager.getConnection(
+    try {
+        Connection connection = DriverManager.getConnection(
             Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setInt(1, question_id);
-        ResultSet queryResult = preparedStatement.executeQuery()) {
+        ResultSet queryResult = preparedStatement.executeQuery();
         // All of the rows from the query are looped if it goes through.
         while (queryResult.next()) {
           int currentAnswerId = queryResult.getInt(1);
