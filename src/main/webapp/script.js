@@ -231,7 +231,7 @@ function fetchMajors() {
 function fetchMentorExperience() {
   fetch('/mentor-signup').then(response => response.json()).then(subjectTags => {
     // Get select container where new options will be appended.
-    const mentorExperienceSelect = document.getElementById('experience');
+    const mentorExperienceSelect = document.getElementById('mentor-experience');
     mentorExperienceSelect.innerHTML = '';
 
     subjectTags.forEach(subjectTag => {

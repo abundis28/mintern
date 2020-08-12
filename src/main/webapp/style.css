@@ -1,7 +1,3 @@
-.btn {
-  margin-right: 10px;
-}
-
 #forum {
   width: 60%;
   margin: auto;
@@ -17,4 +13,31 @@
 #question-body {
   box-sizing: border-box;
   resize: none;
+}
+
+.btn {
+  margin-right: 10px;
+}
+
+.nav-pills a {
+  font-size: xx-large;
+  color: #6cb4b8ff
+}
+
+.nav-pills .nav-link.active {
+  background-color: #6cb4b8ff!important;
+}
+
+.signup-subtitle {
+  font-weight: 200;
+}
+
+.signup-title {
+  text-transform: uppercase;
+  font-weight: 200;
+}
+
+.signup-title .name {
+  color: #6cb4b8ff;
+  font-weight: 400;
 }
