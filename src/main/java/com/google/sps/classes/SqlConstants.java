@@ -22,7 +22,7 @@ public final class SqlConstants {
   public static final int QUESTION_FETCH_TITLE = 2;
   public static final int QUESTION_FETCH_BODY = 3;
   public static final int QUESTION_FETCH_ASKERID = 4;
-  public static final int QUESTION_FETCH_AKSERNAME = 8;
+  public static final int QUESTION_FETCH_ASKERNAME = 8;
   public static final int QUESTION_FETCH_DATETIME = 5;
   public static final int QUESTION_FETCH_NUMBEROFFOLLOWERS = 7;
   public static final int QUESTION_FETCH_NUMBEROFANSWERS = 11;
@@ -38,7 +38,7 @@ public final class SqlConstants {
   public static final int FOLLOWER_INSERT_ASKERID = 2;
 
   // Constants used for querying a user.
-  public static final int USER_FETCH_EMAIL = 5;
+  public static final int USER_FETCH_ID = 1;
   
   // Constants used for inserting a new user.
   public static final int USER_INSERT_FIRSTNAME = 1;

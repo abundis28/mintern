@@ -70,7 +70,7 @@ public final class Utility {
     String email = userService.getCurrentUser().getEmail();
 
     // Set up query to check if user is already registered.
-    String query = "SELECT * FROM User WHERE email = ?";
+    String query = "SELECT * FROM User WHERE email = '" + email + "'";
 
     try {
       // Establish connection to MySQL database.
@@ -80,12 +80,11 @@ public final class Utility {
       // Create the MySQL prepared statement, execute it, and store the result.
       // Takes the query specified above and sets the email field to the logged in user's email.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.setString(SqlConstants.USER_FETCH_EMAIL, email);
       ResultSet queryResult = preparedStatement.executeQuery();
 
       // If email is found, set userId to the ID retrieved from the database.
       if (queryResult.next()) {
-        userId = queryResult.getInt(1);
+        userId = queryResult.getInt(SqlConstants.USER_FETCH_ID);
       } 
       connection.close();
     } catch (SQLException exception) {
@@ -114,12 +113,12 @@ public final class Utility {
 
       // Create the MySQL INSERT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.setString(SqlConstants.ADD_NEW_USER_FIRSTNAME, firstName);
-      preparedStatement.setString(SqlConstants.ADD_NEW_USER_LASTNAME, lastName);
-      preparedStatement.setString(SqlConstants.ADD_NEW_USER_USERNAME, username);
-      preparedStatement.setString(SqlConstants.ADD_NEW_USER_EMAIL, email);
-      preparedStatement.setInt(SqlConstants.ADD_NEW_USER_MAJOR, major);
-      preparedStatement.setBoolean(SqlConstants.ADD_NEW_USER_IS_MENTOR, isMentor);
+      preparedStatement.setString(SqlConstants.USER_INSERT_FIRSTNAME, firstName);
+      preparedStatement.setString(SqlConstants.USER_INSERT_LASTNAME, lastName);
+      preparedStatement.setString(SqlConstants.USER_INSERT_USERNAME, username);
+      preparedStatement.setString(SqlConstants.USER_INSERT_EMAIL, email);
+      preparedStatement.setInt(SqlConstants.USER_INSERT_MAJOR, major);
+      preparedStatement.setBoolean(SqlConstants.USER_INSERT_IS_MENTOR, is_mentor);
 
       // Execute the prepared statement and close connection.
       preparedStatement.execute();
