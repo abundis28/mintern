@@ -14,6 +14,7 @@
 
 package com.google.sps.servlets;
 
+import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
 import java.sql.*;
@@ -50,7 +51,9 @@ public class MentorEvidenceServlet extends HttpServlet {
     int userId = Utility.getUserId();
 
     // Set up query to insert new experience tag to user.
-    String query = "REPLACE INTO MentorEvidence (mentor_id, paragraph) VALUES (?, ?)";
+    String query = "UPDATE MentorEvidence "
+        + "SET paragraph = ? "
+        + "WHERE mentor_id = ?";
 
     try {
       // Establish connection to MySQL database.
@@ -59,8 +62,8 @@ public class MentorEvidenceServlet extends HttpServlet {
 
       // Create the MySQL INSERT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.setInt(1, userId);
-      preparedStatement.setString(2, paragraph);
+      preparedStatement.setString(SqlConstants.MENTOR_EVIDENCE_PARAGRAPH, paragraph);
+      preparedStatement.setInt(SqlConstants.MENTOR_EVIDENCE_USERID, userId);
       preparedStatement.execute();
       connection.close();
     } catch (SQLException exception) {

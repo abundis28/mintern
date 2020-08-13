@@ -89,6 +89,7 @@ public class MentorSignupServlet extends HttpServlet {
     // Insert user and mentor experience to the database.
     Utility.addNewUser(firstName, lastName, username, email, major, is_mentor);
     addMentorExperience(experienceTags);
+    addMentorEvidence();
     response.sendRedirect("/verification.html");
   }
 
@@ -104,7 +105,8 @@ public class MentorSignupServlet extends HttpServlet {
 
       try {
         // Establish connection to MySQL database.
-        Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+        Connection connection = DriverManager.getConnection(
+            Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
 
         // Create the MySQL INSERT prepared statement.
         PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -117,6 +119,34 @@ public class MentorSignupServlet extends HttpServlet {
         Logger logger = Logger.getLogger(MentorSignupServlet.class.getName());
         logger.log(Level.SEVERE, exception.getMessage(), exception);
       }
+    }
+  }
+
+  /**
+   * Inserts a new entry to MentorEvidence table with default values.
+   */
+  private void addMentorEvidence() {
+    int userId = Utility.getUserId();
+    String paragraph = "";
+
+    // Set up query to insert mentor evidence.
+    String query = "INSERT INTO MentorEvidence "
+        + "(mentor_id, approvals, is_approved, is_rejected, paragraph) "
+        + "VALUES (" + userId + ", 0, FALSE, FALSE, " + paragraph + ")";
+
+    try {
+      // Establish connection to MySQL database.
+      Connection connection = DriverManager.getConnection(
+          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+
+      // Create the MySQL INSERT prepared statement.
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      preparedStatement.execute();
+      connection.close();
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, get the log of the error.
+      Logger logger = Logger.getLogger(MentorSignupServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
   }
 }
