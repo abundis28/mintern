@@ -66,6 +66,15 @@ CREATE TABLE MentorExperience (
   REFERENCES SubjectTag (id)
 );
 
+-- Evidence of a user that is a mentor that proves them a previous intern.
+CREATE TABLE MentorEvidence (
+  mentor_id INT NOT NULL,
+  paragraph TEXT,
+  PRIMARY KEY (mentor_id),
+  FOREIGN KEY (mentor_id) 
+  REFERENCES User (id)
+);
+
 -- A question to be posted in the forum.
 CREATE TABLE Question (
   id INT NOT NULL AUTO_INCREMENT,

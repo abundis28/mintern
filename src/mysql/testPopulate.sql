@@ -61,6 +61,12 @@ VALUES
   (3, 1),
   (3, 2);
 
+INSERT INTO MentorEvidence (mentor_id, paragraph)
+VALUES
+  (1, 'I worked at Google. Hi.'),
+  (2, 'I worked at Google. Please approve.'),
+  (3, 'I worked at Google. Here is a link: link.com');
+
 INSERT INTO Question (title, body, asker_id, date_time) 
 VALUES 
   ('When are the Google SWE interviews?', 'I was wondering if it is this week or the other', 4, '2020-07-29 09:00:00.000000'),
