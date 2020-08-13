@@ -20,7 +20,7 @@ import com.google.gson.Gson;
 import com.google.sps.classes.SqlConstants;
 import java.sql.*;
 import java.util.logging.Level;
-import java.util.logging.Logger; 
+import java.util.logging.Logger;
 
 // TODO(aabundis): Add JUnit tests for utility functions.
 
@@ -35,7 +35,7 @@ public final class Utility {
   
   // Query to retrieve data from a question. Generates the following table:
   //
-  // |-----------------Question-----------------|----FollowerCount--------|-----GetUsername-----|------AnswerCount------|
+  // |-----------------Question-----------------|------FollowerCount------|-----GetUsername-----|------AnswerCount------|
   // +----+-------+------+----------+-----------+-------------+-----------+----------+----------+-------------+---------+
   // | id | title | body | asker_id | date_time | question_id | followers | username | asker_id | question_id | answers |
   // +----+-------+------+----------+-----------+-------------+-----------+----------+----------+-------------+---------+
