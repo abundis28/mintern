@@ -35,7 +35,7 @@ import javax.servlet.http.HttpServletResponse;
  * This servlet will post an answer to a question.
  */
 @WebServlet("/post-answer")
-public class PostQuestionServlet extends HttpServlet {
+public class PostAnswerServlet extends HttpServlet {
 
   /** 
    * This method will execute the query to insert an answer to the database.
