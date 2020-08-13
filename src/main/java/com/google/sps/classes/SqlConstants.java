@@ -36,10 +36,6 @@ public final class SqlConstants {
   public static final int QUESTION_FETCH_MAXID_COLUMN = 1;
   public static final int FOLLOWER_INSERT_QUESTIONID_COLUMN = 1;
   public static final int FOLLOWER_INSERT_ASKERID_COLUMN = 2;
-
-  // Constants to update mentor evidence.
-  public static final int MENTOR_EVIDENCE_PARAGRAPH = 1;
-  public static final int MENTOR_EVIDENCE_USERID = 2;
   
   // Constants used to fetch the elements of notification.
   public static final int NOTIFICATION_FETCH_MESSAGE = 1;
@@ -60,4 +56,12 @@ public final class SqlConstants {
 
   // Constant used to fetch the ID of every user following a question or answer.
   public static final int CREATE_NOTIFICATION_FETCH_USERID = 1;
+
+  // Constants to update mentor evidence.
+  public static final int MENTOR_EVIDENCE_PARAGRAPH = 1;
+  public static final int MENTOR_EVIDENCE_USERID = 2;
+
+  // Constatns to add approvers to mentors.
+  public static final int MENTOR_APPROVAL_USERID = 1;
+  public static final int MENTOR_APPROVAL_APPROVERID = 2;
 }

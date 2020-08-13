@@ -39,8 +39,9 @@ public class MentorEvidenceServlet extends HttpServlet {
     // Get variable from HTML form.
     String paragraph = request.getParameter("paragraph");
 
-    // Update mentor evidence in database.
+    // Update mentor evidence and add approvers in database.
     updateMentorEvidence(paragraph);
+    addApprovers();
     response.sendRedirect("/index.html");
   }
 
@@ -70,6 +71,38 @@ public class MentorEvidenceServlet extends HttpServlet {
       // If the connection or the query don't go through, get the log of the error.
       Logger logger = Logger.getLogger(MentorEvidenceServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+  }
+
+  /**
+   * Adds a list of approvers (currently only the admins) to the mentor in the database.
+   */
+  private void addApprovers() {
+    int userId = Utility.getUserId();
+    // Create array to store IDs of approvers.
+    int[] approvers = {1, 2, 3};
+
+    for (int approverId : approvers) {
+      // Set up query to insert new experience tag to user.
+      String query = "INSERT INTO MentorApproval "
+          + "VALUES (?, ?, FALSE, FALSE)";
+
+      try {
+        // Establish connection to MySQL database.
+        Connection connection = DriverManager.getConnection(
+            Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+
+        // Create the MySQL INSERT prepared statement.
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(SqlConstants.MENTOR_APPROVAL_USERID, userId);
+        preparedStatement.setInt(SqlConstants.MENTOR_APPROVAL_APPROVERID, approverId);
+        preparedStatement.execute();
+        connection.close();
+      } catch (SQLException exception) {
+        // If the connection or the query don't go through, get the log of the error.
+        Logger logger = Logger.getLogger(MentorEvidenceServlet.class.getName());
+        logger.log(Level.SEVERE, exception.getMessage(), exception);
+      }
     }
   }
 }
