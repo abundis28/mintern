@@ -80,12 +80,12 @@ public class MentorSignupServlet extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
 
     // Get variables from HTML form.
-    String firstName = request.getParameter(SqlConstants.SIGNUP_FIRST_NAME);
-    String lastName = request.getParameter(SqlConstants.SIGNUP_LAST_NAME);
-    String username = request.getParameter(SqlConstants.SIGNUP_USERNAME);
+    String firstName = request.getParameter("first-name");
+    String lastName = request.getParameter("last-name");
+    String username = request.getParameter("username");
     String email = userService.getCurrentUser().getEmail();
-    int major = Utility.tryParseInt(request.getParameter(SqlConstants.SIGNUP_MAJOR));
-    String[] experienceTags = request.getParameterValues(SqlConstants.SIGNUP_EXPERIENCE);
+    int major = Utility.tryParseInt(request.getParameter("major"));
+    String[] experienceTags = request.getParameterValues("experience");
     Boolean isMentor = true;
 
     // Insert user and mentor experience to the database.
@@ -113,8 +113,8 @@ public class MentorSignupServlet extends HttpServlet {
 
         // Create the MySQL INSERT prepared statement.
         PreparedStatement preparedStatement = connection.prepareStatement(query);
-        preparedStatement.setInt(SqlConstants.MENTOR_EXPERIENCE_ID, userId);
-        preparedStatement.setInt(SqlConstants.MENTOR_EXPERIENCE_TAG, Utility.tryParseInt(tag));
+        preparedStatement.setInt(SqlConstants.MENTOR_EXPERIENCE_INSERT_ID, userId);
+        preparedStatement.setInt(SqlConstants.MENTOR_EXPERIENCE_INSERT_TAG, Utility.tryParseInt(tag));
         preparedStatement.execute();
         connection.close();
       } catch (SQLException exception) {

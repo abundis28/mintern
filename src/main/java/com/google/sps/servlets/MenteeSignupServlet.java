@@ -42,11 +42,11 @@ public class MenteeSignupServlet extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
 
     // Get variables from HTML form.
-    String firstName = request.getParameter(SqlConstants.SIGNUP_FIRST_NAME);
-    String lastName = request.getParameter(SqlConstants.SIGNUP_LAST_NAME);
-    String username = request.getParameter(SqlConstants.SIGNUP_USERNAME);
+    String firstName = request.getParameter("first-name");
+    String lastName = request.getParameter("last-name");
+    String username = request.getParameter("username");
     String email = userService.getCurrentUser().getEmail();
-    int major = Utility.tryParseInt(request.getParameter(SqlConstants.SIGNUP_MAJOR));
+    int major = Utility.tryParseInt(request.getParameter("major"));
     Boolean isMentor = false;
 
     // Insert user to the database.

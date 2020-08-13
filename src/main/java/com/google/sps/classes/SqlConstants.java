@@ -37,25 +37,18 @@ public final class SqlConstants {
   public static final int FOLLOWER_INSERT_QUESTIONID_COLUMN = 1;
   public static final int FOLLOWER_INSERT_ASKERID_COLUMN = 2;
 
-  // Constants to get user ID.
-  public static final int GET_USER_ID_EMAIL = 1;
+  // Constants used for querying a user.
+  public static final int USER_FETCH_EMAIL = 5;
   
-  // Constants to add new user.
-  public static final int ADD_NEW_USER_FIRST_NAME = 1;
-  public static final int ADD_NEW_USER_LAST_NAME = 2;
-  public static final int ADD_NEW_USER_USERNAME = 3;
-  public static final int ADD_NEW_USER_EMAIL = 4;
-  public static final int ADD_NEW_USER_MAJOR = 5;
-  public static final int ADD_NEW_USER_IS_MENTOR = 6;
-  
-  // Constants to get signup servlets parameters.
-  public static final String SIGNUP_FIRST_NAME = "first-name";
-  public static final String SIGNUP_LAST_NAME = "last-name";
-  public static final String SIGNUP_USERNAME = "username";
-  public static final String SIGNUP_MAJOR = "major";
-  public static final String SIGNUP_EXPERIENCE = "experience";
+  // Constants used for inserting a new user.
+  public static final int USER_INSERT_FIRST_NAME = 1;
+  public static final int USER_INSERT_LAST_NAME = 2;
+  public static final int USER_INSERT_USERNAME = 3;
+  public static final int USER_INSERT_EMAIL = 4;
+  public static final int USER_INSERT_MAJOR = 5;
+  public static final int USER_INSERT_IS_MENTOR = 6;
 
-  // Constants to add mentor experience.
-  public static final int MENTOR_EXPERIENCE_ID = 1;
-  public static final int MENTOR_EXPERIENCE_TAG = 2;
+  // Constants used for inserting mentor experience.
+  public static final int MENTOR_EXPERIENCE_INSERT_ID = 1;
+  public static final int MENTOR_EXPERIENCE_INSERT_TAG = 2;
 }

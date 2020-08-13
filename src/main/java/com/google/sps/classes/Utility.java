@@ -70,7 +70,7 @@ public final class Utility {
     String email = userService.getCurrentUser().getEmail();
 
     // Set up query to check if user is already registered.
-    String query = "SELECT id FROM User WHERE email = ?";
+    String query = "SELECT * FROM User WHERE email = ?";
 
     try {
       // Establish connection to MySQL database.
@@ -80,7 +80,7 @@ public final class Utility {
       // Create the MySQL prepared statement, execute it, and store the result.
       // Takes the query specified above and sets the email field to the logged in user's email.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.setString(SqlConstants.GET_USER_ID_EMAIL, email);
+      preparedStatement.setString(SqlConstants.USER_FETCH_EMAIL, email);
       ResultSet queryResult = preparedStatement.executeQuery();
 
       // If email is found, set userId to the ID retrieved from the database.
