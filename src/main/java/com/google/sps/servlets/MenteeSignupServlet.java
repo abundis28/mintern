@@ -16,6 +16,7 @@ package com.google.sps.servlets;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
 import java.sql.*;
@@ -41,15 +42,15 @@ public class MenteeSignupServlet extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
 
     // Get variables from HTML form.
-    String firstName = request.getParameter("first-name");
-    String lastName = request.getParameter("last-name");
-    String username = request.getParameter("username");
+    String firstName = request.getParameter(SqlConstants.SIGNUP_FIRST_NAME);
+    String lastName = request.getParameter(SqlConstants.SIGNUP_LAST_NAME);
+    String username = request.getParameter(SqlConstants.SIGNUP_USERNAME);
     String email = userService.getCurrentUser().getEmail();
-    int major = Utility.tryParseInt(request.getParameter("major"));
-    Boolean is_mentor = false;
+    int major = Utility.tryParseInt(request.getParameter(SqlConstants.SIGNUP_MAJOR));
+    Boolean isMentor = false;
 
     // Insert user to the database.
-    Utility.addNewUser(firstName, lastName, username, email, major, is_mentor);
+    Utility.addNewUser(firstName, lastName, username, email, major, isMentor);
     response.sendRedirect("/index.html");
   }
 }

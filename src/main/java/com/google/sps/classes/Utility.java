@@ -16,6 +16,7 @@ package com.google.sps.classes;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.sps.classes.SqlConstants;
 import com.google.gson.Gson;
 import java.sql.*;
 import java.util.logging.Level;
@@ -79,7 +80,7 @@ public final class Utility {
       // Create the MySQL prepared statement, execute it, and store the result.
       // Takes the query specified above and sets the email field to the logged in user's email.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.setString(1, email);
+      preparedStatement.setString(SqlConstants.GET_USER_ID_EMAIL, email);
       ResultSet queryResult = preparedStatement.executeQuery();
 
       // If email is found, set userId to the ID retrieved from the database.
@@ -113,12 +114,12 @@ public final class Utility {
 
       // Create the MySQL INSERT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.setString(1, firstName);
-      preparedStatement.setString(2, lastName);
-      preparedStatement.setString(3, username);
-      preparedStatement.setString(4, email);
-      preparedStatement.setInt(5, major);
-      preparedStatement.setBoolean(6, is_mentor);
+      preparedStatement.setString(SqlConstants.ADD_NEW_USER_FIRST_NAME, firstName);
+      preparedStatement.setString(SqlConstants.ADD_NEW_USER_LAST_NAME, lastName);
+      preparedStatement.setString(SqlConstants.ADD_NEW_USER_USERNAME, username);
+      preparedStatement.setString(SqlConstants.ADD_NEW_USER_EMAIL, email);
+      preparedStatement.setInt(SqlConstants.ADD_NEW_USER_MAJOR, major);
+      preparedStatement.setBoolean(SqlConstants.ADD_NEW_USER_IS_MENTOR, isMentor);
 
       // Execute the prepared statement and close connection.
       preparedStatement.execute();
