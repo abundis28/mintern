@@ -93,13 +93,13 @@ public class NotificationServlet extends HttpServlet {
                                                              Utility.SQL_LOCAL_USER,
                                                              Utility.SQL_LOCAL_PASSWORD);
          PreparedStatement pst = connection.prepareStatement(query);
-         ResultSet rs = pst.executeQuery()) {
+         ResultSet resultSet = pst.executeQuery()) {
       // Iterate through the result of the query to populate the ArrayList and return it as JSON.
-      while (rs.next()){
+      while (resultSet.next()){
         Notification notification = new Notification();
-        notification.message = rs.getString(SqlConstants.NOTIFICATION_FETCH_MESSAGE);
-        notification.url = rs.getString(SqlConstants.NOTIFICATION_FETCH_URL);
-        notification.timestamp = rs.getTimestamp(SqlConstants.NOTIFICATION_FETCH_TIMESTAMP);
+        notification.message = resultSet.getString(SqlConstants.NOTIFICATION_FETCH_MESSAGE);
+        notification.url = resultSet.getString(SqlConstants.NOTIFICATION_FETCH_URL);
+        notification.timestamp = resultSet.getTimestamp(SqlConstants.NOTIFICATION_FETCH_TIMESTAMP);
         // Store object in ArrayList.
         notifications.add(notification);
       }
@@ -156,10 +156,10 @@ public class NotificationServlet extends HttpServlet {
     // Query the information from Notification table.
     int notificationId = 0;
     try (PreparedStatement pst = connection.prepareStatement(query);
-         ResultSet rs = pst.executeQuery()) {
+         ResultSet resultSet = pst.executeQuery()) {
       // Select the id of the last notification to be inserted.
-      rs.last();
-      notificationId = rs.getInt(1);
+      resultSet.last();
+      notificationId = resultSet.getInt(1);
     } catch (SQLException ex) {
       Logger logger = Logger.getLogger(NotificationServlet.class.getName());
       logger.log(Level.SEVERE, ex.getMessage(), ex);
@@ -177,13 +177,13 @@ public class NotificationServlet extends HttpServlet {
     try (Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL, 
             Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
           PreparedStatement pst = connection.prepareStatement(query);
-          ResultSet rs = pst.executeQuery()) {
+          ResultSet resultSet = pst.executeQuery()) {
       // Insert notification and get its ID to relate in UserNotification table.
       insertToNotification(connection, notificationMessage, notificationUrl, localTimestamp);
       int notificationId = getLastInsertedNotificationId(connection);
       // Iterate through the query's result set to insert all notifications.
-      while (rs.next()) {
-        insertToUserNotification(connection, rs.getInt(1), notificationId);
+      while (resultSet.next()) {
+        insertToUserNotification(connection, resultSet.getInt(1), notificationId);
       }
       // Close the connection once all insertions have been performed.
       connection.close();
