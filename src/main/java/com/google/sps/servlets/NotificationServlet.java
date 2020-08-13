@@ -159,7 +159,7 @@ public class NotificationServlet extends HttpServlet {
          ResultSet resultSet = pst.executeQuery()) {
       // Select the id of the last notification to be inserted.
       resultSet.last();
-      notificationId = resultSet.getInt(1);
+      notificationId = resultSet.getInt(SqlConstants.LAST_NOTIFICATION_FETCH_ID);
     } catch (SQLException ex) {
       Logger logger = Logger.getLogger(NotificationServlet.class.getName());
       logger.log(Level.SEVERE, ex.getMessage(), ex);
@@ -183,7 +183,7 @@ public class NotificationServlet extends HttpServlet {
       int notificationId = getLastInsertedNotificationId(connection);
       // Iterate through the query's result set to insert all notifications.
       while (resultSet.next()) {
-        insertToUserNotification(connection, resultSet.getInt(1), notificationId);
+        insertToUserNotification(connection, resultSet.getInt(SqlConstants.CREATE_NOTIFICATION_FETCH_USERID), notificationId);
       }
       // Close the connection once all insertions have been performed.
       connection.close();
