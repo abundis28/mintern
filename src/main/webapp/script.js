@@ -49,7 +49,7 @@ async function fetchQuestions(page) {
     questionsContainer = document.getElementById('forum');
     hasRedirect = true;
   } else if (page === 'question') {
-    question_id = (new URL(document.location)).searchParams.get("id");
+    question_id = getQuestionId();
     questionsContainer = document.getElementById('question');
     hasRedirect = false;
   }
@@ -65,7 +65,7 @@ async function fetchQuestions(page) {
  * wraps each in an <li> element, and adds them to the DOM.
  */
 async function fetchAnswers() {
-  const question_id = (new URL(document.location)).searchParams.get("id");
+  const question_id = getQuestionId();
   const response = await fetch('/fetch-answers?id=' + question_id);
   const answersObject = await response.json();
   const answersContainer = document.getElementById('answers');
@@ -357,4 +357,8 @@ function isUserRegistered() {
       window.location.replace("/index.html");
     }
   })
+}
+
+function getQuestionId() {
+  return (new URL(document.location)).searchParams.get("id");
 }
