@@ -242,7 +242,27 @@ function createQuestionElement(question, hasRedirect) {
  * to be displayed in the DOM.
  */
 function createAnswerElement(answer) {
-
+  const answersElement = document.createElement('li');
+  answersElement.setAttribute('class', 'list-group-item');
+  answersElement.innerText = answer.body;
+  const votesElement = document.createElement('small');
+  votesElement.setAttribute('class', 'float-right');
+  if (answer.votes === 1) {
+    // Avoid writing '1 votes'.
+    votesElement.innerText = answer.votes + ' vote';
+  } else {
+    votesElement.innerText = answer.votes + ' votes';
+  }
+  answersElement.appendChild(votesElement);
+  answersElement.appendChild(document.createElement('br'));
+  const authorElement = document.createElement('small');
+  authorElement.innerText = answer.author;
+  answersElement.appendChild(authorElement);
+  answersElement.appendChild(document.createElement('br'));
+  const dateElement = document.createElement('small');
+  dateElement.setAttribute('class', 'text-muted');
+  dateElement.innerText = answer.dateTime;
+  answersElement.appendChild(dateElement);
 }
 
 /** 
