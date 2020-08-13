@@ -91,7 +91,7 @@ public class PostQuestionServlet extends HttpServlet {
       PreparedStatement maxIdStatement = connection.prepareStatement(maxIdQuery);
       ResultSet queryResult = maxIdStatement.executeQuery();
       queryResult.next();
-      id = queryResult.getInt(SqlConstants.QUESTION_FETCH_MAXID_COLUMN);
+      id = queryResult.getInt(SqlConstants.ANSWER_FETCH_MAXID_COLUMN);
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
       Logger logger = Logger.getLogger(PostAnswerServlet.class.getName());
@@ -111,8 +111,8 @@ public class PostQuestionServlet extends HttpServlet {
       String insertFollowerQuery = "INSERT INTO AnswerFollower(answer_id, follower_id) "
           + "VALUES (?,?)";
       PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
-      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_QUESTIONID_COLUMN, latestAnswerId);
-      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_ASKERID_COLUMN, author_id);
+      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_ANSWERID_COLUMN, latestAnswerId);
+      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_AUTHORID_COLUMN, author_id);
       followerStatement.executeUpdate();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
