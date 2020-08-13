@@ -15,6 +15,7 @@
 package com.google.sps.servlets;
  
 import com.google.sps.classes.Notification;
+import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
 import java.sql.*;
@@ -96,9 +97,9 @@ public class NotificationServlet extends HttpServlet {
       // Iterate through the result of the query to populate the ArrayList and return it as JSON.
       while (rs.next()){
         Notification notification = new Notification();
-        notification.message = rs.getString(1);
-        notification.url = rs.getString(2);
-        notification.timestamp = rs.getTimestamp(3);
+        notification.message = rs.getString(SqlConstants.NOTIFICATION_FETCH_MESSAGE);
+        notification.url = rs.getString(SqlConstants.NOTIFICATION_FETCH_URL);
+        notification.timestamp = rs.getTimestamp(SqlConstants.NOTIFICATION_FETCH_TIMESTAMP);
         // Store object in ArrayList.
         notifications.add(notification);
       }
@@ -119,9 +120,9 @@ public class NotificationServlet extends HttpServlet {
     try {
       // Prepare the statement to be inserted.
       PreparedStatement prepStatement = connection.prepareStatement(query);
-      prepStatement.setString(1, message);
-      prepStatement.setString(2, notificationUrl);
-      prepStatement.setTimestamp(3, dateTime);
+      prepStatement.setString(SqlConstants.NOTIFICATION_INSERT_MESSAGE, message);
+      prepStatement.setString(SqlConstants.NOTIFICATION_INSERT_URL, notificationUrl);
+      prepStatement.setTimestamp(SqlConstants.NOTIFICATION_INSERT_DATETIME, dateTime);
       prepStatement.executeUpdate();
     } catch (SQLException ex) {
       Logger logger = Logger.getLogger(NotificationServlet.class.getName());
@@ -138,8 +139,8 @@ public class NotificationServlet extends HttpServlet {
     try {
       // Prepare the statement to be inserted.
       PreparedStatement prepStatement = connection.prepareStatement(query);
-      prepStatement.setInt(1, userId);
-      prepStatement.setInt(2, notificationId);
+      prepStatement.setInt(SqlConstants.USER_NOTIFICATION_INSERT_USERID, userId);
+      prepStatement.setInt(SqlConstants.USER_NOTIFICATION_INSERT_NOTIFICATIONID, notificationId);
       prepStatement.executeUpdate();
     } catch (SQLException ex) {
       Logger logger = Logger.getLogger(NotificationServlet.class.getName());
