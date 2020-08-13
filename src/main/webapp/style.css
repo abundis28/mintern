@@ -47,3 +47,7 @@
   color: #6cb4b8ff;
   font-weight: 400;
 }
+
+#backToForum-btn {
+  display: none;
+}

@@ -30,6 +30,37 @@ function onBodyLoadQuestion() {
 }
 
 /**
+* Searches questions that contain the input string in the title or body elements.
+*/
+function searchQuestion() {
+  let stringSearchInput = document.getElementById("questionSearchInput").value;
+  if (stringSearchInput != "") {
+    const questionsContainer = document.getElementById('forum');
+    questionsContainer.innerHTML = "";
+    const backToForumBtn = document.getElementById("backToForum-btn");
+    backToForumBtn.style.display = "block";
+    fetch('/search-question?inputString=' + stringSearchInput).then(response => response.json()).then(questionsJson => {
+      for (const question of questionsJson) {
+        questionsContainer.appendChild(createQuestionElement(question, true));
+      }
+    })
+  }
+}
+
+/**
+ * 
+ */
+function backToForum() {
+  const searchInput = document.getElementById("questionSearchInput");
+  searchInput.value = "";
+  const questionsContainer = document.getElementById('forum');
+  questionsContainer.innerHTML = "";
+  const backToForumBtn = document.getElementById("backToForum-btn");
+  backToForumBtn.style.display = "none";
+  fetchQuestions('forum');
+}
+
+/**
  * Fetches questions from server, wraps each in an <li> element, 
  * and adds them to the DOM.
  */
