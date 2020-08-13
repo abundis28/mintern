@@ -24,6 +24,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
 
 /**
  * Servlet that handles mentor evidence in database.
@@ -42,6 +43,14 @@ public class MentorEvidenceServlet extends HttpServlet {
     // Update mentor evidence and add approvers in database.
     updateMentorEvidence(paragraph);
     addApprovers();
+
+    // Call NotificationServlet to notify approvers.
+    response.setContentType("text/plain");
+    try {
+      request.getRequestDispatcher("/notification?type=approval&modifiedElementId=" + Utility.getUserId()).include(request, response);
+    } catch (ServletException exception) {
+      System.out.println(exception.getMessage());
+    }
     response.sendRedirect("/index.html");
   }
 
