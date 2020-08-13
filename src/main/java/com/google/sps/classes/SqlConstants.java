@@ -49,4 +49,7 @@ public final class SqlConstants {
   public static final int COMMENT_FETCH_BODY_COLUMN = 11;
   public static final int COMMENT_FETCH_AUTHORNAME_COLUMN = 15;
   public static final int COMMENT_FETCH_DATETIME_COLUMN = 13;
+  
+  // Constant used in the forum.
+  public static final int FETCH_ALL_QUESTIONS = -1;
 }

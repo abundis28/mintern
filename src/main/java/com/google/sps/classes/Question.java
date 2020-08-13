@@ -47,7 +47,7 @@ public class Question {
     this.askerName = askerName;
   }
 
-    public void setAskerId(int askerId) {
+  public void setAskerId(int askerId) {
     this.askerId = askerId;
   }
 

@@ -35,13 +35,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** 
- * This servlet will retrieve questions to be displayed on the page.
+ * Retrieves questions to be displayed on the page.
  */
 @WebServlet("/fetch-questions")
 public class FetchQuestionsServlet extends HttpServlet {
 
   /** 
-   * This method will get the questions from the query and return them as a JSON string.
+   * Gets  the questions from the query and return them as a JSON string.
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -52,11 +52,12 @@ public class FetchQuestionsServlet extends HttpServlet {
     // ID of the question to query. -1 means that all questions are to be queried.
     int question_id = Integer.parseInt(request.getParameter("id"));
 
-    if (question_id != -1) {
+    if (question_id == SqlConstants.FETCH_ALL_QUESTIONS) {
+      // Nothing needs to be added to the query apart from closing it.
+      query = Utility.fetchQuestionsQuery + ";";
+    } else {
       // Condition to fetch only one question.
       query = Utility.fetchQuestionsQuery + "WHERE Question.id=" + question_id + ";";
-    } else {
-      query = Utility.fetchQuestionsQuery + ";";
     }
 
     // The connection and query are attempted.
@@ -80,7 +81,7 @@ public class FetchQuestionsServlet extends HttpServlet {
   }
 
   /** 
-   * Create a question object using the results from a query.
+   * Creates a question object using the results from a query.
    */
   private Question buildQuestion(ResultSet queryResult) {
     Question question = new Question();
