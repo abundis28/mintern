@@ -46,7 +46,8 @@ public class MenteeSignupServlet extends HttpServlet {
     String lastName = request.getParameter("last-name");
     String username = request.getParameter("username");
     String email = userService.getCurrentUser().getEmail();
-    int major = Utility.tryParseInt(request.getParameter("major"));
+    int major = Utility.tryParseInt(
+        request.getParameter("major")); // Should not be possible for parseInt() to fail.
     Boolean isMentor = false;
 
     // Insert user to the database.

@@ -19,23 +19,23 @@ package com.google.sps.classes;
  */
 public final class SqlConstants {
   // Constants used for querying a question.
-  public static final int QUESTION_FETCH_TITLE_COLUMN = 2;
-  public static final int QUESTION_FETCH_BODY_COLUMN = 3;
-  public static final int QUESTION_FETCH_ASKERID_COLUMN = 4;
-  public static final int QUESTION_FETCH_AKSERNAME_COLUMN = 8;
-  public static final int QUESTION_FETCH_DATETIME_COLUMN = 5;
-  public static final int QUESTION_FETCH_NUMBEROFFOLLOWERS_COLUMN = 7;
-  public static final int QUESTION_FETCH_NUMBEROFANSWERS_COLUMN = 11;
+  public static final int QUESTION_FETCH_TITLE = 2;
+  public static final int QUESTION_FETCH_BODY = 3;
+  public static final int QUESTION_FETCH_ASKERID = 4;
+  public static final int QUESTION_FETCH_AKSERNAME = 8;
+  public static final int QUESTION_FETCH_DATETIME = 5;
+  public static final int QUESTION_FETCH_NUMBEROFFOLLOWERS = 7;
+  public static final int QUESTION_FETCH_NUMBEROFANSWERS = 11;
 
   // Constants used for inserting a question.
-  public static final int QUESTION_INSERT_TITLE_COLUMN = 1;
-  public static final int QUESTION_INSERT_BODY_COLUMN = 2;
-  public static final int QUESTION_INSERT_ASKERID_COLUMN = 3;
+  public static final int QUESTION_INSERT_TITLE = 1;
+  public static final int QUESTION_INSERT_BODY = 2;
+  public static final int QUESTION_INSERT_ASKERID = 3;
 
   // Constants used for inserting a follower.
-  public static final int QUESTION_FETCH_MAXID_COLUMN = 1;
-  public static final int FOLLOWER_INSERT_QUESTIONID_COLUMN = 1;
-  public static final int FOLLOWER_INSERT_ASKERID_COLUMN = 2;
+  public static final int QUESTION_FETCH_MAXID = 1;
+  public static final int FOLLOWER_INSERT_QUESTIONID = 1;
+  public static final int FOLLOWER_INSERT_ASKERID = 2;
 
   // Constants used for querying a user.
   public static final int USER_FETCH_EMAIL = 5;
