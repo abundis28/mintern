@@ -1,7 +1,12 @@
-#forum {
+#forum-title {
   width: 60%;
   margin: auto;
   margin-top: 70px;
+}
+
+#forum {
+  width: 60%;
+  margin: auto;
 }
 
 #question {
@@ -46,8 +51,4 @@
 .signup-title .name {
   color: #6cb4b8ff;
   font-weight: 400;
-}
-
-#backToForum-btn {
-  display: none;
 }

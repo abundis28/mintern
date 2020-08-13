@@ -37,8 +37,6 @@ function searchQuestion() {
   if (stringSearchInput != "") {
     const questionsContainer = document.getElementById('forum');
     questionsContainer.innerHTML = "";
-    const backToForumBtn = document.getElementById("backToForum-btn");
-    backToForumBtn.style.display = "block";
     fetch('/search-question?inputString=' + stringSearchInput).then(response => response.json()).then(questionsJson => {
       for (const question of questionsJson) {
         questionsContainer.appendChild(createQuestionElement(question, true));
@@ -50,13 +48,11 @@ function searchQuestion() {
 /**
  * 
  */
-function backToForum() {
+function backToHomepage() {
   const searchInput = document.getElementById("questionSearchInput");
   searchInput.value = "";
   const questionsContainer = document.getElementById('forum');
   questionsContainer.innerHTML = "";
-  const backToForumBtn = document.getElementById("backToForum-btn");
-  backToForumBtn.style.display = "none";
   fetchQuestions('forum');
 }
 
