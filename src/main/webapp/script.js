@@ -71,6 +71,15 @@ async function fetchAnswers() {
   const answersContainer = document.getElementById('answers');
   Object.values(answersObject).forEach(answer => {
     answersContainer.appendChild(createAnswerElement(answer));
+    const commentsContainer = document.createElement('ul');
+    commentsContainer.setAttribute('class', 'list-group list-group-flush ml-5');
+    answer.commentList.forEach(comment => {
+      if (comment.body) {
+        commentsContainer.appendChild(createCommentElement(comment));
+      }
+    });
+    answersContainer.appendChild(commentsContainer);
+    answersContainer.appendChild(document.createElement('br'));
   });
 }
 
@@ -237,32 +246,62 @@ function createQuestionElement(question, hasRedirect) {
 }
 
 /** 
- * Creates an element with answer and comment data. 
- * Each element corresponds to an answer and its comments 
+ * Creates an element with answer data. 
+ * Each element corresponds to an answer 
  * to be displayed in the DOM.
  */
 function createAnswerElement(answer) {
-  const answersElement = document.createElement('li');
-  answersElement.setAttribute('class', 'list-group-item');
-  answersElement.innerText = answer.body;
-  const votesElement = document.createElement('small');
-  votesElement.setAttribute('class', 'float-right');
-  if (answer.votes === 1) {
-    // Avoid writing '1 votes'.
-    votesElement.innerText = answer.votes + ' vote';
-  } else {
-    votesElement.innerText = answer.votes + ' votes';
-  }
-  answersElement.appendChild(votesElement);
-  answersElement.appendChild(document.createElement('br'));
+  const answerElement = document.createElement('li');
+  answerElement.setAttribute('class', 'list-group-item');
+  answerElement.innerText = answer.body;
+  
+  // TODO(shaargtz): implement voting system.
+  // const votesElement = document.createElement('small');
+  // votesElement.setAttribute('class', 'float-right');
+  // if (answer.votes === 1) {
+  //   // Avoid writing '1 votes'.
+  //   votesElement.innerText = answer.votes + ' vote';
+  // } else {
+  //   votesElement.innerText = answer.votes + ' votes';
+  // }
+  // answersElement.appendChild(votesElement);
+  
   const authorElement = document.createElement('small');
-  authorElement.innerText = answer.author;
-  answersElement.appendChild(authorElement);
-  answersElement.appendChild(document.createElement('br'));
+  authorElement.innerText = answer.authorName;
+  answerElement.appendChild(document.createElement('br'));
+  answerElement.appendChild(authorElement);
+  
   const dateElement = document.createElement('small');
   dateElement.setAttribute('class', 'text-muted');
   dateElement.innerText = answer.dateTime;
-  answersElement.appendChild(dateElement);
+  answerElement.appendChild(document.createElement('br'));
+  answerElement.appendChild(dateElement);
+
+  return answerElement;
+}
+
+/** 
+ * Creates an element with comment data. 
+ * Each element corresponds to a comment
+ * to be displayed in the DOM.
+ */
+function createCommentElement(comment) {
+  const commentElement = document.createElement('li');
+  commentElement.setAttribute('class', 'list-group-item');
+  commentElement.innerText = comment.body;
+  
+  const authorElement = document.createElement('small');
+  authorElement.innerText = comment.authorName;
+  commentElement.appendChild(document.createElement('br'));
+  commentElement.appendChild(authorElement);
+  
+  const dateElement = document.createElement('small');
+  dateElement.setAttribute('class', 'text-muted');
+  dateElement.innerText = comment.dateTime;
+  commentElement.appendChild(document.createElement('br'));
+  commentElement.appendChild(dateElement);
+
+  return commentElement;
 }
 
 /** 
