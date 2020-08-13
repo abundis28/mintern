@@ -59,7 +59,7 @@ public class PostAnswerServlet extends HttpServlet {
       Logger logger = Logger.getLogger(PostAnswerServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
-    response.sendRedirect("/");
+    response.sendRedirect("/question.html?id=" + question_id);
   }
 
   /** 
