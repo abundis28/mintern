@@ -59,7 +59,7 @@ public class SignupServlet extends HttpServlet {
       connection.close();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, get the log of the error.
-      Logger logger = Logger.getLogger(MentorSignupServlet.class.getName());
+      Logger logger = Logger.getLogger(SignupServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
 
