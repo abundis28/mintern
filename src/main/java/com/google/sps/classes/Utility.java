@@ -114,8 +114,8 @@ public final class Utility {
 
       // Create the MySQL INSERT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.setString(SqlConstants.ADD_NEW_USER_FIRST_NAME, firstName);
-      preparedStatement.setString(SqlConstants.ADD_NEW_USER_LAST_NAME, lastName);
+      preparedStatement.setString(SqlConstants.ADD_NEW_USER_FIRSTNAME, firstName);
+      preparedStatement.setString(SqlConstants.ADD_NEW_USER_LASTNAME, lastName);
       preparedStatement.setString(SqlConstants.ADD_NEW_USER_USERNAME, username);
       preparedStatement.setString(SqlConstants.ADD_NEW_USER_EMAIL, email);
       preparedStatement.setInt(SqlConstants.ADD_NEW_USER_MAJOR, major);

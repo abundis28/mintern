@@ -33,8 +33,8 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet that inserts a new mentor to the database.
  */
-@WebServlet("/mentor-signup")
-public class MentorSignupServlet extends HttpServlet {
+@WebServlet("/signup-mentor")
+public class SignupMentorServlet extends HttpServlet {
 
   /**
    * Gets mentor experience tags from database and returns as JSON.
@@ -64,7 +64,7 @@ public class MentorSignupServlet extends HttpServlet {
       connection.close();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, get the log of the error.
-      Logger logger = Logger.getLogger(MentorSignupServlet.class.getName());
+      Logger logger = Logger.getLogger(SignupMentorServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
 
@@ -123,7 +123,7 @@ public class MentorSignupServlet extends HttpServlet {
         connection.close();
       } catch (SQLException exception) {
         // If the connection or the query don't go through, get the log of the error.
-        Logger logger = Logger.getLogger(MentorSignupServlet.class.getName());
+        Logger logger = Logger.getLogger(SignupMentorServlet.class.getName());
         logger.log(Level.SEVERE, exception.getMessage(), exception);
       }
     }

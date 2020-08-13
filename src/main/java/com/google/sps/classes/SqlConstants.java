@@ -41,8 +41,8 @@ public final class SqlConstants {
   public static final int USER_FETCH_EMAIL = 5;
   
   // Constants used for inserting a new user.
-  public static final int USER_INSERT_FIRST_NAME = 1;
-  public static final int USER_INSERT_LAST_NAME = 2;
+  public static final int USER_INSERT_FIRSTNAME = 1;
+  public static final int USER_INSERT_LASTNAME = 2;
   public static final int USER_INSERT_USERNAME = 3;
   public static final int USER_INSERT_EMAIL = 4;
   public static final int USER_INSERT_MAJOR = 5;
@@ -51,4 +51,24 @@ public final class SqlConstants {
   // Constants used for inserting mentor experience.
   public static final int MENTOR_EXPERIENCE_INSERT_ID = 1;
   public static final int MENTOR_EXPERIENCE_INSERT_TAG = 2;
+
+  // Constants used to fetch the elements of notification.
+  public static final int NOTIFICATION_FETCH_MESSAGE = 1;
+  public static final int NOTIFICATION_FETCH_URL = 2;
+  public static final int NOTIFICATION_FETCH_TIMESTAMP = 3;
+
+  // Constants used to insert a new notification.
+  public static final int NOTIFICATION_INSERT_MESSAGE = 1;
+  public static final int NOTIFICATION_INSERT_URL = 2;
+  public static final int NOTIFICATION_INSERT_DATETIME = 3;
+
+  // Constants used to insert a relationship between user and notification.
+  public static final int USER_NOTIFICATION_INSERT_USERID = 1;
+  public static final int USER_NOTIFICATION_INSERT_NOTIFICATIONID = 2;
+
+  // Constant used to fetch the ID of the last inserted notification.
+  public static final int LAST_NOTIFICATION_FETCH_ID = 1;
+
+  // Constant used to fetch the ID of every user following a question or answer.
+  public static final int CREATE_NOTIFICATION_FETCH_USERID = 1;
 }

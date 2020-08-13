@@ -16,11 +16,9 @@ package com.google.sps.servlets;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
 import java.sql.*;
-import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.annotation.WebServlet;
@@ -31,9 +29,9 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet that inserts a new mentee to the database.
  */
-@WebServlet("/mentee-signup")
-public class MenteeSignupServlet extends HttpServlet {
-  
+@WebServlet("/signup-mentee")
+public class SignupMenteeServlet extends HttpServlet {
+
   /**
    * Receives information about a new mentee and stores it in the database.
    */
