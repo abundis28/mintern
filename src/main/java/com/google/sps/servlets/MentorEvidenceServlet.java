@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 
+ * Servlet that handles mentor evidence in database.
  */
 @WebServlet("/mentor-evidence")
 public class MentorEvidenceServlet extends HttpServlet {
@@ -39,15 +39,15 @@ public class MentorEvidenceServlet extends HttpServlet {
     // Get variable from HTML form.
     String paragraph = request.getParameter("paragraph");
 
-    // Insert mentor evidence to database.
-    addMentorEvidence(paragraph);
+    // Update mentor evidence in database.
+    updateMentorEvidence(paragraph);
     response.sendRedirect("/index.html");
   }
 
   /**
-   * Inserts evidence provided by mentor to MentorEvidence table in database.
+   * Updates evidence provided by mentor in MentorEvidence table.
    */
-  private void addMentorEvidence(String paragraph) {
+  private void updateMentorEvidence(String paragraph) {
     int userId = Utility.getUserId();
 
     // Set up query to insert new experience tag to user.
