@@ -84,8 +84,9 @@ public class MentorSignupServlet extends HttpServlet {
     String lastName = request.getParameter("last-name");
     String username = request.getParameter("username");
     String email = userService.getCurrentUser().getEmail();
-    int major = Utility.tryParseInt(
-        request.getParameter("major")); // Should not be possible for parseInt() to fail.
+    int major = Utility.tryParseInt(request.getParameter("major"));
+        // Should not be possible for parseInt() to fail because form only allows integer values to
+        // be submitted.
     String[] experienceTags = request.getParameterValues("experience");
     Boolean isMentor = true;
 
@@ -115,8 +116,9 @@ public class MentorSignupServlet extends HttpServlet {
         // Create the MySQL INSERT prepared statement.
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setInt(SqlConstants.MENTOR_EXPERIENCE_INSERT_ID, userId);
-        preparedStatement.setInt(SqlConstants.MENTOR_EXPERIENCE_INSERT_TAG,
-            Utility.tryParseInt(tag)); // Should not be possible for parseInt() to fail.
+        preparedStatement.setInt(SqlConstants.MENTOR_EXPERIENCE_INSERT_TAG, Utility.tryParseInt(tag));
+            // Should not be possible for parseInt() to fail because form only allows integer values to
+            // be submitted.
         preparedStatement.execute();
         connection.close();
       } catch (SQLException exception) {
