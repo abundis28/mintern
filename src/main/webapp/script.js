@@ -28,6 +28,7 @@ function loadQuestion() {
   fetchAuthentication();
   fetchQuestions('question');
   fetchAnswers();
+  setQuestionIdValue();
 }
 
 function loadSignup() {
@@ -361,4 +362,8 @@ function isUserRegistered() {
 
 function getQuestionId() {
   return (new URL(document.location)).searchParams.get("id");
+}
+
+function setQuestionIdValue() {
+  document.getElementById('question_id').value = getQuestionId(); 
 }
