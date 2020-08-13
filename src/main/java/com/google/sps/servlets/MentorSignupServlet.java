@@ -132,7 +132,7 @@ public class MentorSignupServlet extends HttpServlet {
     // Set up query to insert mentor evidence.
     String query = "INSERT INTO MentorEvidence "
         + "(mentor_id, approvals, is_approved, is_rejected, paragraph) "
-        + "VALUES (" + userId + ", 0, FALSE, FALSE, " + paragraph + ")";
+        + "VALUES (" + userId + ", 0, FALSE, FALSE, '')";
 
     try {
       // Establish connection to MySQL database.
