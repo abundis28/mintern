@@ -65,6 +65,17 @@
       </div>
     </nav>
     <div id="question"></div>
+    <!-- Answer submission -->
+    <div id="post-answer">
+      <h4>Answer this question</h4>
+      <form action=/post-answer method="POST">
+        <div class="form-group">
+          <textarea class="form-control form-control-sm" name="answer-body" id="answer-body" placeholder="Elaborate on your anwer" rows="3"></textarea>
+          <input type="hidden" value="getQuestionId()" name="answer-body">
+        </div>
+        <button type="submit" class="btn btn-outline-info float-right">Submit</button>
+      </form>
+    </div>
     <div id="answers"></div>
   </body>
 </html>
