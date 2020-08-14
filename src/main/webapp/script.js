@@ -312,7 +312,7 @@ function createCommentFormElement(answer_id) {
   formElement.setAttribute('method', 'POST');
   
   const divElement = document.createElement('div');
-  divElement.setAttribute('class', 'form-group');
+  divElement.setAttribute('class', 'form-group ml-5');
   formElement.appendChild(divElement);
 
   const textElement = document.createElement('textarea');
