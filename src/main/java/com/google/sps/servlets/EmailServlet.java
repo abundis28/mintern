@@ -48,7 +48,6 @@ public class EmailServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // 
     DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
     System.out.println("Pool created successfully!");
     // Get type of notification to create from query string.

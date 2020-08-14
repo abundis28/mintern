@@ -45,12 +45,12 @@ public class PostQuestionServlet extends HttpServlet {
     String title = request.getParameter("question-title");
     String body = request.getParameter("question-body");
     int asker_id = Utility.getUserId();
+    DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
 
     // First we query the number of questions that exist so that we can update the
     // QuestionFollower table as well.
     try {
-      Connection connection = DriverManager
-          .getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+      Connection connection = pool.getConnection();
       insertNewQuestion(connection, title, body, asker_id);
       insertNewFollower(connection, asker_id);
     } 

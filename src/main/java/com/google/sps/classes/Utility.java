@@ -30,6 +30,8 @@ import javax.sql.DataSource;
  * Utility methods used across classes. Just import class to access all methods.
  */
 public final class Utility {
+  DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
+
   // Variables needed to connect to MySQL database.
   public static final String SQL_LOCAL_URL = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
   public static final String SQL_LOCAL_USER = "root";
@@ -80,8 +82,7 @@ public final class Utility {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(SQL_CLOUD_URL, SQL_CLOUD_USER, 
-                                                          SQL_CLOUD_PASSWORD);
+      Connection connection = pool.getConnection();
 
       // Create the MySQL prepared statement, execute it, and store the result.
       // Takes the query specified above and sets the email field to the logged in user's email.
@@ -115,8 +116,7 @@ public final class Utility {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, 
-                                                          SQL_LOCAL_PASSWORD);
+      Connection connection = pool.getConnection();
 
       // Create the MySQL INSERT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);

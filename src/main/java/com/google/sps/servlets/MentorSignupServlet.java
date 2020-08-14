@@ -45,10 +45,11 @@ public class MentorSignupServlet extends HttpServlet {
     
     // Set up query to retrieve all subject tags.
     String query = "SELECT * FROM SubjectTag";
+    DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+      Connection connection = pool.getConnection();
 
       // Create the MySQL prepared statement, execute it, and store the result.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
