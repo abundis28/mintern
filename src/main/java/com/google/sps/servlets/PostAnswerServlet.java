@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 public class PostAnswerServlet extends HttpServlet {
 
   /** 
-   * This method will execute the query to insert an answer to the database.
+   * Executes the query to insert an answer to the database.
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -48,7 +48,7 @@ public class PostAnswerServlet extends HttpServlet {
 
     try {
       Connection connection = DriverManager.getConnection(
-        Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
       insertNewAnswer(connection, question_id, body, author_id);
       insertNewFollower(connection, author_id);
     } 

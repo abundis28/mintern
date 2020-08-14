@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 public class PostQuestionServlet extends HttpServlet {
 
   /** 
-   * This method will execute the query to post a question to the database.
+   * Executes the query to post a question to the database.
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
