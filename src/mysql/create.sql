@@ -67,6 +67,7 @@ CREATE TABLE MentorExperience (
 );
 
 -- A question to be posted in the forum.
+-- The fulltext creates an index in which the search takes place.
 CREATE TABLE Question (
   id INT NOT NULL AUTO_INCREMENT,
   title VARCHAR(255),
