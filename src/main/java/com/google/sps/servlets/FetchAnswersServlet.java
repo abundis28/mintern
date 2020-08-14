@@ -51,7 +51,7 @@ public class FetchAnswersServlet extends HttpServlet {
 
     // Create a map that will hold all of the answers from the query.
     // Each <int> will be an answer's id, and will be used to avoid creating duplicate
-    // answers and easily add a <Comment> to the correspondind <Answer>.
+    // answers and easily add a <Comment> to the corresponding <Answer>.
     Map<Integer, Answer> answers = new HashMap<>();
 
     String query = Utility.fetchAnswersAndCommentsQuery;
