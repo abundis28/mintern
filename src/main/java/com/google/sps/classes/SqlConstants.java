@@ -55,9 +55,6 @@ public final class SqlConstants {
   // Constants used for inserting mentor experience.
   public static final int MENTOR_EXPERIENCE_INSERT_ID = 1;
   public static final int MENTOR_EXPERIENCE_INSERT_TAG = 2;
-
-  // Constant used in the forum.
-  public static final int FETCH_ALL_QUESTIONS = -1;
   
   // Constants used to fetch the elements of notification.
   public static final int NOTIFICATION_FETCH_MESSAGE = 1;
