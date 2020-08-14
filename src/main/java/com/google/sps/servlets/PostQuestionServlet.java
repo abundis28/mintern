@@ -43,10 +43,10 @@ public class PostQuestionServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
     String title = request.getParameter("question-title");
     String body = request.getParameter("question-body");
-    int asker_id = Utility.getUserId();
-    DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
+    int asker_id = Utility.getUserId(pool);
 
     // First we query the number of questions that exist so that we can update the
     // QuestionFollower table as well.

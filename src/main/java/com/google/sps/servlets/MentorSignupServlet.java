@@ -78,6 +78,7 @@ public class MentorSignupServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
+    DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
 
     // Get variables from HTML form.
     String firstName = request.getParameter("first-name");
@@ -89,16 +90,16 @@ public class MentorSignupServlet extends HttpServlet {
     Boolean is_mentor = true;
 
     // Insert user and mentor experience to the database.
-    Utility.addNewUser(firstName, lastName, username, email, major, is_mentor);
-    addMentorExperience(experienceTags);
+    Utility.addNewUser(pool, firstName, lastName, username, email, major, is_mentor);
+    addMentorExperience(experienceTags, pool);
     response.sendRedirect("/index.html");
   }
 
   /**
    * Inserts experience tags with corresponding user to MentorExperience table in database.
    */
-  private void addMentorExperience(String[] experienceTags) {
-    int userId = Utility.getUserId();
+  private void addMentorExperience(String[] experienceTags, DataSource pool) {
+    int userId = Utility.getUserId(pool);
     
     for (String tag : experienceTags) {
       // Set up query to insert new experience tag to user.

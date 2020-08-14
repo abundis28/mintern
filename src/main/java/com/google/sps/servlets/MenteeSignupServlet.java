@@ -38,6 +38,7 @@ public class MenteeSignupServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
+    DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
 
     // Get variables from HTML form.
     String firstName = request.getParameter("first-name");
@@ -48,7 +49,7 @@ public class MenteeSignupServlet extends HttpServlet {
     Boolean is_mentor = false;
 
     // Insert user to the database.
-    Utility.addNewUser(firstName, lastName, username, email, major, is_mentor);
+    Utility.addNewUser(pool, firstName, lastName, username, email, major, is_mentor);
     response.sendRedirect("/index.html");
   }
 }

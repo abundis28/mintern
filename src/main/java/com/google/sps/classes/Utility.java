@@ -30,7 +30,6 @@ import javax.sql.DataSource;
  * Utility methods used across classes. Just import class to access all methods.
  */
 public final class Utility {
-  DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
 
   // Variables needed to connect to MySQL database.
   public static final String SQL_LOCAL_URL = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
@@ -65,7 +64,7 @@ public final class Utility {
    * Returns the ID of a logged in user.
    * If the user is not logged in or if no user ID is found, returns -1.
    */
-  public static int getUserId() {
+  public static int getUserId(pool) {
     int userId = -1;
     UserService userService = UserServiceFactory.getUserService();
 
@@ -108,7 +107,7 @@ public final class Utility {
    * Receives the attributes necessary to insert a new user into the database and inserts it to the
    * User table.
    */
-  public static void addNewUser(String firstName, String lastName, String username, String email,
+  public static void addNewUser(DataSource pool, String firstName, String lastName, String username, String email,
       int major, boolean is_mentor) {
     // Set up query to insert new user into database.
     String query = "INSERT INTO User (first_name, last_name, username, email, major_id, is_mentor)"

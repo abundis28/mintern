@@ -26,6 +26,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 /**
  * Servlet that verifies user login status.
@@ -39,6 +40,7 @@ public class AuthenticationServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
+    DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
     
     // Set default variables to create UserAuthenticationData object.
     Boolean isUserLoggedIn = false;
@@ -53,7 +55,7 @@ public class AuthenticationServlet extends HttpServlet {
       email = userService.getCurrentUser().getEmail();
       authenticationUrl = userService.createLogoutURL(redirectUrl);
 
-      int userId = Utility.getUserId();
+      int userId = Utility.getUserId(pool);
       if (userId == -1) {
         // If user is not registered, redirect user to signup page.
         authenticationUrl = "/signup.html";
