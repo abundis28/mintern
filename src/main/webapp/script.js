@@ -254,7 +254,7 @@ function createQuestionElement(question, hasRedirect) {
  */
 function createAnswerElement(answer) {
   const answerElement = document.createElement('li');
-  answerElement.setAttribute('class', 'list-group-item');
+  answerElement.setAttribute('class', 'list-group-item mt-5');
   answerElement.innerText = answer.body;
   
   // TODO(shaargtz): implement voting system.
