@@ -69,6 +69,10 @@ public class ConnectionPoolContextListener implements ServletContextListener {
     // terminations.
     config.setMaxLifetime(1800000); // 30 minutes
 
+    // For Java users, the Cloud SQL JDBC Socket Factory can provide authenticated connections.
+    config.addDataSourceProperty("socketFactory", "com.google.cloud.sql.mysql.SocketFactory");
+    config.addDataSourceProperty("cloudSqlInstance", CLOUD_SQL_CONNECTION_NAME);
+
     // Initialize the connection pool using the configuration object.
     DataSource pool = new HikariDataSource(config);
     return pool;
