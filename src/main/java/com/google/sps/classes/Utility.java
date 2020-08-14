@@ -64,7 +64,7 @@ public final class Utility {
    * Returns the ID of a logged in user.
    * If the user is not logged in or if no user ID is found, returns -1.
    */
-  public static int getUserId(pool) {
+  public static int getUserId(DataSource pool) {
     int userId = -1;
     UserService userService = UserServiceFactory.getUserService();
 
