@@ -62,4 +62,9 @@ public final class SqlConstants {
   public static final int ANSWER_FETCH_MAXID_COLUMN = 1;
   public static final int FOLLOWER_INSERT_ANSWERID_COLUMN = 1;
   public static final int FOLLOWER_INSERT_AUTHORID_COLUMN = 2;
+
+  // Constants used for inserting a comment.
+  public static final int COMMENT_INSERT_ANSWERID_COLUMN = 1;
+  public static final int ANSWER_INSERT_BODY_COLUMN = 2;
+  public static final int ANSWER_INSERT_AUTHORID_COLUMN = 3;
 }
