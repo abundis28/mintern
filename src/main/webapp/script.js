@@ -66,6 +66,7 @@ async function fetchAnswers() {
     answersContainer.appendChild(createCommentFormElement(answer.id));
     answersContainer.appendChild(document.createElement('br'));
   });
+  addAutoResize();
 }
 
 /**
@@ -394,7 +395,7 @@ function createCommentFormElement(answer_id) {
   textElement.setAttribute('name', 'comment-body');
   textElement.setAttribute('id', 'comment-body');
   textElement.setAttribute('placeholder', 'Write a comment');
-  textElement.setAttribute('data-autoresize');
+  textElement.setAttribute('data-autoresize', '');
   textElement.setAttribute('rows', '2');
   divElement.appendChild(textElement);
 
