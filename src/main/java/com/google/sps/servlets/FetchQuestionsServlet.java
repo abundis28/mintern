@@ -41,7 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 public class FetchQuestionsServlet extends HttpServlet {
 
   /** 
-   * Gets  the questions from the query and return them as a JSON string.
+   * Gets the questions from the query and return them as a JSON string.
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -69,7 +69,7 @@ public class FetchQuestionsServlet extends HttpServlet {
       
       // All of the rows from the query are looped if it goes through.
       while (queryResult.next()) {
-        questions.add(buildQuestion(queryResult));
+        questions.add(Utility.buildQuestion(queryResult));
       }
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
@@ -78,30 +78,5 @@ public class FetchQuestionsServlet extends HttpServlet {
     }
     response.setContentType("application/json;");
     response.getWriter().println(Utility.convertToJsonUsingGson(questions));
-  }
-
-  /** 
-   * Creates a question object using the results from a query.
-   */
-  private Question buildQuestion(ResultSet queryResult) {
-    Question question = new Question();
-    try {
-      question.setId(queryResult.getInt(SqlConstants.QUESTION_FETCH_ID_COLUMN));
-      question.setTitle(queryResult.getString(SqlConstants.QUESTION_FETCH_TITLE_COLUMN));
-      question.setBody(queryResult.getString(SqlConstants.QUESTION_FETCH_BODY_COLUMN));
-      question.setAskerId(queryResult.getInt(SqlConstants.QUESTION_FETCH_ASKERID_COLUMN));
-      question.setAskerName(queryResult.getString(SqlConstants.QUESTION_FETCH_AKSERNAME_COLUMN));
-      question.setDateTime(queryResult.getTimestamp(SqlConstants.QUESTION_FETCH_DATETIME_COLUMN));
-      question.setNumberOfFollowers(queryResult.getInt(
-          SqlConstants.QUESTION_FETCH_NUMBEROFFOLLOWERS_COLUMN));
-      question.setNumberOfAnswers(queryResult.getInt(
-          SqlConstants.QUESTION_FETCH_NUMBEROFANSWERS_COLUMN));
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(FetchQuestionsServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
-    
-    return question;
   }
 }

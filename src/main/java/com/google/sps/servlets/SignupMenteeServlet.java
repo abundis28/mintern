@@ -29,8 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet that inserts a new mentee to the database.
  */
-@WebServlet("/mentee-signup")
-public class MenteeSignupServlet extends HttpServlet {
+@WebServlet("/signup-mentee")
+public class SignupMenteeServlet extends HttpServlet {
 
   /**
    * Receives information about a new mentee and stores it in the database.
@@ -44,11 +44,13 @@ public class MenteeSignupServlet extends HttpServlet {
     String lastName = request.getParameter("last-name");
     String username = request.getParameter("username");
     String email = userService.getCurrentUser().getEmail();
-    int major = Integer.parseInt(request.getParameter("major"));
-    Boolean is_mentor = false;
+    // Should not be possible for parseInt() to fail because form only allows integer values to
+    // be submitted.
+    int major = Utility.tryParseInt(request.getParameter("major"));
+    Boolean isMentor = false;
 
     // Insert user to the database.
-    Utility.addNewUser(firstName, lastName, username, email, major, is_mentor);
+    Utility.addNewUser(firstName, lastName, username, email, major, isMentor);
     response.sendRedirect("/index.html");
   }
 }
