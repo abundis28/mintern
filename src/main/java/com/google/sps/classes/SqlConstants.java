@@ -45,6 +45,9 @@ public final class SqlConstants {
   public static final int ANSWER_FETCH_DATETIME_COLUMN = 5;
   public static final int ANSWER_FETCH_VOTES_COLUMN = 6;
 
+  // Constant used to set parameter in answer prepared statement.
+  public static final int ANSWER_SET_QUESTIONID_COLUMN = 1;
+
   // Constants used for querying a comment.
   public static final int COMMENT_FETCH_BODY_COLUMN = 11;
   public static final int COMMENT_FETCH_AUTHORNAME_COLUMN = 15;

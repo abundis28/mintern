@@ -61,11 +61,11 @@ public class FetchAnswersServlet extends HttpServlet {
         Connection connection = DriverManager.getConnection(
             Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
         PreparedStatement preparedStatement = connection.prepareStatement(query);
-        preparedStatement.setInt(1, question_id);
+        preparedStatement.setInt(Utility.ANSWER_SET_QUESTIONID_COLUMN, question_id);
         ResultSet queryResult = preparedStatement.executeQuery();
         // All of the rows from the query are looped if it goes through.
         while (queryResult.next()) {
-          int currentAnswerId = queryResult.getInt(1);
+          int currentAnswerId = queryResult.getInt(SqlConstants.ANSWER_FETCH_ID_COLUMN);
           if (answers.containsKey(currentAnswerId)) {
             // The comment of the current row corresponds to a previous answer, 
             // so we add it to its corresponding answer object.
