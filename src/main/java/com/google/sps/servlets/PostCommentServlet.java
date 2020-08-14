@@ -42,7 +42,7 @@ public class PostCommentServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String body = request.getParameter("answer-body");
+    String body = request.getParameter("comment-body");
     int question_id = Integer.parseInt(request.getParameter("question_id"));
     int answer_id = Integer.parseInt(request.getParameter("answer_id"));
     int author_id = Utility.getUserId();
@@ -52,7 +52,7 @@ public class PostCommentServlet extends HttpServlet {
     try {
       Connection connection = DriverManager.getConnection(
         Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
-      insertNewAnswer(connection, answer_id, body, author_id);
+      insertNewComment(connection, answer_id, body, author_id);
       insertNewFollower(connection, author_id);
     } 
     catch (SQLException exception) {
@@ -64,16 +64,16 @@ public class PostCommentServlet extends HttpServlet {
   }
 
   /** 
-   * Inserts an answer into the database.
+   * Inserts a comment into the database.
    */
-  private void insertNewAnswer(Connection connection, int answer_id, String body, int author_id) {
+  private void insertNewComment(Connection connection, int answer_id, String body, int author_id) {
     try {
-      String insertAnswerQuery = "INSERT INTO Answer(answer_id, body, author_id, date_time) "
+      String insertCommentQuery = "INSERT INTO Comment(answer_id, body, author_id, date_time) "
           + "VALUES (?,?,?,NOW())";
-      PreparedStatement questionStatement = connection.prepareStatement(insertAnswerQuery);
-      questionStatement.setInt(SqlConstants.ANSWER_INSERT_QUESTIONID_COLUMN, answer_id);
-      questionStatement.setString(SqlConstants.ANSWER_INSERT_BODY_COLUMN, body);
-      questionStatement.setInt(SqlConstants.ANSWER_INSERT_ASKERID_COLUMN, author_id);
+      PreparedStatement questionStatement = connection.prepareStatement(insertCommentQuery);
+      questionStatement.setInt(SqlConstants.COMMENT_INSERT_ANSWERID, answer_id);
+      questionStatement.setString(SqlConstants.COMMENT_INSERT_BODY, body);
+      questionStatement.setInt(SqlConstants.COMMENT_INSERT_AUTHORID, author_id);
       questionStatement.executeUpdate();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
@@ -83,37 +83,15 @@ public class PostCommentServlet extends HttpServlet {
   }
 
   /** 
-   * Gets the ID from the last answer posted. Returns -1 on query failure.
+   * Makes the author of the comment a follower of the answer to which the comment is a reply.
    */
-  private int getLatestAnswerId(Connection connection) {
-    int id = -1;
+  private void insertNewFollower(Connection connection, int answer_id, int author_id) {
     try {
-      String maxIdQuery = "SELECT MAX(id) FROM Answer;";
-      PreparedStatement maxIdStatement = connection.prepareStatement(maxIdQuery);
-      ResultSet queryResult = maxIdStatement.executeQuery();
-      queryResult.next();
-      id = queryResult.getInt(SqlConstants.ANSWER_FETCH_MAXID_COLUMN);
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostCommentServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
-
-    return id;
-  }
-
-  /** 
-   * Makes the author of the recently added question a follower of said question.
-   * TODO(shaargtz): Move function to Utiliy class to be reused.
-   */
-  private void insertNewFollower(Connection connection, int author_id) {
-    try {
-      int latestAnswerId = getLatestAnswerId(connection);
       String insertFollowerQuery = "INSERT INTO AnswerFollower(answer_id, follower_id) "
           + "VALUES (?,?)";
       PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
-      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_ANSWERID_COLUMN, latestAnswerId);
-      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_AUTHORID_COLUMN, author_id);
+      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_ANSWERID, answer_id);
+      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_AUTHORID, author_id);
       followerStatement.executeUpdate();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
