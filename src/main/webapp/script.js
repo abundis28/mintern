@@ -108,9 +108,9 @@ function fetchAuthentication() {
       addAuthenticationButton(
           user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
 
-
       const questionSubmission = document.getElementById('post-question');
       if (questionSubmission) {
+        // If the user is in the forum, display it only if they are logged in.
         questionSubmission.style.display = "block";
       }
     } else {
