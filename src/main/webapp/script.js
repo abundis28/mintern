@@ -17,7 +17,7 @@
  */
 function loadIndex() {
   addAutoResize();
-  fetchAuthentication('forum');
+  fetchAuthentication();
   fetchQuestions('forum');
   fetchNotifications();
 }
@@ -26,7 +26,7 @@ function loadIndex() {
  * Function that will call other functions when the question page loads. 
  */
 function loadQuestion() {
-  fetchAuthentication('question');
+  fetchAuthentication();
   fetchQuestions('question');
 }
 
