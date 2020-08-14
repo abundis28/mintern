@@ -46,6 +46,10 @@ function loadSignup() {
   fetchMentorExperience();
 }
 
+/**
+ * Fetches a single question and its answers from server, 
+ * wraps each in an <li> element, and adds them to the DOM.
+ */
 async function fetchAnswers() {
   const question_id = (new URL(document.location)).searchParams.get("id");
   const response = await fetch('/fetch-answers?id=' + question_id);
