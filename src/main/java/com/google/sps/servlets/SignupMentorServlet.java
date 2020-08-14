@@ -91,17 +91,11 @@ public class SignupMentorServlet extends HttpServlet {
     Boolean isMentor = true;
 
     // Insert user and mentor experience to the database.
-<<<<<<< HEAD:src/main/java/com/google/sps/servlets/MentorSignupServlet.java
-    Utility.addNewUser(firstName, lastName, username, email, major, is_mentor);
-    addMentorExperience(experienceTags);
-    response.sendRedirect("/verification.html");
-=======
     Utility.addNewUser(firstName, lastName, username, email, major, isMentor);
     if (experienceTags != null) {
       addMentorExperience(experienceTags);
     }
-    response.sendRedirect("/index.html");
->>>>>>> 3ea2a8283242a97b25fb72269cbf821f2ccb091b:src/main/java/com/google/sps/servlets/SignupMentorServlet.java
+    response.sendRedirect("/verification.html");
   }
 
   /**
