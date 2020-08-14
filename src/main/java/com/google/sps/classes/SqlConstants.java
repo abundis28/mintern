@@ -61,7 +61,7 @@ public final class SqlConstants {
   public static final int ANSWER_FETCH_VOTES = 6;
 
   // Constant used to set parameter in answer prepared statement.
-  public static final int ANSWER_SET_QUESTIONIDd = 1;
+  public static final int ANSWER_SET_QUESTIONID = 1;
 
   // Constants used for querying a comment.
   public static final int COMMENT_FETCH_BODY = 11;
