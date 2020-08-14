@@ -19,6 +19,7 @@ function loadIndex() {
   addAutoResize();
   fetchAuthentication();
   fetchQuestions('forum');
+  fetchNotifications();
 }
 
 /**
@@ -31,6 +32,9 @@ function loadQuestion() {
   setQuestionIdValue();
 }
 
+/**
+ * Function that will call other functions when the signup page loads. 
+ */
 function loadSignup() {
   isUserRegistered();
   fetchMajors();
@@ -38,31 +42,44 @@ function loadSignup() {
 }
 
 /**
- * Fetches questions from server, wraps each in an <li> element, 
- * and adds them to the DOM.
+ * Displays navbar authentication and inbox buttons according to login status.
  */
-async function fetchQuestions(page) {
-  let question_id;
-  let questionsContainer;
-  let hasRedirect;
-  if (page === 'forum') {
-    // For the forum we pass -1 which means we need to retrieve all questions.
-    question_id = -1;
-    questionsContainer = document.getElementById('forum');
+function fetchAuthentication() {
+  fetch('/authentication').then(response => response.json()).then(user => {
+    const inboxButton = document.getElementById("notificationsDropdown");
+    if (user.isUserLoggedIn) {
+      // If user is logged in, show logout and inbox buttons in navbar.
+      inboxButton.style.display = "block";
+      fetchNotifications(); 
+      if (!user.isUserRegistered) {
+        // If logged in user is not registered, redirect to signup page.
+        window.location.replace(user.authenticationUrl);
+      }
+      // Delete signup button.
+      const signupButtonNavbar = document.getElementById('signup');
+      signupButtonNavbar.innerHTML = '';
 
-    // We want the element in the forum to have a link which sends to the single
-    // page view.
-    hasRedirect = true;
-  } else if (page === 'question') {
-    question_id = getQuestionId();
-    questionsContainer = document.getElementById('question');
-    hasRedirect = false;
-  }
-  const response = await fetch('/fetch-questions?id=' + question_id);
-  const questionsObject = await response.json();
-  questionsObject.forEach(question => {
-    questionsContainer.appendChild(createQuestionElement(question, hasRedirect));
-  });
+      // Add logout button to navbar.
+      createAuthenticationButton(
+          user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
+
+      // Show question submission box when logged in.
+      const questionSubmission = document.getElementById('post-question');
+      if (questionSubmission) {
+        questionSubmission.style.display = "block";
+      }
+    } else {
+      // If user is logged out, show signup and login buttons in navbar.
+
+      // Add signup button to navbar.
+      createAuthenticationButton(
+          user.authenticationUrl, 'btn-success', 'Sign Up', 'signup');
+
+      // Add login button to navbar.
+      createAuthenticationButton(
+          user.authenticationUrl, 'btn-outline-success', 'Log In', 'login');
+    }
+  })
 }
 
 /**
@@ -70,7 +87,7 @@ async function fetchQuestions(page) {
  * wraps each in an <li> element, and adds them to the DOM.
  */
 async function fetchAnswers() {
-  const question_id = getQuestionId();
+  const question_id = (new URL(document.location)).searchParams.get("id");
   const response = await fetch('/fetch-answers?id=' + question_id);
   const answersObject = await response.json();
   const answersContainer = document.getElementById('answers');
@@ -90,45 +107,6 @@ async function fetchAnswers() {
 }
 
 /**
- * Displays navbar authentication buttons according to login status.
- */
-function fetchAuthentication() {
-  fetch('/authentication').then(response => response.json()).then(user => {
-    if (user.isUserLoggedIn) {
-      // If user is logged in, show logout button in navbar.
-      if (!user.isUserRegistered) {
-        // If logged in user is not registered, redirect to signup page.
-        window.location.replace(user.authenticationUrl);
-      }
-
-      // Delete signup button.
-      const signupButtonNavbar = document.getElementById('signup');
-      signupButtonNavbar.innerHTML = '';
-
-      // Add logout button to navbar.
-      addAuthenticationButton(
-          user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
-
-      const questionSubmission = document.getElementById('post-question');
-      if (questionSubmission) {
-        // If the user is in the forum, display it only if they are logged in.
-        questionSubmission.style.display = "block";
-      }
-    } else {
-      // If user is logged out, show signup and login buttons in navbar.
-
-      // Add signup button to navbar.
-      addAuthenticationButton(
-          user.authenticationUrl, 'btn-success', 'Sign Up', 'signup');
-
-      // Add login button to navbar.
-      addAuthenticationButton(
-          user.authenticationUrl, 'btn-outline-success', 'Log In', 'login');
-    }
-  })
-}
-
-/**
  * Gets majors from database and appends them to select container in mentor and mentee signup
  * forms.
  */
@@ -136,9 +114,7 @@ function fetchMajors() {
   fetch('/signup').then(response => response.json()).then(majors => {
     // Get select containers where new options will be appended.
     const mentorMajorSelect = document.getElementById('mentor-major');
-    mentorMajorSelect.innerHTML = '';
     const menteeMajorSelect = document.getElementById('mentee-major');
-    menteeMajorSelect.innerHTML = '';
 
     for (let major in majors) {
       // Create option for major and append it to select containers.
@@ -159,10 +135,9 @@ function fetchMajors() {
  * mentor signup form.
  */
 function fetchMentorExperience() {
-  fetch('/mentor-signup').then(response => response.json()).then(subjectTags => {
+  fetch('/signup-mentor').then(response => response.json()).then(subjectTags => {
     // Get select container where new options will be appended.
     const mentorExperienceSelect = document.getElementById('mentor-experience');
-    mentorExperienceSelect.innerHTML = '';
 
     subjectTags.forEach(subjectTag => {
       // Create option for subject tag and append it to select container.
@@ -175,6 +150,101 @@ function fetchMentorExperience() {
     // Refresh select container to show options.
     $('.selectpicker').selectpicker('refresh');
   })
+}
+
+/**
+ * Fetches notifications of the signed in user.
+ */
+function fetchNotifications() {
+  fetch('/notification').then(response => response.json()).then((notificationsJson) => {
+    const notificationsElement = document.getElementById('inbox-dropdown');
+    notificationsElement.innerHTML = '';
+    for (const notification of notificationsJson) {
+      notificationsElement.appendChild(createNotificationsElement(notification));
+    }
+  });
+}
+
+/**
+ * Fetches questions from server, wraps each in an <li> element, 
+ * and adds them to the DOM.
+ */
+async function fetchQuestions(page) {
+  let question_id;
+  let questionsContainer;
+  let hasRedirect;
+  if (page === 'forum') {
+    // For the forum we pass -1 which means we need to retrieve all questions.
+    question_id = -1;
+    questionsContainer = document.getElementById('forum');
+
+    // We want the element in the forum to have a link which sends to the single
+    // page view.
+    hasRedirect = true;
+  } else if (page === 'question') {
+    question_id = (new URL(document.location)).searchParams.get("id");
+    questionsContainer = document.getElementById('question');
+    hasRedirect = false;
+  }
+  const response = await fetch('/fetch-questions?id=' + question_id);
+  const questionsObject = await response.json();
+  questionsObject.forEach(question => {
+    questionsContainer.appendChild(createQuestionElement(question, hasRedirect));
+  });
+}
+
+/**
+ * Fetches a single question and its answers from server, 
+ * wraps each in an <li> element, and adds them to the DOM.
+ */
+async function fetchQuestionAndAnswers() {
+  const response = await fetch('/answers');
+  const questionsObject = await response.json();
+}
+
+/**
+ * Creates a signup, login, or logout button and appends it to navbar.
+ * @param {string} authenticationUrl 
+ * @param {string} buttonStyle 
+ * @param {string} buttonText 
+ * @param {string} navbarItem 
+ */
+function createAuthenticationButton(authenticationUrl, buttonStyle, buttonText, navbarItem) {
+  // Create button.
+  const authenticationButton = document.createElement('button');
+  authenticationButton.setAttribute('type', 'button');
+  const buttonUrl = 'window.location.href = \"' + authenticationUrl + '\"';
+  authenticationButton.setAttribute('onclick', buttonUrl);
+  authenticationButton.classList.add('btn');
+  authenticationButton.classList.add(buttonStyle);
+  authenticationButton.innerHTML = buttonText;
+
+  // Create navbar item to hold button.
+  const authenticationButtonItem = document.createElement('li');
+  authenticationButtonItem.classList.add('nav-item');
+  authenticationButtonItem.appendChild(authenticationButton);
+
+  // Append button to navbar.
+  const authenticationButtonNavbar = document.getElementById(navbarItem);
+  authenticationButtonNavbar.innerHTML = '';
+  authenticationButtonNavbar.appendChild(authenticationButtonItem);
+}
+
+/**
+ * Appends child to navbar dropdown. Represents a notification.
+ * @param {Notification} notification
+ */
+function createNotificationsElement(notification) {
+  // Create a link to redirect the user to the question that was answered or commented.
+  const linkElement = document.createElement('a');
+  linkElement.innerText = linkElement.innerText.concat(notification.message, " - ");
+  linkElement.innerText = linkElement.innerText.concat(notification.timestamp.toString());
+  linkElement.setAttribute("href", notification.url);
+  // Create list element.
+  const liElement = document.createElement('li');
+  liElement.appendChild(linkElement);
+  liElement.setAttribute("class","list-group-item");
+  return liElement;
 }
 
 /** 
@@ -327,34 +397,6 @@ function addAutoResize() {
 }
 
 /**
- * Creates a signup, login, or logout button and appends it to navbar.
- * @param {string} authenticationUrl 
- * @param {string} buttonStyle 
- * @param {string} buttonText 
- * @param {string} navbarItem 
- */
-function addAuthenticationButton(authenticationUrl, buttonStyle, buttonText, navbarItem) {
-  // Create button.
-  const authenticationButton = document.createElement('button');
-  authenticationButton.setAttribute('type', 'button');
-  const buttonUrl = 'window.location.href = \"' + authenticationUrl + '\"';
-  authenticationButton.setAttribute('onclick', buttonUrl);
-  authenticationButton.classList.add('btn');
-  authenticationButton.classList.add(buttonStyle);
-  authenticationButton.innerHTML = buttonText;
-
-  // Create navbar item to hold button.
-  const authenticationButtonItem = document.createElement('li');
-  authenticationButtonItem.classList.add('nav-item');
-  authenticationButtonItem.appendChild(authenticationButton);
-
-  // Append button to navbar.
-  const authenticationButtonNavbar = document.getElementById(navbarItem);
-  authenticationButtonNavbar.innerHTML = '';
-  authenticationButtonNavbar.appendChild(authenticationButtonItem);
-}
-
-/**
  * Redirect user in signup page to index if they are already registered.
  */
 function isUserRegistered() {
@@ -372,3 +414,33 @@ function getQuestionId() {
 function setQuestionIdValue() {
   document.getElementById('question_id').value = getQuestionId(); 
 }
+
+/**
+ * Creates notification when an answer or comment is posted.
+ * @param {string} type
+ * @param {int} id
+ */
+function notify(type, id) {
+  fetch('notification?type=' + type + '&modifiedElementId=' + id, {
+    method: 'POST'
+  })
+}
+
+// TODO(oumontiel): write the function comment.
+(function() {
+  'use strict';
+  window.addEventListener('load', function() {
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    var forms = document.getElementsByClassName('needs-validation');
+    // Loop over them and prevent submission
+    var validation = Array.prototype.filter.call(forms, function(form) {
+      form.addEventListener('submit', function(event) {
+        if (form.checkValidity() === false) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  }, false);
+})();
