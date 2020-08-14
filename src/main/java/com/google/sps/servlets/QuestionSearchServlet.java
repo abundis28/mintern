@@ -37,56 +37,32 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/search-question")
 public class QuestionSearchServlet extends HttpServlet {
- /**
-  *
-  */
- @Override
- public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-  List<QuestionObject> questions = new ArrayList<>();
-  String userInputString = request.getParameter("inputString");
-  String query = Utility.fetchQuestionsQuery + "WHERE MATCH(title,body) AGAINST('" +
-      userInputString + "' IN NATURAL LANGUAGE MODE);";
-  // The connection and query are attempted.
-  try {
-    Connection connection = DriverManager
-        .getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
-    PreparedStatement preparedStatement = connection.prepareStatement(query);
-    ResultSet queryResult = preparedStatement.executeQuery();
-  
-    // All of the rows from the query are looped if it goes through.
-    while (queryResult.next()) {
-      questions.add(buildQuestion(queryResult));
-    }
-  } catch (SQLException exception) {
-    // If the connection or the query don't go through, we get the log of what happened.\
-    Logger logger = Logger.getLogger(QuestionSearchServlet.class.getName());
-    logger.log(Level.SEVERE, exception.getMessage(), exception);
-  }
-  response.setContentType("application/json;");
-  response.getWriter().println(Utility.convertToJsonUsingGson(questions));
-}
- 
   /**
-   * Creates a question object using the results from a query.
+   * Gets questions that match at some level with the input in search bar.
    */
-  private QuestionObject buildQuestion(ResultSet queryResult) {
-    QuestionObject question = new QuestionObject();
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    List<QuestionObject> questions = new ArrayList<>();
+    String userInputString = request.getParameter("inputString");
+    String query = Utility.fetchQuestionQuery + "WHERE MATCH(title,body) AGAINST('" +
+        userInputString + "' IN NATURAL LANGUAGE MODE);";
+    // The connection and query are attempted.
     try {
-      question.setId(queryResult.getInt(SqlConstants.QUESTION_FETCH_ID_COLUMN));
-      question.setTitle(queryResult.getString(SqlConstants.QUESTION_FETCH_TITLE_COLUMN));
-      question.setBody(queryResult.getString(SqlConstants.QUESTION_FETCH_BODY_COLUMN));
-      question.setAskerId(queryResult.getInt(SqlConstants.QUESTION_FETCH_ASKERID_COLUMN));
-      question.setAskerName(queryResult.getString(SqlConstants.QUESTION_FETCH_AKSERNAME_COLUMN));
-      question.setDateTime(queryResult.getTimestamp(SqlConstants.QUESTION_FETCH_DATETIME_COLUMN));
-      question.setNumberOfFollowers(queryResult.getInt(
-          SqlConstants.QUESTION_FETCH_NUMBEROFFOLLOWERS_COLUMN));
-      question.setNumberOfAnswers(queryResult.getInt(
-          SqlConstants.QUESTION_FETCH_NUMBEROFANSWERS_COLUMN));
+      Connection connection = DriverManager
+          .getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      ResultSet queryResult = preparedStatement.executeQuery();
+    
+      // All of the rows from the query are looped if it goes through.
+      while (queryResult.next()) {
+        questions.add(Utility.buildQuestion(queryResult));
+      }
     } catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
+      // If the connection or the query don't go through, we get the log of what happened.\
       Logger logger = Logger.getLogger(QuestionSearchServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
-    return question;
-  }
+    response.setContentType("application/json;");
+    response.getWriter().println(Utility.convertToJsonUsingGson(questions));
+  } 
 }
