@@ -334,6 +334,12 @@ function createCommentFormElement(answer_id) {
   inputAnswerIdElement.setAttribute('value', answer_id);
   divElement.appendChild(inputAnswerIdElement);
 
+  const buttonElement = document.createElement('button');
+  buttonElement.setAttribute('type', 'submit');
+  buttonElement.setAttribute('class', 'btn btn-outline-info float-right');
+  buttonElement.innerText = "Submit";
+  formElement.appendChild(buttonElement);
+
   return formElement;
 }
 
