@@ -16,6 +16,7 @@ package com.google.sps.servlets;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.SubjectTag;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
@@ -32,8 +33,8 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet that inserts a new mentor to the database.
  */
-@WebServlet("/mentor-signup")
-public class MentorSignupServlet extends HttpServlet {
+@WebServlet("/signup-mentor")
+public class SignupMentorServlet extends HttpServlet {
 
   /**
    * Gets mentor experience tags from database and returns as JSON.
@@ -48,7 +49,8 @@ public class MentorSignupServlet extends HttpServlet {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+      Connection connection = DriverManager.getConnection(
+          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
 
       // Create the MySQL prepared statement, execute it, and store the result.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -62,7 +64,7 @@ public class MentorSignupServlet extends HttpServlet {
       connection.close();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, get the log of the error.
-      Logger logger = Logger.getLogger(MentorSignupServlet.class.getName());
+      Logger logger = Logger.getLogger(SignupMentorServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
 
@@ -82,13 +84,17 @@ public class MentorSignupServlet extends HttpServlet {
     String lastName = request.getParameter("last-name");
     String username = request.getParameter("username");
     String email = userService.getCurrentUser().getEmail();
-    int major = Integer.parseInt(request.getParameter("major"));
+    // Should not be possible for parseInt() to fail because form only allows integer values to
+    // be submitted.
+    int major = Utility.tryParseInt(request.getParameter("major"));
     String[] experienceTags = request.getParameterValues("experience");
-    Boolean is_mentor = true;
+    Boolean isMentor = true;
 
     // Insert user and mentor experience to the database.
-    Utility.addNewUser(firstName, lastName, username, email, major, is_mentor);
-    addMentorExperience(experienceTags);
+    Utility.addNewUser(firstName, lastName, username, email, major, isMentor);
+    if (experienceTags != null) {
+      addMentorExperience(experienceTags);
+    }
     addMentorEvidence();
     response.sendRedirect("/verification.html");
   }
@@ -110,13 +116,15 @@ public class MentorSignupServlet extends HttpServlet {
 
         // Create the MySQL INSERT prepared statement.
         PreparedStatement preparedStatement = connection.prepareStatement(query);
-        preparedStatement.setInt(1, userId);
-        preparedStatement.setInt(2, Integer.parseInt(tag));
+        preparedStatement.setInt(SqlConstants.MENTOR_EXPERIENCE_INSERT_ID, userId);
+        // Should not be possible for parseInt() to fail because form only allows integer values to
+        // be submitted.
+        preparedStatement.setInt(SqlConstants.MENTOR_EXPERIENCE_INSERT_TAG, Utility.tryParseInt(tag));
         preparedStatement.execute();
         connection.close();
       } catch (SQLException exception) {
         // If the connection or the query don't go through, get the log of the error.
-        Logger logger = Logger.getLogger(MentorSignupServlet.class.getName());
+        Logger logger = Logger.getLogger(SignupMentorServlet.class.getName());
         logger.log(Level.SEVERE, exception.getMessage(), exception);
       }
     }
