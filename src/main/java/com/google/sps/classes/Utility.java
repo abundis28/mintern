@@ -150,8 +150,8 @@ public final class Utility {
   /** 
    * Create a question object using the results from a query.
    */
-  public static QuestionObject buildQuestion(ResultSet queryResult) {
-    QuestionObject question = new QuestionObject();
+  public static Question buildQuestion(ResultSet queryResult) {
+    Question question = new Question();
     try {
       question.setId(queryResult.getInt(SqlConstants.QUESTION_FETCH_ID));
       question.setTitle(queryResult.getString(SqlConstants.QUESTION_FETCH_TITLE));
