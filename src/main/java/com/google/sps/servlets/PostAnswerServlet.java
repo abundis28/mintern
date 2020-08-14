@@ -46,8 +46,6 @@ public class PostAnswerServlet extends HttpServlet {
     int question_id = Integer.parseInt(request.getParameter("question_id"));
     int author_id = Utility.getUserId();
 
-    // First we query the number of questions that exist so that we can update the
-    // QuestionFollower table as well.
     try {
       Connection connection = DriverManager.getConnection(
         Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
@@ -69,11 +67,11 @@ public class PostAnswerServlet extends HttpServlet {
     try {
       String insertAnswerQuery = "INSERT INTO Answer(question_id, body, author_id, date_time) "
           + "VALUES (?,?,?,NOW())";
-      PreparedStatement questionStatement = connection.prepareStatement(insertAnswerQuery);
-      questionStatement.setInt(SqlConstants.ANSWER_INSERT_QUESTIONID_COLUMN, question_id);
-      questionStatement.setString(SqlConstants.ANSWER_INSERT_BODY_COLUMN, body);
-      questionStatement.setInt(SqlConstants.ANSWER_INSERT_ASKERID_COLUMN, author_id);
-      questionStatement.executeUpdate();
+      PreparedStatement answerStatement = connection.prepareStatement(insertAnswerQuery);
+      answerStatement.setInt(SqlConstants.ANSWER_INSERT_QUESTIONID_COLUMN, question_id);
+      answerStatement.setString(SqlConstants.ANSWER_INSERT_BODY_COLUMN, body);
+      answerStatement.setInt(SqlConstants.ANSWER_INSERT_ASKERID_COLUMN, author_id);
+      answerStatement.executeUpdate();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
       Logger logger = Logger.getLogger(PostAnswerServlet.class.getName());
@@ -102,7 +100,7 @@ public class PostAnswerServlet extends HttpServlet {
   }
 
   /** 
-   * Makes the author of the recently added question a follower of said question.
+   * Makes the author of the recently added answer a follower of said answer.
    * TODO(shaargtz): Move function to Utiliy class to be reused.
    */
   private void insertNewFollower(Connection connection, int author_id) {
