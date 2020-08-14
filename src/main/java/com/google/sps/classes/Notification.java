@@ -14,21 +14,13 @@
 
 package com.google.sps.classes;
 
+import java.sql.Timestamp;
+
 /**
- * The data used to authenticate a user.
+ * Class to represent notifications and send them to front end as converted JSON.
  */
-public final class UserAuthenticationData {
-
-  private final String email;
-  private final boolean isUserLoggedIn;
-  private final boolean isUserRegistered;
-  private final String authenticationUrl; // URL to redirect to login or logout page.
-
-  public UserAuthenticationData(
-      String email, boolean isUserLoggedIn, boolean isUserRegistered, String authenticationUrl) {
-    this.email = email;
-    this.isUserLoggedIn = isUserLoggedIn;
-    this.isUserRegistered = isUserRegistered;
-    this.authenticationUrl = authenticationUrl;
-  }
+public class Notification {
+  public String message = "";
+  public String url = "";
+  public Timestamp timestamp;
 }

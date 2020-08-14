@@ -16,6 +16,7 @@ package com.google.sps.classes;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.sps.classes.SqlConstants;
 import com.google.gson.Gson;
 import com.google.sps.classes.SqlConstants;
 import java.sql.*;
@@ -29,7 +30,8 @@ import java.util.logging.Logger;
  */
 public final class Utility {
   // Variables needed to connect to MySQL database.
-  public static final String SQL_LOCAL_URL = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
+  public static final String SQL_LOCAL_URL =
+      "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
   public static final String SQL_LOCAL_USER = "root";
   public static final String SQL_LOCAL_PASSWORD = "";
   
@@ -72,21 +74,21 @@ public final class Utility {
     String email = userService.getCurrentUser().getEmail();
 
     // Set up query to check if user is already registered.
-    String query = "SELECT id FROM User WHERE email = ?";
+    String query = "SELECT * FROM User WHERE email = '" + email + "'";
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
+      Connection connection = DriverManager.getConnection(
+          SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
 
       // Create the MySQL prepared statement, execute it, and store the result.
       // Takes the query specified above and sets the email field to the logged in user's email.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.setString(1, email);
       ResultSet queryResult = preparedStatement.executeQuery();
 
       // If email is found, set userId to the ID retrieved from the database.
       if (queryResult.next()) {
-        userId = queryResult.getInt(1);
+        userId = queryResult.getInt(SqlConstants.USER_FETCH_ID);
       } 
       connection.close();
     } catch (SQLException exception) {
@@ -99,26 +101,28 @@ public final class Utility {
   }
   
   /**
-   * Receives the attributes necessary to insert a new user into the database and inserts it to the User table.
+   * Receives the attributes necessary to insert a new user into the database and inserts it to the
+   * User table.
    */
   public static void addNewUser(String firstName, String lastName, String username, String email,
       int major, boolean is_mentor) {
     // Set up query to insert new user into database.
-    String query = "INSERT INTO User (first_name, last_name, username, email, major_id, is_mentor) "
-        + "VALUES (?, ?, ?, ?, ?, ?)";
+    String query = "INSERT INTO User (first_name, last_name, username, email, major_id, is_mentor)"
+        + " VALUES (?, ?, ?, ?, ?, ?)";
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
+      Connection connection = DriverManager.getConnection(
+          SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
 
       // Create the MySQL INSERT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.setString(1, firstName);
-      preparedStatement.setString(2, lastName);
-      preparedStatement.setString(3, username);
-      preparedStatement.setString(4, email);
-      preparedStatement.setInt(5, major);
-      preparedStatement.setBoolean(6, is_mentor);
+      preparedStatement.setString(SqlConstants.USER_INSERT_FIRSTNAME, firstName);
+      preparedStatement.setString(SqlConstants.USER_INSERT_LASTNAME, lastName);
+      preparedStatement.setString(SqlConstants.USER_INSERT_USERNAME, username);
+      preparedStatement.setString(SqlConstants.USER_INSERT_EMAIL, email);
+      preparedStatement.setInt(SqlConstants.USER_INSERT_MAJOR, major);
+      preparedStatement.setBoolean(SqlConstants.USER_INSERT_IS_MENTOR, is_mentor);
 
       // Execute the prepared statement and close connection.
       preparedStatement.execute();
@@ -136,15 +140,15 @@ public final class Utility {
   public static QuestionObject buildQuestion(ResultSet queryResult) {
     QuestionObject question = new QuestionObject();
     try {
-      question.setTitle(queryResult.getString(SqlConstants.QUESTION_FETCH_TITLE_COLUMN));
-      question.setBody(queryResult.getString(SqlConstants.QUESTION_FETCH_BODY_COLUMN));
-      question.setAskerId(queryResult.getInt(SqlConstants.QUESTION_FETCH_ASKERID_COLUMN));
-      question.setAskerName(queryResult.getString(SqlConstants.QUESTION_FETCH_AKSERNAME_COLUMN));
-      question.setDateTime(queryResult.getTimestamp(SqlConstants.QUESTION_FETCH_DATETIME_COLUMN));
+      question.setTitle(queryResult.getString(SqlConstants.QUESTION_FETCH_TITLE));
+      question.setBody(queryResult.getString(SqlConstants.QUESTION_FETCH_BODY));
+      question.setAskerId(queryResult.getInt(SqlConstants.QUESTION_FETCH_ASKERID));
+      question.setAskerName(queryResult.getString(SqlConstants.QUESTION_FETCH_ASKERNAME));
+      question.setDateTime(queryResult.getTimestamp(SqlConstants.QUESTION_FETCH_DATETIME));
       question.setNumberOfFollowers(queryResult.getInt(
-          SqlConstants.QUESTION_FETCH_NUMBEROFFOLLOWERS_COLUMN));
+          SqlConstants.QUESTION_FETCH_NUMBEROFFOLLOWERS));
       question.setNumberOfAnswers(queryResult.getInt(
-          SqlConstants.QUESTION_FETCH_NUMBEROFANSWERS_COLUMN));
+          SqlConstants.QUESTION_FETCH_NUMBEROFANSWERS));
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
       Logger logger = Logger.getLogger(Utility.class.getName());
@@ -152,5 +156,19 @@ public final class Utility {
     }
     
     return question;
+  }
+
+  /**
+   * Tries to convert a string to an integer and returns 0 if not possible.
+   */
+  public static int tryParseInt(String string) {
+    try {
+      return Integer.parseInt(string);
+    } catch (NumberFormatException exception) {
+      // If string parameter was not a number, get the log of the error and return 0.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+      return 0;
+    }
   }
 }

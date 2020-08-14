@@ -19,21 +19,56 @@ package com.google.sps.classes;
  */
 public final class SqlConstants {
   // Constants used for querying a question.
-  public static final int QUESTION_FETCH_TITLE_COLUMN = 2;
-  public static final int QUESTION_FETCH_BODY_COLUMN = 3;
-  public static final int QUESTION_FETCH_ASKERID_COLUMN = 4;
-  public static final int QUESTION_FETCH_AKSERNAME_COLUMN = 8;
-  public static final int QUESTION_FETCH_DATETIME_COLUMN = 5;
-  public static final int QUESTION_FETCH_NUMBEROFFOLLOWERS_COLUMN = 7;
-  public static final int QUESTION_FETCH_NUMBEROFANSWERS_COLUMN = 11;
+  public static final int QUESTION_FETCH_TITLE = 2;
+  public static final int QUESTION_FETCH_BODY = 3;
+  public static final int QUESTION_FETCH_ASKERID = 4;
+  public static final int QUESTION_FETCH_ASKERNAME = 8;
+  public static final int QUESTION_FETCH_DATETIME = 5;
+  public static final int QUESTION_FETCH_NUMBEROFFOLLOWERS = 7;
+  public static final int QUESTION_FETCH_NUMBEROFANSWERS = 11;
 
   // Constants used for inserting a question.
-  public static final int QUESTION_INSERT_TITLE_COLUMN = 1;
-  public static final int QUESTION_INSERT_BODY_COLUMN = 2;
-  public static final int QUESTION_INSERT_ASKERID_COLUMN = 3;
+  public static final int QUESTION_INSERT_TITLE = 1;
+  public static final int QUESTION_INSERT_BODY = 2;
+  public static final int QUESTION_INSERT_ASKERID = 3;
 
   // Constants used for inserting a follower.
-  public static final int QUESTION_FETCH_MAXID_COLUMN = 1;
-  public static final int FOLLOWER_INSERT_QUESTIONID_COLUMN = 1;
-  public static final int FOLLOWER_INSERT_ASKERID_COLUMN = 2;
+  public static final int QUESTION_FETCH_MAXID = 1;
+  public static final int FOLLOWER_INSERT_QUESTIONID = 1;
+  public static final int FOLLOWER_INSERT_ASKERID = 2;
+
+  // Constants used for querying a user.
+  public static final int USER_FETCH_ID = 1;
+  
+  // Constants used for inserting a new user.
+  public static final int USER_INSERT_FIRSTNAME = 1;
+  public static final int USER_INSERT_LASTNAME = 2;
+  public static final int USER_INSERT_USERNAME = 3;
+  public static final int USER_INSERT_EMAIL = 4;
+  public static final int USER_INSERT_MAJOR = 5;
+  public static final int USER_INSERT_IS_MENTOR = 6;
+
+  // Constants used for inserting mentor experience.
+  public static final int MENTOR_EXPERIENCE_INSERT_ID = 1;
+  public static final int MENTOR_EXPERIENCE_INSERT_TAG = 2;
+
+  // Constants used to fetch the elements of notification.
+  public static final int NOTIFICATION_FETCH_MESSAGE = 1;
+  public static final int NOTIFICATION_FETCH_URL = 2;
+  public static final int NOTIFICATION_FETCH_TIMESTAMP = 3;
+
+  // Constants used to insert a new notification.
+  public static final int NOTIFICATION_INSERT_MESSAGE = 1;
+  public static final int NOTIFICATION_INSERT_URL = 2;
+  public static final int NOTIFICATION_INSERT_DATETIME = 3;
+
+  // Constants used to insert a relationship between user and notification.
+  public static final int USER_NOTIFICATION_INSERT_USERID = 1;
+  public static final int USER_NOTIFICATION_INSERT_NOTIFICATIONID = 2;
+
+  // Constant used to fetch the ID of the last inserted notification.
+  public static final int LAST_NOTIFICATION_FETCH_ID = 1;
+
+  // Constant used to fetch the ID of every user following a question or answer.
+  public static final int CREATE_NOTIFICATION_FETCH_USERID = 1;
 }

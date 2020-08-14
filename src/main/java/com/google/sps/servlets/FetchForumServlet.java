@@ -46,7 +46,6 @@ public class FetchForumServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     List<QuestionObject> questions = new ArrayList<>();
-    
     String query = Utility.fetchQuestionQuery;
 
     // The connection and query are attempted.
