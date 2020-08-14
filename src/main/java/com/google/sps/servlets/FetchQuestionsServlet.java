@@ -54,10 +54,10 @@ public class FetchQuestionsServlet extends HttpServlet {
 
     if (question_id == SqlConstants.FETCH_ALL_QUESTIONS) {
       // Nothing needs to be added to the query apart from closing it.
-      query = Utility.fetchQuestionsQuery + ";";
+      query = Utility.fetchQuestionQuery + ";";
     } else {
       // Condition to fetch only one question.
-      query = Utility.fetchQuestionsQuery + "WHERE Question.id=" + question_id + ";";
+      query = Utility.fetchQuestionQuery + "WHERE Question.id=" + question_id + ";";
     }
 
     // The connection and query are attempted.
