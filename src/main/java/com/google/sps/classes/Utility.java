@@ -31,6 +31,9 @@ public final class Utility {
   public static final String SQL_LOCAL_URL = "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
   public static final String SQL_LOCAL_USER = "root";
   public static final String SQL_LOCAL_PASSWORD = "";
+
+  // Variables for user login status.
+  public static final int USER_LOGGED_OUT = -1;
   
   // Query to retrieve data from a question. The ? at the end must be replaced in the
   // prepared statement, can be '1=1' for all questions or a different condition to match
@@ -56,7 +59,7 @@ public final class Utility {
    * If the user is not logged in or if no user ID is found, returns -1.
    */
   public static int getUserId() {
-    int userId = -1;
+    int userId = USER_LOGGED_OUT;
     UserService userService = UserServiceFactory.getUserService();
 
     // If user is not logged in, return -1.
