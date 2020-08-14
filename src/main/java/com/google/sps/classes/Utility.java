@@ -108,7 +108,7 @@ public final class Utility {
    * User table.
    */
   public static void addNewUser(String firstName, String lastName, String username, String email,
-      int major, boolean is_mentor) {
+      int major, boolean isMentor) {
     // Set up query to insert new user into database.
     String query = "INSERT INTO User (first_name, last_name, username, email, major_id, is_mentor)"
         + " VALUES (?, ?, ?, ?, ?, ?)";
@@ -125,7 +125,7 @@ public final class Utility {
       preparedStatement.setString(SqlConstants.USER_INSERT_USERNAME, username);
       preparedStatement.setString(SqlConstants.USER_INSERT_EMAIL, email);
       preparedStatement.setInt(SqlConstants.USER_INSERT_MAJOR, major);
-      preparedStatement.setBoolean(SqlConstants.USER_INSERT_IS_MENTOR, is_mentor);
+      preparedStatement.setBoolean(SqlConstants.USER_INSERT_ISMENTOR, isMentor);
 
       // Execute the prepared statement and close connection.
       preparedStatement.execute();
