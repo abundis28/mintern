@@ -69,9 +69,9 @@ public class PostAnswerServlet extends HttpServlet {
       String insertAnswerQuery = "INSERT INTO Answer(question_id, body, author_id, date_time) "
           + "VALUES (?,?,?,NOW())";
       PreparedStatement answerStatement = connection.prepareStatement(insertAnswerQuery);
-      answerStatement.setInt(SqlConstants.ANSWER_INSERT_QUESTIONID_COLUMN, question_id);
-      answerStatement.setString(SqlConstants.ANSWER_INSERT_BODY_COLUMN, body);
-      answerStatement.setInt(SqlConstants.ANSWER_INSERT_AUTHORID_COLUMN, author_id);
+      answerStatement.setInt(SqlConstants.ANSWER_INSERT_QUESTIONID, question_id);
+      answerStatement.setString(SqlConstants.ANSWER_INSERT_BODY, body);
+      answerStatement.setInt(SqlConstants.ANSWER_INSERT_AUTHORID, author_id);
       answerStatement.executeUpdate();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
@@ -90,7 +90,7 @@ public class PostAnswerServlet extends HttpServlet {
       PreparedStatement maxIdStatement = connection.prepareStatement(maxIdQuery);
       ResultSet queryResult = maxIdStatement.executeQuery();
       queryResult.next();
-      id = queryResult.getInt(SqlConstants.ANSWER_FETCH_MAXID_COLUMN);
+      id = queryResult.getInt(SqlConstants.ANSWER_FETCH_MAXID);
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
       Logger logger = Logger.getLogger(PostAnswerServlet.class.getName());
@@ -110,8 +110,8 @@ public class PostAnswerServlet extends HttpServlet {
       String insertFollowerQuery = "INSERT INTO AnswerFollower(answer_id, follower_id) "
           + "VALUES (?,?)";
       PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
-      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_ANSWERID_COLUMN, latestAnswerId);
-      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_AUTHORID_COLUMN, author_id);
+      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_ANSWERID, latestAnswerId);
+      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_AUTHORID, author_id);
       followerStatement.executeUpdate();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
