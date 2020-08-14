@@ -61,7 +61,7 @@ public final class SqlConstants {
   public static final int ANSWER_FETCH_VOTES = 6;
 
   // Constant used to set parameter in answer prepared statement.
-  public static final int ANSWER_SET_QUESTIONID = 1;
+  public static final int ANSWER_SET_QUESTIONIDd = 1;
 
   // Constants used for querying a comment.
   public static final int COMMENT_FETCH_BODY = 11;
@@ -70,7 +70,6 @@ public final class SqlConstants {
   
   // Constant used in the forum.
   public static final int FETCH_ALL_QUESTIONS = -1;
-<<<<<<< HEAD
 
   // Constants used for inserting an answer.
   public static final int ANSWER_INSERT_QUESTIONID = 1;
@@ -81,7 +80,6 @@ public final class SqlConstants {
   public static final int ANSWER_FETCH_MAXID = 1;
   public static final int FOLLOWER_INSERT_ANSWERID = 1;
   public static final int FOLLOWER_INSERT_AUTHORID = 2;
-=======
   
   // Constants used to fetch the elements of notification.
   public static final int NOTIFICATION_FETCH_MESSAGE = 1;
@@ -102,5 +100,4 @@ public final class SqlConstants {
 
   // Constant used to fetch the ID of every user following a question or answer.
   public static final int CREATE_NOTIFICATION_FETCH_USERID = 1;
->>>>>>> mvp/show-answers
 }
