@@ -18,6 +18,7 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.sps.classes.SqlConstants;
 import com.google.gson.Gson;
+import com.google.sps.classes.SqlConstants;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,16 +35,19 @@ public final class Utility {
   public static final String SQL_LOCAL_USER = "root";
   public static final String SQL_LOCAL_PASSWORD = "";
   
-  // Query to retrieve data from a question. The ? at the end must be replaced in the
-  // prepared statement, can be '1=1' for all questions or a different condition to match
-  // the questions that are needed.
-  public static final String fetchQuestionsQuery = "SELECT * FROM Question "
+  // Query to retrieve data from a question. Generates the following table:
+  //
+  // |-----------------Question-----------------|------FollowerCount------|-----GetUsername-----|------AnswerCount------|
+  // +----+-------+------+----------+-----------+-------------+-----------+----------+----------+-------------+---------+
+  // | id | title | body | asker_id | date_time | question_id | followers | username | asker_id | question_id | answers |
+  // +----+-------+------+----------+-----------+-------------+-----------+----------+----------+-------------+---------+
+  public static final String fetchQuestionQuery = "SELECT * FROM Question "
       + "LEFT JOIN (SELECT question_id, COUNT(follower_id) followers FROM QuestionFollower "
-      + "GROUP BY question_id) CountTable ON Question.id=CountTable.question_id "
-      + "LEFT JOIN (SELECT username, id AS asker_id FROM User) NameTable "
-      + "ON Question.asker_id=NameTable.asker_id "
+      + "GROUP BY question_id) FollowerCount ON Question.id=FollowerCount.question_id "
+      + "LEFT JOIN (SELECT username, id AS asker_id FROM User) GetUsername "
+      + "ON Question.asker_id=GetUsername.asker_id "
       + "LEFT JOIN (SELECT question_id, COUNT(id) answers FROM Answer "
-      + "GROUP BY question_id) AnswerTable ON Question.id=AnswerTable.question_id ";
+      + "GROUP BY question_id) AnswerCount ON Question.id=AnswerCount.question_id ";
 
   /**
    * Converts objects to JSON using GSON class.
@@ -128,6 +132,31 @@ public final class Utility {
       Logger logger = Logger.getLogger(Utility.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
+  }
+
+  /** 
+   * Create a question object using the results from a query.
+   */
+  public static QuestionObject buildQuestion(ResultSet queryResult) {
+    QuestionObject question = new QuestionObject();
+    try {
+      question.setId(queryResult.getInt(SqlConstants.QUESTION_FETCH_ID));
+      question.setTitle(queryResult.getString(SqlConstants.QUESTION_FETCH_TITLE));
+      question.setBody(queryResult.getString(SqlConstants.QUESTION_FETCH_BODY));
+      question.setAskerId(queryResult.getInt(SqlConstants.QUESTION_FETCH_ASKERID));
+      question.setAskerName(queryResult.getString(SqlConstants.QUESTION_FETCH_ASKERNAME));
+      question.setDateTime(queryResult.getTimestamp(SqlConstants.QUESTION_FETCH_DATETIME));
+      question.setNumberOfFollowers(queryResult.getInt(
+          SqlConstants.QUESTION_FETCH_NUMBEROFFOLLOWERS));
+      question.setNumberOfAnswers(queryResult.getInt(
+          SqlConstants.QUESTION_FETCH_NUMBEROFANSWERS));
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+    
+    return question;
   }
 
   /**
