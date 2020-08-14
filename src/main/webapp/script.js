@@ -13,12 +13,54 @@
 // limitations under the License.
 
 /**
- * Function that will call other functions when the index page loads. 
+ * Loads notifications of the signed in user.
+ */
+function loadNotifications() {
+  fetch('/notification').then(response => response.json()).then((notificationsJson) => {
+    const notificationsElement = document.getElementById('inbox-dropdown');
+    notificationsElement.innerHTML = '';
+    for (const notification of notificationsJson) {
+      notificationsElement.appendChild(createNotificationsElement(notification));
+    }
+  });
+}
+
+/**
+ * Appends child to navbar dropdown. Represents a notification.
+ * @param {Notification} notification
+ */
+function createNotificationsElement(notification) {
+  // Create a link to redirect the user to the question that was answered or commented.
+  const linkElement = document.createElement('a');
+  linkElement.innerText = linkElement.innerText.concat(notification.message, " - ");
+  linkElement.innerText = linkElement.innerText.concat(notification.timestamp.toString());
+  linkElement.setAttribute("href", notification.url);
+  // Create list element.
+  const liElement = document.createElement('li');
+  liElement.appendChild(linkElement);
+  liElement.setAttribute("class","list-group-item");
+  return liElement;
+}
+
+/**
+ * Creates notification when an answer or comment is posted.
+ * @param {string} type
+ * @param {int} id
+ */
+function notify(type, id) {
+  fetch('notification?type=' + type + '&modifiedElementId=' + id, {
+    method: 'POST'
+  })
+}
+
+/**
+ * Function that will call other functions when the index page loads.
  */
 function loadIndex() {
   addAutoResize();
   fetchAuthenticationForIndex();
   fetchForum();
+  loadNotifications();
 }
 
 /**
@@ -116,18 +158,21 @@ function addAutoResize() {
   });
 }
 
+
 /**
  * Displays navbar authentication buttons according to login status in index page.
  */
 function fetchAuthenticationForIndex() {
   fetch('/authentication').then(response => response.json()).then(user => {
+    const inboxButton = document.getElementById("notificationsDropdown");
     if (user.isUserLoggedIn) {
-      // If user is logged in, show logout button in navbar.
+      // If user is logged in, show logout and inbox buttons in navbar.
+      inboxButton.style.display = "block";
+      loadNotifications(); 
       if (!user.isUserRegistered) {
         // If logged in user is not registered, redirect to signup page.
         window.location.replace('/signup.html');
       }
-
       // Delete signup button.
       const signupButtonNavbar = document.getElementById('signup');
       signupButtonNavbar.innerHTML = '';
@@ -209,9 +254,7 @@ function fetchMajors() {
   fetch('/signup').then(response => response.json()).then(majors => {
     // Get select containers where new options will be appended.
     const mentorMajorSelect = document.getElementById('mentor-major');
-    mentorMajorSelect.innerHTML = '';
     const menteeMajorSelect = document.getElementById('mentee-major');
-    menteeMajorSelect.innerHTML = '';
 
     for (let major in majors) {
       // Create option for major and append it to select containers.
@@ -232,10 +275,9 @@ function fetchMajors() {
  * mentor signup form.
  */
 function fetchMentorExperience() {
-  fetch('/mentor-signup').then(response => response.json()).then(subjectTags => {
+  fetch('/signup-mentor').then(response => response.json()).then(subjectTags => {
     // Get select container where new options will be appended.
     const mentorExperienceSelect = document.getElementById('mentor-experience');
-    mentorExperienceSelect.innerHTML = '';
 
     subjectTags.forEach(subjectTag => {
       // Create option for subject tag and append it to select container.
@@ -256,7 +298,6 @@ function fetchMentorExperience() {
 function loadVerification() {
   fetchAuthenticationForVerification();
 }
-
 
 /**
  * Displays logout button or redirects to index in verification page.
@@ -279,3 +320,21 @@ function fetchAuthenticationForVerification() {
     }
   })
 }
+
+(function() {
+  'use strict';
+  window.addEventListener('load', function() {
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    var forms = document.getElementsByClassName('needs-validation');
+    // Loop over them and prevent submission
+    var validation = Array.prototype.filter.call(forms, function(form) {
+      form.addEventListener('submit', function(event) {
+        if (form.checkValidity() === false) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  }, false);
+})();
