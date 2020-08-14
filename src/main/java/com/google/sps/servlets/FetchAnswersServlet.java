@@ -42,7 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 public class FetchAnswersServlet extends HttpServlet {
 
   /** 
-   * This method will get the answers for a single question and send them back as JSON.
+   * Gets the answers for a single question and send them back as JSON.
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -87,6 +87,9 @@ public class FetchAnswersServlet extends HttpServlet {
     response.getWriter().println(Utility.convertToJsonUsingGson(answers));
   }
 
+  /** 
+   * Creates an answer object from the query data.
+   */
   private Answer buildAnswer(ResultSet queryResult) {
     Answer answer = new Answer();
     try {
@@ -95,6 +98,7 @@ public class FetchAnswersServlet extends HttpServlet {
       answer.setAuthorName(queryResult.getString(SqlConstants.ANSWER_FETCH_AUTHORNAME_COLUMN));
       answer.setDateTime(queryResult.getTimestamp(SqlConstants.ANSWER_FETCH_DATETIME_COLUMN));
 
+      // Adds the comment from the same row.
       answer.addComment(buildComment(queryResult));
 
       // TODO(shaargtz): Implement voting system.
@@ -109,6 +113,9 @@ public class FetchAnswersServlet extends HttpServlet {
     return answer;
   }
 
+  /** 
+   * Creates a comment object from the query data.
+   */
   private Comment buildComment(ResultSet queryResult) {
     Comment comment = new Comment();
     try {
