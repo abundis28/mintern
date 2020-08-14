@@ -327,6 +327,7 @@ function createCommentFormElement(answer_id) {
   inputQuestionIdElement.setAttribute('type', 'hidden');
   inputQuestionIdElement.setAttribute('name', 'question_id');
   inputQuestionIdElement.setAttribute('id', 'question_id');
+  inputQuestionIdElement.setAttribute('value', getQuestionId());
   divElement.appendChild(inputQuestionIdElement);
 
   const inputAnswerIdElement = document.createElement('input');
