@@ -23,11 +23,7 @@ public final class SqlConstants {
   public static final int QUESTION_FETCH_TITLE = 2;
   public static final int QUESTION_FETCH_BODY = 3;
   public static final int QUESTION_FETCH_ASKERID = 4;
-<<<<<<< HEAD
-  public static final int QUESTION_FETCH_AKSERNAME = 8;
-=======
   public static final int QUESTION_FETCH_ASKERNAME = 8;
->>>>>>> mvp/single-question-view
   public static final int QUESTION_FETCH_DATETIME = 5;
   public static final int QUESTION_FETCH_NUMBEROFFOLLOWERS = 7;
   public static final int QUESTION_FETCH_NUMBEROFANSWERS = 11;
@@ -41,8 +37,6 @@ public final class SqlConstants {
   public static final int QUESTION_FETCH_MAXID = 1;
   public static final int FOLLOWER_INSERT_QUESTIONID = 1;
   public static final int FOLLOWER_INSERT_ASKERID = 2;
-<<<<<<< HEAD
-=======
 
   // Constants used for querying a user.
   public static final int USER_FETCH_ID = 1;
@@ -58,7 +52,6 @@ public final class SqlConstants {
   // Constants used for inserting mentor experience.
   public static final int MENTOR_EXPERIENCE_INSERT_ID = 1;
   public static final int MENTOR_EXPERIENCE_INSERT_TAG = 2;
->>>>>>> mvp/single-question-view
 
   // Constants used for querying an answer.
   public static final int ANSWER_FETCH_ID = 1;

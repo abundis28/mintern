@@ -79,32 +79,4 @@ public class FetchQuestionsServlet extends HttpServlet {
     response.setContentType("application/json;");
     response.getWriter().println(Utility.convertToJsonUsingGson(questions));
   }
-<<<<<<< HEAD
-
-  /** 
-   * Creates a question object using the results from a query.
-   */
-  private Question buildQuestion(ResultSet queryResult) {
-    Question question = new Question();
-    try {
-      question.setId(queryResult.getInt(SqlConstants.QUESTION_FETCH_ID));
-      question.setTitle(queryResult.getString(SqlConstants.QUESTION_FETCH_TITLE));
-      question.setBody(queryResult.getString(SqlConstants.QUESTION_FETCH_BODY));
-      question.setAskerId(queryResult.getInt(SqlConstants.QUESTION_FETCH_ASKERID));
-      question.setAskerName(queryResult.getString(SqlConstants.QUESTION_FETCH_AKSERNAME));
-      question.setDateTime(queryResult.getTimestamp(SqlConstants.QUESTION_FETCH_DATETIME));
-      question.setNumberOfFollowers(queryResult.getInt(
-          SqlConstants.QUESTION_FETCH_NUMBEROFFOLLOWERS));
-      question.setNumberOfAnswers(queryResult.getInt(
-          SqlConstants.QUESTION_FETCH_NUMBEROFANSWERS));
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(FetchQuestionsServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
-    
-    return question;
-  }
-=======
->>>>>>> mvp/single-question-view
 }

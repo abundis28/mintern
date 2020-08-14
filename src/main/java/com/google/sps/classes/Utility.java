@@ -30,16 +30,11 @@ import java.util.logging.Logger;
  */
 public final class Utility {
   // Variables needed to connect to MySQL database.
-<<<<<<< HEAD
-  public static final String SQL_LOCAL_URL = 
-=======
   public static final String SQL_LOCAL_URL =
->>>>>>> mvp/single-question-view
       "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
   public static final String SQL_LOCAL_USER = "root";
   public static final String SQL_LOCAL_PASSWORD = "";
   
-<<<<<<< HEAD
   // Query to retrieve data from all questions. Can be appended a WHERE condition to select
   // specific questions. Generates the following table:
   //
@@ -48,15 +43,6 @@ public final class Utility {
   // | id | title | body | asker_id | date_time | question_id | followers | username | asker_id | question_id | answers |
   // +----+-------+------+----------+-----------+-------------+-----------+----------+----------+-------------+---------+
   public static final String fetchQuestionsQuery = "SELECT * FROM Question "
-=======
-  // Query to retrieve data from a question. Generates the following table:
-  //
-  // |-----------------Question-----------------|------FollowerCount------|-----GetUsername-----|------AnswerCount------|
-  // +----+-------+------+----------+-----------+-------------+-----------+----------+----------+-------------+---------+
-  // | id | title | body | asker_id | date_time | question_id | followers | username | asker_id | question_id | answers |
-  // +----+-------+------+----------+-----------+-------------+-----------+----------+----------+-------------+---------+
-  public static final String fetchQuestionQuery = "SELECT * FROM Question "
->>>>>>> mvp/single-question-view
       + "LEFT JOIN (SELECT question_id, COUNT(follower_id) followers FROM QuestionFollower "
       + "GROUP BY question_id) FollowerCount ON Question.id=FollowerCount.question_id "
       + "LEFT JOIN (SELECT username, id AS asker_id FROM User) GetUsername "
@@ -105,13 +91,8 @@ public final class Utility {
 
     try {
       // Establish connection to MySQL database.
-<<<<<<< HEAD
-      Connection connection = DriverManager
-          .getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
-=======
       Connection connection = DriverManager.getConnection(
           SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
->>>>>>> mvp/single-question-view
 
       // Create the MySQL prepared statement, execute it, and store the result.
       // Takes the query specified above and sets the email field to the logged in user's email.
@@ -133,13 +114,8 @@ public final class Utility {
   }
   
   /**
-<<<<<<< HEAD
-   * Receives the attributes necessary to insert a new user into the database and inserts it to 
-   * the User table.
-=======
    * Receives the attributes necessary to insert a new user into the database and inserts it to the
    * User table.
->>>>>>> mvp/single-question-view
    */
   public static void addNewUser(String firstName, String lastName, String username, String email,
       int major, boolean is_mentor) {
@@ -149,13 +125,8 @@ public final class Utility {
 
     try {
       // Establish connection to MySQL database.
-<<<<<<< HEAD
-      Connection connection = DriverManager
-          .getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
-=======
       Connection connection = DriverManager.getConnection(
           SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
->>>>>>> mvp/single-question-view
 
       // Create the MySQL INSERT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
