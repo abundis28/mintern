@@ -47,6 +47,7 @@ public class FetchQuestionsServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     List<Question> questions = new ArrayList<>();
     
+    // TODO(shaargtz): move queries from Utility to a new SqlQueries class.
     String query = Utility.fetchQuestionsQuery;
 
     // ID of the question to query. -1 means that all questions are to be queried.
