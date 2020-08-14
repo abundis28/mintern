@@ -80,6 +80,7 @@ async function fetchAnswers() {
       }
     });
     answersContainer.appendChild(commentsContainer);
+    answersContainer.appendChild(createCommentFormElement(answer.id));
     answersContainer.appendChild(document.createElement('br'));
   });
 }
@@ -303,6 +304,22 @@ function createCommentElement(comment) {
   commentElement.appendChild(dateElement);
 
   return commentElement;
+}
+
+function createCommentFormElement(answer_id) {
+  const formElement = document.createElement('li');
+  
+  const divElement = document.createElement('div');
+  divElement.setAttribute('class', 'form-group');
+
+  const textElement = document.createElement('textarea');
+  textElement.setAttribute('class', 'form-control form-control-sm');
+  textElement.setAttribute('name', 'comment-body');
+  textElement.setAttribute('id', 'comment-body');
+  textElement.setAttribute('placeholder', 'Write a comment');
+  textElement.setAttribute('rows', '2');
+
+  return formElement;
 }
 
 /** 
