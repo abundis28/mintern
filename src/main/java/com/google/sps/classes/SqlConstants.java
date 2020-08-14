@@ -54,17 +54,17 @@ public final class SqlConstants {
   public static final int FETCH_ALL_QUESTIONS = -1;
 
   // Constants used for inserting an answer.
-  public static final int ANSWER_INSERT_QUESTIONID_COLUMN = 1;
-  public static final int ANSWER_INSERT_BODY_COLUMN = 2;
-  public static final int ANSWER_INSERT_AUTHORID_COLUMN = 3;
+  public static final int ANSWER_INSERT_QUESTIONID = 1;
+  public static final int ANSWER_INSERT_BODY = 2;
+  public static final int ANSWER_INSERT_AUTHORID = 3;
 
   // Constants used for inserting a follower to an answer.
-  public static final int ANSWER_FETCH_MAXID_COLUMN = 1;
-  public static final int FOLLOWER_INSERT_ANSWERID_COLUMN = 1;
-  public static final int FOLLOWER_INSERT_AUTHORID_COLUMN = 2;
+  public static final int ANSWER_FETCH_MAXID = 1;
+  public static final int FOLLOWER_INSERT_ANSWERID = 1;
+  public static final int FOLLOWER_INSERT_AUTHORID = 2;
 
   // Constants used for inserting a comment.
-  public static final int COMMENT_INSERT_ANSWERID_COLUMN = 1;
-  public static final int ANSWER_INSERT_BODY_COLUMN = 2;
-  public static final int ANSWER_INSERT_AUTHORID_COLUMN = 3;
+  public static final int COMMENT_INSERT_ANSWERID= 1;
+  public static final int COMMENT_INSERT_BODY = 2;
+  public static final int COMMENT_INSERT_AUTHORID = 3;
 }
