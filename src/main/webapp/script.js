@@ -108,19 +108,6 @@ async function fetchAnswers() {
 }
 
 /**
- * Fetches questions from server, wraps each in an <li> element, 
- * and adds them to the DOM.
- */
-async function fetchForum() {
-  const response = await fetch('/fetch-forum');
-  const questionsObject = await response.json();
-  const questionsContainer = document.getElementById('forum');
-  questionsObject.forEach(question => {
-    questionsContainer.appendChild(createQuestionElement(question));
-  });
-}
-
-/**
  * Gets majors from database and appends them to select container in mentor and mentee signup
  * forms.
  */
