@@ -72,8 +72,8 @@ public class MentorEvidenceServlet extends HttpServlet {
 
       // Create the MySQL INSERT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.setString(SqlConstants.MENTOR_EVIDENCE_PARAGRAPH, paragraph);
-      preparedStatement.setInt(SqlConstants.MENTOR_EVIDENCE_USERID, userId);
+      preparedStatement.setString(SqlConstants.MENTOR_EVIDENCE_UPDATE_PARAGRAPH, paragraph);
+      preparedStatement.setInt(SqlConstants.MENTOR_EVIDENCE_UPDATE_USERID, userId);
       preparedStatement.execute();
       connection.close();
     } catch (SQLException exception) {
@@ -103,8 +103,8 @@ public class MentorEvidenceServlet extends HttpServlet {
 
         // Create the MySQL INSERT prepared statement.
         PreparedStatement preparedStatement = connection.prepareStatement(query);
-        preparedStatement.setInt(SqlConstants.MENTOR_APPROVAL_USERID, userId);
-        preparedStatement.setInt(SqlConstants.MENTOR_APPROVAL_APPROVERID, approverId);
+        preparedStatement.setInt(SqlConstants.MENTOR_APPROVAL_INSERT_USERID, userId);
+        preparedStatement.setInt(SqlConstants.MENTOR_APPROVAL_INSERT_APPROVERID, approverId);
         preparedStatement.execute();
         connection.close();
       } catch (SQLException exception) {

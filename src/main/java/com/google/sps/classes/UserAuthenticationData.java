@@ -24,7 +24,8 @@ public final class UserAuthenticationData {
   private final boolean isUserRegistered;
   private final String authenticationUrl; // URL to redirect to login or logout page.
 
-  public UserAuthenticationData(String email, boolean isUserLoggedIn, boolean isUserRegistered, String authenticationUrl) {
+  public UserAuthenticationData(
+      String email, boolean isUserLoggedIn, boolean isUserRegistered, String authenticationUrl) {
     this.email = email;
     this.isUserLoggedIn = isUserLoggedIn;
     this.isUserRegistered = isUserRegistered;
