@@ -13,45 +13,22 @@
 // limitations under the License.
 
 /**
- * Function that will call other functions when the page loads. 
+ * Function that will call other functions when the index page loads. 
  */
 function loadIndex() {
   addAutoResize();
   fetchAuthentication();
   fetchForum();
-  loadNotifications();
+  fetchNotifications();
 }
 
+/**
+ * Function that will call other functions when the signup page loads. 
+ */
 function loadSignup() {
   isUserRegistered();
   fetchMajors();
   fetchMentorExperience();
-}
-
-/**
- * Loads notifications of the signed in user.
- */
-function loadNotifications() {
-  fetch('/notification').then(response => response.json()).then((notificationsJson) => {
-    const notificationsElement = document.getElementById('inbox-dropdown');
-    notificationsElement.innerHTML = '';
-    for (const notification of notificationsJson) {
-      notificationsElement.appendChild(createNotificationsElement(notification));
-    }
-  });
-}
-
-/**
- * Fetches questions from server, wraps each in an <li> element, 
- * and adds them to the DOM.
- */
-async function fetchForum() {
-  const response = await fetch('/fetch-forum');
-  const questionsObject = await response.json();
-  const questionsContainer = document.getElementById('forum');
-  questionsObject.forEach(question => {
-    questionsContainer.appendChild(createQuestionElement(question));
-  });
 }
 
 /**
@@ -91,6 +68,19 @@ function fetchAuthentication() {
           user.authenticationUrl, 'btn-outline-success', 'Log In', 'login');
     }
   })
+}
+
+/**
+ * Fetches questions from server, wraps each in an <li> element, 
+ * and adds them to the DOM.
+ */
+async function fetchForum() {
+  const response = await fetch('/fetch-forum');
+  const questionsObject = await response.json();
+  const questionsContainer = document.getElementById('forum');
+  questionsObject.forEach(question => {
+    questionsContainer.appendChild(createQuestionElement(question));
+  });
 }
 
 /**
@@ -137,6 +127,36 @@ function fetchMentorExperience() {
     // Refresh select container to show options.
     $('.selectpicker').selectpicker('refresh');
   })
+}
+
+/**
+ * Fetches notifications of the signed in user.
+ */
+function fetchNotifications() {
+  fetch('/notification').then(response => response.json()).then((notificationsJson) => {
+    const notificationsElement = document.getElementById('inbox-dropdown');
+    notificationsElement.innerHTML = '';
+    for (const notification of notificationsJson) {
+      notificationsElement.appendChild(createNotificationsElement(notification));
+    }
+  });
+}
+
+/**
+ * Appends child to navbar dropdown. Represents a notification.
+ * @param {Notification} notification
+ */
+function createNotificationsElement(notification) {
+  // Create a link to redirect the user to the question that was answered or commented.
+  const linkElement = document.createElement('a');
+  linkElement.innerText = linkElement.innerText.concat(notification.message, " - ");
+  linkElement.innerText = linkElement.innerText.concat(notification.timestamp.toString());
+  linkElement.setAttribute("href", notification.url);
+  // Create list element.
+  const liElement = document.createElement('li');
+  liElement.appendChild(linkElement);
+  liElement.setAttribute("class","list-group-item");
+  return liElement;
 }
 
 /** 
@@ -206,39 +226,6 @@ function createQuestionElement(question) {
 }
 
 /**
- * Appends child to navbar dropdown. Represents a notification.
- * @param {Notification} notification
- */
-function createNotificationsElement(notification) {
-  // Create a link to redirect the user to the question that was answered or commented.
-  const linkElement = document.createElement('a');
-  linkElement.innerText = linkElement.innerText.concat(notification.message, " - ");
-  linkElement.innerText = linkElement.innerText.concat(notification.timestamp.toString());
-  linkElement.setAttribute("href", notification.url);
-  // Create list element.
-  const liElement = document.createElement('li');
-  liElement.appendChild(linkElement);
-  liElement.setAttribute("class","list-group-item");
-  return liElement;
-}
-
-/** 
- * Sets all textarea elements with the data-autoresize attribute to be
- * responsive with its size as the user writes more text. 
- */
-function addAutoResize() {
-  document.querySelectorAll('[data-autoresize]').forEach(function (element) {
-    element.style.boxSizing = 'border-box';
-    var offset = element.offsetHeight - element.clientHeight;
-    element.addEventListener('input', function (event) {
-      event.target.style.height = 'auto';
-      event.target.style.height = event.target.scrollHeight + offset + 'px';
-    });
-    element.removeAttribute('data-autoresize');
-  });
-}
-
-/**
  * Creates a signup, login, or logout button and appends it to navbar.
  * @param {string} authenticationUrl 
  * @param {string} buttonStyle 
@@ -266,6 +253,22 @@ function addAuthenticationButton(authenticationUrl, buttonStyle, buttonText, nav
   authenticationButtonNavbar.appendChild(authenticationButtonItem);
 }
 
+/** 
+ * Sets all textarea elements with the data-autoresize attribute to be
+ * responsive with its size as the user writes more text. 
+ */
+function addAutoResize() {
+  document.querySelectorAll('[data-autoresize]').forEach(function (element) {
+    element.style.boxSizing = 'border-box';
+    var offset = element.offsetHeight - element.clientHeight;
+    element.addEventListener('input', function (event) {
+      event.target.style.height = 'auto';
+      event.target.style.height = event.target.scrollHeight + offset + 'px';
+    });
+    element.removeAttribute('data-autoresize');
+  });
+}
+
 /**
  * Redirects user in signup page to index if they are already registered.
  */
@@ -288,6 +291,7 @@ function notify(type, id) {
   })
 }
 
+// TODO(oumontiel): rename and write the function comment.
 (function() {
   'use strict';
   window.addEventListener('load', function() {
