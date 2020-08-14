@@ -16,7 +16,9 @@ package com.google.sps.classes;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.sps.classes.SqlConstants;
 import com.google.gson.Gson;
+import com.google.sps.classes.SqlConstants;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,11 +30,16 @@ import java.util.logging.Logger;
  */
 public final class Utility {
   // Variables needed to connect to MySQL database.
+<<<<<<< HEAD
   public static final String SQL_LOCAL_URL = 
+=======
+  public static final String SQL_LOCAL_URL =
+>>>>>>> mvp/single-question-view
       "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
   public static final String SQL_LOCAL_USER = "root";
   public static final String SQL_LOCAL_PASSWORD = "";
   
+<<<<<<< HEAD
   // Query to retrieve data from all questions. Can be appended a WHERE condition to select
   // specific questions. Generates the following table:
   //
@@ -41,12 +48,21 @@ public final class Utility {
   // | id | title | body | asker_id | date_time | question_id | followers | username | asker_id | question_id | answers |
   // +----+-------+------+----------+-----------+-------------+-----------+----------+----------+-------------+---------+
   public static final String fetchQuestionsQuery = "SELECT * FROM Question "
+=======
+  // Query to retrieve data from a question. Generates the following table:
+  //
+  // |-----------------Question-----------------|------FollowerCount------|-----GetUsername-----|------AnswerCount------|
+  // +----+-------+------+----------+-----------+-------------+-----------+----------+----------+-------------+---------+
+  // | id | title | body | asker_id | date_time | question_id | followers | username | asker_id | question_id | answers |
+  // +----+-------+------+----------+-----------+-------------+-----------+----------+----------+-------------+---------+
+  public static final String fetchQuestionQuery = "SELECT * FROM Question "
+>>>>>>> mvp/single-question-view
       + "LEFT JOIN (SELECT question_id, COUNT(follower_id) followers FROM QuestionFollower "
-      + "GROUP BY question_id) CountTable ON Question.id=CountTable.question_id "
-      + "LEFT JOIN (SELECT username, id AS asker_id FROM User) NameTable "
-      + "ON Question.asker_id=NameTable.asker_id "
+      + "GROUP BY question_id) FollowerCount ON Question.id=FollowerCount.question_id "
+      + "LEFT JOIN (SELECT username, id AS asker_id FROM User) GetUsername "
+      + "ON Question.asker_id=GetUsername.asker_id "
       + "LEFT JOIN (SELECT question_id, COUNT(id) answers FROM Answer "
-      + "GROUP BY question_id) AnswerTable ON Question.id=AnswerTable.question_id ";
+      + "GROUP BY question_id) AnswerCount ON Question.id=AnswerCount.question_id ";
 
   // Query to get answers and comments from a question. Generates the following table:
   //
@@ -85,22 +101,26 @@ public final class Utility {
     String email = userService.getCurrentUser().getEmail();
 
     // Set up query to check if user is already registered.
-    String query = "SELECT id FROM User WHERE email = ?";
+    String query = "SELECT * FROM User WHERE email = '" + email + "'";
 
     try {
       // Establish connection to MySQL database.
+<<<<<<< HEAD
       Connection connection = DriverManager
           .getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
+=======
+      Connection connection = DriverManager.getConnection(
+          SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
+>>>>>>> mvp/single-question-view
 
       // Create the MySQL prepared statement, execute it, and store the result.
       // Takes the query specified above and sets the email field to the logged in user's email.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.setString(1, email);
       ResultSet queryResult = preparedStatement.executeQuery();
 
       // If email is found, set userId to the ID retrieved from the database.
       if (queryResult.next()) {
-        userId = queryResult.getInt(1);
+        userId = queryResult.getInt(SqlConstants.USER_FETCH_ID);
       } 
       connection.close();
     } catch (SQLException exception) {
@@ -113,8 +133,13 @@ public final class Utility {
   }
   
   /**
+<<<<<<< HEAD
    * Receives the attributes necessary to insert a new user into the database and inserts it to 
    * the User table.
+=======
+   * Receives the attributes necessary to insert a new user into the database and inserts it to the
+   * User table.
+>>>>>>> mvp/single-question-view
    */
   public static void addNewUser(String firstName, String lastName, String username, String email,
       int major, boolean is_mentor) {
@@ -124,17 +149,22 @@ public final class Utility {
 
     try {
       // Establish connection to MySQL database.
+<<<<<<< HEAD
       Connection connection = DriverManager
           .getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
+=======
+      Connection connection = DriverManager.getConnection(
+          SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
+>>>>>>> mvp/single-question-view
 
       // Create the MySQL INSERT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.setString(1, firstName);
-      preparedStatement.setString(2, lastName);
-      preparedStatement.setString(3, username);
-      preparedStatement.setString(4, email);
-      preparedStatement.setInt(5, major);
-      preparedStatement.setBoolean(6, is_mentor);
+      preparedStatement.setString(SqlConstants.USER_INSERT_FIRSTNAME, firstName);
+      preparedStatement.setString(SqlConstants.USER_INSERT_LASTNAME, lastName);
+      preparedStatement.setString(SqlConstants.USER_INSERT_USERNAME, username);
+      preparedStatement.setString(SqlConstants.USER_INSERT_EMAIL, email);
+      preparedStatement.setInt(SqlConstants.USER_INSERT_MAJOR, major);
+      preparedStatement.setBoolean(SqlConstants.USER_INSERT_IS_MENTOR, is_mentor);
 
       // Execute the prepared statement and close connection.
       preparedStatement.execute();
@@ -143,6 +173,45 @@ public final class Utility {
       // If the connection or the query don't go through, get the log of the error.
       Logger logger = Logger.getLogger(Utility.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+  }
+
+  /** 
+   * Create a question object using the results from a query.
+   */
+  public static QuestionObject buildQuestion(ResultSet queryResult) {
+    QuestionObject question = new QuestionObject();
+    try {
+      question.setId(queryResult.getInt(SqlConstants.QUESTION_FETCH_ID));
+      question.setTitle(queryResult.getString(SqlConstants.QUESTION_FETCH_TITLE));
+      question.setBody(queryResult.getString(SqlConstants.QUESTION_FETCH_BODY));
+      question.setAskerId(queryResult.getInt(SqlConstants.QUESTION_FETCH_ASKERID));
+      question.setAskerName(queryResult.getString(SqlConstants.QUESTION_FETCH_ASKERNAME));
+      question.setDateTime(queryResult.getTimestamp(SqlConstants.QUESTION_FETCH_DATETIME));
+      question.setNumberOfFollowers(queryResult.getInt(
+          SqlConstants.QUESTION_FETCH_NUMBEROFFOLLOWERS));
+      question.setNumberOfAnswers(queryResult.getInt(
+          SqlConstants.QUESTION_FETCH_NUMBEROFANSWERS));
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+    
+    return question;
+  }
+
+  /**
+   * Tries to convert a string to an integer and returns 0 if not possible.
+   */
+  public static int tryParseInt(String string) {
+    try {
+      return Integer.parseInt(string);
+    } catch (NumberFormatException exception) {
+      // If string parameter was not a number, get the log of the error and return 0.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+      return 0;
     }
   }
 }
