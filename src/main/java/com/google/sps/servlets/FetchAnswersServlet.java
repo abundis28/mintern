@@ -61,11 +61,11 @@ public class FetchAnswersServlet extends HttpServlet {
         Connection connection = DriverManager.getConnection(
             Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
         PreparedStatement preparedStatement = connection.prepareStatement(query);
-        preparedStatement.setInt(Utility.ANSWER_SET_QUESTIONID_COLUMN, question_id);
+        preparedStatement.setInt(Utility.ANSWER_SET_QUESTIONID, question_id);
         ResultSet queryResult = preparedStatement.executeQuery();
         // All of the rows from the query are looped if it goes through.
         while (queryResult.next()) {
-          int currentAnswerId = queryResult.getInt(SqlConstants.ANSWER_FETCH_ID_COLUMN);
+          int currentAnswerId = queryResult.getInt(SqlConstants.ANSWER_FETCH_ID);
           if (answers.containsKey(currentAnswerId)) {
             // The comment of the current row corresponds to a previous answer, 
             // so we add it to its corresponding answer object.
@@ -93,16 +93,16 @@ public class FetchAnswersServlet extends HttpServlet {
   private Answer buildAnswer(ResultSet queryResult) {
     Answer answer = new Answer();
     try {
-      answer.setId(queryResult.getInt(SqlConstants.ANSWER_FETCH_ID_COLUMN));
-      answer.setBody(queryResult.getString(SqlConstants.ANSWER_FETCH_BODY_COLUMN));
-      answer.setAuthorName(queryResult.getString(SqlConstants.ANSWER_FETCH_AUTHORNAME_COLUMN));
-      answer.setDateTime(queryResult.getTimestamp(SqlConstants.ANSWER_FETCH_DATETIME_COLUMN));
+      answer.setId(queryResult.getInt(SqlConstants.ANSWER_FETCH_ID));
+      answer.setBody(queryResult.getString(SqlConstants.ANSWER_FETCH_BODY));
+      answer.setAuthorName(queryResult.getString(SqlConstants.ANSWER_FETCH_AUTHORNAME));
+      answer.setDateTime(queryResult.getTimestamp(SqlConstants.ANSWER_FETCH_DATETIME));
 
       // Adds the comment from the same row.
       answer.addComment(buildComment(queryResult));
 
       // TODO(shaargtz): Implement voting system.
-      // answer.setVotes(queryResult.getInt(SqlConstants.ANSWER_FETCH_VOTES_COLUMN));
+      // answer.setVotes(queryResult.getInt(SqlConstants.ANSWER_FETCH_VOTES));
 
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
@@ -119,9 +119,9 @@ public class FetchAnswersServlet extends HttpServlet {
   private Comment buildComment(ResultSet queryResult) {
     Comment comment = new Comment();
     try {
-      comment.setBody(queryResult.getString(SqlConstants.COMMENT_FETCH_BODY_COLUMN));
-      comment.setAuthorName(queryResult.getString(SqlConstants.COMMENT_FETCH_AUTHORNAME_COLUMN));
-      comment.setDateTime(queryResult.getTimestamp(SqlConstants.COMMENT_FETCH_DATETIME_COLUMN));
+      comment.setBody(queryResult.getString(SqlConstants.COMMENT_FETCH_BODY));
+      comment.setAuthorName(queryResult.getString(SqlConstants.COMMENT_FETCH_AUTHORNAME));
+      comment.setDateTime(queryResult.getTimestamp(SqlConstants.COMMENT_FETCH_DATETIME));
 
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
