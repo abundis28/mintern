@@ -45,8 +45,12 @@ async function fetchQuestions(page) {
   let questionsContainer;
   let hasRedirect;
   if (page === 'forum') {
+    // For the forum we pass -1 which means we need to retrieve all questions.
     question_id = -1;
     questionsContainer = document.getElementById('forum');
+
+    // We want the element in the forum to have a link which sends to the single
+    // page view.
     hasRedirect = true;
   } else if (page === 'question') {
     question_id = (new URL(document.location)).searchParams.get("id");
@@ -75,6 +79,7 @@ async function fetchAnswers() {
     commentsContainer.setAttribute('class', 'list-group list-group-flush ml-5');
     answer.commentList.forEach(comment => {
       if (comment.body) {
+        // This is just to skip the NULL elements from the query.
         commentsContainer.appendChild(createCommentElement(comment));
       }
     });
