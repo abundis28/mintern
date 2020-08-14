@@ -29,6 +29,16 @@
   margin-top: 100px;
 }
 
+#answer-body {
+  box-sizing: border-box;
+  resize: none;
+}
+
+#comment-body {
+  box-sizing: border-box;
+  resize: none;
+}
+
 #post-question {
   width: 60%;
   margin: auto;
@@ -39,6 +49,7 @@
   box-sizing: border-box;
   resize: none;
 }
+
 #notificationsDropdown {
   display: none;
 }
