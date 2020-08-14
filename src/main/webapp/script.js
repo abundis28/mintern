@@ -177,6 +177,15 @@ async function fetchQuestions(page) {
 }
 
 /**
+ * Fetches a single question and its answers from server, 
+ * wraps each in an <li> element, and adds them to the DOM.
+ */
+async function fetchQuestionAndAnswers() {
+  const response = await fetch('/answers');
+  const questionsObject = await response.json();
+}
+
+/**
  * Creates a signup, login, or logout button and appends it to navbar.
  * @param {string} authenticationUrl 
  * @param {string} buttonStyle 
@@ -309,15 +318,6 @@ function addAutoResize() {
     });
     element.removeAttribute('data-autoresize');
   });
-}
-
-/**
- * Fetches a single question and its answers from server, 
- * wraps each in an <li> element, and adds them to the DOM.
- */
-async function fetchQuestionAndAnswers() {
-  const response = await fetch('/answers');
-  const questionsObject = await response.json();
 }
 
 /**
