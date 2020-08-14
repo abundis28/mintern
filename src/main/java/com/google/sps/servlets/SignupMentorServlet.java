@@ -91,7 +91,7 @@ public class SignupMentorServlet extends HttpServlet {
     Boolean isMentor = true;
 
     // Insert user and mentor experience to the database.
-    Utility.addNewUser(firstName, lastName, username, email, major, is_mentor);
+    Utility.addNewUser(firstName, lastName, username, email, major, isMentor);
     if (experienceTags != null) {
       addMentorExperience(experienceTags);
     }
@@ -153,7 +153,7 @@ public class SignupMentorServlet extends HttpServlet {
       connection.close();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, get the log of the error.
-      Logger logger = Logger.getLogger(MentorSignupServlet.class.getName());
+      Logger logger = Logger.getLogger(SignupMentorServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
   }
