@@ -70,7 +70,7 @@ public class PostAnswerServlet extends HttpServlet {
       PreparedStatement answerStatement = connection.prepareStatement(insertAnswerQuery);
       answerStatement.setInt(SqlConstants.ANSWER_INSERT_QUESTIONID_COLUMN, question_id);
       answerStatement.setString(SqlConstants.ANSWER_INSERT_BODY_COLUMN, body);
-      answerStatement.setInt(SqlConstants.ANSWER_INSERT_ASKERID_COLUMN, author_id);
+      answerStatement.setInt(SqlConstants.ANSWER_INSERT_AUTHORID_COLUMN, author_id);
       answerStatement.executeUpdate();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.

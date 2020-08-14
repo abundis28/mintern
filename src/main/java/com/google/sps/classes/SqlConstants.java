@@ -56,7 +56,7 @@ public final class SqlConstants {
   // Constants used for inserting an answer.
   public static final int ANSWER_INSERT_QUESTIONID_COLUMN = 1;
   public static final int ANSWER_INSERT_BODY_COLUMN = 2;
-  public static final int ANSWER_INSERT_ASKERID_COLUMN = 3;
+  public static final int ANSWER_INSERT_AUTHORID_COLUMN = 3;
 
   // Constants used for inserting a follower to an answer.
   public static final int ANSWER_FETCH_MAXID_COLUMN = 1;
