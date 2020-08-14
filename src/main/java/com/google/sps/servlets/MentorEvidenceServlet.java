@@ -50,6 +50,8 @@ public class MentorEvidenceServlet extends HttpServlet {
     int userId = Utility.getUserId();
 
     // Set up query to insert new experience tag to user.
+    // Use replace in case mentor evidence already exists in database and mentor wants to update
+    // their information.
     String query = "REPLACE INTO MentorEvidence (mentor_id, paragraph) VALUES (?, ?)";
 
     try {
@@ -59,8 +61,8 @@ public class MentorEvidenceServlet extends HttpServlet {
 
       // Create the MySQL INSERT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.setInt(1, userId);
-      preparedStatement.setString(2, paragraph);
+      preparedStatement.setInt(SqlConstants.MENTOR_EVIDENCE_PARAGRAPH, userId);
+      preparedStatement.setString(SqlConstants.MENTOR_EVIDENCE_USERID, paragraph);
       preparedStatement.execute();
       connection.close();
     } catch (SQLException exception) {

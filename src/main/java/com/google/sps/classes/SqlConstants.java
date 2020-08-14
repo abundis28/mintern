@@ -36,4 +36,8 @@ public final class SqlConstants {
   public static final int QUESTION_FETCH_MAXID_COLUMN = 1;
   public static final int FOLLOWER_INSERT_QUESTIONID_COLUMN = 1;
   public static final int FOLLOWER_INSERT_ASKERID_COLUMN = 2;
+
+  // Constants to update mentor evidence.
+  public static final int MENTOR_EVIDENCE_PARAGRAPH = 1;
+  public static final int MENTOR_EVIDENCE_USERID = 2;
 }
