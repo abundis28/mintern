@@ -42,6 +42,30 @@ function loadSignup() {
 }
 
 /**
+ * Fetches a single question and its answers from server, 
+ * wraps each in an <li> element, and adds them to the DOM.
+ */
+async function fetchAnswers() {
+  const question_id = (new URL(document.location)).searchParams.get("id");
+  const response = await fetch('/fetch-answers?id=' + question_id);
+  const answersObject = await response.json();
+  const answersContainer = document.getElementById('answers');
+  Object.values(answersObject).forEach(answer => {
+    answersContainer.appendChild(createAnswerElement(answer));
+    const commentsContainer = document.createElement('ul');
+    commentsContainer.setAttribute('class', 'list-group list-group-flush ml-5');
+    answer.commentList.forEach(comment => {
+      if (comment.body) {
+        // This is just to skip the NULL elements from the query.
+        commentsContainer.appendChild(createCommentElement(comment));
+      }
+    });
+    answersContainer.appendChild(commentsContainer);
+    answersContainer.appendChild(document.createElement('br'));
+  });
+}
+
+/**
  * Displays navbar authentication and inbox buttons according to login status.
  */
 function fetchAuthentication() {
@@ -80,30 +104,6 @@ function fetchAuthentication() {
           user.authenticationUrl, 'btn-outline-success', 'Log In', 'login');
     }
   })
-}
-
-/**
- * Fetches a single question and its answers from server, 
- * wraps each in an <li> element, and adds them to the DOM.
- */
-async function fetchAnswers() {
-  const question_id = (new URL(document.location)).searchParams.get("id");
-  const response = await fetch('/fetch-answers?id=' + question_id);
-  const answersObject = await response.json();
-  const answersContainer = document.getElementById('answers');
-  Object.values(answersObject).forEach(answer => {
-    answersContainer.appendChild(createAnswerElement(answer));
-    const commentsContainer = document.createElement('ul');
-    commentsContainer.setAttribute('class', 'list-group list-group-flush ml-5');
-    answer.commentList.forEach(comment => {
-      if (comment.body) {
-        // This is just to skip the NULL elements from the query.
-        commentsContainer.appendChild(createCommentElement(comment));
-      }
-    });
-    answersContainer.appendChild(commentsContainer);
-    answersContainer.appendChild(document.createElement('br'));
-  });
 }
 
 /**
