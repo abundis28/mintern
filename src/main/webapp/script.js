@@ -61,6 +61,8 @@ async function fetchAnswers() {
       }
     });
     answersContainer.appendChild(commentsContainer);
+
+    // Add the form to upload a comment at the bottom.
     answersContainer.appendChild(createCommentFormElement(answer.id));
     answersContainer.appendChild(document.createElement('br'));
   });
@@ -248,6 +250,7 @@ function createQuestionElement(question, hasRedirect) {
   questionElement.setAttribute('class', 'list-group-item');
 
   if (hasRedirect) {
+    // Add href to redirect from forum to single view.
     const questionTitle = document.createElement('a');
     questionTitle.setAttribute('href', '/question.html?id=' + question.id);
     questionTitle.innerText = question.title;
@@ -376,6 +379,8 @@ function createCommentElement(comment) {
  */
 function createCommentFormElement(answer_id) {
   const formElement = document.createElement('form');
+
+  // Attributes to call the servlet.
   formElement.setAttribute('action', '/post-comment');
   formElement.setAttribute('method', 'POST');
   
@@ -383,6 +388,7 @@ function createCommentFormElement(answer_id) {
   divElement.setAttribute('class', 'form-group ml-5');
   formElement.appendChild(divElement);
 
+  // Textarea to write the comment.
   const textElement = document.createElement('textarea');
   textElement.setAttribute('class', 'form-control form-control-sm');
   textElement.setAttribute('name', 'comment-body');
@@ -391,6 +397,7 @@ function createCommentFormElement(answer_id) {
   textElement.setAttribute('rows', '2');
   divElement.appendChild(textElement);
 
+  // Hidden input with question id.
   const inputQuestionIdElement = document.createElement('input');
   inputQuestionIdElement.setAttribute('type', 'hidden');
   inputQuestionIdElement.setAttribute('name', 'question_id');
@@ -398,6 +405,7 @@ function createCommentFormElement(answer_id) {
   inputQuestionIdElement.setAttribute('value', getQuestionId());
   divElement.appendChild(inputQuestionIdElement);
 
+  // Hidden input with answer id.
   const inputAnswerIdElement = document.createElement('input');
   inputAnswerIdElement.setAttribute('type', 'hidden');
   inputAnswerIdElement.setAttribute('name', 'answer_id');
@@ -441,10 +449,16 @@ function isUserRegistered() {
   })
 }
 
+/**
+ * Gets the ID of the question that is currently being viewed.
+ */
 function getQuestionId() {
   return (new URL(document.location)).searchParams.get("id");
 }
 
+/**
+ * Sets attribute to the corresponding form elements.
+ */
 function setQuestionIdValue() {
   document.getElementById('question_id').value = getQuestionId(); 
 }
