@@ -50,7 +50,7 @@ function fetchAuthentication() {
       signupButtonNavbar.innerHTML = '';
 
       // Add logout button to navbar.
-      addAuthenticationButton(
+      createAuthenticationButton(
           user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
 
       // Show question submission box.
@@ -60,11 +60,11 @@ function fetchAuthentication() {
       // If user is logged out, show signup and login buttons in navbar.
 
       // Add signup button to navbar.
-      addAuthenticationButton(
+      createAuthenticationButton(
           user.authenticationUrl, 'btn-success', 'Sign Up', 'signup');
 
       // Add login button to navbar.
-      addAuthenticationButton(
+      createAuthenticationButton(
           user.authenticationUrl, 'btn-outline-success', 'Log In', 'login');
     }
   })
@@ -140,6 +140,34 @@ function fetchNotifications() {
       notificationsElement.appendChild(createNotificationsElement(notification));
     }
   });
+}
+
+/**
+ * Creates a signup, login, or logout button and appends it to navbar.
+ * @param {string} authenticationUrl 
+ * @param {string} buttonStyle 
+ * @param {string} buttonText 
+ * @param {string} navbarItem 
+ */
+function createAuthenticationButton(authenticationUrl, buttonStyle, buttonText, navbarItem) {
+  // Create button.
+  const authenticationButton = document.createElement('button');
+  authenticationButton.setAttribute('type', 'button');
+  const buttonUrl = 'window.location.href = \"' + authenticationUrl + '\"';
+  authenticationButton.setAttribute('onclick', buttonUrl);
+  authenticationButton.classList.add('btn');
+  authenticationButton.classList.add(buttonStyle);
+  authenticationButton.innerHTML = buttonText;
+
+  // Create navbar item to hold button.
+  const authenticationButtonItem = document.createElement('li');
+  authenticationButtonItem.classList.add('nav-item');
+  authenticationButtonItem.appendChild(authenticationButton);
+
+  // Append button to navbar.
+  const authenticationButtonNavbar = document.getElementById(navbarItem);
+  authenticationButtonNavbar.innerHTML = '';
+  authenticationButtonNavbar.appendChild(authenticationButtonItem);
 }
 
 /**
@@ -225,34 +253,6 @@ function createQuestionElement(question) {
   return questionElement;
 }
 
-/**
- * Creates a signup, login, or logout button and appends it to navbar.
- * @param {string} authenticationUrl 
- * @param {string} buttonStyle 
- * @param {string} buttonText 
- * @param {string} navbarItem 
- */
-function addAuthenticationButton(authenticationUrl, buttonStyle, buttonText, navbarItem) {
-  // Create button.
-  const authenticationButton = document.createElement('button');
-  authenticationButton.setAttribute('type', 'button');
-  const buttonUrl = 'window.location.href = \"' + authenticationUrl + '\"';
-  authenticationButton.setAttribute('onclick', buttonUrl);
-  authenticationButton.classList.add('btn');
-  authenticationButton.classList.add(buttonStyle);
-  authenticationButton.innerHTML = buttonText;
-
-  // Create navbar item to hold button.
-  const authenticationButtonItem = document.createElement('li');
-  authenticationButtonItem.classList.add('nav-item');
-  authenticationButtonItem.appendChild(authenticationButton);
-
-  // Append button to navbar.
-  const authenticationButtonNavbar = document.getElementById(navbarItem);
-  authenticationButtonNavbar.innerHTML = '';
-  authenticationButtonNavbar.appendChild(authenticationButtonItem);
-}
-
 /** 
  * Sets all textarea elements with the data-autoresize attribute to be
  * responsive with its size as the user writes more text. 
@@ -291,7 +291,7 @@ function notify(type, id) {
   })
 }
 
-// TODO(oumontiel): rename and write the function comment.
+// TODO(oumontiel): write the function comment.
 (function() {
   'use strict';
   window.addEventListener('load', function() {
