@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /** 
  * This servlet will post a question to the forum.
+ * TODO(shaargtz): join this servlet with fetchQuestions into a single question servlet.
  */
 @WebServlet("/post-question")
 public class PostQuestionServlet extends HttpServlet {

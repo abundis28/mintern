@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /** 
  * This servlet will post an answer to a question.
+ * TODO(shaargtz): join this servlet with fetchAnswers into a single answer servlet.
  */
 @WebServlet("/post-answer")
 public class PostAnswerServlet extends HttpServlet {
