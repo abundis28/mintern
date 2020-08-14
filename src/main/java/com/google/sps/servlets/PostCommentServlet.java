@@ -53,7 +53,7 @@ public class PostCommentServlet extends HttpServlet {
       Connection connection = DriverManager.getConnection(
         Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
       insertNewComment(connection, answer_id, body, author_id);
-      insertNewFollower(connection, author_id);
+      insertNewFollower(connection, answer_id, author_id);
     } 
     catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
