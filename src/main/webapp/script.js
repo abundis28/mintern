@@ -307,10 +307,13 @@ function createCommentElement(comment) {
 }
 
 function createCommentFormElement(answer_id) {
-  const formElement = document.createElement('li');
+  const formElement = document.createElement('form');
+  formElement.setAttribute('action', '/post-comment');
+  formElement.setAttribute('method', 'POST');
   
   const divElement = document.createElement('div');
   divElement.setAttribute('class', 'form-group');
+  formElement.appendChild(divElement);
 
   const textElement = document.createElement('textarea');
   textElement.setAttribute('class', 'form-control form-control-sm');
@@ -318,6 +321,18 @@ function createCommentFormElement(answer_id) {
   textElement.setAttribute('id', 'comment-body');
   textElement.setAttribute('placeholder', 'Write a comment');
   textElement.setAttribute('rows', '2');
+  divElement.appendChild(textElement);
+
+  const inputQuestionIdElement = document.createElement('input');
+  inputQuestionIdElement.setAttribute('type', 'hidden');
+  inputQuestionIdElement.setAttribute('name', 'question_id');
+  inputQuestionIdElement.setAttribute('id', 'question_id');
+  divElement.appendChild(inputQuestionIdElement);
+
+  const inputAnswerIdElement = document.createElement('input');
+  inputAnswerIdElement.setAttribute('type', 'hidden');
+  inputAnswerIdElement.setAttribute('value', answer_id);
+  divElement.appendChild(inputAnswerIdElement);
 
   return formElement;
 }
