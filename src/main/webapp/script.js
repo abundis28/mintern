@@ -19,6 +19,7 @@ function loadIndex() {
   addAutoResize();
   fetchAuthentication('forum');
   fetchQuestions('forum');
+  loadNotifications();
 }
 
 /**

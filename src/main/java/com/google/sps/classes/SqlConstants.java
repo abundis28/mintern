@@ -19,6 +19,7 @@ package com.google.sps.classes;
  */
 public final class SqlConstants {
   // Constants used for querying a question.
+  public static final int QUESTION_FETCH_ID = 1;
   public static final int QUESTION_FETCH_TITLE = 2;
   public static final int QUESTION_FETCH_BODY = 3;
   public static final int QUESTION_FETCH_ASKERID = 4;
@@ -55,6 +56,9 @@ public final class SqlConstants {
   public static final int MENTOR_EXPERIENCE_INSERT_ID = 1;
   public static final int MENTOR_EXPERIENCE_INSERT_TAG = 2;
 
+  // Constant used in the forum.
+  public static final int FETCH_ALL_QUESTIONS = -1;
+  
   // Constants used to fetch the elements of notification.
   public static final int NOTIFICATION_FETCH_MESSAGE = 1;
   public static final int NOTIFICATION_FETCH_URL = 2;
