@@ -41,7 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 public class FetchQuestionsServlet extends HttpServlet {
 
   /** 
-   * Gets  the questions from the query and return them as a JSON string.
+   * Gets the questions from the query and return them as a JSON string.
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
