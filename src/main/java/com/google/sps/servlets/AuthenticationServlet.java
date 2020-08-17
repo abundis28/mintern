@@ -54,7 +54,7 @@ public class AuthenticationServlet extends HttpServlet {
       authenticationUrl = userService.createLogoutURL(redirectUrl);
 
       int userId = Utility.getUserId();
-      if (userId != Utility.USER_LOGGED_OUT) {
+      if (userId != Utility.USER_LOGGED_OUT_ID) {
         // If user is registered, change isUserRegistered to true.
         isUserRegistered = true;
       }
