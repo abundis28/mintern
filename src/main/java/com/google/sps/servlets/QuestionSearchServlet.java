@@ -14,7 +14,7 @@
 
 package com.google.sps.servlets;
 
-import com.google.sps.classes.QuestionObject;
+import com.google.sps.classes.Question;
 import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
@@ -42,12 +42,12 @@ public class QuestionSearchServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    List<QuestionObject> questions = new ArrayList<>();
+    List<Question> questions = new ArrayList<>();
     // Get input string from search bar.
     String userInputString = request.getParameter("inputString");
     // The query will return a ResultSet with order depending on the level of similarity to the 
     // input string.
-    String query = Utility.fetchQuestionQuery + "WHERE MATCH(title,body) AGAINST('" +
+    String query = Utility.fetchQuestionsQuery + "WHERE MATCH(title,body) AGAINST('" +
         userInputString + "' IN NATURAL LANGUAGE MODE);";
     // The connection and query are attempted.
     try {
