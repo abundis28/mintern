@@ -389,7 +389,7 @@ function createCommentFormElement(answerId) {
   divElement.setAttribute('class', 'form-group ml-5');
   formElement.appendChild(divElement);
 
-  // Textarea to write the comment.
+  // Text area to write the comment.
   const textElement = document.createElement('textarea');
   textElement.setAttribute('class', 'form-control form-control-sm');
   textElement.setAttribute('name', 'comment-body');
