@@ -40,6 +40,21 @@
         <ul class="navbar-nav mt-2 mt-lg-0 ml-auto">
           <!-- Logout Button -->
           <div id="login"></div>
+          <!-- Notifications Dropdown -->
+          <li class="nav-item dropdown">
+            <!-- Notifications Icon -->
+            <a class="nav-link dropdown-toggle" href="#" id="notificationsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <svg width="30px" height="30px" viewBox="0 0 16 16" class="bi bi-inbox-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M3.81 4.063A1.5 1.5 0 0 1 4.98 3.5h6.04a1.5 1.5 0 0 1 1.17.563l3.7 4.625a.5.5 0 0 1-.78.624l-3.7-4.624a.5.5 0 0 0-.39-.188H4.98a.5.5 0 0 0-.39.188L.89 9.312a.5.5 0 1 1-.78-.624l3.7-4.625z"/>
+                <path fill-rule="evenodd" d="M.125 8.67A.5.5 0 0 1 .5 8.5h5A.5.5 0 0 1 6 9c0 .828.625 2 2 2s2-1.172 2-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .496.562l-.39 3.124a1.5 1.5 0 0 1-1.489 1.314H1.883a1.5 1.5 0 0 1-1.489-1.314l-.39-3.124a.5.5 0 0 1 .121-.393z"/>
+              </svg>
+            </a>
+            <!-- Notifications Dropdown -->
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown" id="dropdown-override">
+              <!-- Container for addition of notifications. -->
+              <ul class="list-group" id="inbox-dropdown"></ul>
+            </div>
+          </li>
         </ul>
       </div>
     </nav>
@@ -47,12 +62,12 @@
     <div class="content m-5">
       <div class="container text-center">
         <h1 class="signup-title">Mentor Approval</h1>
-        <h2 class="signup-subtitle text-muted">Below you can find the information related to internship experience of: <span class="username"></span></h2> 
+        <h2 class="signup-subtitle text-muted">Below you can find the information related to internship experience of: <span id="username"></span></h2> 
         <h2 class="signup-subtitle text-muted">Please verify their validity.</h2> 
       </div>
       <!-- Mentor Evidence Display -->
       <div class="container">
-        
+        <div id="paragraph"></div>
       </div>
     </div>
   </body>

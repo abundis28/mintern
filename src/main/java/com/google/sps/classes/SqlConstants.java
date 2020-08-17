@@ -20,6 +20,7 @@ package com.google.sps.classes;
 public final class SqlConstants {
   // Constants used for querying a user.
   public static final int USER_FETCH_ID = 1;
+  public static final int USER_FETCH_USERNAME = 4;
   
   // Constants used for inserting a new user.
   public static final int USER_INSERT_FIRSTNAME = 1;
@@ -28,10 +29,6 @@ public final class SqlConstants {
   public static final int USER_INSERT_EMAIL = 4;
   public static final int USER_INSERT_MAJOR = 5;
   public static final int USER_INSERT_ISMENTOR = 6;
-
-  // Constants to update mentor evidence.
-  public static final int MENTOR_EVIDENCE_PARAGRAPH = 1;
-  public static final int MENTOR_EVIDENCE_USERID = 2;
 
   // Constants used for querying an answer.
   public static final int ANSWER_FETCH_ID = 1;
@@ -75,13 +72,16 @@ public final class SqlConstants {
   public static final int MENTOR_EXPERIENCE_INSERT_ID = 1;
   public static final int MENTOR_EXPERIENCE_INSERT_TAG = 2;
 
-  // Constants used for updating mentor evidence.
-  public static final int MENTOR_EVIDENCE_UPDATE_PARAGRAPH = 1;
-  public static final int MENTOR_EVIDENCE_UPDATE_USERID = 2;
+  // Constants used for querying mentor evidence.
+  public static final int MENTOR_EVIDENCE_FETCH_PARAGRAPH = 5;
 
   // Constatns used for inserting approvers to mentors.
   public static final int MENTOR_APPROVAL_INSERT_USERID = 1;
   public static final int MENTOR_APPROVAL_INSERT_APPROVERID = 2;
+
+  // Constants used for querying a MentorApproval row.
+  public static final int MENTOR_APPROVAL_FETCH_MENTORID = 1;
+  public static final int MENTOR_APPROVAL_FETCH_APPROVERID = 2;
 
   // Constants used for querying a question.
   public static final int QUESTION_FETCH_ID = 1;
