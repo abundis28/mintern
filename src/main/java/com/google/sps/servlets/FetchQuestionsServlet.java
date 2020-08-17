@@ -15,7 +15,7 @@
 package com.google.sps.servlets;
 
 import com.google.sps.classes.SqlConstants;
-import com.google.sps.classes.QuestionObject;
+import com.google.sps.classes.Question;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
 import java.sql.Connection;
@@ -35,18 +35,31 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** 
- * This servlet will retrieve forum posts to be displayed on the page.
+ * Retrieves questions to be displayed on the page.
  */
-@WebServlet("/fetch-forum")
-public class FetchForumServlet extends HttpServlet {
+@WebServlet("/fetch-questions")
+public class FetchQuestionsServlet extends HttpServlet {
 
   /** 
-   * This method will get the forum questions from the query and return them as a JSON string.
+   * Gets the questions from the query and return them as a JSON string.
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    List<QuestionObject> questions = new ArrayList<>();
-    String query = Utility.fetchQuestionQuery;
+    List<Question> questions = new ArrayList<>();
+    
+    // TODO(shaargtz): move queries from Utility to a new SqlQueries class.
+    String query = Utility.fetchQuestionsQuery;
+
+    // ID of the question to query.
+    int question_id = Integer.parseInt(request.getParameter("id"));
+
+    if (question_id == SqlConstants.FETCH_ALL_QUESTIONS) {
+      // Nothing needs to be added to the query apart from closing it.
+      query = Utility.fetchQuestionsQuery + ";";
+    } else {
+      // Condition to fetch only one question.
+      query = Utility.fetchQuestionsQuery + "WHERE Question.id=" + question_id + ";";
+    }
 
     // The connection and query are attempted.
     try {
@@ -61,7 +74,7 @@ public class FetchForumServlet extends HttpServlet {
       }
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(FetchForumServlet.class.getName());
+      Logger logger = Logger.getLogger(FetchQuestionsServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
     response.setContentType("application/json;");

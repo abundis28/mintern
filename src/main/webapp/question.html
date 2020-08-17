@@ -12,14 +12,14 @@
     <script src="script.js"></script>
 
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
     
     <title>Mintern</title>
   </head>
-  <body onload="loadIndex()">
+  <body onload="loadQuestion()">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <!-- Logo -->
@@ -49,35 +49,22 @@
           <!-- Notifications Dropdown -->
           <li class="nav-item dropdown">
             <!-- Notifications Icon -->
-            <a class="nav-link dropdown-toggle" href="#" id="notificationsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <svg width="30px" height="30px" viewBox="0 0 16 16" class="bi bi-inbox-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" d="M3.81 4.063A1.5 1.5 0 0 1 4.98 3.5h6.04a1.5 1.5 0 0 1 1.17.563l3.7 4.625a.5.5 0 0 1-.78.624l-3.7-4.624a.5.5 0 0 0-.39-.188H4.98a.5.5 0 0 0-.39.188L.89 9.312a.5.5 0 1 1-.78-.624l3.7-4.625z"/>
                 <path fill-rule="evenodd" d="M.125 8.67A.5.5 0 0 1 .5 8.5h5A.5.5 0 0 1 6 9c0 .828.625 2 2 2s2-1.172 2-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .496.562l-.39 3.124a1.5 1.5 0 0 1-1.489 1.314H1.883a1.5 1.5 0 0 1-1.489-1.314l-.39-3.124a.5.5 0 0 1 .121-.393z"/>
               </svg>
             </a>
-            <!-- Notifications Dropdown -->
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown" id="dropdown-override">
-              <!-- Container for addition of notifications. -->
-              <ul class="list-group" id="inbox-dropdown"></ul>
+            <!-- Notifications Dropdown Hardcoded Items -->
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="#">Notification 1</a>
+              <a class="dropdown-item" href="#">Notification 2</a>
             </div>
           </li>
         </ul>
       </div>
     </nav>
-    <!-- Question submission -->
-    <div id="post-question" style="display: none;">
-      <h4>Ask a question</h4>
-      <form action=/post-question method="POST">
-        <div class="form-group">
-          <textarea class="form-control" maxlength="100" style="resize: none;" name="question-title" id="question-title" placeholder="What is your question?" data-autoresize rows="1"></textarea>
-          <textarea class="form-control form-control-sm" maxlength="2000" name="question-body" id="question-body" placeholder="Elaborate on your question (optional)" data-autoresize rows="3"></textarea>
-        </div>
-        <button type="submit" class="btn btn-outline-info float-right">Submit</button>
-      </form>
-    </div>
-    <!-- Forum -->
-    <div id="forum">
-      <h4>Browse questions</h4>
-    </div>
+    <div id="question"></div>
+    <div id="answers"></div>
   </body>
 </html>
