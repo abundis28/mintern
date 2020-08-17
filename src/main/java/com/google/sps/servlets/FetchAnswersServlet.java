@@ -47,7 +47,7 @@ public class FetchAnswersServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // ID of the question to which the answers correspond.
-    int question_id = Integer.parseInt(request.getParameter("id"));
+    int questionId = Integer.parseInt(request.getParameter("id"));
 
     // Create a map that will hold all of the answers from the query.
     // Each <int> will be an answer's id, and will be used to avoid creating duplicate
@@ -61,7 +61,7 @@ public class FetchAnswersServlet extends HttpServlet {
         Connection connection = DriverManager.getConnection(
             Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
         PreparedStatement preparedStatement = connection.prepareStatement(query);
-        preparedStatement.setInt(SqlConstants.ANSWER_SET_QUESTIONID, question_id);
+        preparedStatement.setInt(SqlConstants.ANSWER_SET_QUESTIONID, questionId);
         ResultSet queryResult = preparedStatement.executeQuery();
         // All of the rows from the query are looped if it goes through.
         while (queryResult.next()) {

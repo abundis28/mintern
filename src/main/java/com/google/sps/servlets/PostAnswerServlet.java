@@ -44,34 +44,34 @@ public class PostAnswerServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String body = request.getParameter("answer-body");
-    int question_id = Integer.parseInt(request.getParameter("question_id"));
-    int author_id = Utility.getUserId();
+    int questionId = Integer.parseInt(request.getParameter("question_id"));
+    int authorId = Utility.getUserId();
 
     try {
       Connection connection = DriverManager.getConnection(
           Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
-      insertNewAnswer(connection, question_id, body, author_id);
-      insertNewFollower(connection, author_id);
+      insertNewAnswer(connection, questionId, body, authorId);
+      insertNewFollower(connection, authorId);
     } 
     catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
       Logger logger = Logger.getLogger(PostAnswerServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
-    response.sendRedirect("/question.html?id=" + question_id);
+    response.sendRedirect("/question.html?id=" + questionId);
   }
 
   /** 
    * Inserts an answer into the database.
    */
-  private void insertNewAnswer(Connection connection, int question_id, String body, int author_id) {
+  private void insertNewAnswer(Connection connection, int questionId, String body, int authorId) {
     try {
-      String insertAnswerQuery = "INSERT INTO Answer(question_id, body, author_id, date_time) "
+      String insertAnswerQuery = "INSERT INTO Answer(questionId, body, author_id, date_time) "
           + "VALUES (?,?,?,NOW())";
       PreparedStatement answerStatement = connection.prepareStatement(insertAnswerQuery);
-      answerStatement.setInt(SqlConstants.ANSWER_INSERT_QUESTIONID, question_id);
+      answerStatement.setInt(SqlConstants.ANSWER_INSERT_QUESTIONID, questionId);
       answerStatement.setString(SqlConstants.ANSWER_INSERT_BODY, body);
-      answerStatement.setInt(SqlConstants.ANSWER_INSERT_AUTHORID, author_id);
+      answerStatement.setInt(SqlConstants.ANSWER_INSERT_AUTHORID, authorId);
       answerStatement.executeUpdate();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
@@ -104,14 +104,14 @@ public class PostAnswerServlet extends HttpServlet {
    * Makes the author of the recently added answer a follower of said answer.
    * TODO(shaargtz): Move function to Utiliy class to be reused.
    */
-  private void insertNewFollower(Connection connection, int author_id) {
+  private void insertNewFollower(Connection connection, int authorId) {
     try {
       int latestAnswerId = getLatestAnswerId(connection);
       String insertFollowerQuery = "INSERT INTO AnswerFollower(answer_id, follower_id) "
           + "VALUES (?,?)";
       PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
       followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_ANSWERID, latestAnswerId);
-      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_AUTHORID, author_id);
+      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_AUTHORID, authorId);
       followerStatement.executeUpdate();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
