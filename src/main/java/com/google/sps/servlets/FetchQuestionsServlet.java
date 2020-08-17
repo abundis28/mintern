@@ -49,7 +49,7 @@ public class FetchQuestionsServlet extends HttpServlet {
     
     String query;
 
-    // ID of the question to query. -1 means that all questions are to be queried.
+    // ID of the question to query.
     int question_id = Integer.parseInt(request.getParameter("id"));
 
     if (question_id == SqlConstants.FETCH_ALL_QUESTIONS) {
