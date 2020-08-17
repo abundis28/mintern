@@ -44,7 +44,7 @@ public class PostAnswerServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String body = request.getParameter("answer-body");
-    int questionId = Integer.parseInt(request.getParameter("question_id"));
+    int questionId = Utility.tryParseInt(request.getParameter("question_id"));
     int authorId = Utility.getUserId();
 
     try {
@@ -66,6 +66,7 @@ public class PostAnswerServlet extends HttpServlet {
    */
   private void insertNewAnswer(Connection connection, int questionId, String body, int authorId) {
     try {
+      // NOW() is the function to get the current date and time in MySQL.
       String insertAnswerQuery = "INSERT INTO Answer(question_id, body, author_id, date_time) "
           + "VALUES (?,?,?,NOW())";
       PreparedStatement answerStatement = connection.prepareStatement(insertAnswerQuery);
