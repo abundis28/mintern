@@ -18,6 +18,29 @@ package com.google.sps.classes;
  * SQL constants used throughout different queries.
  */
 public final class SqlConstants {
+<<<<<<< HEAD
+=======
+  // Constants used for querying a question.
+  public static final int QUESTION_FETCH_ID = 1;
+  public static final int QUESTION_FETCH_TITLE = 2;
+  public static final int QUESTION_FETCH_BODY = 3;
+  public static final int QUESTION_FETCH_ASKERID = 4;
+  public static final int QUESTION_FETCH_ASKERNAME = 8;
+  public static final int QUESTION_FETCH_DATETIME = 5;
+  public static final int QUESTION_FETCH_NUMBEROFFOLLOWERS = 7;
+  public static final int QUESTION_FETCH_NUMBEROFANSWERS = 11;
+
+  // Constants used for inserting a question.
+  public static final int QUESTION_INSERT_TITLE = 1;
+  public static final int QUESTION_INSERT_BODY = 2;
+  public static final int QUESTION_INSERT_ASKERID = 3;
+
+  // Constants used for inserting a follower.
+  public static final int QUESTION_FETCH_MAXID = 1;
+  public static final int FOLLOWER_INSERT_QUESTIONID = 1;
+  public static final int FOLLOWER_INSERT_ASKERID = 2;
+
+>>>>>>> 2116dc2f73cf0360459e4ba0dc43f494404b07f6
   // Constants used for querying a user.
   public static final int USER_FETCH_ID = 1;
   
@@ -27,8 +50,34 @@ public final class SqlConstants {
   public static final int USER_INSERT_USERNAME = 3;
   public static final int USER_INSERT_EMAIL = 4;
   public static final int USER_INSERT_MAJOR = 5;
-  public static final int USER_INSERT_IS_MENTOR = 6;
+  public static final int USER_INSERT_ISMENTOR = 6;
 
+  // Constants used for inserting mentor experience.
+  public static final int MENTOR_EXPERIENCE_INSERT_ID = 1;
+  public static final int MENTOR_EXPERIENCE_INSERT_TAG = 2;
+
+  // Constants to update mentor evidence.
+  public static final int MENTOR_EVIDENCE_PARAGRAPH = 1;
+  public static final int MENTOR_EVIDENCE_USERID = 2;
+
+  // Constants used for querying an answer.
+  public static final int ANSWER_FETCH_ID = 1;
+  public static final int ANSWER_FETCH_BODY = 3;
+  public static final int ANSWER_FETCH_AUTHORNAME = 8;
+  public static final int ANSWER_FETCH_DATETIME = 5;
+  public static final int ANSWER_FETCH_VOTES = 6;
+
+  // Constant used to set parameter in answer prepared statement.
+  public static final int ANSWER_SET_QUESTIONID = 1;
+
+  // Constants used for querying a comment.
+  public static final int COMMENT_FETCH_BODY = 11;
+  public static final int COMMENT_FETCH_AUTHORNAME = 15;
+  public static final int COMMENT_FETCH_DATETIME = 13;
+  
+  // Constant used in the forum.
+  public static final int FETCH_ALL_QUESTIONS = -1;
+  
   // Constants used to fetch the elements of notification.
   public static final int NOTIFICATION_FETCH_MESSAGE = 1;
   public static final int NOTIFICATION_FETCH_URL = 2;
