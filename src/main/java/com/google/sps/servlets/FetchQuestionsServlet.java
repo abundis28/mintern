@@ -60,7 +60,7 @@ public class FetchQuestionsServlet extends HttpServlet {
       // Condition to fetch only one question.
       query = Utility.fetchQuestionsQuery + "WHERE Question.id=" + question_id + ";";
     }
-    
+
     // The connection and query are attempted.
     try {
       Connection connection = DriverManager

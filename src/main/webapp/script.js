@@ -48,6 +48,7 @@ function backToHomepage() {
   questionsContainer.innerHTML = "";
   fetchQuestions('forum');
 }
+
 /**
  * Function that will call other functions when the question page loads. 
  */
