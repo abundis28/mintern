@@ -77,7 +77,7 @@ function fetchAuthentication() {
     const inboxButton = document.getElementById("notificationsDropdown");
     if (user.isUserLoggedIn) {
       // If user is logged in, show logout and inbox buttons in navbar.
-      inboxButton.style.display = "block";
+      if (inboxButton) inboxButton.style.display = "block";
       fetchNotifications(); 
       if (!user.isUserRegistered) {
         // If logged in user is not registered, redirect to signup page.
@@ -91,11 +91,28 @@ function fetchAuthentication() {
       createAuthenticationButton(
           user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
 
-      // Show question submission box when logged in.
+      // Show submission forms when logged in.
       const questionSubmission = document.getElementById('post-question');
       if (questionSubmission) {
         questionSubmission.style.display = "block";
       }
+
+      const answerSubmission = document.getElementById('post-answer');
+      if (answerSubmission) {
+        answerSubmission.style.display = "block";
+      }
+
+      const commentSubmission = document.getElementsByClassName('post-comment');
+      if (commentSubmission != null) {
+        // The timeout is to wait for the dynamically generated forms of each
+        // answer to appear in the DOM.
+        setTimeout(() => {
+          for (element of commentSubmission) {
+            element.style.display = "block";
+          }
+        }, 500);
+      }
+
     } else {
       // If user is logged out, show signup and login buttons in navbar.
 
@@ -379,11 +396,15 @@ function createCommentElement(comment) {
  * Creates an element with the form to upload a comment. 
  */
 function createCommentFormElement(answerId) {
-  const formElement = document.createElement('form');
-
+  const formDiv = document.createElement('div');
+  formDiv.setAttribute('class', 'post-comment');
+  formDiv.setAttribute('style', 'display: none');
+  
   // Attributes to call the servlet.
+  const formElement = document.createElement('form');
   formElement.setAttribute('action', '/post-comment');
   formElement.setAttribute('method', 'POST');
+  formDiv.appendChild(formElement);
   
   const divElement = document.createElement('div');
   divElement.setAttribute('class', 'form-group ml-5');
@@ -421,7 +442,7 @@ function createCommentFormElement(answerId) {
   buttonElement.innerText = "Submit";
   formElement.appendChild(buttonElement);
 
-  return formElement;
+  return formDiv;
 }
 
 /** 
