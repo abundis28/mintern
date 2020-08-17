@@ -62,7 +62,7 @@ public class PostAnswerServlet extends HttpServlet {
     
     try {
       // We call the notification servlet to notify of this posted answer.
-      Request.getRequestDispatcher("/notification?type=question&modifiedElementId=" + questionId)
+      request.getRequestDispatcher("/notification?type=question&modifiedElementId=" + questionId)
           .include(request, response);
     } catch (ServletException exception) {
       // If the notification doesn't go through, we get the log of what happened.

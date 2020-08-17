@@ -64,7 +64,7 @@ public class PostCommentServlet extends HttpServlet {
 
     try {
       // We call the notification servlet to notify of this posted comment.
-      Request.getRequestDispatcher("/notification?type=answer&modifiedElementId=" + questionId)
+      request.getRequestDispatcher("/notification?type=answer&modifiedElementId=" + questionId)
           .include(request, response);
     } catch (ServletException exception) {
       // If the notification doesn't go through, we get the log of what happened.
