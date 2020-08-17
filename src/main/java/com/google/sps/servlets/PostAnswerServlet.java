@@ -44,7 +44,7 @@ public class PostAnswerServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String body = request.getParameter("answer-body");
-    int questionId = Utility.tryParseInt(request.getParameter("question_id"));
+    int questionId = Utility.tryParseInt(request.getParameter("question-id"));
     int authorId = Utility.getUserId();
 
     try {

@@ -43,8 +43,8 @@ public class PostCommentServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String body = request.getParameter("comment-body");
-    int questionId = Utility.tryParseInt(request.getParameter("question_id"));
-    int answerId = Utility.tryParseInt(request.getParameter("answer_id"));
+    int questionId = Utility.tryParseInt(request.getParameter("question-id"));
+    int answerId = Utility.tryParseInt(request.getParameter("answer-id"));
     int authorId = Utility.getUserId();
 
     // First we query the number of questions that exist so that we can update the

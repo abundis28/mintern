@@ -46,8 +46,8 @@ function loadSignup() {
  * wraps each in an <li> element, and adds them to the DOM.
  */
 async function fetchAnswers() {
-  const question_id = (new URL(document.location)).searchParams.get("id");
-  const response = await fetch('/fetch-answers?id=' + question_id);
+  const questionId = (new URL(document.location)).searchParams.get("id");
+  const response = await fetch('/fetch-answers?id=' + questionId);
   const answersObject = await response.json();
   const answersContainer = document.getElementById('answers');
   Object.values(answersObject).forEach(answer => {
@@ -174,23 +174,23 @@ function fetchNotifications() {
  * and adds them to the DOM.
  */
 async function fetchQuestions(page) {
-  let question_id;
+  let questionId;
   let questionsContainer;
   let hasRedirect;
   if (page === 'forum') {
     // For the forum we pass -1 which means we need to retrieve all questions.
-    question_id = -1;
+    questionId = -1;
     questionsContainer = document.getElementById('forum');
 
     // We want the element in the forum to have a link which sends to the single
     // page view.
     hasRedirect = true;
   } else if (page === 'question') {
-    question_id = (new URL(document.location)).searchParams.get("id");
+    questionId = (new URL(document.location)).searchParams.get("id");
     questionsContainer = document.getElementById('question');
     hasRedirect = false;
   }
-  const response = await fetch('/fetch-questions?id=' + question_id);
+  const response = await fetch('/fetch-questions?id=' + questionId);
   const questionsObject = await response.json();
   questionsObject.forEach(question => {
     questionsContainer.appendChild(createQuestionElement(question, hasRedirect));
@@ -378,7 +378,7 @@ function createCommentElement(comment) {
 /** 
  * Creates an element with the form to upload a comment. 
  */
-function createCommentFormElement(answer_id) {
+function createCommentFormElement(answerId) {
   const formElement = document.createElement('form');
 
   // Attributes to call the servlet.
@@ -402,17 +402,17 @@ function createCommentFormElement(answer_id) {
   // Hidden input with question id.
   const inputQuestionIdElement = document.createElement('input');
   inputQuestionIdElement.setAttribute('type', 'hidden');
-  inputQuestionIdElement.setAttribute('name', 'question_id');
-  inputQuestionIdElement.setAttribute('id', 'question_id');
+  inputQuestionIdElement.setAttribute('name', 'question-id');
+  inputQuestionIdElement.setAttribute('id', 'question-id');
   inputQuestionIdElement.setAttribute('value', getQuestionId());
   divElement.appendChild(inputQuestionIdElement);
 
   // Hidden input with answer id.
   const inputAnswerIdElement = document.createElement('input');
   inputAnswerIdElement.setAttribute('type', 'hidden');
-  inputAnswerIdElement.setAttribute('name', 'answer_id');
-  inputAnswerIdElement.setAttribute('id', 'answer_id');
-  inputAnswerIdElement.setAttribute('value', answer_id);
+  inputAnswerIdElement.setAttribute('name', 'answer-id');
+  inputAnswerIdElement.setAttribute('id', 'answer-id');
+  inputAnswerIdElement.setAttribute('value', answerId);
   divElement.appendChild(inputAnswerIdElement);
 
   const buttonElement = document.createElement('button');
@@ -462,7 +462,7 @@ function getQuestionId() {
  * Sets attribute to the corresponding form elements.
  */
 function setQuestionIdValue() {
-  document.getElementById('question_id').value = getQuestionId(); 
+  document.getElementById('question-id').value = getQuestionId(); 
 }
 
 /**
