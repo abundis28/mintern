@@ -47,7 +47,8 @@ public class MentorEvidenceServlet extends HttpServlet {
     // Call NotificationServlet to notify approvers.
     response.setContentType("text/plain");
     try {
-      request.getRequestDispatcher("/notification?type=approval&modifiedElementId=" + Utility.getUserId()).include(request, response);
+      request.getRequestDispatcher("/notification?type=approval&modifiedElementId="
+          + Utility.getUserId()).include(request, response);
     } catch (ServletException exception) {
       System.out.println(exception.getMessage());
     }
@@ -90,13 +91,14 @@ public class MentorEvidenceServlet extends HttpServlet {
   private void addApprovers() {
     int userId = Utility.getUserId();
     // Create array to store IDs of approvers.
+    // TODO(oumontiel): Get IDs from all admins and remove hardcoded IDs.
     int[] approvers = {1, 2, 3};
 
-    for (int approverId : approvers) {
-      // Set up query to insert new experience tag to user.
-      String query = "INSERT INTO MentorApproval "
-          + "VALUES (?, ?, FALSE, FALSE)";
+    // Set up query to insert new experience tag to user.
+    String query = "INSERT INTO MentorApproval (mentor_id, approver_id, is_approved, is_rejected) "
+        + "VALUES (?, ?, FALSE, FALSE)";
 
+    for (int approverId : approvers) {
       try {
         // Establish connection to MySQL database.
         Connection connection = DriverManager.getConnection(
