@@ -194,18 +194,20 @@ public class NotificationServlet extends HttpServlet {
     }
   }
 
+  /**
+   * Fetches ID of question that is related to the answer that was commented.
+   */
   private int getIdOfAnsweredQuestion(int answerId) {
-    System.out.println(answerId);
     String query = "SELECT question_id FROM Answer WHERE id = " + answerId;
     int answeredQuestionId = 0;
     try {
+      // Setup and perform query.
       Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL, 
           Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
       PreparedStatement pst = connection.prepareStatement(query);
       ResultSet resultSet = pst.executeQuery();
       resultSet.next();
       answeredQuestionId = resultSet.getInt(SqlConstants.NOTIFICATION_FETCH_ID_ANSWERED_QUESTION);
-      System.out.println("Assigned: " + answeredQuestionId);
       connection.close();
     } catch (SQLException ex) {
       Logger logger = Logger.getLogger(NotificationServlet.class.getName());
