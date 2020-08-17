@@ -18,8 +18,16 @@
 function loadIndex() {
   addAutoResize();
   fetchAuthentication();
-  fetchForum();
+  fetchQuestions('forum');
   fetchNotifications();
+}
+
+/**
+ * Function that will call other functions when the question page loads. 
+ */
+function loadQuestion() {
+  fetchAuthentication();
+  fetchQuestions('question');
 }
 
 /**
@@ -40,7 +48,7 @@ function fetchAuthentication() {
     if (user.isUserLoggedIn) {
       // If user is logged in, show logout and inbox buttons in navbar.
       inboxButton.style.display = "block";
-      loadNotifications(); 
+      fetchNotifications(); 
       if (!user.isUserRegistered) {
         // If logged in user is not registered, redirect to signup page.
         window.location.replace(user.authenticationUrl);
@@ -53,9 +61,11 @@ function fetchAuthentication() {
       createAuthenticationButton(
           user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
 
-      // Show question submission box.
+      // Show question submission box when logged in.
       const questionSubmission = document.getElementById('post-question');
-      questionSubmission.style.display = "block";
+      if (questionSubmission) {
+        questionSubmission.style.display = "block";
+      }
     } else {
       // If user is logged out, show signup and login buttons in navbar.
 
@@ -68,19 +78,6 @@ function fetchAuthentication() {
           user.authenticationUrl, 'btn-outline-success', 'Log In', 'login');
     }
   })
-}
-
-/**
- * Fetches questions from server, wraps each in an <li> element, 
- * and adds them to the DOM.
- */
-async function fetchForum() {
-  const response = await fetch('/fetch-forum');
-  const questionsObject = await response.json();
-  const questionsContainer = document.getElementById('forum');
-  questionsObject.forEach(question => {
-    questionsContainer.appendChild(createQuestionElement(question));
-  });
 }
 
 /**
@@ -143,6 +140,39 @@ function fetchNotifications() {
 }
 
 /**
+ * Fetches questions from server, wraps each in an <li> element, 
+ * and adds them to the DOM.
+ */
+async function fetchQuestions(page) {
+  let question_id;
+  let questionsContainer;
+  let hasRedirect;
+  if (page === 'forum') {
+    question_id = -1;
+    questionsContainer = document.getElementById('forum');
+    hasRedirect = true;
+  } else if (page === 'question') {
+    question_id = (new URL(document.location)).searchParams.get("id");
+    questionsContainer = document.getElementById('question');
+    hasRedirect = false;
+  }
+  const response = await fetch('/fetch-questions?id=' + question_id);
+  const questionsObject = await response.json();
+  questionsObject.forEach(question => {
+    questionsContainer.appendChild(createQuestionElement(question, hasRedirect));
+  });
+}
+
+/**
+ * Fetches a single question and its answers from server, 
+ * wraps each in an <li> element, and adds them to the DOM.
+ */
+async function fetchQuestionAndAnswers() {
+  const response = await fetch('/answers');
+  const questionsObject = await response.json();
+}
+
+/**
  * Creates a signup, login, or logout button and appends it to navbar.
  * @param {string} authenticationUrl 
  * @param {string} buttonStyle 
@@ -191,10 +221,18 @@ function createNotificationsElement(notification) {
  * Creates an <li> element with question data. 
  * Each element corresponds to a question to be displayed in the DOM.
  */
-function createQuestionElement(question) {
+function createQuestionElement(question, hasRedirect) {
   const questionElement = document.createElement('li');
   questionElement.setAttribute('class', 'list-group-item');
-  questionElement.innerText = question.title;
+
+  if (hasRedirect) {
+    const questionTitle = document.createElement('a');
+    questionTitle.setAttribute('href', '/question.html?id=' + question.id);
+    questionTitle.innerText = question.title;
+    questionElement.appendChild(questionTitle);
+  } else {
+    questionElement.innerText = question.title;
+  }
   
   // Asker name is placed besides the question.
   const askerElement = document.createElement('small');
@@ -270,7 +308,7 @@ function addAutoResize() {
 }
 
 /**
- * Redirects user in signup page to index if they are already registered.
+ * Redirect user in signup page to index if they are already registered.
  */
 function isUserRegistered() {
   fetch('/authentication').then(response => response.json()).then(user => {

@@ -140,6 +140,7 @@ public final class Utility {
   public static QuestionObject buildQuestion(ResultSet queryResult) {
     QuestionObject question = new QuestionObject();
     try {
+      question.setId(queryResult.getInt(SqlConstants.QUESTION_FETCH_ID));
       question.setTitle(queryResult.getString(SqlConstants.QUESTION_FETCH_TITLE));
       question.setBody(queryResult.getString(SqlConstants.QUESTION_FETCH_BODY));
       question.setAskerId(queryResult.getInt(SqlConstants.QUESTION_FETCH_ASKERID));

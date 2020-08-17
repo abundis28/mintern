@@ -14,52 +14,40 @@
 
 package com.google.sps.classes;
 
+import com.google.sps.classes.CommentObject;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
- * Class to create a question for the forum. It will be used for Gson conversion.
+ * Class to create an answer for the forum. It will be used for Gson conversion.
  */
-public class QuestionObject {
+public class AnswerObject {
 
-  private int id;
-  private String title;
   private String body;
-  private String askerName;
-  private int askerId;
+  private String authorName;
   private Timestamp dateTime;
-  private int numberOfFollowers;
-  private int numberOfAnswers;  
-
-  public void setId(int id) {
-    this.id = id;
-  }
-
-  public void setTitle(String title) {
-    this.title = title;
-  }
+  private int votes;
+  private List<CommentObject> commentList;
 
   public void setBody(String body) {
     this.body = body;
   }
 
-  public void setAskerName(String askerName) {
-    this.askerName = askerName;
-  }
-
-  public void setAskerId(int askerId) {
-    this.askerId = askerId;
+  public void setAuthorName(String authorName) {
+    this.authorName = authorName;
   }
 
   public void setDateTime(Timestamp dateTime) {
     this.dateTime = dateTime;
   }
 
-  public void setNumberOfFollowers(int numberOfFollowers) {
-    this.numberOfFollowers = numberOfFollowers;
+  public void setVotes(int votes) {
+    this.votes = votes;
   }  
 
-  public void setNumberOfAnswers(int numberOfAnswers) {
-    this.numberOfAnswers = numberOfAnswers;
-  }  
+  public void addComment(CommentObject comment) {
+    commentList.add(comment);
+  }
 }
