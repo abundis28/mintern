@@ -199,7 +199,7 @@ public class NotificationServlet extends HttpServlet {
    */
   private int getIdOfAnsweredQuestion(int answerId) {
     String query = "SELECT question_id FROM Answer WHERE id = " + answerId;
-    int answeredQuestionId = 0;
+    int answeredQuestionId = -1;
     try {
       // Setup and perform query.
       Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL, 
