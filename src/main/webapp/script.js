@@ -120,7 +120,6 @@ function fetchAuthenticationForIndex() {
 }
 
 /**
-<<<<<<< HEAD
  * Fetches questions from server, wraps each in an <li> element, 
  * and adds them to the DOM.
  */
@@ -147,8 +146,6 @@ function fetchNotifications() {
 }
 
 /**
-=======
->>>>>>> ee267c7f92ca355df13c7a52a6c4700006921eba
  * Gets majors from database and appends them to select container in mentor and mentee signup
  * forms.
  */
