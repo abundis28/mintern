@@ -20,7 +20,7 @@ import java.util.Date;
 /**
  * Class to create a question for the forum. It will be used for Gson conversion.
  */
-public class QuestionObject {
+public class Question {
 
   private int id;
   private String title;

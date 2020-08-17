@@ -14,6 +14,9 @@
 
 package com.google.sps.servlets;
 
+import com.google.sps.classes.Answer;
+import com.google.sps.classes.Comment;
+import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
 import java.sql.Connection;
@@ -22,9 +25,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.annotation.WebServlet;
@@ -35,15 +38,97 @@ import javax.servlet.http.HttpServletResponse;
 /** 
  * Retrieves the answers to be displayed on the page.
  */
-@WebServlet("/answers")
+@WebServlet("/fetch-answers")
 public class FetchAnswersServlet extends HttpServlet {
 
   /** 
    * Gets the answers for a single question and send them back as JSON.
-   * TODO(shaargtz): Modify to get style and functionality right.
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // ID of the question to which the answers correspond.
+    int question_id = Integer.parseInt(request.getParameter("id"));
 
+    // Create a map that will hold all of the answers from the query.
+    // Each <int> will be an answer's id, and will be used to avoid creating duplicate
+    // answers and easily add a <Comment> to the corresponding <Answer>.
+    Map<Integer, Answer> answers = new HashMap<>();
+
+    String query = Utility.fetchAnswersAndCommentsQuery;
+
+    // The connection and query are attempted.
+    try {
+        Connection connection = DriverManager.getConnection(
+            Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(SqlConstants.ANSWER_SET_QUESTIONID, question_id);
+        ResultSet queryResult = preparedStatement.executeQuery();
+        // All of the rows from the query are looped if it goes through.
+        while (queryResult.next()) {
+          int currentAnswerId = queryResult.getInt(SqlConstants.ANSWER_FETCH_ID);
+          if (answers.containsKey(currentAnswerId)) {
+            // The comment of the current row corresponds to a previous answer, 
+            // so we add it to its corresponding answer object.
+            answers.get(currentAnswerId).addComment(buildComment(queryResult));
+          } else {
+            // The comment of the current row corresponds to a new answer,
+            // so we create that answer along with its comment and add it to
+            // the map.
+            answers.put(currentAnswerId, buildAnswer(queryResult));
+          }
+        }
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(FetchAnswersServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    response.setContentType("application/json;");
+    response.getWriter().println(Utility.convertToJsonUsingGson(answers));
+  }
+
+  /** 
+   * Creates an answer object from the query data.
+   */
+  private Answer buildAnswer(ResultSet queryResult) {
+    Answer answer = new Answer();
+    try {
+      answer.setId(queryResult.getInt(SqlConstants.ANSWER_FETCH_ID));
+      answer.setBody(queryResult.getString(SqlConstants.ANSWER_FETCH_BODY));
+      answer.setAuthorName(queryResult.getString(SqlConstants.ANSWER_FETCH_AUTHORNAME));
+      answer.setDateTime(queryResult.getTimestamp(SqlConstants.ANSWER_FETCH_DATETIME));
+
+      // Adds the comment from the same row.
+      answer.addComment(buildComment(queryResult));
+
+      // TODO(shaargtz): Implement voting system.
+      // answer.setVotes(queryResult.getInt(SqlConstants.ANSWER_FETCH_VOTES));
+
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(FetchAnswersServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    return answer;
+  }
+
+  /** 
+   * Creates a comment object from the query data.
+   */
+  private Comment buildComment(ResultSet queryResult) {
+    Comment comment = new Comment();
+    try {
+      comment.setBody(queryResult.getString(SqlConstants.COMMENT_FETCH_BODY));
+      comment.setAuthorName(queryResult.getString(SqlConstants.COMMENT_FETCH_AUTHORNAME));
+      comment.setDateTime(queryResult.getTimestamp(SqlConstants.COMMENT_FETCH_DATETIME));
+
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(FetchAnswersServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    return comment;
   }
 }
