@@ -29,6 +29,7 @@ import java.util.logging.Logger;
  * Utility methods used across classes. Just import class to access all methods.
  */
 public final class Utility {
+  // TODO(oumontiel): Move constants to different file.
   // Variables needed to connect to MySQL database.
   public static final String SQL_LOCAL_URL =
       "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
@@ -36,7 +37,7 @@ public final class Utility {
   public static final String SQL_LOCAL_PASSWORD = "";
 
   // Variables for user login status.
-  public static final int USER_LOGGED_OUT = -1;
+  public static final int USER_LOGGED_OUT_ID = -1;
   
   // Query to retrieve data from a question. Generates the following table:
   //
@@ -65,7 +66,7 @@ public final class Utility {
    * If the user is not logged in or if no user ID is found, returns -1.
    */
   public static int getUserId() {
-    int userId = USER_LOGGED_OUT;
+    int userId = USER_LOGGED_OUT_ID;
     UserService userService = UserServiceFactory.getUserService();
 
     // If user is not logged in, return -1.
