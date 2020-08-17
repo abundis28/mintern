@@ -17,17 +17,9 @@
  */
 function loadIndex() {
   addAutoResize();
-  fetchAuthentication('forum');
-  fetchQuestions('forum');
-  loadNotifications();
-}
-
-/**
- * Function that will call other functions when the question page loads. 
- */
-function onBodyLoadQuestion() {
-  fetchAuthentication('question');
-  fetchQuestions('question');
+  fetchAuthentication();
+  fetchForum();
+  fetchNotifications();
 }
 
 /**
@@ -58,9 +50,116 @@ function backToHomepage() {
 }
 
 /**
- * Loads notifications of the signed in user.
+ * Function that will call other functions when the signup page loads. 
  */
-function loadNotifications() {
+function loadSignup() {
+  isUserRegistered();
+  fetchMajors();
+  fetchMentorExperience();
+}
+
+/**
+ * Displays navbar authentication and inbox buttons according to login status.
+ */
+function fetchAuthentication() {
+  fetch('/authentication').then(response => response.json()).then(user => {
+    const inboxButton = document.getElementById("notificationsDropdown");
+    if (user.isUserLoggedIn) {
+      // If user is logged in, show logout and inbox buttons in navbar.
+      inboxButton.style.display = "block";
+      loadNotifications(); 
+      if (!user.isUserRegistered) {
+        // If logged in user is not registered, redirect to signup page.
+        window.location.replace(user.authenticationUrl);
+      }
+      // Delete signup button.
+      const signupButtonNavbar = document.getElementById('signup');
+      signupButtonNavbar.innerHTML = '';
+
+      // Add logout button to navbar.
+      createAuthenticationButton(
+          user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
+
+      // Show question submission box.
+      const questionSubmission = document.getElementById('post-question');
+      questionSubmission.style.display = "block";
+    } else {
+      // If user is logged out, show signup and login buttons in navbar.
+
+      // Add signup button to navbar.
+      createAuthenticationButton(
+          user.authenticationUrl, 'btn-success', 'Sign Up', 'signup');
+
+      // Add login button to navbar.
+      createAuthenticationButton(
+          user.authenticationUrl, 'btn-outline-success', 'Log In', 'login');
+    }
+  })
+}
+
+/**
+ * Fetches questions from server, wraps each in an <li> element, 
+ * and adds them to the DOM.
+ */
+async function fetchForum() {
+  const response = await fetch('/fetch-forum');
+  const questionsObject = await response.json();
+  const questionsContainer = document.getElementById('forum');
+  questionsObject.forEach(question => {
+    questionsContainer.appendChild(createQuestionElement(question));
+  });
+}
+
+/**
+ * Gets majors from database and appends them to select container in mentor and mentee signup
+ * forms.
+ */
+function fetchMajors() {
+  fetch('/signup').then(response => response.json()).then(majors => {
+    // Get select containers where new options will be appended.
+    const mentorMajorSelect = document.getElementById('mentor-major');
+    const menteeMajorSelect = document.getElementById('mentee-major');
+
+    for (let major in majors) {
+      // Create option for major and append it to select containers.
+      const selectOption = document.createElement('option');
+      selectOption.appendChild(document.createTextNode(majors[major]));
+      selectOption.value = major;
+      mentorMajorSelect.appendChild(selectOption);
+      menteeMajorSelect.appendChild(selectOption.cloneNode(true));
+    }
+
+    // Refresh select container to show options.
+    $('.selectpicker').selectpicker('refresh');
+  })
+}
+
+/**
+ * Gets subject tags from database and appends them to select container of mentor experience in
+ * mentor signup form.
+ */
+function fetchMentorExperience() {
+  fetch('/signup-mentor').then(response => response.json()).then(subjectTags => {
+    // Get select container where new options will be appended.
+    const mentorExperienceSelect = document.getElementById('mentor-experience');
+
+    subjectTags.forEach(subjectTag => {
+      // Create option for subject tag and append it to select container.
+      const selectOption = document.createElement('option');
+      selectOption.appendChild(document.createTextNode(subjectTag.subject));
+      selectOption.value = subjectTag.id;
+      mentorExperienceSelect.appendChild(selectOption);
+    })
+
+    // Refresh select container to show options.
+    $('.selectpicker').selectpicker('refresh');
+  })
+}
+
+/**
+ * Fetches notifications of the signed in user.
+ */
+function fetchNotifications() {
   fetch('/notification').then(response => response.json()).then((notificationsJson) => {
     const notificationsElement = document.getElementById('inbox-dropdown');
     notificationsElement.innerHTML = '';
@@ -68,6 +167,34 @@ function loadNotifications() {
       notificationsElement.appendChild(createNotificationsElement(notification));
     }
   });
+}
+
+/**
+ * Creates a signup, login, or logout button and appends it to navbar.
+ * @param {string} authenticationUrl 
+ * @param {string} buttonStyle 
+ * @param {string} buttonText 
+ * @param {string} navbarItem 
+ */
+function createAuthenticationButton(authenticationUrl, buttonStyle, buttonText, navbarItem) {
+  // Create button.
+  const authenticationButton = document.createElement('button');
+  authenticationButton.setAttribute('type', 'button');
+  const buttonUrl = 'window.location.href = \"' + authenticationUrl + '\"';
+  authenticationButton.setAttribute('onclick', buttonUrl);
+  authenticationButton.classList.add('btn');
+  authenticationButton.classList.add(buttonStyle);
+  authenticationButton.innerHTML = buttonText;
+
+  // Create navbar item to hold button.
+  const authenticationButtonItem = document.createElement('li');
+  authenticationButtonItem.classList.add('nav-item');
+  authenticationButtonItem.appendChild(authenticationButton);
+
+  // Append button to navbar.
+  const authenticationButtonNavbar = document.getElementById(navbarItem);
+  authenticationButtonNavbar.innerHTML = '';
+  authenticationButtonNavbar.appendChild(authenticationButtonItem);
 }
 
 /**
@@ -85,41 +212,6 @@ function createNotificationsElement(notification) {
   liElement.appendChild(linkElement);
   liElement.setAttribute("class","list-group-item");
   return liElement;
-}
-
-/**
- * Creates notification when an answer or comment is posted.
- * @param {string} type
- * @param {int} id
- */
-function notify(type, id) {
-  fetch('notification?type=' + type + '&modifiedElementId=' + id, {
-    method: 'POST'
-  })
-}
-
-/**
- * Fetches questions from server, wraps each in an <li> element, 
- * and adds them to the DOM.
- */
-async function fetchQuestions(page) {
-  let question_id;
-  let questionsContainer;
-  let hasRedirect;
-  if (page === 'forum') {
-    question_id = -1;
-    questionsContainer = document.getElementById('forum');
-    hasRedirect = true;
-  } else if (page === 'question') {
-    question_id = (new URL(document.location)).searchParams.get("id");
-    questionsContainer = document.getElementById('question');
-    hasRedirect = false;
-  }
-  const response = await fetch('/fetch-questions?id=' + question_id);
-  const questionsObject = await response.json();
-  questionsObject.forEach(question => {
-    questionsContainer.appendChild(createQuestionElement(question, hasRedirect));
-  });
 }
 
 /** 
@@ -212,82 +304,6 @@ function addAutoResize() {
   });
 }
 
-
-/**
- * Displays navbar authentication and inbox buttons according to login status.
- */
-function fetchAuthentication(page) {
-  fetch('/authentication').then(response => response.json()).then(user => {
-    const inboxButton = document.getElementById("notificationsDropdown");
-    if (user.isUserLoggedIn) {
-      // If user is logged in, show logout and inbox buttons in navbar.
-      inboxButton.style.display = "block";
-      loadNotifications(); 
-      if (!user.isUserRegistered) {
-        // If logged in user is not registered, redirect to signup page.
-        window.location.replace(user.authenticationUrl);
-      }
-      // Delete signup button.
-      const signupButtonNavbar = document.getElementById('signup');
-      signupButtonNavbar.innerHTML = '';
-
-      // Add logout button to navbar.
-      addAuthenticationButton(
-          user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
-
-      if (page === 'forum') {
-        // Show question submission box.
-        const questionSubmission = document.getElementById('post-question');
-        questionSubmission.style.display = "block";
-      }
-    } else {
-      // If user is logged out, show signup and login buttons in navbar.
-
-      // Add signup button to navbar.
-      addAuthenticationButton(
-          user.authenticationUrl, 'btn-success', 'Sign Up', 'signup');
-
-      // Add login button to navbar.
-      addAuthenticationButton(
-          user.authenticationUrl, 'btn-outline-success', 'Log In', 'login');
-    }
-  })
-}
-
-/**
- * Creates a signup, login, or logout button and appends it to navbar.
- * @param {string} authenticationUrl 
- * @param {string} buttonStyle 
- * @param {string} buttonText 
- * @param {string} navbarItem 
- */
-function addAuthenticationButton(authenticationUrl, buttonStyle, buttonText, navbarItem) {
-  // Create button.
-  const authenticationButton = document.createElement('button');
-  authenticationButton.setAttribute('type', 'button');
-  const buttonUrl = 'window.location.href = \"' + authenticationUrl + '\"';
-  authenticationButton.setAttribute('onclick', buttonUrl);
-  authenticationButton.classList.add('btn');
-  authenticationButton.classList.add(buttonStyle);
-  authenticationButton.innerHTML = buttonText;
-
-  // Create navbar item to hold button.
-  const authenticationButtonItem = document.createElement('li');
-  authenticationButtonItem.classList.add('nav-item');
-  authenticationButtonItem.appendChild(authenticationButton);
-
-  // Append button to navbar.
-  const authenticationButtonNavbar = document.getElementById(navbarItem);
-  authenticationButtonNavbar.innerHTML = '';
-  authenticationButtonNavbar.appendChild(authenticationButtonItem);
-}
-
-function loadSignup() {
-  isUserRegistered();
-  fetchMajors();
-  fetchMentorExperience();
-}
-
 /**
  * Fetches a single question and its answers from server, 
  * wraps each in an <li> element, and adds them to the DOM.
@@ -309,51 +325,17 @@ function isUserRegistered() {
 }
 
 /**
- * Gets majors from database and appends them to select container in mentor and mentee signup
- * forms.
+ * Creates notification when an answer or comment is posted.
+ * @param {string} type
+ * @param {int} id
  */
-function fetchMajors() {
-  fetch('/signup').then(response => response.json()).then(majors => {
-    // Get select containers where new options will be appended.
-    const mentorMajorSelect = document.getElementById('mentor-major');
-    const menteeMajorSelect = document.getElementById('mentee-major');
-
-    for (let major in majors) {
-      // Create option for major and append it to select containers.
-      const selectOption = document.createElement('option');
-      selectOption.appendChild(document.createTextNode(majors[major]));
-      selectOption.value = major;
-      mentorMajorSelect.appendChild(selectOption);
-      menteeMajorSelect.appendChild(selectOption.cloneNode(true));
-    }
-
-    // Refresh select container to show options.
-    $('.selectpicker').selectpicker('refresh');
+function notify(type, id) {
+  fetch('notification?type=' + type + '&modifiedElementId=' + id, {
+    method: 'POST'
   })
 }
 
-/**
- * Gets subject tags from database and appends them to select container of mentor experience in
- * mentor signup form.
- */
-function fetchMentorExperience() {
-  fetch('/signup-mentor').then(response => response.json()).then(subjectTags => {
-    // Get select container where new options will be appended.
-    const mentorExperienceSelect = document.getElementById('mentor-experience');
-
-    subjectTags.forEach(subjectTag => {
-      // Create option for subject tag and append it to select container.
-      const selectOption = document.createElement('option');
-      selectOption.appendChild(document.createTextNode(subjectTag.subject));
-      selectOption.value = subjectTag.id;
-      mentorExperienceSelect.appendChild(selectOption);
-    })
-
-    // Refresh select container to show options.
-    $('.selectpicker').selectpicker('refresh');
-  })
-}
-
+// TODO(oumontiel): write the function comment.
 (function() {
   'use strict';
   window.addEventListener('load', function() {
