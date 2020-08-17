@@ -42,7 +42,7 @@ function loadSignup() {
 }
 
 /**
- * Fetches a single question and its answers from server, 
+ * Fetches answers for a single question from server, 
  * wraps each in an <li> element, and adds them to the DOM.
  */
 async function fetchAnswers() {
