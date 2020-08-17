@@ -68,7 +68,7 @@ public class PostCommentServlet extends HttpServlet {
           .include(request, response);
     } catch (ServletException exception) {
       // If the notification doesn't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostAnswerServlet.class.getName());
+      Logger logger = Logger.getLogger(PostCommentServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
     response.sendRedirect("/question.html?id=" + questionId);
