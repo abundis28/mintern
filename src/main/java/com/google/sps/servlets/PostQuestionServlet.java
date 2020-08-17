@@ -45,15 +45,15 @@ public class PostQuestionServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String title = request.getParameter("question-title");
     String body = request.getParameter("question-body");
-    int asker_id = Utility.getUserId();
+    int askerId = Utility.getUserId();
 
     // First we query the number of questions that exist so that we can update the
     // QuestionFollower table as well.
     try {
       Connection connection = DriverManager
           .getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
-      insertNewQuestion(connection, title, body, asker_id);
-      insertNewFollower(connection, asker_id);
+      insertNewQuestion(connection, title, body, askerId);
+      insertNewFollower(connection, askerId);
     } 
     catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
@@ -66,14 +66,14 @@ public class PostQuestionServlet extends HttpServlet {
   /** 
    * Inserts a question into the database.
    */
-  private void insertNewQuestion(Connection connection, String title, String body, int asker_id) {
+  private void insertNewQuestion(Connection connection, String title, String body, int askerId) {
     try {
       String insertQuestionQuery = "INSERT INTO Question(title, body, asker_id, date_time) "
           + "VALUES (?,?,?,NOW())";
       PreparedStatement questionStatement = connection.prepareStatement(insertQuestionQuery);
       questionStatement.setString(SqlConstants.QUESTION_INSERT_TITLE, title);
       questionStatement.setString(SqlConstants.QUESTION_INSERT_BODY, body);
-      questionStatement.setInt(SqlConstants.QUESTION_INSERT_ASKERID, asker_id);
+      questionStatement.setInt(SqlConstants.QUESTION_INSERT_ASKERID, askerId);
       questionStatement.executeUpdate();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
@@ -106,14 +106,14 @@ public class PostQuestionServlet extends HttpServlet {
    * Makes the author of the recently added question a follower of said question.
    * TODO(shaargtz): Move function to Utiliy class to be reused.
    */
-  private void insertNewFollower(Connection connection, int asker_id) {
+  private void insertNewFollower(Connection connection, int askerId) {
     try {
       int latestQuestionId = getLatestQuestionId(connection);
       String insertFollowerQuery = "INSERT INTO QuestionFollower(question_id, follower_id) "
           + "VALUES (?,?)";
       PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
       followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_QUESTIONID, latestQuestionId);
-      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_ASKERID, asker_id);
+      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_ASKERID, askerId);
       followerStatement.executeUpdate();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
