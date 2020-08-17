@@ -80,6 +80,7 @@ public final class SqlConstants {
   public static final int NOTIFICATION_INSERT_MESSAGE = 1;
   public static final int NOTIFICATION_INSERT_URL = 2;
   public static final int NOTIFICATION_INSERT_DATETIME = 3;
+  public static final int NOTIFICATION_FETCH_ID_ANSWERED_QUESTION = 1;
 
   // Constants used to insert a relationship between user and notification.
   public static final int USER_NOTIFICATION_INSERT_USERID = 1;
