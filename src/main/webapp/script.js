@@ -33,7 +33,7 @@ function searchQuestion() {
     fetch('/search-question?inputString=' + stringSearchInput).then(response => 
         response.json()).then(questionsJson => {
       for (const question of questionsJson) {
-        // True value paramete for createQuestionElement means that the question does have a 
+        // True value parameter for createQuestionElement means that the question does have a 
         // redirect URL option.
         questionsContainer.appendChild(createQuestionElement(question, true));
       }
