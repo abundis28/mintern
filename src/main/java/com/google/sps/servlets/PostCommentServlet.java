@@ -64,14 +64,14 @@ public class PostCommentServlet extends HttpServlet {
 
     try {
       // We call the notification servlet to notify of this posted comment.
-      request.getRequestDispatcher("/notification?type=answer&modifiedElementId=" + questionId)
+      request.getRequestDispatcher("/notification?type=answer&modifiedElementId=" + answerId)
           .include(request, response);
     } catch (ServletException exception) {
       // If the notification doesn't go through, we get the log of what happened.
       Logger logger = Logger.getLogger(PostAnswerServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
-    response.sendRedirect("/question.html?id=" + answerId);
+    response.sendRedirect("/question.html?id=" + questionId);
   }
 
   /** 
