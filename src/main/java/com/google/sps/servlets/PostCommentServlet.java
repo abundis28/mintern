@@ -71,7 +71,7 @@ public class PostCommentServlet extends HttpServlet {
       Logger logger = Logger.getLogger(PostAnswerServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
-    response.sendRedirect("/question.html?id=" + questionId);
+    response.sendRedirect("/question.html?id=" + answerId);
   }
 
   /** 
