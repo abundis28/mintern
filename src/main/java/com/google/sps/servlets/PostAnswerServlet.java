@@ -66,7 +66,7 @@ public class PostAnswerServlet extends HttpServlet {
    */
   private void insertNewAnswer(Connection connection, int questionId, String body, int authorId) {
     try {
-      String insertAnswerQuery = "INSERT INTO Answer(questionId, body, author_id, date_time) "
+      String insertAnswerQuery = "INSERT INTO Answer(question_id, body, author_id, date_time) "
           + "VALUES (?,?,?,NOW())";
       PreparedStatement answerStatement = connection.prepareStatement(insertAnswerQuery);
       answerStatement.setInt(SqlConstants.ANSWER_INSERT_QUESTIONID, questionId);
