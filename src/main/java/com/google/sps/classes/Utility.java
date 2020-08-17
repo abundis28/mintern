@@ -35,19 +35,32 @@ public final class Utility {
   public static final String SQL_LOCAL_USER = "root";
   public static final String SQL_LOCAL_PASSWORD = "";
   
-  // Query to retrieve data from a question. Generates the following table:
+  // Query to retrieve data from all questions. Can be appended a WHERE condition to select
+  // specific questions. Generates the following table:
   //
-  // |-----------------Question-----------------|------FollowerCount------|-----GetUsername-----|------AnswerCount------|
+  // |-----------------Question-----------------|----FollowerCount--------|-----GetUsername-----|------AnswerCount------|
   // +----+-------+------+----------+-----------+-------------+-----------+----------+----------+-------------+---------+
   // | id | title | body | asker_id | date_time | question_id | followers | username | asker_id | question_id | answers |
   // +----+-------+------+----------+-----------+-------------+-----------+----------+----------+-------------+---------+
-  public static final String fetchQuestionQuery = "SELECT * FROM Question "
+  public static final String fetchQuestionsQuery = "SELECT * FROM Question "
       + "LEFT JOIN (SELECT question_id, COUNT(follower_id) followers FROM QuestionFollower "
       + "GROUP BY question_id) FollowerCount ON Question.id=FollowerCount.question_id "
       + "LEFT JOIN (SELECT username, id AS asker_id FROM User) GetUsername "
       + "ON Question.asker_id=GetUsername.asker_id "
       + "LEFT JOIN (SELECT question_id, COUNT(id) answers FROM Answer "
       + "GROUP BY question_id) AnswerCount ON Question.id=AnswerCount.question_id ";
+
+  // Query to get answers and comments from a question. Generates the following table:
+  //
+  // |-------------------------Answer--------------------------|AnswerUsername-|---------------------Comment-------------------|CommentUsername|
+  // +----+-------------+------+-----------+-----------+-------+----+----------+----+-----------+------+-----------+-----------+----+----------+
+  // | id | question_id | body | author_id | date_time | votes | id | username | id | answer_id | body | author_id | date_time | id | username |
+  // +----+-------------+------+-----------+-----------+-------+----+----------+----+-----------+------+-----------+-----------+----+----------+
+  public static final String fetchAnswersAndCommentsQuery = "SELECT * FROM Answer LEFT JOIN " 
+      + "(SELECT id, username FROM User) AnswerUsername ON Answer.author_id=AnswerUsername.id "
+      + "LEFT JOIN Comment ON Answer.id=Comment.answer_id LEFT JOIN "
+      + "(SELECT id, username FROM User) CommentUsername ON Comment.author_id=CommentUsername.id"
+      + " WHERE Answer.question_id=?;";
 
   /**
    * Converts objects to JSON using GSON class.
@@ -137,8 +150,8 @@ public final class Utility {
   /** 
    * Create a question object using the results from a query.
    */
-  public static QuestionObject buildQuestion(ResultSet queryResult) {
-    QuestionObject question = new QuestionObject();
+  public static Question buildQuestion(ResultSet queryResult) {
+    Question question = new Question();
     try {
       question.setId(queryResult.getInt(SqlConstants.QUESTION_FETCH_ID));
       question.setTitle(queryResult.getString(SqlConstants.QUESTION_FETCH_TITLE));

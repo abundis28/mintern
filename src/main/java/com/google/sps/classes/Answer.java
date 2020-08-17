@@ -14,21 +14,45 @@
 
 package com.google.sps.classes;
 
+import com.google.sps.classes.Comment;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
- * Class to create a comment for the forum. It will be used for Gson conversion.
+ * Class to create an answer for the forum. It will be used for Gson conversion.
  */
-public class CommentObject {
+public class Answer {
 
+  private int id;
   private String body;
   private String authorName;
   private Timestamp dateTime;
+  private int votes;
+  private List<Comment> commentList = new ArrayList<>();
 
-  public CommentObject(String body, String authorName, Timestamp dateTime) {
+  public void setId(int id) {
+    this.id = id;
+  }  
+
+  public void setBody(String body) {
     this.body = body;
+  }
+
+  public void setAuthorName(String authorName) {
     this.authorName = authorName;
+  }
+
+  public void setDateTime(Timestamp dateTime) {
     this.dateTime = dateTime;
+  }
+
+  public void setVotes(int votes) {
+    this.votes = votes;
+  }  
+
+  public void addComment(Comment comment) {
+    this.commentList.add(comment);
   }
 }

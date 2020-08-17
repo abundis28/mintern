@@ -15,7 +15,7 @@
 package com.google.sps.servlets;
 
 import com.google.sps.classes.SqlConstants;
-import com.google.sps.classes.QuestionObject;
+import com.google.sps.classes.Question;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
 import java.sql.Connection;
@@ -41,23 +41,24 @@ import javax.servlet.http.HttpServletResponse;
 public class FetchQuestionsServlet extends HttpServlet {
 
   /** 
-   * Gets  the questions from the query and return them as a JSON string.
+   * Gets the questions from the query and return them as a JSON string.
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    List<QuestionObject> questions = new ArrayList<>();
+    List<Question> questions = new ArrayList<>();
     
-    String query;
+    // TODO(shaargtz): move queries from Utility to a new SqlQueries class.
+    String query = Utility.fetchQuestionsQuery;
 
     // ID of the question to query.
     int question_id = Integer.parseInt(request.getParameter("id"));
 
     if (question_id == SqlConstants.FETCH_ALL_QUESTIONS) {
       // Nothing needs to be added to the query apart from closing it.
-      query = Utility.fetchQuestionQuery + ";";
+      query = Utility.fetchQuestionsQuery + ";";
     } else {
       // Condition to fetch only one question.
-      query = Utility.fetchQuestionQuery + "WHERE Question.id=" + question_id + ";";
+      query = Utility.fetchQuestionsQuery + "WHERE Question.id=" + question_id + ";";
     }
 
     // The connection and query are attempted.

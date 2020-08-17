@@ -53,6 +53,21 @@ public final class SqlConstants {
   public static final int MENTOR_EXPERIENCE_INSERT_ID = 1;
   public static final int MENTOR_EXPERIENCE_INSERT_TAG = 2;
 
+  // Constants used for querying an answer.
+  public static final int ANSWER_FETCH_ID = 1;
+  public static final int ANSWER_FETCH_BODY = 3;
+  public static final int ANSWER_FETCH_AUTHORNAME = 8;
+  public static final int ANSWER_FETCH_DATETIME = 5;
+  public static final int ANSWER_FETCH_VOTES = 6;
+
+  // Constant used to set parameter in answer prepared statement.
+  public static final int ANSWER_SET_QUESTIONID = 1;
+
+  // Constants used for querying a comment.
+  public static final int COMMENT_FETCH_BODY = 11;
+  public static final int COMMENT_FETCH_AUTHORNAME = 15;
+  public static final int COMMENT_FETCH_DATETIME = 13;
+  
   // Constant used in the forum.
   public static final int FETCH_ALL_QUESTIONS = -1;
   
