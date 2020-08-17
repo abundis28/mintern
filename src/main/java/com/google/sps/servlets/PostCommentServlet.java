@@ -60,6 +60,16 @@ public class PostCommentServlet extends HttpServlet {
       Logger logger = Logger.getLogger(PostCommentServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
+
+    try {
+      // We call the notification servlet to notify of this posted comment.
+      Request.getRequestDispatcher("/notification?type=answer&modifiedElementId=" + questionId)
+          .include(request, response);
+    } catch (ServletException exception) {
+      // If the notification doesn't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(PostAnswerServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
     response.sendRedirect("/question.html?id=" + questionId);
   }
 
