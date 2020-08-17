@@ -188,9 +188,17 @@ async function fetchQuestions(page) {
   }
   const response = await fetch('/fetch-questions?id=' + questionId);
   const questionsObject = await response.json();
-  questionsObject.forEach(question => {
-    questionsContainer.appendChild(createQuestionElement(question, hasRedirect));
-  });
+
+  if (questionsObject.length !== 0) {
+    // Check that the ID exist so that it actually has questions in it.
+    console.log(questionsObject);
+    questionsObject.forEach(question => {
+      questionsContainer.appendChild(createQuestionElement(question, hasRedirect));
+    });
+  } else {
+    // If the ID doesn't exist, redirect to the index.
+    window.location.replace('/index.html');
+  }
 }
 
 /**
