@@ -19,6 +19,7 @@ package com.google.sps.classes;
  */
 public final class SqlConstants {
   // Constants used for querying a question.
+  public static final int QUESTION_FETCH_ID = 1;
   public static final int QUESTION_FETCH_TITLE = 2;
   public static final int QUESTION_FETCH_BODY = 3;
   public static final int QUESTION_FETCH_ASKERID = 4;
@@ -46,7 +47,7 @@ public final class SqlConstants {
   public static final int USER_INSERT_USERNAME = 3;
   public static final int USER_INSERT_EMAIL = 4;
   public static final int USER_INSERT_MAJOR = 5;
-  public static final int USER_INSERT_IS_MENTOR = 6;
+  public static final int USER_INSERT_ISMENTOR = 6;
 
   // Constants used for inserting mentor experience.
   public static final int MENTOR_EXPERIENCE_INSERT_ID = 1;
@@ -56,6 +57,24 @@ public final class SqlConstants {
   public static final int MENTOR_EVIDENCE_PARAGRAPH = 1;
   public static final int MENTOR_EVIDENCE_USERID = 2;
 
+  // Constants used for querying an answer.
+  public static final int ANSWER_FETCH_ID = 1;
+  public static final int ANSWER_FETCH_BODY = 3;
+  public static final int ANSWER_FETCH_AUTHORNAME = 8;
+  public static final int ANSWER_FETCH_DATETIME = 5;
+  public static final int ANSWER_FETCH_VOTES = 6;
+
+  // Constant used to set parameter in answer prepared statement.
+  public static final int ANSWER_SET_QUESTIONID = 1;
+
+  // Constants used for querying a comment.
+  public static final int COMMENT_FETCH_BODY = 11;
+  public static final int COMMENT_FETCH_AUTHORNAME = 15;
+  public static final int COMMENT_FETCH_DATETIME = 13;
+  
+  // Constant used in the forum.
+  public static final int FETCH_ALL_QUESTIONS = -1;
+  
   // Constants used to fetch the elements of notification.
   public static final int NOTIFICATION_FETCH_MESSAGE = 1;
   public static final int NOTIFICATION_FETCH_URL = 2;
