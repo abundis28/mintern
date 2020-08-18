@@ -135,7 +135,6 @@ public class SignupMentorServlet extends HttpServlet {
    */
   private void addMentorEvidence() {
     int userId = Utility.getUserId();
-    String paragraph = "";
 
     // Set up query to insert mentor evidence.
     String query = "INSERT INTO MentorEvidence "

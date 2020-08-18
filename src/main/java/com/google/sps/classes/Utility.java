@@ -90,7 +90,7 @@ public final class Utility {
     String email = userService.getCurrentUser().getEmail();
 
     // Set up query to check if user is already registered.
-    String query = "SELECT * FROM User WHERE email = '" + email + "'";
+    String query = "SELECT id FROM User WHERE email = '" + email + "'";
 
     try {
       // Establish connection to MySQL database.
@@ -123,7 +123,7 @@ public final class Utility {
     String username = "";
 
     // Set up query to get username.
-    String query = "SELECT * FROM User WHERE id = " + userId;
+    String query = "SELECT username FROM User WHERE id = " + userId;
 
     try {
       // Establish connection to MySQL database.
