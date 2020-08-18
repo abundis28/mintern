@@ -501,6 +501,19 @@ function notify(type, id) {
   })
 }
 
+/**
+ * Modifies approval status of a mentor based on approver's feedback.
+ * @param {boolean} isApproved 
+ */
+function mentorApprove(isApproved) {
+  const mentor_id = (new URL(document.location)).searchParams.get('id');
+  console.log(mentor_id);
+  console.log(isApproved);
+  fetch('mentor-approval?isApproved=' + isApproved + '&id=' + mentor_id, {
+    method: 'POST'
+  })
+}
+
 // Disables form submissions if there are invalid fields in it.
 (function validateFormSubmission() {
   'use strict';

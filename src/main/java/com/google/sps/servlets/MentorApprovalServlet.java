@@ -64,19 +64,34 @@ public class MentorApprovalServlet extends HttpServlet {
   }
 
   /**
+   *
+   */
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // Get request parameters and ID of approver.
+    boolean isApproved = Boolean.parseBoolean(request.getParameter("isApproved"));
+    int mentorId = Utility.tryParseInt(request.getParameter("id"));
+    int approverId = Utility.getUserId();
+
+    // Update database tables related to mentor approval.
+    addApproval(mentorId, approverId);
+    addEvidence(isApproved, mentorId);
+  }
+
+  /**
    * Returns true if approver is assigned to mentee.
    */
   private boolean checkForApprover(int mentorId, int approverId) {
-    // Create the MySQL prepared statement, execute it, and store the result.
+    // Create the MySQL prepared statement.
     String query = "SELECT * FROM MentorApproval "
         + "WHERE mentor_id = ? AND approver_id = ?";
 
     try {
       // Establish connection to MySQL database.
       Connection connection = DriverManager.getConnection(
-            Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
       
-      // Create the MySQL SELECT prepared statement.
+      // Create and execute the MySQL SELECT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
       preparedStatement.setInt(SqlConstants.MENTOR_APPROVAL_FETCH_MENTORID, mentorId);
       preparedStatement.setInt(SqlConstants.MENTOR_APPROVAL_FETCH_APPROVERID, approverId);
@@ -84,8 +99,10 @@ public class MentorApprovalServlet extends HttpServlet {
 
       // If link is found between mentor and approver in MentorApproval table, return true.
       if (queryResult.next()) {
+        connection.close();
         return true;
       }
+      connection.close();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
       Logger logger = Logger.getLogger(MentorApprovalServlet.class.getName());
@@ -102,14 +119,14 @@ public class MentorApprovalServlet extends HttpServlet {
   private String getMentorEvidence(int mentorId) {
     String paragraph = "";
 
-    // Create the MySQL prepared statement, execute it, and store the result.
+    // Create the MySQL prepared statement.
     String query = "SELECT * FROM MentorEvidence "
         + "WHERE mentor_id = ?";
 
     try {
       // Establish connection to MySQL database.
       Connection connection = DriverManager.getConnection(
-            Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
       
       // Create the MySQL SELECT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -120,11 +137,115 @@ public class MentorApprovalServlet extends HttpServlet {
       if (queryResult.next()) {
         paragraph = queryResult.getString(SqlConstants.MENTOR_EVIDENCE_FETCH_PARAGRAPH);
       }
+      connection.close();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
       Logger logger = Logger.getLogger(MentorApprovalServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
     return paragraph;
+  }
+
+  /**
+   * Updates the is_reviewed variable in MentorApproval table.
+   */
+  private void addApproval(int mentorId, int approverId) {
+    // Create the MySQL prepared statement.
+    String query = "UPDATE MentorApproval "
+        + "SET is_reviewed = TRUE "
+        + "WHERE mentor_id = " + Integer.toString(mentorId)
+        + " AND approver_id = " + Integer.toString(approverId);
+    
+    try {
+      // Establish connection to MySQL database.
+      Connection connection = DriverManager.getConnection(
+          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+      
+      // Execute the MySQL SELECT prepared statement.
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      preparedStatement.execute();
+      connection.close();
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(MentorApprovalServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+  }
+
+  /**
+   * Updates is_approved, is_rejected or approvals variables in MentorEvidence table based on
+   * approver review.
+   */
+  private void addEvidence(boolean isApproved, int mentorId) {
+    // Get current number of approvals mentor has.
+    int numberOfApprovals = getNumberOfApprovals(mentorId);
+    
+    // Create the MySQL prepared statement.
+    String query = "";
+    if(isApproved && numberOfApprovals == 1) {
+      // If user is approved by approver, and already has one approval,
+      // increment number of approvals and update is_approved in MentorEvidence table.
+      query = "UPDATE MentorEvidence "
+          + "SET approvals = 2, is_approved = TRUE "
+          + "WHERE mentor_id = " + Integer.toString(mentorId);
+    } else if (isApproved && numberOfApprovals == 0) {
+      // If user is approved by approver, but has no previous approvals,
+      // increment number of approvals in MentorEvidence table.
+      query = "UPDATE MentorEvidence "
+          + "SET approvals = 1 "
+          + "WHERE mentor_id = " + Integer.toString(mentorId);
+    } else {
+      // If user is rejected, update is_rejected in MentorEvidence table.
+      query = "UPDATE MentorEvidence "
+          + "SET is_rejected = TRUE "
+          + "WHERE mentor_id = " + Integer.toString(mentorId);
+    }
+    
+    try {
+      // Establish connection to MySQL database.
+      Connection connection = DriverManager.getConnection(
+          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+      
+      // Execute the MySQL SELECT prepared statement.
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      preparedStatement.execute();
+      connection.close();
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(MentorApprovalServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+  }
+
+  /**
+   * Returns the current number of approvals a mentor has.
+   */
+  private int getNumberOfApprovals(int mentorId) {
+    int numberOfApprovals = 0;
+
+    // Create the MySQL prepared statement.
+    String query = "SELECT * FROM MentorEvidence "
+        + "WHERE mentor_id = " + Integer.toString(mentorId);
+
+    try {
+      // Establish connection to MySQL database.
+      Connection connection = DriverManager.getConnection(
+          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+      
+      // Create and execute the MySQL SELECT prepared statement.
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      ResultSet queryResult = preparedStatement.executeQuery();
+      
+      // Get results from query.
+      if (queryResult.next()) {
+        numberOfApprovals = queryResult.getInt(SqlConstants.MENTOR_EVIDENCE_FETCH_APPROVALS);
+      }
+      connection.close();
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(MentorApprovalServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+    return numberOfApprovals;
   }
 }

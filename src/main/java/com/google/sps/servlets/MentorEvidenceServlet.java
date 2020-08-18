@@ -74,7 +74,7 @@ public class MentorEvidenceServlet extends HttpServlet {
       Connection connection = DriverManager.getConnection(
           Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
 
-      // Create the MySQL INSERT prepared statement.
+      // Execute the MySQL UPDATE prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
       preparedStatement.execute();
       connection.close();
@@ -95,8 +95,8 @@ public class MentorEvidenceServlet extends HttpServlet {
     int[] approvers = {1, 2, 3};
 
     // Set up query to insert new experience tag to user.
-    String query = "INSERT INTO MentorApproval (mentor_id, approver_id, is_approved, is_rejected) "
-        + "VALUES (?, ?, FALSE, FALSE)";
+    String query = "INSERT INTO MentorApproval (mentor_id, approver_id, is_reviewed) "
+        + "VALUES (?, ?, FALSE)";
 
     for (int approverId : approvers) {
       try {
