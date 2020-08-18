@@ -34,6 +34,8 @@ public final class SqlConstants {
   public static final int QUESTION_INSERT_ASKERID = 3;
 
   // Constants used for inserting a follower to a question.
+  // QUESTION_FETCH_MAXID is used to get the ID of the question
+  // that was just posted so the follower can be inserted.
   public static final int QUESTION_FETCH_MAXID = 1;
   public static final int FOLLOWER_INSERT_QUESTIONID = 1;
   public static final int FOLLOWER_INSERT_ASKERID = 2;
@@ -77,6 +79,8 @@ public final class SqlConstants {
   public static final int ANSWER_INSERT_AUTHORID = 3;
 
   // Constants used for inserting a follower to an answer.
+  // ANSWER_FETCH_MAXID is used to get the ID of the answer
+  // that was just posted so the follower can be inserted.
   public static final int ANSWER_FETCH_MAXID = 1;
   public static final int FOLLOWER_INSERT_ANSWERID = 1;
   public static final int FOLLOWER_INSERT_AUTHORID = 2;
