@@ -53,7 +53,8 @@ public class MentorEvidenceServlet extends HttpServlet {
     // Set up query to insert new experience tag to user.
     // Use replace in case mentor evidence already exists in database and mentor wants to update
     // their information.
-    // TODO(oumontiel): Let mentors know they have the option to update their evidence information.
+    // TODO(oumontiel): Let mentors know they have the option to update their evidence information
+    //                  and add button that redirects to this servlet to allow them that.
     String query = "REPLACE INTO MentorEvidence (mentor_id, paragraph) VALUES (?, ?)";
 
     try {
