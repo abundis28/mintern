@@ -201,7 +201,7 @@ function fetchMentorExperience() {
 }
 
 /**
- * Displays logout button or redirects to index in verification page.
+ * Displays logout button or redirects to index or signup page.
  */
 function fetchAuthentication() {
   fetch('/authentication').then(response => response.json()).then(user => {
@@ -227,7 +227,7 @@ function fetchAuthentication() {
 }
 
 /**
- * Displays logout button or redirects to index in verification page.
+ * Fetches and displays information related to mentor evidence.
  */
 function fetchMentorApproval() {
   const mentor_id = (new URL(document.location)).searchParams.get('id');
