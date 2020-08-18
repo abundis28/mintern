@@ -47,7 +47,7 @@ public class FetchAnswersServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // ID of the question to which the answers correspond.
-    int questionId = Integer.parseInt(request.getParameter("id"));
+    int questionId = Utility.tryParseInt(request.getParameter("id"));
 
     // Create a map that will hold all of the answers from the query.
     // Each <int> will be an answer's id, and will be used to avoid creating duplicate

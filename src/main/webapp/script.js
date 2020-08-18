@@ -61,8 +61,12 @@ async function fetchAnswers() {
       }
     });
     answersContainer.appendChild(commentsContainer);
+
+    // Add the form to upload a comment at the bottom.
+    answersContainer.appendChild(createCommentFormElement(answer.id));
     answersContainer.appendChild(document.createElement('br'));
   });
+  addAutoResize();
 }
 
 /**
@@ -202,15 +206,6 @@ async function fetchQuestions(page) {
 }
 
 /**
- * Fetches a single question and its answers from server, 
- * wraps each in an <li> element, and adds them to the DOM.
- */
-async function fetchQuestionAndAnswers() {
-  const response = await fetch('/answers');
-  const questionsObject = await response.json();
-}
-
-/**
  * Creates a signup, login, or logout button and appends it to navbar.
  * @param {string} authenticationUrl 
  * @param {string} buttonStyle 
@@ -264,6 +259,7 @@ function createQuestionElement(question, hasRedirect) {
   questionElement.setAttribute('class', 'list-group-item');
 
   if (hasRedirect) {
+    // Add href to redirect from forum to single view.
     const questionTitle = document.createElement('a');
     questionTitle.setAttribute('href', '/question.html?id=' + question.id);
     questionTitle.innerText = question.title;
@@ -336,7 +332,7 @@ function createQuestionElement(question, hasRedirect) {
  */
 function createAnswerElement(answer) {
   const answerElement = document.createElement('li');
-  answerElement.setAttribute('class', 'list-group-item');
+  answerElement.setAttribute('class', 'list-group-item mt-5');
   answerElement.innerText = answer.body;
   
   // TODO(shaargtz): implement voting system.
@@ -365,9 +361,8 @@ function createAnswerElement(answer) {
 }
 
 /** 
- * Creates an element with comment data. 
- * Each element corresponds to a comment
- * to be displayed in the DOM.
+ * Creates an element with comment data. Each element corresponds 
+ * to a comment to be displayed in the DOM.
  */
 function createCommentElement(comment) {
   const commentElement = document.createElement('li');
@@ -386,6 +381,55 @@ function createCommentElement(comment) {
   commentElement.appendChild(dateElement);
 
   return commentElement;
+}
+
+/** 
+ * Creates an element with the form to upload a comment. 
+ */
+function createCommentFormElement(answerId) {
+  const formElement = document.createElement('form');
+
+  // Attributes to call the servlet.
+  formElement.setAttribute('action', '/post-comment');
+  formElement.setAttribute('method', 'POST');
+  
+  const divElement = document.createElement('div');
+  divElement.setAttribute('class', 'form-group ml-5');
+  formElement.appendChild(divElement);
+
+  // Text area to write the comment.
+  const textElement = document.createElement('textarea');
+  textElement.setAttribute('class', 'form-control form-control-sm');
+  textElement.setAttribute('name', 'comment-body');
+  textElement.setAttribute('id', 'comment-body');
+  textElement.setAttribute('placeholder', 'Write a comment');
+  textElement.setAttribute('data-autoresize', '');
+  textElement.setAttribute('rows', '2');
+  divElement.appendChild(textElement);
+
+  // Hidden input with question id.
+  const inputQuestionIdElement = document.createElement('input');
+  inputQuestionIdElement.setAttribute('type', 'hidden');
+  inputQuestionIdElement.setAttribute('name', 'question-id');
+  inputQuestionIdElement.setAttribute('id', 'question-id');
+  inputQuestionIdElement.setAttribute('value', getQuestionId());
+  divElement.appendChild(inputQuestionIdElement);
+
+  // Hidden input with answer id.
+  const inputAnswerIdElement = document.createElement('input');
+  inputAnswerIdElement.setAttribute('type', 'hidden');
+  inputAnswerIdElement.setAttribute('name', 'answer-id');
+  inputAnswerIdElement.setAttribute('id', 'answer-id');
+  inputAnswerIdElement.setAttribute('value', answerId);
+  divElement.appendChild(inputAnswerIdElement);
+
+  const buttonElement = document.createElement('button');
+  buttonElement.setAttribute('type', 'submit');
+  buttonElement.setAttribute('class', 'btn btn-outline-info float-right');
+  buttonElement.innerText = "Submit";
+  formElement.appendChild(buttonElement);
+
+  return formElement;
 }
 
 /** 
@@ -415,10 +459,16 @@ function isUserRegistered() {
   })
 }
 
+/**
+ * Gets the ID of the question that is currently being viewed.
+ */
 function getQuestionId() {
   return (new URL(document.location)).searchParams.get("id");
 }
 
+/**
+ * Sets attribute to the corresponding form elements.
+ */
 function setQuestionIdValue() {
   document.getElementById('question-id').value = getQuestionId(); 
 }

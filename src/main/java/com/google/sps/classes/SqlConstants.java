@@ -84,6 +84,11 @@ public final class SqlConstants {
   public static final int ANSWER_FETCH_MAXID = 1;
   public static final int FOLLOWER_INSERT_ANSWERID = 1;
   public static final int FOLLOWER_INSERT_AUTHORID = 2;
+
+  // Constants used for inserting a comment.
+  public static final int COMMENT_INSERT_ANSWERID = 1;
+  public static final int COMMENT_INSERT_BODY = 2;
+  public static final int COMMENT_INSERT_AUTHORID = 3;
   
   // Constants used to fetch the elements of notification.
   public static final int NOTIFICATION_FETCH_MESSAGE = 1;

@@ -32,91 +32,71 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** 
- * This servlet will post an answer to a question.
- * TODO(shaargtz): join this servlet with fetchAnswers into a single answer servlet.
+ * This servlet will post a comment to an answer.
  */
-@WebServlet("/post-answer")
-public class PostAnswerServlet extends HttpServlet {
+@WebServlet("/post-comment")
+public class PostCommentServlet extends HttpServlet {
 
   /** 
-   * Executes the query to insert an answer to the database.
+   * This method will execute the query to insert a comment to the database.
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String body = request.getParameter("answer-body");
+    String body = request.getParameter("comment-body");
     int questionId = Utility.tryParseInt(request.getParameter("question-id"));
+    int answerId = Utility.tryParseInt(request.getParameter("answer-id"));
     int authorId = Utility.getUserId();
 
+    // First we query the number of questions that exist so that we can update the
+    // QuestionFollower table as well.
     try {
       Connection connection = DriverManager.getConnection(
-          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
-      insertNewAnswer(connection, questionId, body, authorId);
-      insertNewFollower(connection, authorId);
+        Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+      insertNewComment(connection, answerId, body, authorId);
+      insertNewFollower(connection, answerId, authorId);
     } 
     catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostAnswerServlet.class.getName());
+      Logger logger = Logger.getLogger(PostCommentServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
     response.sendRedirect("/question.html?id=" + questionId);
   }
 
   /** 
-   * Inserts an answer into the database.
+   * Inserts a comment into the database.
    */
-  private void insertNewAnswer(Connection connection, int questionId, String body, int authorId) {
+  private void insertNewComment(Connection connection, int answerId, String body, int authorId) {
     try {
-      // NOW() is the function to get the current date and time in MySQL.
-      String insertAnswerQuery = "INSERT INTO Answer(question_id, body, author_id, date_time) "
+      // NOW() is the functions to get the current date and time in MySQL.
+      String insertCommentQuery = "INSERT INTO Comment(answer_id, body, author_id, date_time) "
           + "VALUES (?,?,?,NOW())";
-      PreparedStatement answerStatement = connection.prepareStatement(insertAnswerQuery);
-      answerStatement.setInt(SqlConstants.ANSWER_INSERT_QUESTIONID, questionId);
-      answerStatement.setString(SqlConstants.ANSWER_INSERT_BODY, body);
-      answerStatement.setInt(SqlConstants.ANSWER_INSERT_AUTHORID, authorId);
-      answerStatement.executeUpdate();
+      PreparedStatement questionStatement = connection.prepareStatement(insertCommentQuery);
+      questionStatement.setInt(SqlConstants.COMMENT_INSERT_ANSWERID, answerId);
+      questionStatement.setString(SqlConstants.COMMENT_INSERT_BODY, body);
+      questionStatement.setInt(SqlConstants.COMMENT_INSERT_AUTHORID, authorId);
+      questionStatement.executeUpdate();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostAnswerServlet.class.getName());
+      Logger logger = Logger.getLogger(PostCommentServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
   }
 
   /** 
-   * Gets the ID from the last answer posted. Returns -1 on query failure.
+   * Makes the author of the comment a follower of the answer to which the comment is a reply.
    */
-  private int getLatestAnswerId(Connection connection) {
-    int id = -1;
+  private void insertNewFollower(Connection connection, int answerId, int authorId) {
     try {
-      String maxIdQuery = "SELECT MAX(id) FROM Answer;";
-      PreparedStatement maxIdStatement = connection.prepareStatement(maxIdQuery);
-      ResultSet queryResult = maxIdStatement.executeQuery();
-      queryResult.next();
-      id = queryResult.getInt(SqlConstants.ANSWER_FETCH_MAXID);
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostAnswerServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
-
-    return id;
-  }
-
-  /** 
-   * Makes the author of the recently added answer a follower of said answer.
-   * TODO(shaargtz): Move function to Utiliy class to be reused.
-   */
-  private void insertNewFollower(Connection connection, int authorId) {
-    try {
-      int latestAnswerId = getLatestAnswerId(connection);
       String insertFollowerQuery = "INSERT INTO AnswerFollower(answer_id, follower_id) "
           + "VALUES (?,?)";
       PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
-      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_ANSWERID, latestAnswerId);
+      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_ANSWERID, answerId);
       followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_AUTHORID, authorId);
       followerStatement.executeUpdate();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostAnswerServlet.class.getName());
+      Logger logger = Logger.getLogger(PostCommentServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
   }

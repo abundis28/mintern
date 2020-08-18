@@ -68,6 +68,7 @@ public class PostQuestionServlet extends HttpServlet {
    */
   private void insertNewQuestion(Connection connection, String title, String body, int askerId) {
     try {
+      // NOW() is the function to get the current date and time in MySQL.
       String insertQuestionQuery = "INSERT INTO Question(title, body, asker_id, date_time) "
           + "VALUES (?,?,?,NOW())";
       PreparedStatement questionStatement = connection.prepareStatement(insertQuestionQuery);
