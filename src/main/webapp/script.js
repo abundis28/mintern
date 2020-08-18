@@ -17,7 +17,8 @@
  */
 function loadIndex() {
   addAutoResize();
-  fetchAuthentication();
+  fetchAuthenticationForIndex();
+  fetchForum();
   fetchQuestions('forum');
 }
 
@@ -76,6 +77,13 @@ function loadSignup() {
 }
 
 /**
+ * Function that will call other functions when the verification page loads. 
+ */
+function loadVerification() {
+  fetchAuthenticationForVerification();
+}
+
+/**
  * Fetches answers for a single question from server, 
  * wraps each in an <li> element, and adds them to the DOM.
  */
@@ -102,7 +110,7 @@ async function fetchAnswers() {
 /**
  * Displays navbar authentication and inbox buttons according to login status.
  */
-function fetchAuthentication() {
+function fetchAuthenticationForIndex() {
   fetch('/authentication').then(response => response.json()).then(user => {
     const inboxButton = document.getElementById("notificationsDropdown");
     if (user.isUserLoggedIn) {
@@ -138,6 +146,32 @@ function fetchAuthentication() {
           user.authenticationUrl, 'btn-outline-success', 'Log In', 'login');
     }
   })
+}
+
+/**
+ * Fetches questions from server, wraps each in an <li> element, 
+ * and adds them to the DOM.
+ */
+async function fetchForum() {
+  const response = await fetch('/fetch-forum');
+  const questionsObject = await response.json();
+  const questionsContainer = document.getElementById('forum');
+  questionsObject.forEach(question => {
+    questionsContainer.appendChild(createQuestionElement(question));
+  });
+}
+
+/**
+ * Fetches notifications of the signed in user.
+ */
+function fetchNotifications() {
+  fetch('/notification').then(response => response.json()).then((notificationsJson) => {
+    const notificationsElement = document.getElementById('inbox-dropdown');
+    notificationsElement.innerHTML = '';
+    for (const notification of notificationsJson) {
+      notificationsElement.appendChild(createNotificationsElement(notification));
+    }
+  });
 }
 
 /**
@@ -187,16 +221,25 @@ function fetchMentorExperience() {
 }
 
 /**
- * Fetches notifications of the signed in user.
+ * Displays logout button or redirects to index in verification page.
  */
-function fetchNotifications() {
-  fetch('/notification').then(response => response.json()).then((notificationsJson) => {
-    const notificationsElement = document.getElementById('inbox-dropdown');
-    notificationsElement.innerHTML = '';
-    for (const notification of notificationsJson) {
-      notificationsElement.appendChild(createNotificationsElement(notification));
+function fetchAuthenticationForVerification() {
+  fetch('/authentication').then(response => response.json()).then(user => {
+    if (user.isUserLoggedIn) {
+      // If user is logged in, show logout button in navbar.
+      if (!user.isUserRegistered) {
+        // If logged in user is not registered, redirect to signup page.
+        window.location.replace('/signup.html');
+      }
+
+      // Add logout button to navbar.
+      addAuthenticationButton(
+          user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
+    } else {
+      // If user is logged out, show signup and login buttons in navbar.
+      window.location.replace('/index.html');
     }
-  });
+  })
 }
 
 /**

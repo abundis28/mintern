@@ -50,11 +50,15 @@ public final class SqlConstants {
   public static final int USER_INSERT_USERNAME = 3;
   public static final int USER_INSERT_EMAIL = 4;
   public static final int USER_INSERT_MAJOR = 5;
-  public static final int USER_INSERT_IS_MENTOR = 6;
+  public static final int USER_INSERT_ISMENTOR = 6;
 
   // Constants used for inserting mentor experience.
   public static final int MENTOR_EXPERIENCE_INSERT_ID = 1;
   public static final int MENTOR_EXPERIENCE_INSERT_TAG = 2;
+
+  // Constants to update mentor evidence.
+  public static final int MENTOR_EVIDENCE_PARAGRAPH = 1;
+  public static final int MENTOR_EVIDENCE_USERID = 2;
 
   // Constants used for querying an answer.
   public static final int ANSWER_FETCH_ID = 1;

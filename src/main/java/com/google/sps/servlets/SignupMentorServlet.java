@@ -95,7 +95,7 @@ public class SignupMentorServlet extends HttpServlet {
     if (experienceTags != null) {
       addMentorExperience(experienceTags);
     }
-    response.sendRedirect("/index.html");
+    response.sendRedirect("/verification.html");
   }
 
   /**
