@@ -6,10 +6,15 @@
   min-width: 25rem;
 } 
 
-#forum {
+#forum-title {
   width: 60%;
   margin: auto;
   margin-top: 70px;
+}
+
+#forum {
+  width: 60%;
+  margin: auto;
 }
 
 #question {
