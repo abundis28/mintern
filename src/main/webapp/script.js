@@ -105,11 +105,13 @@ function fetchAuthentication() {
       const commentSubmission = document.getElementsByClassName('post-comment');
       if (commentSubmission != null) {
         // The timeout is to wait for the dynamically generated forms of each
-        // answer to appear in the DOM.
+        // answer to appear in the DOM so that the attribute can be changed.
         setTimeout(() => {
           for (element of commentSubmission) {
             element.style.display = "block";
           }
+          // The timeout of 500ms is enough to let the forms load and not make
+          // the user feel like it's taking too long to load the whole page.
         }, 500);
       }
 
