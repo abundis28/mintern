@@ -20,7 +20,7 @@ package com.google.sps.classes;
 public final class SqlConstants {
   // Constants used for querying a user.
   public static final int USER_FETCH_ID = 1;
-  public static final int USER_FETCH_USERNAME = 4;
+  public static final int USER_FETCH_USERNAME = 1;
   
   // Constants used for inserting a new user.
   public static final int USER_INSERT_FIRSTNAME = 1;
