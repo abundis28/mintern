@@ -47,7 +47,7 @@ public class MentorEvidenceServlet extends HttpServlet {
     // Call NotificationServlet to notify approvers.
     response.setContentType("text/plain");
     try {
-      request.getRequestDispatcher("/notification?type=approval&modifiedElementId="
+      request.getRequestDispatcher("/notification?type=requestApproval&modifiedElementId="
           + Utility.getUserId()).include(request, response);
     } catch (ServletException exception) {
       System.out.println(exception.getMessage());

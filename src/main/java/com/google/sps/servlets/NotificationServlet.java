@@ -73,7 +73,7 @@ public class NotificationServlet extends HttpServlet {
       query =  "SELECT follower_id FROM AnswerFollower WHERE answer_id = " + modifiedElementId;
       notificationUrl = "/question.html?id=" + getIdOfAnsweredQuestion(modifiedElementId);
       notificationMessage = "Your answer was commented."; 
-    } else if (typeOfNotification.equals("approval")) {
+    } else if (typeOfNotification.equals("requestApproval")) {
       // If the notification is for a mentor approval.
       query = "SELECT approver_id FROM MentorApproval WHERE mentor_id = " + modifiedElementId;
       notificationUrl = "/approval.html?id=" + modifiedElementId;
