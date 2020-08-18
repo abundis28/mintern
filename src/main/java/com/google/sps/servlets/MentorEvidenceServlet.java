@@ -39,15 +39,15 @@ public class MentorEvidenceServlet extends HttpServlet {
     // Get variable from HTML form.
     String paragraph = request.getParameter("paragraph");
 
-    // Insert mentor evidence to database.
-    addMentorEvidence(paragraph);
+    // Update mentor evidence in database.
+    updateMentorEvidence(paragraph);
     response.sendRedirect("/index.html");
   }
 
   /**
-   * Inserts evidence provided by mentor to MentorEvidence table in database.
+   * Updates evidence provided by mentor in MentorEvidence table.
    */
-  private void addMentorEvidence(String paragraph) {
+  private void updateMentorEvidence(String paragraph) {
     int userId = Utility.getUserId();
 
     // Set up query to insert new experience tag to user.
@@ -64,8 +64,8 @@ public class MentorEvidenceServlet extends HttpServlet {
 
       // Create the MySQL INSERT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.setInt(SqlConstants.MENTOR_EVIDENCE_PARAGRAPH, userId);
-      preparedStatement.setString(SqlConstants.MENTOR_EVIDENCE_USERID, paragraph);
+      preparedStatement.setString(SqlConstants.MENTOR_EVIDENCE_PARAGRAPH, paragraph);
+      preparedStatement.setInt(SqlConstants.MENTOR_EVIDENCE_USERID, userId);
       preparedStatement.execute();
       connection.close();
     } catch (SQLException exception) {
