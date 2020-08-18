@@ -57,7 +57,7 @@ public class NotificationServlet extends HttpServlet {
     Timestamp localTimestamp = Timestamp.valueOf(LocalDateTime.now());
     // Check if notification is about a question answered or answer commented, along with its id.
     String typeOfNotification = request.getParameter("type");
-    int modifiedElementId = Integer.parseInt(request.getParameter("modifiedElementId"));
+    int modifiedElementId = Utility.tryParseInt(request.getParameter("modifiedElementId"));
 
     // URL to which the user will be redirected.
     String notificationUrl = "";
@@ -71,8 +71,8 @@ public class NotificationServlet extends HttpServlet {
     } else if (typeOfNotification.equals("answer")) {
       // If the notification is for a new comment in an answer.
       query =  "SELECT follower_id FROM AnswerFollower WHERE answer_id = " + modifiedElementId;
-      notificationUrl = "/question.html?id=" + modifiedElementId;
-      notificationMessage = "Your answer was commented.";
+      notificationUrl = "/question.html?id=" + getIdOfAnsweredQuestion(modifiedElementId);
+      notificationMessage = "Your answer was commented."; 
     }
     // Creates notification and relationship between its ID and the ID of the concerned users.
     createNotification(query, notificationUrl, notificationMessage, localTimestamp);
@@ -183,7 +183,8 @@ public class NotificationServlet extends HttpServlet {
       int notificationId = getLastInsertedNotificationId(connection);
       // Iterate through the query's result set to insert all notifications.
       while (resultSet.next()) {
-        insertToUserNotification(connection, resultSet.getInt(SqlConstants.CREATE_NOTIFICATION_FETCH_USERID), notificationId);
+        insertToUserNotification(connection, resultSet.getInt(
+            SqlConstants.CREATE_NOTIFICATION_FETCH_USERID), notificationId);
       }
       // Close the connection once all insertions have been performed.
       connection.close();
@@ -191,5 +192,27 @@ public class NotificationServlet extends HttpServlet {
       Logger logger = Logger.getLogger(NotificationServlet.class.getName());
       logger.log(Level.SEVERE, ex.getMessage(), ex);
     }
+  }
+
+  /**
+   * Fetches ID of question that is related to the answer that was commented.
+   */
+  private int getIdOfAnsweredQuestion(int answerId) {
+    String query = "SELECT question_id FROM Answer WHERE id = " + answerId;
+    int answeredQuestionId = -1;
+    try {
+      // Setup and perform query.
+      Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL, 
+          Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+      PreparedStatement pst = connection.prepareStatement(query);
+      ResultSet resultSet = pst.executeQuery();
+      resultSet.next();
+      answeredQuestionId = resultSet.getInt(SqlConstants.NOTIFICATION_FETCH_ID_ANSWERED_QUESTION);
+      connection.close();
+    } catch (SQLException ex) {
+      Logger logger = Logger.getLogger(NotificationServlet.class.getName());
+      logger.log(Level.SEVERE, ex.getMessage(), ex);
+    }
+    return answeredQuestionId;
   }
 }
