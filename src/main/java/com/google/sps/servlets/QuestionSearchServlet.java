@@ -38,7 +38,11 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/search-question")
 public class QuestionSearchServlet extends HttpServlet {
   /**
-   * Gets questions that match at some level with the input in search bar.
+   * Fetches questions that match at some level with the input in search bar. This is implemented
+   * with the Fulltext index defined in the create.sql file. The mysql inbuilt search will
+   * compare the input string against the columns of data (body and title of Question) defined in 
+   * FULLTEXT index. This comparison will be done considering only natural human language (no 
+   * special operators except for double quotes). 
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
