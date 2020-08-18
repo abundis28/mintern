@@ -18,7 +18,6 @@
 function loadIndex() {
   addAutoResize();
   fetchAuthenticationForIndex();
-  fetchForum();
   fetchQuestions('forum');
 }
 
