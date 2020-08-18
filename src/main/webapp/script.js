@@ -20,7 +20,36 @@ function loadIndex() {
   fetchAuthenticationForIndex();
   fetchForum();
   fetchQuestions('forum');
-  fetchNotifications();
+}
+
+/**
+* Searches questions that contain the input string in the title or body elements.
+*/
+function searchQuestion() {
+  let stringSearchInput = document.getElementById("questionSearchInput").value;
+  if (stringSearchInput != "") {
+    const questionsContainer = document.getElementById('forum');
+    questionsContainer.innerHTML = "";
+    fetch('/search-question?inputString=' + stringSearchInput).then(response => 
+        response.json()).then(questionsJson => {
+      for (const question of questionsJson) {
+        // True value parameter for createQuestionElement means that the question does have a 
+        // redirect URL option.
+        questionsContainer.appendChild(createQuestionElement(question, true));
+      }
+    })
+  }
+}
+
+/**
+ * Reloads homepage forum from scratch and clears input in search bar.
+ */
+function backToHomepage() {
+  const searchInput = document.getElementById("questionSearchInput");
+  searchInput.value = "";
+  const questionsContainer = document.getElementById('forum');
+  questionsContainer.innerHTML = "";
+  fetchQuestions('forum');
 }
 
 /**

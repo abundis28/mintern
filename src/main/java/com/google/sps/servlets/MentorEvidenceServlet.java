@@ -64,7 +64,8 @@ public class MentorEvidenceServlet extends HttpServlet {
     // Set up query to insert new experience tag to user.
     // Use replace in case mentor evidence already exists in database and mentor wants to update
     // their information.
-    // TODO(oumontiel): Let mentors know they have the option to update their evidence information.
+    // TODO(oumontiel): Let mentors know they have the option to update their evidence information
+    //                  and add button that redirects to this servlet to allow them that.
     String query = "REPLACE INTO MentorEvidence (mentor_id, paragraph) VALUES (?, ?)";
 
     try {
@@ -92,7 +93,7 @@ public class MentorEvidenceServlet extends HttpServlet {
     int userId = Utility.getUserId();
     // Create array to store IDs of approvers.
     // TODO(oumontiel): Get IDs from all admins and remove hardcoded IDs.
-    int[] approvers = {1, 2, 3};
+    int[] approvers = {SqlConstants.SHAAR_USER_ID, SqlConstants.ANDRES_USER_ID, SqlConstants.OMAR_USER_ID};
 
     // Set up query to insert new experience tag to user.
     String query = "INSERT INTO MentorApproval (mentor_id, approver_id, is_approved, is_rejected) "
