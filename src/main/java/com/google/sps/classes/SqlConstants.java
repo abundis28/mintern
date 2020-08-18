@@ -18,6 +18,34 @@ package com.google.sps.classes;
  * SQL constants used throughout different queries.
  */
 public final class SqlConstants {
+  // Constants for Shaar, Andres, and Omar user id.
+  public static final int SHAAR_USER_ID = 1;
+  public static final int ANDRES_USER_ID = 2;
+  public static final int OMAR_USER_ID = 3;
+
+  // Constants used for querying a question.
+  public static final int QUESTION_FETCH_ID = 1;
+  public static final int QUESTION_FETCH_TITLE = 2;
+  public static final int QUESTION_FETCH_BODY = 3;
+  public static final int QUESTION_FETCH_ASKERID = 4;
+  public static final int QUESTION_FETCH_ASKERNAME = 8;
+  public static final int QUESTION_FETCH_DATETIME = 5;
+  public static final int QUESTION_FETCH_NUMBEROFFOLLOWERS = 7;
+  public static final int QUESTION_FETCH_NUMBEROFANSWERS = 11;
+
+  // Constants used for inserting a question.
+  public static final int QUESTION_INSERT_TITLE = 1;
+  public static final int QUESTION_INSERT_BODY = 2;
+  public static final int QUESTION_INSERT_ASKERID = 3;
+
+  // Constant used in the forum.
+  public static final int FETCH_ALL_QUESTIONS = -1;
+
+  // Constants used for inserting a follower.
+  public static final int QUESTION_FETCH_MAXID = 1;
+  public static final int FOLLOWER_INSERT_QUESTIONID = 1;
+  public static final int FOLLOWER_INSERT_ASKERID = 2;
+
   // Constants used for querying a user.
   public static final int USER_FETCH_ID = 1;
   public static final int USER_FETCH_USERNAME = 1;
@@ -44,10 +72,7 @@ public final class SqlConstants {
   public static final int COMMENT_FETCH_BODY = 11;
   public static final int COMMENT_FETCH_AUTHORNAME = 15;
   public static final int COMMENT_FETCH_DATETIME = 13;
-  
-  // Constant used in the forum.
-  public static final int FETCH_ALL_QUESTIONS = -1;
-  
+    
   // Constants used to fetch the elements of notification.
   public static final int NOTIFICATION_FETCH_MESSAGE = 1;
   public static final int NOTIFICATION_FETCH_URL = 2;
@@ -57,6 +82,7 @@ public final class SqlConstants {
   public static final int NOTIFICATION_INSERT_MESSAGE = 1;
   public static final int NOTIFICATION_INSERT_URL = 2;
   public static final int NOTIFICATION_INSERT_DATETIME = 3;
+  public static final int NOTIFICATION_FETCH_ID_ANSWERED_QUESTION = 1;
 
   // Constants used to insert a relationship between user and notification.
   public static final int USER_NOTIFICATION_INSERT_USERID = 1;
@@ -82,24 +108,4 @@ public final class SqlConstants {
   // Constants used for querying a MentorApproval row.
   public static final int MENTOR_APPROVAL_FETCH_MENTORID = 1;
   public static final int MENTOR_APPROVAL_FETCH_APPROVERID = 2;
-
-  // Constants used for querying a question.
-  public static final int QUESTION_FETCH_ID = 1;
-  public static final int QUESTION_FETCH_TITLE = 2;
-  public static final int QUESTION_FETCH_BODY = 3;
-  public static final int QUESTION_FETCH_ASKERID = 4;
-  public static final int QUESTION_FETCH_ASKERNAME = 8;
-  public static final int QUESTION_FETCH_DATETIME = 5;
-  public static final int QUESTION_FETCH_NUMBEROFFOLLOWERS = 7;
-  public static final int QUESTION_FETCH_NUMBEROFANSWERS = 11;
-
-  // Constants used for inserting a question.
-  public static final int QUESTION_INSERT_TITLE = 1;
-  public static final int QUESTION_INSERT_BODY = 2;
-  public static final int QUESTION_INSERT_ASKERID = 3;
-
-  // Constants used for inserting a follower.
-  public static final int QUESTION_FETCH_MAXID = 1;
-  public static final int FOLLOWER_INSERT_QUESTIONID = 1;
-  public static final int FOLLOWER_INSERT_ASKERID = 2;
 }
