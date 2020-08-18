@@ -77,7 +77,10 @@ function fetchAuthentication() {
     const inboxButton = document.getElementById("notificationsDropdown");
     if (user.isUserLoggedIn) {
       // If user is logged in, show logout and inbox buttons in navbar.
-      if (inboxButton) inboxButton.style.display = "block";
+      if (inboxButton) {
+        inboxButton.style.display = "block";
+      }
+      
       fetchNotifications(); 
       if (!user.isUserRegistered) {
         // If logged in user is not registered, redirect to signup page.
