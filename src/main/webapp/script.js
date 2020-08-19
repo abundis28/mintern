@@ -18,12 +18,16 @@
 function loadIndex() {
   addAutoResize();
   fetchAuthIndexQuestion();
-  const search = (new URL(document.location)).searchParams.get("search");
-  if (search === "1") {
+  // Determine whether all the questions should be fetched or just the ones that match the search.
+  const fullTextSearch = (new URL(document.location)).searchParams.get("search");
+  if (fullTextSearch === "1") {
+    // Fetch just the questions related to the string input in the search bar.
     const stringSearchInput = (new URL(document.location)).searchParams.get("stringSearchInput");
     searchQuestion(stringSearchInput);
   } else {
+    // Fetch the whole forum.
     fetchQuestions('forum');
+    eraseQueryStringFromUrl();
   }
 }
 
@@ -444,6 +448,7 @@ function backToHomepage() {
   const questionsContainer = document.getElementById('forum');
   questionsContainer.innerHTML = "";
   fetchQuestions('forum');
+  eraseQueryStringFromUrl();
 }
 
 /**
@@ -468,6 +473,9 @@ function notify(type, id) {
   })
 }
 
+/**
+ * Redirects user from any view to the search view in index.
+ */
 function searchRedirect() {
   let stringSearchInput = document.getElementById("questionSearchInput").value;
   window.location.replace("index.html?search=1&stringSearchInput=" + stringSearchInput);
@@ -509,3 +517,14 @@ function searchQuestion(stringSearchInput) {
     });
   }, false);
 })();
+
+/**
+ * Erases the query string from the url.
+ */
+function eraseQueryStringFromUrl() {
+  const uri = window.location.toString();
+  if (uri.indexOf("?") > 0) {
+      const clean_uri = uri.substring(0, uri.indexOf("?"));
+      window.history.replaceState({}, document.title, clean_uri);
+  }
+}
