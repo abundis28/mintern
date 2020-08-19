@@ -16,7 +16,6 @@ package com.google.sps.classes;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.google.sps.classes.SqlConstants;
 import com.google.gson.Gson;
 import com.google.sps.classes.SqlConstants;
 import java.sql.*;
