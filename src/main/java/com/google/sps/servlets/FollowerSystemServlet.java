@@ -45,13 +45,20 @@ public class FollowerSystemServlet extends HttpServlet {
     int questionId = Utility.tryParseInt(request.getParameter("question-id"));
     int userId = Utility.getUserId();
 
-    Connection connection = DriverManager.getConnection(
-        Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+    try {
+      Connection connection = DriverManager.getConnection(
+          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
 
-    if (type.equals("follow")) {
-      insertFollower(connection, questionId, userId);
-    } else if (type.equals("unfollow")) {
-      deleteFollower(connection, questionId, userId);
+      if (type.equals("follow")) {
+        insertFollower(connection, questionId, userId);
+      } else if (type.equals("unfollow")) {
+        deleteFollower(connection, questionId, userId);
+      }
+
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(FollowerSystemServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
   }
 
@@ -83,7 +90,7 @@ public class FollowerSystemServlet extends HttpServlet {
           + "WHERE question_id=? AND follower_id=?;";
       PreparedStatement followerStatement = connection.prepareStatement(deleteFollowerQuery);
       followerStatement.setInt(SqlConstants.FOLLOWER_QUERY_QUESTIONID, questionId);
-      followerStatement.setInt(SqlConstants.FOLLOWER_QUERY_QUESTIONID, userId);
+      followerStatement.setInt(SqlConstants.FOLLOWER_QUERY_USERID, userId);
       followerStatement.executeUpdate();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
