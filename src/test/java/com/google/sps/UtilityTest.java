@@ -14,9 +14,8 @@
  
 package com.google.sps;
 
-import com.google.sps.classes.Notification;
+import com.google.sps.classes.SubjectTag;
 import com.google.sps.classes.Utility;
-import java.sql.Timestamp;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -26,5 +25,11 @@ import org.junit.Test;
 
 @RunWith(JUnit4.class)
 public final class UtilityTest {
-  
+  @Test
+  public void convertUsingGsonToJsonTest() {
+    SubjectTag tag = new SubjectTag(5, "Interviews", "red");
+    String actual = Utility.convertToJsonUsingGson(tag);
+    String expected = "{\"id\":5,\"subject\":\"Interviews\",\"color\":\"red\"}";
+    Assert.assertEquals(expected, actual);
+  }
 }
