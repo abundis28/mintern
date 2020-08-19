@@ -311,6 +311,7 @@ function createQuestionElement(question, hasRedirect) {
 
   const iconElement = document.createElement('i');
   iconElement.setAttribute('id', 'icon' + question.id);
+  iconElement.setAttribute('style', 'cursor: pointer');
 
   if (question.userFollowsQuestion) {
     iconElement.setAttribute('class', 'fas fa-bell fa-2x');
