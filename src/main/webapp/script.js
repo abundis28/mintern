@@ -17,7 +17,7 @@
  */
 function loadIndex() {
   addAutoResize();
-  fetchAuthenticationForIndex();
+  fetchAuthIndexQuestion();
   fetchQuestions('forum');
 }
 
@@ -25,7 +25,7 @@ function loadIndex() {
  * Function that will call other functions when the question page loads. 
  */
 function loadQuestion() {
-  fetchAuthentication();
+  fetchAuthIndexQuestion();
   fetchQuestions('question');
   fetchAnswers();
 }
@@ -49,7 +49,7 @@ function loadSignup() {
  * Function that will call other functions when the verification page loads. 
  */
 function loadVerification() {
-  fetchAuthenticationForVerification();
+  fetchAuthVerification();
 }
 
 /**
@@ -79,7 +79,7 @@ async function fetchAnswers() {
 /**
  * Displays navbar authentication and inbox buttons according to login status.
  */
-function fetchAuthenticationForIndex() {
+function fetchAuthIndexQuestion() {
   fetch('/authentication').then(response => response.json()).then(user => {
     const inboxButton = document.getElementById("notificationsDropdown");
     if (user.isUserLoggedIn) {
@@ -179,7 +179,7 @@ function fetchMentorExperience() {
 /**
  * Displays logout button or redirects to index in verification page.
  */
-function fetchAuthenticationForVerification() {
+function fetchAuthVerification() {
   fetch('/authentication').then(response => response.json()).then(user => {
     if (user.isUserLoggedIn) {
       // If user is logged in, show logout button in navbar.
