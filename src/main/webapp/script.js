@@ -18,7 +18,13 @@
 function loadIndex() {
   addAutoResize();
   fetchAuthIndexQuestion();
-  fetchQuestions('forum');
+  const search = (new URL(document.location)).searchParams.get("search");
+  if (search === "1") {
+    const stringSearchInput = (new URL(document.location)).searchParams.get("stringSearchInput");
+    searchQuestion(stringSearchInput);
+  } else {
+    fetchQuestions('forum');
+  }
 }
 
 /**
@@ -462,11 +468,15 @@ function notify(type, id) {
   })
 }
 
+function searchRedirect() {
+  let stringSearchInput = document.getElementById("questionSearchInput").value;
+  window.location.replace("index.html?search=1&stringSearchInput=" + stringSearchInput);
+}
+
 /**
  * Searches questions that contain the input string in the title or body elements.
  */
-function searchQuestion() {
-  let stringSearchInput = document.getElementById("questionSearchInput").value;
+function searchQuestion(stringSearchInput) {
   if (stringSearchInput != "") {
     const questionsContainer = document.getElementById('forum');
     questionsContainer.innerHTML = "";
