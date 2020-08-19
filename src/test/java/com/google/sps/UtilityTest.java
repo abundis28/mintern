@@ -14,7 +14,6 @@
  
 package com.google.sps;
 
-import com.google.sps.classes.Notification;
 import com.google.sps.classes.Utility;
 import java.sql.Timestamp;
 import org.junit.Assert;
