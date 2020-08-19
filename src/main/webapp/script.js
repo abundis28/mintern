@@ -291,12 +291,16 @@ function createQuestionElement(question, hasRedirect) {
   questionWrapper.appendChild(questionElement);
 
   const iconElement = document.createElement('i');
+  iconElement.setAttribute('id', 'icon' + question.id);
 
   if (question.userFollowsQuestion) {
     iconElement.setAttribute('class', 'fas fa-bell fa-2x');
   } else {
     iconElement.setAttribute('class', 'far fa-bell fa-2x');
   }
+
+  iconElement.setAttribute('onclick', 'followUnfollow(' 
+      + question.userFollowsQuestion + ', ' + question.id + ')');
   
   questionElement.appendChild(iconElement);
 
@@ -345,6 +349,7 @@ function createQuestionElement(question, hasRedirect) {
   // Number of followers is placed to the right side.
   const followersElement = document.createElement('small');
   followersElement.setAttribute('class', 'float-right');
+  followersElement.setAttribute('id', 'followerCount' + question.id);
   if (question.numberOfFollowers === 1) {
     // Avoid writing '1 followers'.
     followersElement.innerText = question.numberOfFollowers + ' follower';
@@ -506,6 +511,54 @@ function backToHomepage() {
   const questionsContainer = document.getElementById('forum');
   questionsContainer.innerHTML = "";
   fetchQuestions('forum');
+}
+
+function followUnfollow(userFollowsQuestion, questionId) {
+  const iconToChange = document.getElementById('icon' + questionId);
+  const currentFollowerContainer = 
+      document.getElementById('followerCount' + questionId);
+  const currentFollowerString = currentFollowerContainer.innerText;
+  const currentFollowerCount = 
+      // Get the number of followers using a regex.
+      parseInt(currentFollowerString.match(/\d/g));
+
+  if (userFollowsQuestion) {
+    // Unfollow the question.
+    // fetch('/follower-system?type=follow&questionId=' + questionId);
+    
+    // Change the button.
+    iconToChange.setAttribute('class', 'far fa-bell fa-2x');
+
+    // Update the follower count in the DOM.
+    if (currentFollowerCount === 2) {
+      // Avoid writing '1 followers'.
+      currentFollowerContainer.innerText = currentFollowerCount - 1
+          + ' follower';
+    } else {
+      currentFollowerContainer.innerText = currentFollowerCount - 1
+          + ' followers';
+    }
+  } else {
+    // Follow the question.
+    // fetch('/follower-system?type=unfollow&questionId=' + questionId);
+
+    // Change the button.
+    iconToChange.setAttribute('class', 'fas fa-bell fa-2x');
+
+    // Update the follower count in the DOM.
+    if (currentFollowerCount === 0) {
+      // Avoid writing '1 followers'.
+      currentFollowerContainer.innerText = currentFollowerCount + 1
+          + ' follower';
+    } else {
+      currentFollowerContainer.innerText = currentFollowerCount + 1
+          + ' followers';
+    }
+  }
+
+  // Update the onclick.
+  iconToChange.setAttribute('onclick', 'followUnfollow(' 
+    + !userFollowsQuestion + ', ' + questionId + ')');
 }
 
 /**
