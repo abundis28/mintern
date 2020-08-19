@@ -289,7 +289,7 @@ function fetchMentorApproval() {
     } else if (approval.isApprover) {
       // If approver is assigned to mentor and has not reviewed them,
       // show evidence and approval buttons.
-      createApprovalMessage(7);
+      
       // Display mentor username.
       const usernameElement = document.getElementById('username');
       usernameElement.innerHTML = approval.mentorUsername;
