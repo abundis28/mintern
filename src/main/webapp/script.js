@@ -282,21 +282,26 @@ function createNotificationsElement(notification) {
  * Each element corresponds to a question to be displayed in the DOM.
  */
 function createQuestionElement(question, hasRedirect) {
+  const questionWrapper = document.createElement('div');
+  questionWrapper.setAttribute('class', 'list-group-item');
+
   const questionElement = document.createElement('div');
   questionElement.setAttribute('class', 'media');
+  questionElement.setAttribute('style', 'width: auto');
+  questionWrapper.appendChild(questionElement);
 
   const iconElement = document.createElement('i');
 
   if (question.userFollowsQuestion) {
-    iconElement.setAttribute('class', 'fas fa-bell');
+    iconElement.setAttribute('class', 'fas fa-bell fa-3x');
   } else {
-    iconElement.setAttribute('class', 'far fa-bell');
+    iconElement.setAttribute('class', 'far fa-bell fa-3x');
   }
   
   questionElement.appendChild(iconElement);
 
   const textContainer = document.createElement('div');
-  textContainer.setAttribute('class', 'media-body');
+  textContainer.setAttribute('class', 'media-body ml-3');
   questionElement.appendChild(textContainer);
 
   const questionTitle = document.createElement('h5');
@@ -305,19 +310,39 @@ function createQuestionElement(question, hasRedirect) {
     // Add href to redirect from forum to single view.
     const questionURL = document.createElement('a');
     questionURL.setAttribute('href', '/question.html?id=' + question.id);
+    questionURL.innerText = question.title;
     questionTitle.appendChild(questionURL);
+  } else {
+    questionTitle.innerText = question.title;
   }
 
-  questionTitle.innerText = question.title;
   textContainer.appendChild(questionTitle);
-  
-  // Asker name is placed besides the question.
+
+  // If the question has a body, show it underneath.
+  if (question.body) {
+    const bodyElement = document.createElement('p');
+    bodyElement.setAttribute('class', 'mb-1');
+    if (question.body.length > 80) {
+      // All of the body should not be displayed if it is very big.
+      bodyElement.innerText = question.body
+          // Reduce the preview of the body to 80 characters
+          .substring(0,80)
+          // Remove line breaks and add trailing dots
+          .replace(/(\r\n|\n|\r)/gm,'') + '...';
+    } else {
+      bodyElement.innerText = question.body
+          // Remove line breaks from the preview.
+          .replace(/(\r\n|\n|\r)/gm,' ');
+    }
+    textContainer.appendChild(bodyElement);
+  }
+
   const askerElement = document.createElement('small');
   askerElement.setAttribute('class', 'text-muted');
   askerElement.innerText = '\t' + question.askerName;
-  questionElement.appendChild(askerElement);
+  textContainer.appendChild(askerElement);
 
-  // Number of followers is placed to the right side at the top.
+  // Number of followers is placed to the right side.
   const followersElement = document.createElement('small');
   followersElement.setAttribute('class', 'float-right');
   if (question.numberOfFollowers === 1) {
@@ -326,7 +351,7 @@ function createQuestionElement(question, hasRedirect) {
   } else {
     followersElement.innerText = question.numberOfFollowers + ' followers';
   }
-  questionElement.appendChild(followersElement);
+  textContainer.appendChild(followersElement);
 
   // Number of answers is placed to the right side at the bottom.
   const answersElement = document.createElement('small');
@@ -337,35 +362,16 @@ function createQuestionElement(question, hasRedirect) {
   } else {
     answersElement.innerText = question.numberOfAnswers + ' answers';
   }
-  questionElement.appendChild(document.createElement('br'));
-  questionElement.appendChild(answersElement);
- 
-  // If the question has a body, show it underneath.
-  if (question.body) {
-    const bodyElement = document.createElement('p');
-    if (question.body.length > 100) {
-      // All of the body should not be displayed if it is very big.
-      bodyElement.innerText = question.body
-          // Reduce the preview of the body to 100 characters
-          .substring(0,100)
-          // Remove line breaks and add trailing dots
-          .replace(/(\r\n|\n|\r)/gm,'') + '...';
-    } else {
-      bodyElement.innerText = question.body
-          // Remove line breaks from the preview.
-          .replace(/(\r\n|\n|\r)/gm,' ');
-    }
-    questionElement.appendChild(bodyElement);
-    questionElement.appendChild(document.createElement('br'));
-  } 
+  textContainer.appendChild(document.createElement('br'));
+  textContainer.appendChild(answersElement);
   
   // Date is placed beneath the body or title.
   const dateElement = document.createElement('small');
   dateElement.setAttribute('class', 'text-muted');
   dateElement.innerText = question.dateTime;
-  questionElement.appendChild(dateElement);
+  textContainer.appendChild(dateElement);
 
-  return questionElement;
+  return questionWrapper;
 }
 
 /** 
