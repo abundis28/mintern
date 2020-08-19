@@ -53,7 +53,7 @@ public final class Utility {
       + "LEFT JOIN (SELECT question_id, COUNT(id) answers FROM Answer "
       + "GROUP BY question_id) AnswerCount ON Question.id=AnswerCount.question_id "
       + "LEFT JOIN (SELECT question_id AS follows_question FROM QuestionFollower WHERE follower_id=1) "
-      + "UserFollows ON Question.id=UserFollows.follows_question "
+      + "UserFollows ON Question.id=UserFollows.follows_question ";
 
   // Query to get answers and comments from a question. Generates the following table:
   //
@@ -168,6 +168,8 @@ public final class Utility {
           SqlConstants.QUESTION_FETCH_NUMBEROFFOLLOWERS));
       question.setNumberOfAnswers(queryResult.getInt(
           SqlConstants.QUESTION_FETCH_NUMBEROFANSWERS));
+      question.setUserFollowsQuestion((queryResult.getInt(
+          SqlConstants.QUESTION_FETCH_USERFOLLOWSQUESTION) != 0 ? true : false));
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
       Logger logger = Logger.getLogger(Utility.class.getName());
