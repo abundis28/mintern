@@ -76,9 +76,6 @@ public final class SqlConstants {
   public static final int COMMENT_FETCH_BODY = 11;
   public static final int COMMENT_FETCH_AUTHORNAME = 15;
   public static final int COMMENT_FETCH_DATETIME = 13;
-  
-  // Constant used in the forum.
-  public static final int FETCH_ALL_QUESTIONS = -1;
 
   // Constants used for inserting an answer.
   public static final int ANSWER_INSERT_QUESTIONID = 1;
