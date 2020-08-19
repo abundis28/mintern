@@ -524,7 +524,7 @@ function followUnfollow(userFollowsQuestion, questionId) {
 
   if (userFollowsQuestion) {
     // Unfollow the question.
-    // fetch('/follower-system?type=follow&questionId=' + questionId);
+    fetch('/follower-system?type=follow&question-id=' + questionId);
     
     // Change the button.
     iconToChange.setAttribute('class', 'far fa-bell fa-2x');
@@ -540,7 +540,7 @@ function followUnfollow(userFollowsQuestion, questionId) {
     }
   } else {
     // Follow the question.
-    // fetch('/follower-system?type=unfollow&questionId=' + questionId);
+    fetch('/follower-system?type=unfollow&question-id=' + questionId);
 
     // Change the button.
     iconToChange.setAttribute('class', 'fas fa-bell fa-2x');
