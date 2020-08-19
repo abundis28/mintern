@@ -262,7 +262,31 @@ function fetchMentorApproval() {
   const mentor_id = (new URL(document.location)).searchParams.get('id');
   const mentorApprovalUrl = '/mentor-approval?id=' + mentor_id.toString();
   fetch(mentorApprovalUrl).then(response => response.json()).then(approval => {
-    if (approval.isApprover) {
+    if (approval.userId === mentorId && approval.isApproved) {
+      // If mentor has been approved, show corresponding message.
+
+    } else if (approval.userId === mentorId && approval.isRejected) {
+      // If mentor has been rejected, show corresponding message.
+
+    } else if (approval.userId === mentorId) {
+      // If mentor is not approved or rejected yet, show corresponding message.
+
+    } else if (approval.isApprover && approval.isApproved) {
+      // If approver is assigned to mentor but mentor is already approved,
+      // show corresponding message.
+
+    } else if (approval.isApprover && approval.isRejected) {
+      // If approver is assigned to mentor but mentor is already rejected,
+      // show corresponding message.
+
+    } else if (approval.isApprover && approval.hasReviewed) {
+      // If approver is assigned to mentor and has already reviewed them,
+      // show corresponding message.
+
+    } else if (approval.isApprover) {
+      // If approver is assigned to mentor and has not reviewed them,
+      // show evidence and approval buttons.
+
       // Display mentor username.
       const usernameElement = document.getElementById('username');
       usernameElement.innerHTML = approval.mentorUsername;
@@ -271,7 +295,7 @@ function fetchMentorApproval() {
       const paragraphElement = document.getElementById('paragraph');
       paragraphElement.innerHTML = approval.paragraph;
     } else {
-      // If approver is not assigned to mentor, redirect to index.
+      // If user is not either a mentor or an approver assigned to that mentor, redirect to index.
       window.location.replace('/index.html');
     }
   })

@@ -100,6 +100,8 @@ public final class SqlConstants {
 
   // Constants used for querying mentor evidence.
   public static final int MENTOR_EVIDENCE_FETCH_APPROVALS = 2;
+  public static final int MENTOR_EVIDENCE_FETCH_ISAPPROVED = 3;
+  public static final int MENTOR_EVIDENCE_FETCH_ISREJECTED = 4;
   public static final int MENTOR_EVIDENCE_FETCH_PARAGRAPH = 5;
 
   // Constatns used for inserting approvers to mentors.
