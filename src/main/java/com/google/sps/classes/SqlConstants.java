@@ -33,6 +33,9 @@ public final class SqlConstants {
   public static final int QUESTION_INSERT_BODY = 2;
   public static final int QUESTION_INSERT_ASKERID = 3;
 
+  // Constant used in the forum.
+  public static final int FETCH_ALL_QUESTIONS = -1;
+
   // Constants used for inserting a follower to a question.
   // QUESTION_FETCH_MAXID is used to get the ID of the question
   // that was just posted so the follower can be inserted.
@@ -49,11 +52,15 @@ public final class SqlConstants {
   public static final int USER_INSERT_USERNAME = 3;
   public static final int USER_INSERT_EMAIL = 4;
   public static final int USER_INSERT_MAJOR = 5;
-  public static final int USER_INSERT_IS_MENTOR = 6;
+  public static final int USER_INSERT_ISMENTOR = 6;
 
   // Constants used for inserting mentor experience.
   public static final int MENTOR_EXPERIENCE_INSERT_ID = 1;
   public static final int MENTOR_EXPERIENCE_INSERT_TAG = 2;
+
+  // Constants to update mentor evidence.
+  public static final int MENTOR_EVIDENCE_PARAGRAPH = 1;
+  public static final int MENTOR_EVIDENCE_USERID = 2;
 
   // Constants used for querying an answer.
   public static final int ANSWER_FETCH_ID = 1;
@@ -99,6 +106,7 @@ public final class SqlConstants {
   public static final int NOTIFICATION_INSERT_MESSAGE = 1;
   public static final int NOTIFICATION_INSERT_URL = 2;
   public static final int NOTIFICATION_INSERT_DATETIME = 3;
+  public static final int NOTIFICATION_FETCH_ID_ANSWERED_QUESTION = 1;
 
   // Constants used to insert a relationship between user and notification.
   public static final int USER_NOTIFICATION_INSERT_USERID = 1;

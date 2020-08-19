@@ -17,9 +17,39 @@
  */
 function loadIndex() {
   addAutoResize();
-  fetchAuthentication();
+  fetchAuthenticationForIndex();
+  fetchForum();
   fetchQuestions('forum');
-  fetchNotifications();
+}
+
+/**
+* Searches questions that contain the input string in the title or body elements.
+*/
+function searchQuestion() {
+  let stringSearchInput = document.getElementById("questionSearchInput").value;
+  if (stringSearchInput != "") {
+    const questionsContainer = document.getElementById('forum');
+    questionsContainer.innerHTML = "";
+    fetch('/search-question?inputString=' + stringSearchInput).then(response => 
+        response.json()).then(questionsJson => {
+      for (const question of questionsJson) {
+        // True value parameter for createQuestionElement means that the question does have a 
+        // redirect URL option.
+        questionsContainer.appendChild(createQuestionElement(question, true));
+      }
+    })
+  }
+}
+
+/**
+ * Reloads homepage forum from scratch and clears input in search bar.
+ */
+function backToHomepage() {
+  const searchInput = document.getElementById("questionSearchInput");
+  searchInput.value = "";
+  const questionsContainer = document.getElementById('forum');
+  questionsContainer.innerHTML = "";
+  fetchQuestions('forum');
 }
 
 /**
@@ -42,12 +72,24 @@ function loadSignup() {
 }
 
 /**
+ * Function that will call other functions when the verification page loads. 
+ */
+function loadVerification() {
+  fetchAuthenticationForVerification();
+}
+
+/**
  * Fetches answers for a single question from server, 
  * wraps each in an <li> element, and adds them to the DOM.
  */
 async function fetchAnswers() {
+<<<<<<< HEAD
   const questionId = (new URL(document.location)).searchParams.get("id");
   const response = await fetch('/fetch-answers?id=' + questionId);
+=======
+  const question_id = (new URL(document.location)).searchParams.get('id');
+  const response = await fetch('/fetch-answers?id=' + question_id);
+>>>>>>> master
   const answersObject = await response.json();
   const answersContainer = document.getElementById('answers');
   Object.values(answersObject).forEach(answer => {
@@ -72,16 +114,16 @@ async function fetchAnswers() {
 /**
  * Displays navbar authentication and inbox buttons according to login status.
  */
-function fetchAuthentication() {
+function fetchAuthenticationForIndex() {
   fetch('/authentication').then(response => response.json()).then(user => {
-    const inboxButton = document.getElementById("notificationsDropdown");
+    const inboxButton = document.getElementById('notificationsDropdown');
     if (user.isUserLoggedIn) {
       // If user is logged in, show logout and inbox buttons in navbar.
-      inboxButton.style.display = "block";
+      inboxButton.style.display = 'block';
       fetchNotifications(); 
       if (!user.isUserRegistered) {
         // If logged in user is not registered, redirect to signup page.
-        window.location.replace(user.authenticationUrl);
+        window.location.replace('signup.html');
       }
       // Delete signup button.
       const signupButtonNavbar = document.getElementById('signup');
@@ -94,7 +136,7 @@ function fetchAuthentication() {
       // Show question submission box when logged in.
       const questionSubmission = document.getElementById('post-question');
       if (questionSubmission) {
-        questionSubmission.style.display = "block";
+        questionSubmission.style.display = 'block';
       }
     } else {
       // If user is logged out, show signup and login buttons in navbar.
@@ -108,6 +150,32 @@ function fetchAuthentication() {
           user.authenticationUrl, 'btn-outline-success', 'Log In', 'login');
     }
   })
+}
+
+/**
+ * Fetches questions from server, wraps each in an <li> element, 
+ * and adds them to the DOM.
+ */
+async function fetchForum() {
+  const response = await fetch('/fetch-forum');
+  const questionsObject = await response.json();
+  const questionsContainer = document.getElementById('forum');
+  questionsObject.forEach(question => {
+    questionsContainer.appendChild(createQuestionElement(question));
+  });
+}
+
+/**
+ * Fetches notifications of the signed in user.
+ */
+function fetchNotifications() {
+  fetch('/notification').then(response => response.json()).then((notificationsJson) => {
+    const notificationsElement = document.getElementById('inbox-dropdown');
+    notificationsElement.innerHTML = '';
+    for (const notification of notificationsJson) {
+      notificationsElement.appendChild(createNotificationsElement(notification));
+    }
+  });
 }
 
 /**
@@ -157,16 +225,25 @@ function fetchMentorExperience() {
 }
 
 /**
- * Fetches notifications of the signed in user.
+ * Displays logout button or redirects to index in verification page.
  */
-function fetchNotifications() {
-  fetch('/notification').then(response => response.json()).then((notificationsJson) => {
-    const notificationsElement = document.getElementById('inbox-dropdown');
-    notificationsElement.innerHTML = '';
-    for (const notification of notificationsJson) {
-      notificationsElement.appendChild(createNotificationsElement(notification));
+function fetchAuthenticationForVerification() {
+  fetch('/authentication').then(response => response.json()).then(user => {
+    if (user.isUserLoggedIn) {
+      // If user is logged in, show logout button in navbar.
+      if (!user.isUserRegistered) {
+        // If logged in user is not registered, redirect to signup page.
+        window.location.replace('/signup.html');
+      }
+
+      // Add logout button to navbar.
+      createAuthenticationButton(
+          user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
+    } else {
+      // If user is logged out, show signup and login buttons in navbar.
+      window.location.replace('/index.html');
     }
-  });
+  })
 }
 
 /**
@@ -186,7 +263,11 @@ async function fetchQuestions(page) {
     // page view.
     hasRedirect = true;
   } else if (page === 'question') {
+<<<<<<< HEAD
     questionId = (new URL(document.location)).searchParams.get("id");
+=======
+    question_id = (new URL(document.location)).searchParams.get('id');
+>>>>>>> master
     questionsContainer = document.getElementById('question');
     hasRedirect = false;
   }
@@ -240,13 +321,13 @@ function createAuthenticationButton(authenticationUrl, buttonStyle, buttonText, 
 function createNotificationsElement(notification) {
   // Create a link to redirect the user to the question that was answered or commented.
   const linkElement = document.createElement('a');
-  linkElement.innerText = linkElement.innerText.concat(notification.message, " - ");
+  linkElement.innerText = linkElement.innerText.concat(notification.message, ' - ');
   linkElement.innerText = linkElement.innerText.concat(notification.timestamp.toString());
-  linkElement.setAttribute("href", notification.url);
+  linkElement.setAttribute('href', notification.url);
   // Create list element.
   const liElement = document.createElement('li');
   liElement.appendChild(linkElement);
-  liElement.setAttribute("class","list-group-item");
+  liElement.setAttribute('class', 'list-group-item');
   return liElement;
 }
 
@@ -306,11 +387,11 @@ function createQuestionElement(question, hasRedirect) {
           // Reduce the preview of the body to 100 characters
           .substring(0,100)
           // Remove line breaks and add trailing dots
-          .replace(/(\r\n|\n|\r)/gm,"") + "...";
+          .replace(/(\r\n|\n|\r)/gm,'') + '...';
     } else {
       bodyElement.innerText = question.body
           // Remove line breaks from the preview.
-          .replace(/(\r\n|\n|\r)/gm," ");
+          .replace(/(\r\n|\n|\r)/gm,' ');
     }
     questionElement.appendChild(bodyElement);
     questionElement.appendChild(document.createElement('br'));
@@ -449,12 +530,12 @@ function addAutoResize() {
 }
 
 /**
- * Redirect user in signup page to index if they are already registered.
+ * Redirects user in signup page to index if they are already registered.
  */
 function isUserRegistered() {
   fetch('/authentication').then(response => response.json()).then(user => {
     if (user.isUserRegistered) {
-      window.location.replace("/index.html");
+      window.location.replace('/index.html');
     }
   })
 }
