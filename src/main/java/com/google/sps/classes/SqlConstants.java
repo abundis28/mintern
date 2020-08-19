@@ -127,4 +127,8 @@ public final class SqlConstants {
   // Constatns used for inserting approvers to mentors.
   public static final int MENTOR_APPROVAL_INSERT_USERID = 1;
   public static final int MENTOR_APPROVAL_INSERT_APPROVERID = 2;
+
+  // Constants used in the follower system.
+  public static final int FOLLOWER_QUERY_QUESTIONID = 1;
+  public static final int FOLLOWER_QUERY_USERID = 2;
 }
