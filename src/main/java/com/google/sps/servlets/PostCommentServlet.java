@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /** 
  * This servlet will post a comment to an answer.
+ * TODO(shaargtz): share logic with PostAnswerServlet.
  */
 @WebServlet("/post-comment")
 public class PostCommentServlet extends HttpServlet {
