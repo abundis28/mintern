@@ -223,7 +223,6 @@ async function fetchQuestions(page) {
 
   if (questionsObject.length !== 0) {
     // Check that the ID exist so that it actually has questions in it.
-    console.log(questionsObject);
     questionsObject.forEach(question => {
       questionsContainer.appendChild(createQuestionElement(question, hasRedirect));
     });
