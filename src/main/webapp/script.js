@@ -293,9 +293,9 @@ function createQuestionElement(question, hasRedirect) {
   const iconElement = document.createElement('i');
 
   if (question.userFollowsQuestion) {
-    iconElement.setAttribute('class', 'fas fa-bell fa-3x');
+    iconElement.setAttribute('class', 'fas fa-bell fa-2x');
   } else {
-    iconElement.setAttribute('class', 'far fa-bell fa-3x');
+    iconElement.setAttribute('class', 'far fa-bell fa-2x');
   }
   
   questionElement.appendChild(iconElement);
