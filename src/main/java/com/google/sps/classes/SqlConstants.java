@@ -41,7 +41,9 @@ public final class SqlConstants {
   // Constant used in the forum.
   public static final int FETCH_ALL_QUESTIONS = -1;
 
-  // Constants used for inserting a follower.
+  // Constants used for inserting a follower to a question.
+  // QUESTION_FETCH_MAXID is used to get the ID of the question
+  // that was just posted so the follower can be inserted.
   public static final int QUESTION_FETCH_MAXID = 1;
   public static final int FOLLOWER_INSERT_QUESTIONID = 1;
   public static final int FOLLOWER_INSERT_ASKERID = 2;
@@ -72,7 +74,24 @@ public final class SqlConstants {
   public static final int COMMENT_FETCH_BODY = 11;
   public static final int COMMENT_FETCH_AUTHORNAME = 15;
   public static final int COMMENT_FETCH_DATETIME = 13;
-    
+
+  // Constants used for inserting an answer.
+  public static final int ANSWER_INSERT_QUESTIONID = 1;
+  public static final int ANSWER_INSERT_BODY = 2;
+  public static final int ANSWER_INSERT_AUTHORID = 3;
+
+  // Constants used for inserting a follower to an answer.
+  // ANSWER_FETCH_MAXID is used to get the ID of the answer
+  // that was just posted so the follower can be inserted.
+  public static final int ANSWER_FETCH_MAXID = 1;
+  public static final int FOLLOWER_INSERT_ANSWERID = 1;
+  public static final int FOLLOWER_INSERT_AUTHORID = 2;
+
+  // Constants used for inserting a comment.
+  public static final int COMMENT_INSERT_ANSWERID = 1;
+  public static final int COMMENT_INSERT_BODY = 2;
+  public static final int COMMENT_INSERT_AUTHORID = 3;
+  
   // Constants used to fetch the elements of notification.
   public static final int NOTIFICATION_FETCH_MESSAGE = 1;
   public static final int NOTIFICATION_FETCH_URL = 2;
