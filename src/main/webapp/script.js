@@ -57,7 +57,7 @@ function loadVerification() {
  * wraps each in an <li> element, and adds them to the DOM.
  */
 async function fetchAnswers() {
-  const question_id = (new URL(document.location)).searchParams.get("id");
+  const question_id = (new URL(document.location)).searchParams.get('id');
   const response = await fetch('/fetch-answers?id=' + question_id);
   const answersObject = await response.json();
   const answersContainer = document.getElementById('answers');
@@ -81,14 +81,14 @@ async function fetchAnswers() {
  */
 function fetchAuthIndexQuestion() {
   fetch('/authentication').then(response => response.json()).then(user => {
-    const inboxButton = document.getElementById("notificationsDropdown");
+    const inboxButton = document.getElementById('notificationsDropdown');
     if (user.isUserLoggedIn) {
       // If user is logged in, show logout and inbox buttons in navbar.
-      inboxButton.style.display = "block";
+      inboxButton.style.display = 'block';
       fetchNotifications(); 
       if (!user.isUserRegistered) {
         // If logged in user is not registered, redirect to signup page.
-        window.location.replace(user.authenticationUrl);
+        window.location.replace('signup.html');
       }
       // Delete signup button.
       const signupButtonNavbar = document.getElementById('signup');
@@ -101,7 +101,7 @@ function fetchAuthIndexQuestion() {
       // Show question submission box when logged in.
       const questionSubmission = document.getElementById('post-question');
       if (questionSubmission) {
-        questionSubmission.style.display = "block";
+        questionSubmission.style.display = 'block';
       }
     } else {
       // If user is logged out, show signup and login buttons in navbar.
@@ -189,7 +189,7 @@ function fetchAuthVerification() {
       }
 
       // Add logout button to navbar.
-      addAuthenticationButton(
+      createAuthenticationButton(
           user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
     } else {
       // If user is logged out, show signup and login buttons in navbar.
@@ -215,7 +215,7 @@ async function fetchQuestions(page) {
     // page view.
     hasRedirect = true;
   } else if (page === 'question') {
-    question_id = (new URL(document.location)).searchParams.get("id");
+    question_id = (new URL(document.location)).searchParams.get('id');
     questionsContainer = document.getElementById('question');
     hasRedirect = false;
   }
@@ -270,13 +270,13 @@ function createAuthenticationButton(authenticationUrl, buttonStyle, buttonText, 
 function createNotificationsElement(notification) {
   // Create a link to redirect the user to the question that was answered or commented.
   const linkElement = document.createElement('a');
-  linkElement.innerText = linkElement.innerText.concat(notification.message, " - ");
+  linkElement.innerText = linkElement.innerText.concat(notification.message, ' - ');
   linkElement.innerText = linkElement.innerText.concat(notification.timestamp.toString());
-  linkElement.setAttribute("href", notification.url);
+  linkElement.setAttribute('href', notification.url);
   // Create list element.
   const liElement = document.createElement('li');
   liElement.appendChild(linkElement);
-  liElement.setAttribute("class","list-group-item");
+  liElement.setAttribute('class', 'list-group-item');
   return liElement;
 }
 
@@ -335,11 +335,11 @@ function createQuestionElement(question, hasRedirect) {
           // Reduce the preview of the body to 100 characters
           .substring(0,100)
           // Remove line breaks and add trailing dots
-          .replace(/(\r\n|\n|\r)/gm,"") + "...";
+          .replace(/(\r\n|\n|\r)/gm,'') + '...';
     } else {
       bodyElement.innerText = question.body
           // Remove line breaks from the preview.
-          .replace(/(\r\n|\n|\r)/gm," ");
+          .replace(/(\r\n|\n|\r)/gm,' ');
     }
     questionElement.appendChild(bodyElement);
     questionElement.appendChild(document.createElement('br'));
@@ -441,12 +441,12 @@ function backToHomepage() {
 }
 
 /**
- * Redirect user in signup page to index if they are already registered.
+ * Redirects user in signup page to index if they are already registered.
  */
 function isUserRegistered() {
   fetch('/authentication').then(response => response.json()).then(user => {
     if (user.isUserRegistered) {
-      window.location.replace("/index.html");
+      window.location.replace('/index.html');
     }
   })
 }
