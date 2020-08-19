@@ -49,8 +49,8 @@ public class MentorApprovalServlet extends HttpServlet {
     // Set default variables to create MentorEvidence object.
     boolean isApprover = false;
     String mentorUsername = "";
-    int isApproved = false;
-    int isRejected = false;
+    boolean isApproved = false;
+    boolean isRejected = false;
     String paragraph = "";
 
     if (userService.isUserLoggedIn()) {

@@ -259,34 +259,37 @@ function fetchAuthentication() {
  * Fetches and displays information related to mentor evidence.
  */
 function fetchMentorApproval() {
-  const mentor_id = (new URL(document.location)).searchParams.get('id');
-  const mentorApprovalUrl = '/mentor-approval?id=' + mentor_id.toString();
+  const mentorId = (new URL(document.location)).searchParams.get('id');
+  if (mentorId === null) {
+    window.location.replace('/index.html')
+  }
+  const mentorApprovalUrl = '/mentor-approval?id=' + mentorId;
   fetch(mentorApprovalUrl).then(response => response.json()).then(approval => {
-    if (approval.userId === mentorId && approval.isApproved) {
+    if (approval.userId == mentorId && approval.isApproved) {
       // If mentor has been approved, show corresponding message.
-
-    } else if (approval.userId === mentorId && approval.isRejected) {
+      createApprovalMessage(1);
+    } else if (approval.userId == mentorId && approval.isRejected) {
       // If mentor has been rejected, show corresponding message.
-
-    } else if (approval.userId === mentorId) {
+      createApprovalMessage(2);
+    } else if (approval.userId == mentorId) {
       // If mentor is not approved or rejected yet, show corresponding message.
-
+      createApprovalMessage(3);
     } else if (approval.isApprover && approval.isApproved) {
       // If approver is assigned to mentor but mentor is already approved,
       // show corresponding message.
-
+      createApprovalMessage(4);
     } else if (approval.isApprover && approval.isRejected) {
       // If approver is assigned to mentor but mentor is already rejected,
       // show corresponding message.
-
+      createApprovalMessage(5);
     } else if (approval.isApprover && approval.hasReviewed) {
       // If approver is assigned to mentor and has already reviewed them,
       // show corresponding message.
-
+      createApprovalMessage(6);
     } else if (approval.isApprover) {
       // If approver is assigned to mentor and has not reviewed them,
       // show evidence and approval buttons.
-
+      createApprovalMessage(7);
       // Display mentor username.
       const usernameElement = document.getElementById('username');
       usernameElement.innerHTML = approval.mentorUsername;
@@ -296,7 +299,7 @@ function fetchMentorApproval() {
       paragraphElement.innerHTML = approval.paragraph;
     } else {
       // If user is not either a mentor or an approver assigned to that mentor, redirect to index.
-      window.location.replace('/index.html');
+      //window.location.replace('/index.html');
     }
   })
 }
@@ -364,6 +367,15 @@ function createAuthenticationButton(authenticationUrl, buttonStyle, buttonText, 
   const authenticationButtonNavbar = document.getElementById(navbarItem);
   authenticationButtonNavbar.innerHTML = '';
   authenticationButtonNavbar.appendChild(authenticationButtonItem);
+}
+
+/**
+ * Create message for the approval page that shows approval status directed to mentor or approver.
+ * TODO(oumontiel): Create content for message.
+ */
+function createApprovalMessage(example) {
+  const approvalContentElement = document.getElementById('approval-content');
+  approvalContentElement.innerHTML = example.toString();
 }
 
 /**
@@ -559,12 +571,13 @@ function notify(type, id) {
  * @param {boolean} isApproved 
  */
 function mentorApprove(isApproved) {
-  const mentor_id = (new URL(document.location)).searchParams.get('id');
-  console.log(mentor_id);
+  const mentorId = (new URL(document.location)).searchParams.get('id');
+  console.log(mentorId);
   console.log(isApproved);
-  fetch('mentor-approval?isApproved=' + isApproved + '&id=' + mentor_id, {
+  fetch('mentor-approval?isApproved=' + isApproved + '&id=' + mentorId, {
     method: 'POST'
   })
+  window.location.reload(true);
 }
 
 // Disables form submissions if there are invalid fields in it.

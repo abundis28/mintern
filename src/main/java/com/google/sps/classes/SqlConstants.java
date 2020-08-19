@@ -107,4 +107,8 @@ public final class SqlConstants {
   // Constatns used for inserting approvers to mentors.
   public static final int MENTOR_APPROVAL_INSERT_USERID = 1;
   public static final int MENTOR_APPROVAL_INSERT_APPROVERID = 2;
+
+  // Constants sued for fetchting mentor ID and their approver ID.
+  public static final int MENTOR_APPROVAL_FETCH_MENTORID = 1;
+  public static final int MENTOR_APPROVAL_FETCH_APPROVERID = 2;
 }
