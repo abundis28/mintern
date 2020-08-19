@@ -130,4 +130,5 @@ public final class SqlConstants {
   // Constants sued for fetchting mentor ID and their approver ID.
   public static final int MENTOR_APPROVAL_FETCH_MENTORID = 1;
   public static final int MENTOR_APPROVAL_FETCH_APPROVERID = 2;
+  public static final int MENTOR_APPROVAL_FETCH_ISREVIEWED = 3;
 }

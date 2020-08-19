@@ -47,15 +47,15 @@ public class MentorApprovalServlet extends HttpServlet {
     int userId = Utility.getUserId();
     
     // Set default variables to create MentorEvidence object.
-    boolean isApprover = false;
     String mentorUsername = "";
     boolean isApproved = false;
     boolean isRejected = false;
     String paragraph = "";
+    boolean[] approver = {false, false}; // Stores approver ID and if they have reviewed already.
 
     if (userService.isUserLoggedIn()) {
       // If user is logged in, update variables.
-      isApprover = checkForApprover(mentorId, userId);
+      approver = checkForApprover(mentorId, userId);
       mentorUsername = Utility.getUsername(mentorId);
 
       // Create the MySQL prepared statement.
@@ -86,7 +86,7 @@ public class MentorApprovalServlet extends HttpServlet {
     }
 
     MentorEvidence mentorEvidence = new MentorEvidence(
-        userId, isApprover, mentorUsername, isApproved, isRejected, paragraph);
+        userId, mentorUsername, isApproved, isRejected, paragraph, approver[0], approver[1]);
     response.setContentType("application/json");
     response.getWriter().println(Utility.convertToJsonUsingGson(mentorEvidence));
   }
@@ -128,9 +128,12 @@ public class MentorApprovalServlet extends HttpServlet {
   }
 
   /**
-   * Returns true if approver is assigned to mentee.
+   * Returns whether approver is assigned to mentor (first index) and if they have already reviewed
+   * the mentor (second index).
    */
-  private boolean checkForApprover(int mentorId, int approverId) {
+  private boolean[] checkForApprover(int mentorId, int approverId) {
+    boolean[] approver = {false, false};
+
     // Create the MySQL prepared statement.
     String query = "SELECT * FROM MentorApproval "
         + "WHERE mentor_id = ? AND approver_id = ?";
@@ -146,10 +149,11 @@ public class MentorApprovalServlet extends HttpServlet {
       preparedStatement.setInt(SqlConstants.MENTOR_APPROVAL_FETCH_APPROVERID, approverId);
       ResultSet queryResult = preparedStatement.executeQuery();
 
-      // If link is found between mentor and approver in MentorApproval table, return true.
+      // If link is found between mentor and approver in MentorApproval table, set first index as
+      // true and get result for other index.
       if (queryResult.next()) {
-        connection.close();
-        return true;
+        approver[0] = true;
+        approver[1] = queryResult.getBoolean(SqlConstants.MENTOR_APPROVAL_FETCH_ISREVIEWED);
       }
       connection.close();
     } catch (SQLException exception) {
@@ -157,8 +161,7 @@ public class MentorApprovalServlet extends HttpServlet {
       Logger logger = Logger.getLogger(MentorApprovalServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
-    // If no link was found between mentor and approver in MentorApproval table, return false.
-    return false;
+    return approver;
   }
 
   /**
