@@ -61,6 +61,21 @@ VALUES
   (3, 1),
   (3, 2);
 
+INSERT INTO MentorEvidence (mentor_id, approvals, is_approved, is_rejected, paragraph)
+VALUES
+  (1, 2, TRUE, FALSE, 'I worked at Google. Hi.'),
+  (2, 2, TRUE, FALSE, 'I worked at Google. Please approve.'),
+  (3, 2, TRUE, FALSE, 'I worked at Google. Here is a link: link.com');
+
+INSERT INTO MentorApproval (mentor_id, approver_id, is_approved, is_rejected)
+VALUES
+  (1, 2, TRUE, FALSE),
+  (1, 3, TRUE, FALSE),
+  (2, 1, TRUE, FALSE),
+  (2, 3, TRUE, FALSE),
+  (3, 1, TRUE, FALSE),
+  (3, 2, TRUE, FALSE);
+
 INSERT INTO Question (title, body, asker_id, date_time) 
 VALUES 
   ('When are the Google SWE interviews?', 'I was wondering if it is this week or the other', 4, '2020-07-29 09:00:00.000000'),

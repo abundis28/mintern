@@ -14,8 +14,8 @@
 
 package com.google.sps.servlets;
 
-import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.Question;
+import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
 import java.sql.Connection;
@@ -23,9 +23,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,50 +32,42 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** 
- * Retrieves questions to be displayed on the page.
+/**
+ * Search questions by text input.
  */
-@WebServlet("/fetch-questions")
-public class FetchQuestionsServlet extends HttpServlet {
-
-  /** 
-   * Gets the questions from the query and return them as a JSON string.
+@WebServlet("/search-question")
+public class QuestionSearchServlet extends HttpServlet {
+  /**
+   * Fetches questions that match at some level with the input in search bar. This is implemented
+   * with the Fulltext index defined in the create.sql file. The mysql inbuilt search will
+   * compare the input string against the columns of data (body and title of Question) defined in 
+   * FULLTEXT index. This comparison will be done considering only natural human language (no 
+   * special operators except for double quotes). 
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     List<Question> questions = new ArrayList<>();
-    
-    // TODO(shaargtz): move queries from Utility to a new SqlQueries class.
-    String query = Utility.fetchQuestionsQuery;
-
-    // ID of the question to query.
-    int questionId = Utility.tryParseInt(request.getParameter("id"));
-
-    if (questionId == SqlConstants.FETCH_ALL_QUESTIONS) {
-      // Nothing needs to be added to the query apart from closing it.
-      query = Utility.fetchQuestionsQuery + ";";
-    } else {
-      // Condition to fetch only one question.
-      query = Utility.fetchQuestionsQuery + "WHERE Question.id=" + questionId + ";";
-    }
-
+    // The query will return a ResultSet with order depending on the level of similarity to the 
+    // input string.
+    String query = Utility.fetchQuestionsQuery + "WHERE MATCH(title,body) AGAINST('" +
+        request.getParameter("inputString") + "' IN NATURAL LANGUAGE MODE);";
     // The connection and query are attempted.
     try {
       Connection connection = DriverManager
           .getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
       PreparedStatement preparedStatement = connection.prepareStatement(query);
       ResultSet queryResult = preparedStatement.executeQuery();
-      
+    
       // All of the rows from the query are looped if it goes through.
       while (queryResult.next()) {
         questions.add(Utility.buildQuestion(queryResult));
       }
     } catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(FetchQuestionsServlet.class.getName());
+      // If the connection or the query don't go through, we get the log of what happened.\
+      Logger logger = Logger.getLogger(QuestionSearchServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
     response.setContentType("application/json;");
     response.getWriter().println(Utility.convertToJsonUsingGson(questions));
-  }
+  } 
 }

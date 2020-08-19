@@ -17,7 +17,7 @@
  */
 function loadIndex() {
   addAutoResize();
-  fetchAuthentication();
+  fetchAuthIndexQuestion();
   fetchQuestions('forum');
 }
 
@@ -25,15 +25,10 @@ function loadIndex() {
  * Function that will call other functions when the question page loads. 
  */
 function loadQuestion() {
-  fetchAuthentication();
+  fetchAuthIndexQuestion();
   fetchQuestions('question');
   fetchAnswers();
-}
-
-function loadSignup() {
-  isUserRegistered();
-  fetchMajors();
-  fetchMentorExperience();
+  setQuestionIdValue();
 }
 
 /**
@@ -46,12 +41,19 @@ function loadSignup() {
 }
 
 /**
+ * Function that will call other functions when the verification page loads. 
+ */
+function loadVerification() {
+  fetchAuthVerification();
+}
+
+/**
  * Fetches answers for a single question from server, 
  * wraps each in an <li> element, and adds them to the DOM.
  */
 async function fetchAnswers() {
-  const question_id = (new URL(document.location)).searchParams.get("id");
-  const response = await fetch('/fetch-answers?id=' + question_id);
+  const questionId = (new URL(document.location)).searchParams.get("id");
+  const response = await fetch('/fetch-answers?id=' + questionId);
   const answersObject = await response.json();
   const answersContainer = document.getElementById('answers');
   Object.values(answersObject).forEach(answer => {
@@ -65,23 +67,27 @@ async function fetchAnswers() {
       }
     });
     answersContainer.appendChild(commentsContainer);
+
+    // Add the form to upload a comment at the bottom.
+    answersContainer.appendChild(createCommentFormElement(answer.id));
     answersContainer.appendChild(document.createElement('br'));
   });
+  addAutoResize();
 }
 
 /**
  * Displays navbar authentication and inbox buttons according to login status.
  */
-function fetchAuthentication() {
+function fetchAuthIndexQuestion() {
   fetch('/authentication').then(response => response.json()).then(user => {
-    const inboxButton = document.getElementById("notificationsDropdown");
+    const inboxButton = document.getElementById('notificationsDropdown');
     if (user.isUserLoggedIn) {
       // If user is logged in, show logout and inbox buttons in navbar.
-      inboxButton.style.display = "block";
+      inboxButton.style.display = 'block';
       fetchNotifications(); 
       if (!user.isUserRegistered) {
         // If logged in user is not registered, redirect to signup page.
-        window.location.replace(user.authenticationUrl);
+        window.location.replace('signup.html');
       }
       // Delete signup button.
       const signupButtonNavbar = document.getElementById('signup');
@@ -94,7 +100,7 @@ function fetchAuthentication() {
       // Show question submission box when logged in.
       const questionSubmission = document.getElementById('post-question');
       if (questionSubmission) {
-        questionSubmission.style.display = "block";
+        questionSubmission.style.display = 'block';
       }
     } else {
       // If user is logged out, show signup and login buttons in navbar.
@@ -108,6 +114,19 @@ function fetchAuthentication() {
           user.authenticationUrl, 'btn-outline-success', 'Log In', 'login');
     }
   })
+}
+
+/**
+ * Fetches notifications of the signed in user.
+ */
+function fetchNotifications() {
+  fetch('/notification').then(response => response.json()).then((notificationsJson) => {
+    const notificationsElement = document.getElementById('inbox-dropdown');
+    notificationsElement.innerHTML = '';
+    for (const notification of notificationsJson) {
+      notificationsElement.appendChild(createNotificationsElement(notification));
+    }
+  });
 }
 
 /**
@@ -157,16 +176,25 @@ function fetchMentorExperience() {
 }
 
 /**
- * Fetches notifications of the signed in user.
+ * Displays logout button or redirects to index in verification page.
  */
-function fetchNotifications() {
-  fetch('/notification').then(response => response.json()).then((notificationsJson) => {
-    const notificationsElement = document.getElementById('inbox-dropdown');
-    notificationsElement.innerHTML = '';
-    for (const notification of notificationsJson) {
-      notificationsElement.appendChild(createNotificationsElement(notification));
+function fetchAuthVerification() {
+  fetch('/authentication').then(response => response.json()).then(user => {
+    if (user.isUserLoggedIn) {
+      // If user is logged in, show logout button in navbar.
+      if (!user.isUserRegistered) {
+        // If logged in user is not registered, redirect to signup page.
+        window.location.replace('/signup.html');
+      }
+
+      // Add logout button to navbar.
+      createAuthenticationButton(
+          user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
+    } else {
+      // If user is logged out, show signup and login buttons in navbar.
+      window.location.replace('/index.html');
     }
-  });
+  })
 }
 
 /**
@@ -174,36 +202,34 @@ function fetchNotifications() {
  * and adds them to the DOM.
  */
 async function fetchQuestions(page) {
-  let question_id;
+  let questionId;
   let questionsContainer;
   let hasRedirect;
   if (page === 'forum') {
     // For the forum we pass -1 which means we need to retrieve all questions.
-    question_id = -1;
+    questionId = -1;
     questionsContainer = document.getElementById('forum');
 
     // We want the element in the forum to have a link which sends to the single
     // page view.
     hasRedirect = true;
   } else if (page === 'question') {
-    question_id = (new URL(document.location)).searchParams.get("id");
+    questionId = (new URL(document.location)).searchParams.get("id");
     questionsContainer = document.getElementById('question');
     hasRedirect = false;
   }
-  const response = await fetch('/fetch-questions?id=' + question_id);
+  const response = await fetch('/fetch-questions?id=' + questionId);
   const questionsObject = await response.json();
-  questionsObject.forEach(question => {
-    questionsContainer.appendChild(createQuestionElement(question, hasRedirect));
-  });
-}
 
-/**
- * Fetches a single question and its answers from server, 
- * wraps each in an <li> element, and adds them to the DOM.
- */
-async function fetchQuestionAndAnswers() {
-  const response = await fetch('/answers');
-  const questionsObject = await response.json();
+  if (questionsObject.length !== 0) {
+    // Check that the ID exist so that it actually has questions in it.
+    questionsObject.forEach(question => {
+      questionsContainer.appendChild(createQuestionElement(question, hasRedirect));
+    });
+  } else {
+    // If the ID doesn't exist, redirect to the index.
+    window.location.replace('/index.html');
+  }
 }
 
 /**
@@ -241,13 +267,13 @@ function createAuthenticationButton(authenticationUrl, buttonStyle, buttonText, 
 function createNotificationsElement(notification) {
   // Create a link to redirect the user to the question that was answered or commented.
   const linkElement = document.createElement('a');
-  linkElement.innerText = linkElement.innerText.concat(notification.message, " - ");
+  linkElement.innerText = linkElement.innerText.concat(notification.message, ' - ');
   linkElement.innerText = linkElement.innerText.concat(notification.timestamp.toString());
-  linkElement.setAttribute("href", notification.url);
+  linkElement.setAttribute('href', notification.url);
   // Create list element.
   const liElement = document.createElement('li');
   liElement.appendChild(linkElement);
-  liElement.setAttribute("class","list-group-item");
+  liElement.setAttribute('class', 'list-group-item');
   return liElement;
 }
 
@@ -260,6 +286,7 @@ function createQuestionElement(question, hasRedirect) {
   questionElement.setAttribute('class', 'list-group-item');
 
   if (hasRedirect) {
+    // Add href to redirect from forum to single view.
     const questionTitle = document.createElement('a');
     questionTitle.setAttribute('href', '/question.html?id=' + question.id);
     questionTitle.innerText = question.title;
@@ -306,11 +333,11 @@ function createQuestionElement(question, hasRedirect) {
           // Reduce the preview of the body to 100 characters
           .substring(0,100)
           // Remove line breaks and add trailing dots
-          .replace(/(\r\n|\n|\r)/gm,"") + "...";
+          .replace(/(\r\n|\n|\r)/gm,'') + '...';
     } else {
       bodyElement.innerText = question.body
           // Remove line breaks from the preview.
-          .replace(/(\r\n|\n|\r)/gm," ");
+          .replace(/(\r\n|\n|\r)/gm,' ');
     }
     questionElement.appendChild(bodyElement);
     questionElement.appendChild(document.createElement('br'));
@@ -332,7 +359,7 @@ function createQuestionElement(question, hasRedirect) {
  */
 function createAnswerElement(answer) {
   const answerElement = document.createElement('li');
-  answerElement.setAttribute('class', 'list-group-item');
+  answerElement.setAttribute('class', 'list-group-item mt-5');
   answerElement.innerText = answer.body;
   
   // TODO(shaargtz): implement voting system.
@@ -361,9 +388,8 @@ function createAnswerElement(answer) {
 }
 
 /** 
- * Creates an element with comment data. 
- * Each element corresponds to a comment
- * to be displayed in the DOM.
+ * Creates an element with comment data. Each element corresponds 
+ * to a comment to be displayed in the DOM.
  */
 function createCommentElement(comment) {
   const commentElement = document.createElement('li');
@@ -385,6 +411,55 @@ function createCommentElement(comment) {
 }
 
 /** 
+ * Creates an element with the form to upload a comment. 
+ */
+function createCommentFormElement(answerId) {
+  const formElement = document.createElement('form');
+
+  // Attributes to call the servlet.
+  formElement.setAttribute('action', '/post-comment');
+  formElement.setAttribute('method', 'POST');
+  
+  const divElement = document.createElement('div');
+  divElement.setAttribute('class', 'form-group ml-5');
+  formElement.appendChild(divElement);
+
+  // Text area to write the comment.
+  const textElement = document.createElement('textarea');
+  textElement.setAttribute('class', 'form-control form-control-sm');
+  textElement.setAttribute('name', 'comment-body');
+  textElement.setAttribute('id', 'comment-body');
+  textElement.setAttribute('placeholder', 'Write a comment');
+  textElement.setAttribute('data-autoresize', '');
+  textElement.setAttribute('rows', '2');
+  divElement.appendChild(textElement);
+
+  // Hidden input with question id.
+  const inputQuestionIdElement = document.createElement('input');
+  inputQuestionIdElement.setAttribute('type', 'hidden');
+  inputQuestionIdElement.setAttribute('name', 'question-id');
+  inputQuestionIdElement.setAttribute('id', 'question-id');
+  inputQuestionIdElement.setAttribute('value', getQuestionId());
+  divElement.appendChild(inputQuestionIdElement);
+
+  // Hidden input with answer id.
+  const inputAnswerIdElement = document.createElement('input');
+  inputAnswerIdElement.setAttribute('type', 'hidden');
+  inputAnswerIdElement.setAttribute('name', 'answer-id');
+  inputAnswerIdElement.setAttribute('id', 'answer-id');
+  inputAnswerIdElement.setAttribute('value', answerId);
+  divElement.appendChild(inputAnswerIdElement);
+
+  const buttonElement = document.createElement('button');
+  buttonElement.setAttribute('type', 'submit');
+  buttonElement.setAttribute('class', 'btn btn-outline-info float-right');
+  buttonElement.innerText = "Submit";
+  formElement.appendChild(buttonElement);
+
+  return formElement;
+}
+
+/** 
  * Sets all textarea elements with the data-autoresize attribute to be
  * responsive with its size as the user writes more text. 
  */
@@ -401,14 +476,39 @@ function addAutoResize() {
 }
 
 /**
- * Redirect user in signup page to index if they are already registered.
+ * Reloads homepage forum from scratch and clears input in search bar.
+ */
+function backToHomepage() {
+  const searchInput = document.getElementById("questionSearchInput");
+  searchInput.value = "";
+  const questionsContainer = document.getElementById('forum');
+  questionsContainer.innerHTML = "";
+  fetchQuestions('forum');
+}
+
+/**
+ * Redirects user in signup page to index if they are already registered.
  */
 function isUserRegistered() {
   fetch('/authentication').then(response => response.json()).then(user => {
     if (user.isUserRegistered) {
-      window.location.replace("/index.html");
+      window.location.replace('/index.html');
     }
   })
+}
+
+/**
+ * Gets the ID of the question that is currently being viewed.
+ */
+function getQuestionId() {
+  return (new URL(document.location)).searchParams.get("id");
+}
+
+/**
+ * Sets attribute to the corresponding form elements.
+ */
+function setQuestionIdValue() {
+  document.getElementById('question-id').value = getQuestionId(); 
 }
 
 /**
@@ -420,6 +520,25 @@ function notify(type, id) {
   fetch('notification?type=' + type + '&modifiedElementId=' + id, {
     method: 'POST'
   })
+}
+
+/**
+ * Searches questions that contain the input string in the title or body elements.
+ */
+function searchQuestion() {
+  let stringSearchInput = document.getElementById("questionSearchInput").value;
+  if (stringSearchInput != "") {
+    const questionsContainer = document.getElementById('forum');
+    questionsContainer.innerHTML = "";
+    fetch('/search-question?inputString=' + stringSearchInput).then(response => 
+        response.json()).then(questionsJson => {
+      for (const question of questionsJson) {
+        // True value parameter for createQuestionElement means that the question does have a 
+        // redirect URL option.
+        questionsContainer.appendChild(createQuestionElement(question, true));
+      }
+    })
+  }
 }
 
 // TODO(oumontiel): write the function comment.

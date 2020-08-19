@@ -66,6 +66,31 @@ CREATE TABLE MentorExperience (
   REFERENCES SubjectTag (id)
 );
 
+-- Evidence of a user that is a mentor that proves them a previous intern.
+CREATE TABLE MentorEvidence (
+  mentor_id INT NOT NULL,
+  approvals INT,
+  is_approved BOOLEAN,
+  is_rejected BOOLEAN,
+  paragraph TEXT,
+  PRIMARY KEY (mentor_id),
+  FOREIGN KEY (mentor_id) 
+  REFERENCES User (id)
+);
+
+-- Links a mentor with another mentor that will serve as an approver and stores approval status.
+CREATE TABLE MentorApproval (
+  mentor_id INT NOT NULL,
+  approver_id INT NOT NULL,
+  is_approved BOOLEAN,
+  is_rejected BOOLEAN,
+  PRIMARY KEY (mentor_id, approver_id),
+  FOREIGN KEY (mentor_id)
+  REFERENCES User (id),
+  FOREIGN KEY (approver_id)
+  REFERENCES User (id)
+);
+
 -- A question to be posted in the forum.
 CREATE TABLE Question (
   id INT NOT NULL AUTO_INCREMENT,
