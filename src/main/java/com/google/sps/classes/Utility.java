@@ -41,17 +41,19 @@ public final class Utility {
   // Query to retrieve data from all questions. Can be appended a WHERE condition to select
   // specific questions. Generates the following table:
   //
-  // |-----------------Question-----------------|----FollowerCount--------|-----GetUsername-----|------AnswerCount------|
-  // +----+-------+------+----------+-----------+-------------+-----------+----------+----------+-------------+---------+
-  // | id | title | body | asker_id | date_time | question_id | followers | username | asker_id | question_id | answers |
-  // +----+-------+------+----------+-----------+-------------+-----------+----------+----------+-------------+---------+
+  // |-----------------Question-----------------|----FollowerCount--------|-----GetUsername-----|------AnswerCount------|----UserFollows---|
+  // +----+-------+------+----------+-----------+-------------+-----------+----------+----------+-------------+---------+------------------+
+  // | id | title | body | asker_id | date_time | question_id | followers | username | asker_id | question_id | answers | follows_question |
+  // +----+-------+------+----------+-----------+-------------+-----------+----------+----------+-------------+---------+------------------+
   public static final String fetchQuestionsQuery = "SELECT * FROM Question "
       + "LEFT JOIN (SELECT question_id, COUNT(follower_id) followers FROM QuestionFollower "
       + "GROUP BY question_id) FollowerCount ON Question.id=FollowerCount.question_id "
       + "LEFT JOIN (SELECT username, id AS asker_id FROM User) GetUsername "
       + "ON Question.asker_id=GetUsername.asker_id "
       + "LEFT JOIN (SELECT question_id, COUNT(id) answers FROM Answer "
-      + "GROUP BY question_id) AnswerCount ON Question.id=AnswerCount.question_id ";
+      + "GROUP BY question_id) AnswerCount ON Question.id=AnswerCount.question_id "
+      + "LEFT JOIN (SELECT question_id AS follows_question FROM QuestionFollower WHERE follower_id=1) "
+      + "UserFollows ON Question.id=UserFollows.follows_question "
 
   // Query to get answers and comments from a question. Generates the following table:
   //
