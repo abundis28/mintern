@@ -541,8 +541,10 @@ function searchQuestion() {
   }
 }
 
-// TODO(oumontiel): write the function comment.
-(function() {
+/**
+ * Disables form submissions if there are invalid fields in it.
+ */
+(function validateFormSubmission() {
   'use strict';
   window.addEventListener('load', function() {
     // Fetch all the forms we want to apply custom Bootstrap validation styles to
