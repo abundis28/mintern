@@ -83,13 +83,8 @@ function loadVerification() {
  * wraps each in an <li> element, and adds them to the DOM.
  */
 async function fetchAnswers() {
-<<<<<<< HEAD
   const questionId = (new URL(document.location)).searchParams.get("id");
   const response = await fetch('/fetch-answers?id=' + questionId);
-=======
-  const question_id = (new URL(document.location)).searchParams.get('id');
-  const response = await fetch('/fetch-answers?id=' + question_id);
->>>>>>> master
   const answersObject = await response.json();
   const answersContainer = document.getElementById('answers');
   Object.values(answersObject).forEach(answer => {
@@ -263,11 +258,7 @@ async function fetchQuestions(page) {
     // page view.
     hasRedirect = true;
   } else if (page === 'question') {
-<<<<<<< HEAD
     questionId = (new URL(document.location)).searchParams.get("id");
-=======
-    question_id = (new URL(document.location)).searchParams.get('id');
->>>>>>> master
     questionsContainer = document.getElementById('question');
     hasRedirect = false;
   }
