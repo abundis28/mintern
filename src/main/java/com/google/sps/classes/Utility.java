@@ -52,7 +52,7 @@ public final class Utility {
       + "ON Question.asker_id=GetUsername.asker_id "
       + "LEFT JOIN (SELECT question_id, COUNT(id) answers FROM Answer "
       + "GROUP BY question_id) AnswerCount ON Question.id=AnswerCount.question_id "
-      + "LEFT JOIN (SELECT question_id AS follows_question FROM QuestionFollower WHERE follower_id=1) "
+      + "LEFT JOIN (SELECT question_id AS follows_question FROM QuestionFollower WHERE follower_id=?) "
       + "UserFollows ON Question.id=UserFollows.follows_question ";
 
   // Query to get answers and comments from a question. Generates the following table:

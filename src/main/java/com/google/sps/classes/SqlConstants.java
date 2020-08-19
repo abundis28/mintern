@@ -29,6 +29,9 @@ public final class SqlConstants {
   public static final int QUESTION_FETCH_NUMBEROFANSWERS = 11;
   public static final int QUESTION_FETCH_USERFOLLOWSQUESTION = 12;
 
+  // Constant used to check if the user follows a question.
+  public static final int QUERY_SET_USERID = 1;
+
   // Constants used for inserting a question.
   public static final int QUESTION_INSERT_TITLE = 1;
   public static final int QUESTION_INSERT_BODY = 2;
