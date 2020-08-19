@@ -463,8 +463,8 @@ function notify(type, id) {
 }
 
 /**
-* Searches questions that contain the input string in the title or body elements.
-*/
+ * Searches questions that contain the input string in the title or body elements.
+ */
 function searchQuestion() {
   let stringSearchInput = document.getElementById("questionSearchInput").value;
   if (stringSearchInput != "") {
