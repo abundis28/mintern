@@ -106,7 +106,7 @@ public class MentorApprovalServlet extends HttpServlet {
     addEvidence(isApproved, mentorId);
 
     // If mentor review is complete, send them a notification.
-    if (isReviewed(true, mentorId)) {
+    if (Utility.isReviewed(true, mentorId) == Utility.MENTOR_APPROVED) {
       // If mentor is approved, send notification of type 'approved'.
       response.setContentType("text/plain");
       try {
@@ -115,7 +115,7 @@ public class MentorApprovalServlet extends HttpServlet {
       } catch (ServletException exception) {
         System.out.println(exception.getMessage());
       }
-    } else if (isReviewed(false, mentorId)) {
+    } else if (Utility.isReviewed(false, mentorId) == Utility.MENTOR_REJECTED) {
       // If mentor is rejected, send notification of type 'rejected'.
       response.setContentType("text/plain");
       try {
@@ -262,45 +262,5 @@ public class MentorApprovalServlet extends HttpServlet {
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
     return numberOfApprovals;
-  }
-
-  /**
-  * Returns true if mentor review is approved or rejected.
-  */
-  private boolean isReviewed(boolean isApprovalType, int mentorId) {
-    String reviewType = "";
-    if (isApprovalType) {
-      // If isApprovalType is true, set reviewType to 'is_approved' column.
-      reviewType = "is_approved";
-    } else {
-      // If isApprovalType is false, set reviewType to 'is_rejected' column.
-      reviewType = "is_rejected";
-    }
-
-    // Create the MySQL prepared statement.
-    String query = "SELECT * FROM MentorEvidence "
-        + "WHERE mentor_id = " + Integer.toString(mentorId) + " "
-        + "AND " + reviewType + " = TRUE";
-
-    try {
-      // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
-      
-      // Create and execute the MySQL SELECT prepared statement.
-      PreparedStatement preparedStatement = connection.prepareStatement(query);
-      ResultSet queryResult = preparedStatement.executeQuery();
-      
-      // If query exists, returns true because mentor is found to be approved or rejected.
-      if (queryResult.next()) {
-        return true;
-      }
-      connection.close();
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(MentorApprovalServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
-    return false;
   }
 }

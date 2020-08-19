@@ -37,6 +37,11 @@ public final class Utility {
 
   // Variables for user login status.
   public static final int USER_LOGGED_OUT_ID = -1;
+
+  // Variables for mentor review status.
+  public static final int MENTOR_NOT_REVIEWED = 0;
+  public static final int MENTOR_APPROVED = 1;
+  public static final int MENTOR_REJECTED = 2;
   
   // Query to retrieve data from all questions. Can be appended a WHERE condition to select
   // specific questions. Generates the following table:
@@ -90,7 +95,7 @@ public final class Utility {
     String email = userService.getCurrentUser().getEmail();
 
     // Set up query to check if user is already registered.
-    String query = "SELECT * FROM User WHERE email = '" + email + "'";
+    String query = "SELECT id FROM User WHERE email = '" + email + "'";
 
     try {
       // Establish connection to MySQL database.
@@ -123,7 +128,7 @@ public final class Utility {
     String username = "";
 
     // Set up query to get username.
-    String query = "SELECT * FROM User WHERE id = " + userId;
+    String query = "SELECT username FROM User WHERE id = " + userId;
 
     try {
       // Establish connection to MySQL database.
@@ -205,6 +210,50 @@ public final class Utility {
     }
     
     return question;
+  }
+
+  /**
+   * Returns true if mentor review is approved or rejected.
+   */
+  public static int isReviewed(boolean isApprovalType, int mentorId) {
+    String reviewType = "";
+    if (isApprovalType) {
+      // If isApprovalType is true, set reviewType to 'is_approved' column.
+      reviewType = "is_approved";
+    } else {
+      // If isApprovalType is false, set reviewType to 'is_rejected' column.
+      reviewType = "is_rejected";
+    }
+
+    // Create the MySQL prepared statement.
+    String query = "SELECT * FROM MentorEvidence "
+        + "WHERE mentor_id = " + Integer.toString(mentorId) + " "
+        + "AND " + reviewType + " = TRUE";
+
+    try {
+      // Establish connection to MySQL database.
+      Connection connection = DriverManager.getConnection(
+          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+      
+      // Create and execute the MySQL SELECT prepared statement.
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      ResultSet queryResult = preparedStatement.executeQuery();
+      
+      // If query exists, returns true because mentor is found to be approved or rejected.
+      if (queryResult.next()) {
+        if (isApprovalType) {
+          return MENTOR_APPROVED;
+        } else {
+          return MENTOR_REJECTED;
+        }
+      }
+      connection.close();
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+    return MENTOR_NOT_REVIEWED;
   }
 
   /**
