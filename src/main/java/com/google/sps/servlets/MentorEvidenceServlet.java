@@ -24,6 +24,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
 
 /**
  * Servlet that handles mentor evidence in database.
@@ -39,8 +40,18 @@ public class MentorEvidenceServlet extends HttpServlet {
     // Get variable from HTML form.
     String paragraph = request.getParameter("paragraph");
 
-    // Update mentor evidence in database.
+    // Update mentor evidence and add approvers in database.
     updateMentorEvidence(paragraph);
+    addApprovers();
+
+    // Call NotificationServlet to notify approvers.
+    response.setContentType("text/plain");
+    try {
+      request.getRequestDispatcher("/notification?type=requestApproval&modifiedElementId="
+          + Utility.getUserId()).include(request, response);
+    } catch (ServletException exception) {
+      System.out.println(exception.getMessage());
+    }
     response.sendRedirect("/index.html");
   }
 
@@ -64,14 +75,47 @@ public class MentorEvidenceServlet extends HttpServlet {
 
       // Create the MySQL INSERT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.setString(SqlConstants.MENTOR_EVIDENCE_PARAGRAPH, paragraph);
-      preparedStatement.setInt(SqlConstants.MENTOR_EVIDENCE_USERID, userId);
+      preparedStatement.setString(SqlConstants.MENTOR_EVIDENCE_UPDATE_PARAGRAPH, paragraph);
+      preparedStatement.setInt(SqlConstants.MENTOR_EVIDENCE_UPDATE_USERID, userId);
       preparedStatement.execute();
       connection.close();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, get the log of the error.
       Logger logger = Logger.getLogger(MentorEvidenceServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+  }
+
+  /**
+   * Adds a list of approvers (currently only the admins) to the mentor in the database.
+   */
+  private void addApprovers() {
+    int userId = Utility.getUserId();
+    // Create array to store IDs of approvers.
+    // TODO(oumontiel): Get IDs from all admins and remove hardcoded IDs.
+    int[] approvers = {SqlConstants.SHAAR_USER_ID, SqlConstants.ANDRES_USER_ID, SqlConstants.OMAR_USER_ID};
+
+    // Set up query to insert new experience tag to user.
+    String query = "INSERT INTO MentorApproval (mentor_id, approver_id, is_approved, is_rejected) "
+        + "VALUES (?, ?, FALSE, FALSE)";
+
+    for (int approverId : approvers) {
+      try {
+        // Establish connection to MySQL database.
+        Connection connection = DriverManager.getConnection(
+            Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+
+        // Create the MySQL INSERT prepared statement.
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(SqlConstants.MENTOR_APPROVAL_INSERT_USERID, userId);
+        preparedStatement.setInt(SqlConstants.MENTOR_APPROVAL_INSERT_APPROVERID, approverId);
+        preparedStatement.execute();
+        connection.close();
+      } catch (SQLException exception) {
+        // If the connection or the query don't go through, get the log of the error.
+        Logger logger = Logger.getLogger(MentorEvidenceServlet.class.getName());
+        logger.log(Level.SEVERE, exception.getMessage(), exception);
+      }
     }
   }
 }
