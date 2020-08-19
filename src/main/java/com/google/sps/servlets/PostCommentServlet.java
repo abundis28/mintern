@@ -26,6 +26,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -57,6 +58,16 @@ public class PostCommentServlet extends HttpServlet {
     } 
     catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(PostCommentServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    try {
+      // We call the notification servlet to notify of this posted comment.
+      request.getRequestDispatcher("/notification?type=answer&modifiedElementId=" + answerId)
+          .include(request, response);
+    } catch (ServletException exception) {
+      // If the notification doesn't go through, we get the log of what happened.
       Logger logger = Logger.getLogger(PostCommentServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
