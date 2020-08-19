@@ -17,16 +17,15 @@
  */
 function loadIndex() {
   addAutoResize();
-  fetchAuthentication();
+  fetchAuthIndexQuestion();
   fetchQuestions('forum');
-  fetchNotifications();
 }
 
 /**
  * Function that will call other functions when the question page loads. 
  */
 function loadQuestion() {
-  fetchAuthentication();
+  fetchAuthIndexQuestion();
   fetchQuestions('question');
   fetchAnswers();
   setQuestionIdValue();
@@ -39,6 +38,13 @@ function loadSignup() {
   isUserRegistered();
   fetchMajors();
   fetchMentorExperience();
+}
+
+/**
+ * Function that will call other functions when the verification page loads. 
+ */
+function loadVerification() {
+  fetchAuthVerification();
 }
 
 /**
@@ -72,19 +78,16 @@ async function fetchAnswers() {
 /**
  * Displays navbar authentication and inbox buttons according to login status.
  */
-function fetchAuthentication() {
+function fetchAuthIndexQuestion() {
   fetch('/authentication').then(response => response.json()).then(user => {
-    const inboxButton = document.getElementById("notificationsDropdown");
+    const inboxButton = document.getElementById('notificationsDropdown');
     if (user.isUserLoggedIn) {
       // If user is logged in, show logout and inbox buttons in navbar.
-      if (inboxButton) {
-        inboxButton.style.display = "block";
-      }
-      
+      inboxButton.style.display = 'block';
       fetchNotifications(); 
       if (!user.isUserRegistered) {
         // If logged in user is not registered, redirect to signup page.
-        window.location.replace(user.authenticationUrl);
+        window.location.replace('signup.html');
       }
       // Delete signup button.
       const signupButtonNavbar = document.getElementById('signup');
@@ -97,7 +100,7 @@ function fetchAuthentication() {
       // Show submission forms when logged in.
       const questionSubmission = document.getElementById('post-question');
       if (questionSubmission) {
-        questionSubmission.style.display = "block";
+        questionSubmission.style.display = 'block';
       }
 
       const answerSubmission = document.getElementById('post-answer');
@@ -130,6 +133,19 @@ function fetchAuthentication() {
           user.authenticationUrl, 'btn-outline-success', 'Log In', 'login');
     }
   })
+}
+
+/**
+ * Fetches notifications of the signed in user.
+ */
+function fetchNotifications() {
+  fetch('/notification').then(response => response.json()).then((notificationsJson) => {
+    const notificationsElement = document.getElementById('inbox-dropdown');
+    notificationsElement.innerHTML = '';
+    for (const notification of notificationsJson) {
+      notificationsElement.appendChild(createNotificationsElement(notification));
+    }
+  });
 }
 
 /**
@@ -179,16 +195,25 @@ function fetchMentorExperience() {
 }
 
 /**
- * Fetches notifications of the signed in user.
+ * Displays logout button or redirects to index in verification page.
  */
-function fetchNotifications() {
-  fetch('/notification').then(response => response.json()).then((notificationsJson) => {
-    const notificationsElement = document.getElementById('inbox-dropdown');
-    notificationsElement.innerHTML = '';
-    for (const notification of notificationsJson) {
-      notificationsElement.appendChild(createNotificationsElement(notification));
+function fetchAuthVerification() {
+  fetch('/authentication').then(response => response.json()).then(user => {
+    if (user.isUserLoggedIn) {
+      // If user is logged in, show logout button in navbar.
+      if (!user.isUserRegistered) {
+        // If logged in user is not registered, redirect to signup page.
+        window.location.replace('/signup.html');
+      }
+
+      // Add logout button to navbar.
+      createAuthenticationButton(
+          user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
+    } else {
+      // If user is logged out, show signup and login buttons in navbar.
+      window.location.replace('/index.html');
     }
-  });
+  })
 }
 
 /**
@@ -214,9 +239,16 @@ async function fetchQuestions(page) {
   }
   const response = await fetch('/fetch-questions?id=' + questionId);
   const questionsObject = await response.json();
-  questionsObject.forEach(question => {
-    questionsContainer.appendChild(createQuestionElement(question, hasRedirect));
-  });
+
+  if (questionsObject.length !== 0) {
+    // Check that the ID exist so that it actually has questions in it.
+    questionsObject.forEach(question => {
+      questionsContainer.appendChild(createQuestionElement(question, hasRedirect));
+    });
+  } else {
+    // If the ID doesn't exist, redirect to the index.
+    window.location.replace('/index.html');
+  }
 }
 
 /**
@@ -254,13 +286,13 @@ function createAuthenticationButton(authenticationUrl, buttonStyle, buttonText, 
 function createNotificationsElement(notification) {
   // Create a link to redirect the user to the question that was answered or commented.
   const linkElement = document.createElement('a');
-  linkElement.innerText = linkElement.innerText.concat(notification.message, " - ");
+  linkElement.innerText = linkElement.innerText.concat(notification.message, ' - ');
   linkElement.innerText = linkElement.innerText.concat(notification.timestamp.toString());
-  linkElement.setAttribute("href", notification.url);
+  linkElement.setAttribute('href', notification.url);
   // Create list element.
   const liElement = document.createElement('li');
   liElement.appendChild(linkElement);
-  liElement.setAttribute("class","list-group-item");
+  liElement.setAttribute('class', 'list-group-item');
   return liElement;
 }
 
@@ -320,11 +352,11 @@ function createQuestionElement(question, hasRedirect) {
           // Reduce the preview of the body to 100 characters
           .substring(0,100)
           // Remove line breaks and add trailing dots
-          .replace(/(\r\n|\n|\r)/gm,"") + "...";
+          .replace(/(\r\n|\n|\r)/gm,'') + '...';
     } else {
       bodyElement.innerText = question.body
           // Remove line breaks from the preview.
-          .replace(/(\r\n|\n|\r)/gm," ");
+          .replace(/(\r\n|\n|\r)/gm,' ');
     }
     questionElement.appendChild(bodyElement);
     questionElement.appendChild(document.createElement('br'));
@@ -467,12 +499,23 @@ function addAutoResize() {
 }
 
 /**
- * Redirect user in signup page to index if they are already registered.
+ * Reloads homepage forum from scratch and clears input in search bar.
+ */
+function backToHomepage() {
+  const searchInput = document.getElementById("questionSearchInput");
+  searchInput.value = "";
+  const questionsContainer = document.getElementById('forum');
+  questionsContainer.innerHTML = "";
+  fetchQuestions('forum');
+}
+
+/**
+ * Redirects user in signup page to index if they are already registered.
  */
 function isUserRegistered() {
   fetch('/authentication').then(response => response.json()).then(user => {
     if (user.isUserRegistered) {
-      window.location.replace("/index.html");
+      window.location.replace('/index.html');
     }
   })
 }
@@ -500,6 +543,25 @@ function notify(type, id) {
   fetch('notification?type=' + type + '&modifiedElementId=' + id, {
     method: 'POST'
   })
+}
+
+/**
+ * Searches questions that contain the input string in the title or body elements.
+ */
+function searchQuestion() {
+  let stringSearchInput = document.getElementById("questionSearchInput").value;
+  if (stringSearchInput != "") {
+    const questionsContainer = document.getElementById('forum');
+    questionsContainer.innerHTML = "";
+    fetch('/search-question?inputString=' + stringSearchInput).then(response => 
+        response.json()).then(questionsJson => {
+      for (const question of questionsJson) {
+        // True value parameter for createQuestionElement means that the question does have a 
+        // redirect URL option.
+        questionsContainer.appendChild(createQuestionElement(question, true));
+      }
+    })
+  }
 }
 
 // TODO(oumontiel): write the function comment.
