@@ -22,8 +22,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.annotation.WebServlet;
@@ -35,8 +33,8 @@ import javax.servlet.http.HttpServletResponse;
  * This servlet will post a question to the forum.
  * TODO(shaargtz): join this servlet with fetchQuestions into a single question servlet.
  */
-@WebServlet("/post-question")
-public class PostQuestionServlet extends HttpServlet {
+@WebServlet("/follower-system")
+public class FollowerSystemServlet extends HttpServlet {
 
   /** 
    * Executes the query to post a question to the database.
@@ -45,84 +43,51 @@ public class PostQuestionServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String type = request.getParameter("type");
     int questionId = Utility.tryParseInt(request.getParameter("question-id"));
-    int askerId = Utility.getUserId();
+    int userId = Utility.getUserId();
+
+    Connection connection = DriverManager.getConnection(
+        Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
 
     if (type.equals("follow")) {
-      insertFollower(questionId, askerId);
+      insertFollower(connection, questionId, userId);
     } else if (type.equals("unfollow")) {
-      deleteFollower(questionId, askerId);
-    }
-
-    // First we query the number of questions that exist so that we can update the
-    // QuestionFollower table as well.
-    try {
-      Connection connection = DriverManager
-          .getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
-      insertNewQuestion(connection, title, body, askerId);
-      insertNewFollower(connection, askerId);
-    } 
-    catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostQuestionServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
+      deleteFollower(connection, questionId, userId);
     }
   }
 
-  /** 
-   * Inserts a question into the database.
-   */
-  private void insertNewQuestion(Connection connection, String title, String body, int askerId) {
-    try {
-      // NOW() is the function to get the current date and time in MySQL.
-      String insertQuestionQuery = "INSERT INTO Question(title, body, asker_id, date_time) "
-          + "VALUES (?,?,?,NOW())";
-      PreparedStatement questionStatement = connection.prepareStatement(insertQuestionQuery);
-      questionStatement.setString(SqlConstants.QUESTION_INSERT_TITLE, title);
-      questionStatement.setString(SqlConstants.QUESTION_INSERT_BODY, body);
-      questionStatement.setInt(SqlConstants.QUESTION_INSERT_ASKERID, askerId);
-      questionStatement.executeUpdate();
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostQuestionServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
-  }
-
-  /** 
-   * Gets the ID from the last question posted. Returns -1 on query failure.
-   */
-  private int getLatestQuestionId(Connection connection) {
-    int id = -1;
-    try {
-      String maxIdQuery = "SELECT MAX(id) FROM Question;";
-      PreparedStatement maxIdStatement = connection.prepareStatement(maxIdQuery);
-      ResultSet queryResult = maxIdStatement.executeQuery();
-      queryResult.next();
-      id = queryResult.getInt(SqlConstants.QUESTION_FETCH_MAXID);
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostQuestionServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
-
-    return id;
-  }
 
   /** 
    * Makes the current user a follower of the question they clicked.
    */
-  private void insertNewFollower(Connection connection, int askerId) {
+  private void insertFollower(Connection connection, int questionId, int userId) {
     try {
-      int latestQuestionId = getLatestQuestionId(connection);
       String insertFollowerQuery = "INSERT INTO QuestionFollower(question_id, follower_id) "
           + "VALUES (?,?)";
       PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
-      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_QUESTIONID, latestQuestionId);
-      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_ASKERID, askerId);
+      followerStatement.setInt(SqlConstants.FOLLOWER_QUERY_QUESTIONID, questionId);
+      followerStatement.setInt(SqlConstants.FOLLOWER_QUERY_USERID, userId);
       followerStatement.executeUpdate();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostQuestionServlet.class.getName());
+      Logger logger = Logger.getLogger(FollowerSystemServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+  }
+
+  /** 
+   * Makes the current user unfollow the question they clicked.
+   */
+  private void deleteFollower(Connection connection, int questionId, int userId) {
+    try {
+      String deleteFollowerQuery = "DELETE FROM QuestionFollower "
+          + "WHERE question_id=? AND follower_id=?;";
+      PreparedStatement followerStatement = connection.prepareStatement(deleteFollowerQuery);
+      followerStatement.setInt(SqlConstants.FOLLOWER_QUERY_QUESTIONID, questionId);
+      followerStatement.setInt(SqlConstants.FOLLOWER_QUERY_QUESTIONID, userId);
+      followerStatement.executeUpdate();
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(FollowerSystemServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
   }
