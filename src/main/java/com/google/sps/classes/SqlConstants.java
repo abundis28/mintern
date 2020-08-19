@@ -27,6 +27,7 @@ public final class SqlConstants {
   public static final int QUESTION_FETCH_DATETIME = 5;
   public static final int QUESTION_FETCH_NUMBEROFFOLLOWERS = 7;
   public static final int QUESTION_FETCH_NUMBEROFANSWERS = 11;
+  public static final int QUESTION_FETCH_USERFOLLOWSQUESTION = 12;
 
   // Constants used for inserting a question.
   public static final int QUESTION_INSERT_TITLE = 1;
