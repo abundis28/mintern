@@ -282,18 +282,34 @@ function createNotificationsElement(notification) {
  * Each element corresponds to a question to be displayed in the DOM.
  */
 function createQuestionElement(question, hasRedirect) {
-  const questionElement = document.createElement('li');
-  questionElement.setAttribute('class', 'list-group-item');
+  const questionElement = document.createElement('div');
+  questionElement.setAttribute('class', 'media');
+
+  const iconElement = document.createElement('i');
+
+  if (question.userFollowsQuestion) {
+    iconElement.setAttribute('class', 'fas fa-bell');
+  } else {
+    iconElement.setAttribute('class', 'far fa-bell');
+  }
+  
+  questionElement.appendChild(iconElement);
+
+  const textContainer = document.createElement('div');
+  textContainer.setAttribute('class', 'media-body');
+  questionElement.appendChild(textContainer);
+
+  const questionTitle = document.createElement('h5');
 
   if (hasRedirect) {
     // Add href to redirect from forum to single view.
-    const questionTitle = document.createElement('a');
-    questionTitle.setAttribute('href', '/question.html?id=' + question.id);
-    questionTitle.innerText = question.title;
-    questionElement.appendChild(questionTitle);
-  } else {
-    questionElement.innerText = question.title;
+    const questionURL = document.createElement('a');
+    questionURL.setAttribute('href', '/question.html?id=' + question.id);
+    questionTitle.appendChild(questionURL);
   }
+
+  questionTitle.innerText = question.title;
+  textContainer.appendChild(questionTitle);
   
   // Asker name is placed besides the question.
   const askerElement = document.createElement('small');
@@ -326,7 +342,7 @@ function createQuestionElement(question, hasRedirect) {
  
   // If the question has a body, show it underneath.
   if (question.body) {
-    const bodyElement = document.createElement('small');
+    const bodyElement = document.createElement('p');
     if (question.body.length > 100) {
       // All of the body should not be displayed if it is very big.
       bodyElement.innerText = question.body
