@@ -19,7 +19,7 @@ package com.google.sps.classes;
  */
 public final class MentorEvidence {
 
-  private final boolean isApprover; // This is to check whether the approver is assigned to mentor.
+  private final boolean isApprover; // This is true if the approver is assigned to the mentor.
   private final String mentorUsername;
   private final String paragraph;
 
