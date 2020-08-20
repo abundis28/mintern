@@ -29,6 +29,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 /**
  * Servlet that inserts a new mentor to the database.
@@ -41,6 +42,9 @@ public class SignupMentorServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // Creates pool with connections to access database.
+    DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
+
     // Set up list to store subject tags.
     List<SubjectTag> subjectTags = new ArrayList<SubjectTag>();
     
@@ -49,8 +53,7 @@ public class SignupMentorServlet extends HttpServlet {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+      Connection connection = Utility.getConnection(pool);
 
       // Create the MySQL prepared statement, execute it, and store the result.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -77,6 +80,9 @@ public class SignupMentorServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // Creates pool with connections to access database.
+    DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
+
     UserService userService = UserServiceFactory.getUserService();
 
     // Get variables from HTML form.
@@ -91,19 +97,19 @@ public class SignupMentorServlet extends HttpServlet {
     Boolean isMentor = true;
 
     // Insert user and mentor experience to the database.
-    Utility.addNewUser(firstName, lastName, username, email, major, isMentor);
+    Utility.addNewUser(firstName, lastName, username, email, major, isMentor, pool);
     if (experienceTags != null) {
-      addMentorExperience(experienceTags);
+      addMentorExperience(experienceTags, pool);
     }
-    addMentorEvidence();
+    addMentorEvidence(pool);
     response.sendRedirect("/verification.html");
   }
 
   /**
    * Inserts experience tags with corresponding user to MentorExperience table in database.
    */
-  private void addMentorExperience(String[] experienceTags) {
-    int userId = Utility.getUserId();
+  private void addMentorExperience(String[] experienceTags, DataSource pool) {
+    int userId = Utility.getUserId(pool);
     
     for (String tag : experienceTags) {
       // Set up query to insert new experience tag to user.
@@ -111,8 +117,7 @@ public class SignupMentorServlet extends HttpServlet {
 
       try {
         // Establish connection to MySQL database.
-        Connection connection = DriverManager.getConnection(
-            Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+        Connection connection = Utility.getConnection(pool);
 
         // Create the MySQL INSERT prepared statement.
         PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -133,8 +138,8 @@ public class SignupMentorServlet extends HttpServlet {
   /**
    * Inserts a new entry to MentorEvidence table with default values.
    */
-  private void addMentorEvidence() {
-    int userId = Utility.getUserId();
+  private void addMentorEvidence(DataSource pool) {
+    int userId = Utility.getUserId(pool);
 
     // Set up query to insert mentor evidence.
     String query = "INSERT INTO MentorEvidence "
@@ -143,8 +148,7 @@ public class SignupMentorServlet extends HttpServlet {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+      Connection connection = Utility.getConnection(pool);
 
       // Create the MySQL INSERT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);

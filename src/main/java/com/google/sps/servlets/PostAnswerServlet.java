@@ -18,7 +18,6 @@ import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,6 +30,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 /** 
  * This servlet will post an answer to a question.
@@ -44,21 +44,16 @@ public class PostAnswerServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // Creates pool with connections to access database.
+    DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
+    
     String body = request.getParameter("answer-body");
     int questionId = Utility.tryParseInt(request.getParameter("question-id"));
-    int authorId = Utility.getUserId();
+    int authorId = Utility.getUserId(pool);
 
-    try {
-      Connection connection = DriverManager.getConnection(
-          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
-      insertNewAnswer(connection, questionId, body, authorId);
-      insertNewFollower(connection, authorId);
-    } 
-    catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostAnswerServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
+    Connection connection = Utility.getConnection(pool);
+    insertNewAnswer(connection, questionId, body, authorId);
+    insertNewFollower(connection, authorId);
     
     try {
       // We call the notification servlet to notify of this posted answer.

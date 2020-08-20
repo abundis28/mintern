@@ -25,6 +25,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 /**
  * Servlet that inserts a new mentee to the database.
@@ -37,6 +38,9 @@ public class SignupMenteeServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // Creates pool with connections to access database.
+    DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
+    
     UserService userService = UserServiceFactory.getUserService();
 
     // Get variables from HTML form.
@@ -50,7 +54,7 @@ public class SignupMenteeServlet extends HttpServlet {
     Boolean isMentor = false;
 
     // Insert user to the database.
-    Utility.addNewUser(firstName, lastName, username, email, major, isMentor);
+    Utility.addNewUser(firstName, lastName, username, email, major, isMentor, pool);
     response.sendRedirect("/index.html");
   }
 }
