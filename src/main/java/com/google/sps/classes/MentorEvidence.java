@@ -15,12 +15,12 @@
 package com.google.sps.classes;
 
 /**
- * The data used to authenticate a user.
+ * The evidence a mentor to verify their internship and their assigned reviewer.
  */
 public final class MentorEvidence {
 
   private final int userId;
-  private final boolean isApprover; // This is to check whether the approver is assigned to mentor.
+  private final boolean isApprover; // This is true if the approver is assigned to the mentor.
   private final String mentorUsername;
   private final boolean isApproved;
   private final boolean isRejected;

@@ -599,8 +599,6 @@ function notify(type, id) {
  */
 function mentorApprove(isApproved) {
   const mentorId = (new URL(document.location)).searchParams.get('id');
-  console.log(mentorId);
-  console.log(isApproved);
   fetch('mentor-approval?isApproved=' + isApproved + '&id=' + mentorId, {
     method: 'POST'
   })
