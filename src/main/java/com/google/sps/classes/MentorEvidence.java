@@ -15,7 +15,7 @@
 package com.google.sps.classes;
 
 /**
- * The data used to authenticate a user.
+ * The evidence a mentor to verify their internship and their assigned reviewer.
  */
 public final class MentorEvidence {
 
