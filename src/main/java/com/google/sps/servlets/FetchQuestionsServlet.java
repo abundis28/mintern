@@ -14,6 +14,7 @@
 
 package com.google.sps.servlets;
 
+import com.google.sps.classes.ForumPage;
 import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.Question;
 import com.google.sps.classes.Utility;
