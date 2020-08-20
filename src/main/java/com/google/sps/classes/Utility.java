@@ -124,7 +124,6 @@ public final class Utility {
 
     // Set up query to get username.
     String query = "SELECT username FROM User WHERE id = " + userId;
-
     try {
       // Establish connection to MySQL database.
       Connection connection = DriverManager.getConnection(
