@@ -579,7 +579,9 @@ function searchQuestion(stringSearchInput) {
 })();
 
 /**
- * Erases the query string from the url.
+ * Erases the query string from the url. This will be used whenever a search is made in the
+ * homepage view (the query string gets a pair of parameters) and the user clicks on the brand
+ * button to return to the full forum page.
  */
 function eraseQueryStringFromUrl() {
   const uri = window.location.toString();
