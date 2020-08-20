@@ -54,6 +54,9 @@ public class FetchQuestionsServlet extends HttpServlet {
     // ID of the question to query.
     int questionId = Utility.tryParseInt(request.getParameter("id"));
 
+    // Number of page that the user is browsing.
+    int questionId = Utility.tryParseInt(request.getParameter("id"));
+
     if (questionId == SqlConstants.FETCH_ALL_QUESTIONS) {
       // Nothing needs to be added to the query apart from closing it.
       query = Utility.fetchQuestionsQuery + ";";
@@ -78,7 +81,32 @@ public class FetchQuestionsServlet extends HttpServlet {
       Logger logger = Logger.getLogger(FetchQuestionsServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
+
     response.setContentType("application/json;");
-    response.getWriter().println(Utility.convertToJsonUsingGson(questions));
+
+    if (page != SqlConstants.SINGLE_QUESTION_PAGE) {
+      // Forum posts get split by pages.
+      ForumPage forumPage = splitPages(questions, page);
+      response.getWriter().println(Utility.convertToJsonUsingGson(forumPage));
+    } else {
+      // A single question is returned.
+      response.getWriter().println(Utility.convertToJsonUsingGson(questions));
+    }
+  }
+
+  ForumPage splitPages(List<Question> questions, int page) {
+    int numberOfComments = questions.size();
+    int numberOfPages = (int) Math.ceil((double) numberOfComments / SqlConstants.PAGE_SIZE);
+   
+    Integer nextPage = page < numberOfPages ? (page + 1) : null;
+    Integer previousPage = page > 1 ? (page - 1) : null;
+    
+    int lowerIndex = (page - 1) * SqlConstants.PAGE_SIZE;
+    int upperIndex = page * SqlConstants.PAGE_SIZE;
+
+    List<Question> trimmedQuestions = questions.subList(lowerIndex >= 0 ? lowerIndex : 0,
+        upperIndex <= numberOfComments ? upperIndex : numberOfComments);
+
+    return new ForumPage(nextPage, previousPage, numberOfPages, trimmedQuestions);
   }
 }
