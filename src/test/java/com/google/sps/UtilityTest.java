@@ -36,7 +36,7 @@ public final class UtilityTest {
 
   @Test
   public void convertUsingGsonToJsonEmptyTest() {
-    // Empty object.
+    // Empty object that will take the default values in the constructor.
     SubjectTag tag = new SubjectTag();
     String actual = Utility.convertToJsonUsingGson(tag);
     String expected = "{\"id\":-1,\"subject\":\"\",\"color\":\"\"}";
