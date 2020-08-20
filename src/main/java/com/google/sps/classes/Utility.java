@@ -30,7 +30,22 @@ import javax.sql.DataSource;
  */
 public final class Utility {
   // Define if running locally or deploying the current branch.
-  private static final String localOrDeployed = "local";
+  private static final String localOrDeployed = "deploy";
+
+  public static Connection getConnection(DataSource pool) {
+    try {
+      if (localOrDeployed == "local") {
+        return DriverManager.getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, 
+            SQL_LOCAL_PASSWORD);
+      }
+      return pool.getConnection();
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+    return null;
+  }
   
   // Variables needed to connect to MySQL database.
   public static final String SQL_LOCAL_URL =
@@ -194,20 +209,5 @@ public final class Utility {
       logger.log(Level.SEVERE, exception.getMessage(), exception);
       return 0;
     }
-  }
-
-  public static Connection getConnection(DataSource pool) {
-    try {
-      if (localOrDeployed == "local") {
-        return DriverManager.getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, 
-            SQL_LOCAL_PASSWORD);
-      }
-      return pool.getConnection();
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(Utility.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
-    return;
   }
 }
