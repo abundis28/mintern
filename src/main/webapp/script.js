@@ -254,7 +254,7 @@ function fetchMentorApproval() {
       paragraphElement.innerHTML = approval.paragraph;
     } else {
       // If user is not either a mentor or an approver assigned to that mentor, redirect to index.
-      //window.location.replace('/index.html');
+      window.location.replace('/index.html');
     }
   })
 }
