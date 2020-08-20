@@ -27,9 +27,19 @@ import org.junit.Test;
 public final class UtilityTest {
   @Test
   public void convertUsingGsonToJsonTest() {
+    // Object with attributes.
     SubjectTag tag = new SubjectTag(5, "Interviews", "red");
     String actual = Utility.convertToJsonUsingGson(tag);
     String expected = "{\"id\":5,\"subject\":\"Interviews\",\"color\":\"red\"}";
+    Assert.assertEquals(expected, actual);
+  }
+
+  @Test
+  public void convertUsingGsonToJsonEmptyTest() {
+    // Empty object.
+    SubjectTag tag = new SubjectTag();
+    String actual = Utility.convertToJsonUsingGson(tag);
+    String expected = "{\"id\":-1,\"subject\":\"\",\"color\":\"\"}";
     Assert.assertEquals(expected, actual);
   }
 }
