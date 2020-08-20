@@ -63,7 +63,8 @@ public class MentorApprovalServlet extends HttpServlet {
   }
 
   /**
-   * Returns true if approver is assigned to mentee.
+   * Returns true if approver is assigned to mentee, used to grant access to approval page only to
+   * approvers.
    */
   private boolean checkForApprover(int mentorId, int approverId) {
     // Create the MySQL prepared statement, execute it, and store the result.
@@ -101,11 +102,11 @@ public class MentorApprovalServlet extends HttpServlet {
   private String getMentorEvidence(int mentorId) {
     String paragraph = "";
 
-    // Create the MySQL prepared statement, execute it, and store the result.
-    String query = "SELECT * FROM MentorEvidence "
-        + "WHERE mentor_id = ?";
-
     try {
+      // Create the MySQL prepared statement, execute it, and store the result.
+      String query = "SELECT * FROM MentorEvidence "
+          + "WHERE mentor_id = ?";
+      
       // Establish connection to MySQL database.
       Connection connection = DriverManager.getConnection(
             Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
