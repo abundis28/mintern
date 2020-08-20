@@ -311,33 +311,44 @@ function createPageElement(forumPage, pageNumber, hasRedirect) {
 
   const pageIndexes = document.createElement('ul');
   pageIndexes.setAttribute('class', 'pagination');
-  
-  const previousButton = document.createElement('li');
+
+  const previousWrapper = document.createElement('li');
   if (forumPage.previousPage) {
-    previousButton.setAttribute('class', 'page-item');
-    previousButton.setAttribute(
+    previousWrapper.setAttribute('class', 'page-item');
+    previousWrapper.setAttribute(
         'onclick', 'fetchQuestions(' + (pageNumber - 1) + ')');
   } else {
-    previousButton.setAttribute('class', 'page-item disabled');
+    previousWrapper.setAttribute('class', 'page-item disabled');
   }
-  pageIndexes.appendChild(previousButton);
+  const previousButton = document.createElement('a');
+  previousButton.setAttribute('class', 'page-link');
+  previousButton.innerHTML = '&laquo;';
+  previousWrapper.appendChild(previousButton);
+  pageIndexes.appendChild(previousWrapper);
 
   const currentPage = document.createElement('li');
-  currentPage.setAttribute('class', 'list-group-item');
-  currentPage.innerText = 'Page ' + pageNumber;
+  currentPage.setAttribute('class', 'page-item');
+  const pageText = document.createElement('a');
+  pageText.setAttribute('class', 'page-link');
+  pageText.innerText = 'Page ' + pageNumber + ' of ' + forumPage.numberOfPages;
+  currentPage.appendChild(pageText);
   pageIndexes.appendChild(currentPage);
 
-  const nextButton = document.createElement('li');
+  const nextWrapper = document.createElement('li');
   if (forumPage.nextPage) {
-    nextButton.setAttribute('class', 'page-item');
-    previousButton.setAttribute(
+    nextWrapper.setAttribute('class', 'page-item');
+    nextWrapper.setAttribute(
         'onclick', 'fetchQuestions(' + (pageNumber + 1) + ')');
   } else {
-    nextButton.setAttribute('class', 'page-item disabled');
+    nextWrapper.setAttribute('class', 'page-item disabled');
   }
-  pageIndexes.appendChild(nextButton);
+  const nextButton = document.createElement('a');
+  nextButton.setAttribute('class', 'page-link');
+  nextButton.innerHTML = '&raquo;';
+  nextWrapper.appendChild(nextButton);
+  pageIndexes.appendChild(nextWrapper);
 
-  pageWrapper.appendChild(pageIndexes)
+  pageWrapper.appendChild(pageIndexes);
 
   return pageWrapper;
 }
