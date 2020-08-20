@@ -30,10 +30,10 @@ public final class UtilityTest {
     // Object with attributes.
     SubjectTag tag = new SubjectTag(5, "Interviews", "red");
     String expectedJson = "{\"id\":5,\"subject\":\"Interviews\",\"color\":\"red\"}";
+
+    String actualJson = Utility.convertToJsonUsingGson(tag);
     
-    String actual = Utility.convertToJsonUsingGson(tag);
-    
-    Assert.assertEquals(expected, actual);
+    Assert.assertEquals(expectedJson, actualJson);
   }
 
   @Test
@@ -42,8 +42,8 @@ public final class UtilityTest {
     SubjectTag tag = new SubjectTag();
     String expectedJson = "{\"id\":-1,\"subject\":\"\",\"color\":\"\"}";
 
-    String actual = Utility.convertToJsonUsingGson(tag);
+    String actualJson = Utility.convertToJsonUsingGson(tag);
    
-    Assert.assertEquals(expected, actual);
+    Assert.assertEquals(expectedJson, actualJson);
   }
 }
