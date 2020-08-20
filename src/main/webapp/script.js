@@ -242,6 +242,8 @@ async function fetchQuestions(pageNumber) {
   const response = await fetch('/fetch-questions?id=' + questionId + '&page=' + pageNumber);
   const questionsObject = await response.json();
 
+  questionsContainer.innerHTML = '';
+
   if (questionsObject.length !== 0) {
     // Check that the ID exist so that it actually has questions in it.
 
