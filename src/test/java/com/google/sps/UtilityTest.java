@@ -29,8 +29,10 @@ public final class UtilityTest {
   public void convertUsingGsonToJsonTest() {
     // Object with attributes.
     SubjectTag tag = new SubjectTag(5, "Interviews", "red");
+    String expectedJson = "{\"id\":5,\"subject\":\"Interviews\",\"color\":\"red\"}";
+    
     String actual = Utility.convertToJsonUsingGson(tag);
-    String expected = "{\"id\":5,\"subject\":\"Interviews\",\"color\":\"red\"}";
+    
     Assert.assertEquals(expected, actual);
   }
 
@@ -38,8 +40,10 @@ public final class UtilityTest {
   public void convertUsingGsonToJsonEmptyTest() {
     // Empty object that will take the default values in the constructor.
     SubjectTag tag = new SubjectTag();
+    String expectedJson = "{\"id\":-1,\"subject\":\"\",\"color\":\"\"}";
+
     String actual = Utility.convertToJsonUsingGson(tag);
-    String expected = "{\"id\":-1,\"subject\":\"\",\"color\":\"\"}";
+   
     Assert.assertEquals(expected, actual);
   }
 }
