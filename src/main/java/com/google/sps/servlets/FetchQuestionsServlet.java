@@ -53,12 +53,14 @@ public class FetchQuestionsServlet extends HttpServlet {
     // ID of the question to query.
     int questionId = Utility.tryParseInt(request.getParameter("id"));
 
-    if (questionId == SqlConstants.FETCH_ALL_QUESTIONS) {
-      // Nothing needs to be added to the query apart from closing it.
-      query = Utility.fetchQuestionsQuery + ";";
+    if (questionId != SqlConstants.FETCH_ALL_QUESTIONS) {
+      // Nothing needs to be added to the query.
+      query = Utility.fetchQuestionsQuery;
     } else {
       // Condition to fetch only one question.
-      query = Utility.fetchQuestionsQuery + "WHERE Question.id=" + questionId + ";";
+      query = Utility.fetchQuestionsQuery.substring(0, 424) + "WHERE Question.id=" + questionId 
+          + " " + Utility.fetchQuestionsQuery.substring(424, Utility.fetchQuestionsQuery.length());
+      System.out.println(query);
     }
 
     // The connection and query are attempted.
