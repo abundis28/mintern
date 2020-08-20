@@ -55,7 +55,7 @@ public class FetchQuestionsServlet extends HttpServlet {
     int questionId = Utility.tryParseInt(request.getParameter("id"));
 
     // Number of page that the user is browsing.
-    int questionId = Utility.tryParseInt(request.getParameter("id"));
+    int page = Utility.tryParseInt(request.getParameter("page"));
 
     if (questionId == SqlConstants.FETCH_ALL_QUESTIONS) {
       // Nothing needs to be added to the query apart from closing it.
