@@ -21,6 +21,7 @@ import com.google.sps.classes.SqlConstants;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.sql.DataSource;
 
 // TODO(aabundis): Add JUnit tests for utility functions.
 
@@ -28,12 +29,20 @@ import java.util.logging.Logger;
  * Utility methods used across classes. Just import class to access all methods.
  */
 public final class Utility {
-  // TODO(oumontiel): Move constants to different file.
+  // Define if running locally or deploying the current branch.
+  private static final String localOrDeployed = "local";
+  
   // Variables needed to connect to MySQL database.
   public static final String SQL_LOCAL_URL =
       "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
   public static final String SQL_LOCAL_USER = "root";
   public static final String SQL_LOCAL_PASSWORD = "";
+
+  // Access constants to cloud sql.
+  private static final String DATABASE_NAME = "Mintern";
+  public static final String SQL_CLOUD_URL = String.format("jdbc:mysql:///%s", DATABASE_NAME);
+  public static final String SQL_CLOUD_USER = "root";
+  public static final String SQL_CLOUD_PASSWORD = "mintern";
 
   // Variables for user login status.
   public static final int USER_LOGGED_OUT_ID = -1;
@@ -77,7 +86,7 @@ public final class Utility {
    * Returns the ID of a logged in user.
    * If the user is not logged in or if no user ID is found, returns -1.
    */
-  public static int getUserId() {
+  public static int getUserId(DataSource pool) {
     int userId = USER_LOGGED_OUT_ID;
     UserService userService = UserServiceFactory.getUserService();
 
@@ -94,8 +103,7 @@ public final class Utility {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
+      Connection connection = Utility.getConnection(pool);
 
       // Create the MySQL prepared statement, execute it, and store the result.
       // Takes the query specified above and sets the email field to the logged in user's email.
@@ -121,15 +129,14 @@ public final class Utility {
    * User table.
    */
   public static void addNewUser(String firstName, String lastName, String username, String email,
-      int major, boolean isMentor) {
+      int major, boolean isMentor, DataSource pool) {
     // Set up query to insert new user into database.
     String query = "INSERT INTO User (first_name, last_name, username, email, major_id, is_mentor)"
         + " VALUES (?, ?, ?, ?, ?, ?)";
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
+      Connection connection = Utility.getConnection(pool);
 
       // Create the MySQL INSERT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -187,5 +194,20 @@ public final class Utility {
       logger.log(Level.SEVERE, exception.getMessage(), exception);
       return 0;
     }
+  }
+
+  public static Connection getConnection(DataSource pool) {
+    try {
+      if (localOrDeployed == "local") {
+        return DriverManager.getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, 
+            SQL_LOCAL_PASSWORD);
+      }
+      return pool.getConnection();
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+    return;
   }
 }
