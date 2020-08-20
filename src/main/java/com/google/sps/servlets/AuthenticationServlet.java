@@ -39,8 +39,6 @@ public class AuthenticationServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Creates pool with connections to access database.
-    DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
     
     UserService userService = UserServiceFactory.getUserService();
     
@@ -57,7 +55,7 @@ public class AuthenticationServlet extends HttpServlet {
       email = userService.getCurrentUser().getEmail();
       authenticationUrl = userService.createLogoutURL(redirectUrl);
 
-      int userId = Utility.getUserId(pool);
+      int userId = Utility.getUserId(request);
       if (userId != Utility.USER_LOGGED_OUT_ID) {
         // If user is registered, change isUserRegistered to true.
         isUserRegistered = true;

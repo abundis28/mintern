@@ -44,14 +44,12 @@ public class PostAnswerServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Creates pool with connections to access database.
-    DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
-    
+   
     String body = request.getParameter("answer-body");
     int questionId = Utility.tryParseInt(request.getParameter("question-id"));
-    int authorId = Utility.getUserId(pool);
+    int authorId = Utility.getUserId(request);
 
-    Connection connection = Utility.getConnection(pool);
+    Connection connection = Utility.getConnection(request);
     insertNewAnswer(connection, questionId, body, authorId);
     insertNewFollower(connection, authorId);
     

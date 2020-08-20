@@ -39,9 +39,7 @@ public class SignupServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Creates pool with connections to access database.
-    DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
-
+    
     // Store majors in map to relate the name of the major (string) with its ID (integer).
     Map<Integer, String> majors = new HashMap<Integer, String>();
     
@@ -50,7 +48,7 @@ public class SignupServlet extends HttpServlet {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = Utility.getConnection(pool);
+      Connection connection = Utility.getConnection(request);
 
       // Create the MySQL prepared statement, execute it, and store the result.
       PreparedStatement preparedStatement = connection.prepareStatement(query);

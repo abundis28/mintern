@@ -43,16 +43,14 @@ public class PostQuestionServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Creates pool with connections to access database.
-    DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
     
     String title = request.getParameter("question-title");
     String body = request.getParameter("question-body");
-    int askerId = Utility.getUserId(pool);
+    int askerId = Utility.getUserId(request);
 
     // First we query the number of questions that exist so that we can update the
     // QuestionFollower table as well.
-    Connection connection = Utility.getConnection(pool);
+    Connection connection = Utility.getConnection(request);
     insertNewQuestion(connection, title, body, askerId);
     insertNewFollower(connection, askerId);
     response.sendRedirect("/");

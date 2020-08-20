@@ -46,8 +46,6 @@ public class FetchAnswersServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Creates pool with connections to access database.
-    DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
 
     // ID of the question to which the answers correspond.
     int questionId = Utility.tryParseInt(request.getParameter("id"));
@@ -61,7 +59,7 @@ public class FetchAnswersServlet extends HttpServlet {
 
     // The connection and query are attempted.
     try {
-        Connection connection = Utility.getConnection(pool);
+        Connection connection = Utility.getConnection(request);
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setInt(SqlConstants.ANSWER_SET_QUESTIONID, questionId);
         ResultSet queryResult = preparedStatement.executeQuery();

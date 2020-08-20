@@ -44,17 +44,15 @@ public class PostCommentServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Creates pool with connections to access database.
-    DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
-    
+  
     String body = request.getParameter("comment-body");
     int questionId = Utility.tryParseInt(request.getParameter("question-id"));
     int answerId = Utility.tryParseInt(request.getParameter("answer-id"));
-    int authorId = Utility.getUserId(pool);
+    int authorId = Utility.getUserId(request);
 
     // First we query the number of questions that exist so that we can update the
     // QuestionFollower table as well.
-    Connection connection = Utility.getConnection(pool);
+    Connection connection = Utility.getConnection(request);
     insertNewComment(connection, answerId, body, authorId);
     insertNewFollower(connection, answerId, authorId);
 

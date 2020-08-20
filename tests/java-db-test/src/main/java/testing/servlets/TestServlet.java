@@ -35,13 +35,11 @@ public class TestServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Creates pool with connections to access database.
-    DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
     
     // We begin the JSON string.
     String json = "{";
     // The connection and query are attempted.
-    try (Connection connection = Utility.getConnection(pool);
+    try (Connection connection = Utility.getConnection(request);
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         ResultSet queryResult = preparedStatement.executeQuery()) {
           // All of the rows from the query are looped if it goes through.

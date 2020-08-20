@@ -42,8 +42,6 @@ public class SignupMentorServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Creates pool with connections to access database.
-    DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
 
     // Set up list to store subject tags.
     List<SubjectTag> subjectTags = new ArrayList<SubjectTag>();
@@ -53,7 +51,7 @@ public class SignupMentorServlet extends HttpServlet {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = Utility.getConnection(pool);
+      Connection connection = Utility.getConnection(request);
 
       // Create the MySQL prepared statement, execute it, and store the result.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -80,8 +78,6 @@ public class SignupMentorServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Creates pool with connections to access database.
-    DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
 
     UserService userService = UserServiceFactory.getUserService();
 
@@ -97,19 +93,19 @@ public class SignupMentorServlet extends HttpServlet {
     Boolean isMentor = true;
 
     // Insert user and mentor experience to the database.
-    Utility.addNewUser(firstName, lastName, username, email, major, isMentor, pool);
+    Utility.addNewUser(firstName, lastName, username, email, major, isMentor, request);
     if (experienceTags != null) {
-      addMentorExperience(experienceTags, pool);
+      addMentorExperience(experienceTags, request);
     }
-    addMentorEvidence(pool);
+    addMentorEvidence(request);
     response.sendRedirect("/verification.html");
   }
 
   /**
    * Inserts experience tags with corresponding user to MentorExperience table in database.
    */
-  private void addMentorExperience(String[] experienceTags, DataSource pool) {
-    int userId = Utility.getUserId(pool);
+  private void addMentorExperience(String[] experienceTags, HttpServletRequest request) {
+    int userId = Utility.getUserId(request);
     
     for (String tag : experienceTags) {
       // Set up query to insert new experience tag to user.
@@ -117,7 +113,7 @@ public class SignupMentorServlet extends HttpServlet {
 
       try {
         // Establish connection to MySQL database.
-        Connection connection = Utility.getConnection(pool);
+        Connection connection = Utility.getConnection(request);
 
         // Create the MySQL INSERT prepared statement.
         PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -138,8 +134,8 @@ public class SignupMentorServlet extends HttpServlet {
   /**
    * Inserts a new entry to MentorEvidence table with default values.
    */
-  private void addMentorEvidence(DataSource pool) {
-    int userId = Utility.getUserId(pool);
+  private void addMentorEvidence(HttpServletRequest request) {
+    int userId = Utility.getUserId(request);
 
     // Set up query to insert mentor evidence.
     String query = "INSERT INTO MentorEvidence "
@@ -148,7 +144,7 @@ public class SignupMentorServlet extends HttpServlet {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = Utility.getConnection(pool);
+      Connection connection = Utility.getConnection(request);
 
       // Create the MySQL INSERT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);

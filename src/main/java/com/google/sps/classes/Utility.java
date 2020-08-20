@@ -21,6 +21,7 @@ import com.google.sps.classes.SqlConstants;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 
 // TODO(aabundis): Add JUnit tests for utility functions.
@@ -32,12 +33,14 @@ public final class Utility {
   // Define if running locally or deploying the current branch.
   private static final String localOrDeployed = "deploy";
 
-  public static Connection getConnection(DataSource pool) {
+  public static Connection getConnection(HttpServletRequest request) {
     try {
       if (localOrDeployed == "local") {
         return DriverManager.getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, 
             SQL_LOCAL_PASSWORD);
       }
+      // Creates pool with connections to access database.
+      DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
       return pool.getConnection();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
@@ -101,7 +104,7 @@ public final class Utility {
    * Returns the ID of a logged in user.
    * If the user is not logged in or if no user ID is found, returns -1.
    */
-  public static int getUserId(DataSource pool) {
+  public static int getUserId(HttpServletRequest request) {
     int userId = USER_LOGGED_OUT_ID;
     UserService userService = UserServiceFactory.getUserService();
 
@@ -118,7 +121,7 @@ public final class Utility {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = Utility.getConnection(pool);
+      Connection connection = Utility.getConnection(request);
 
       // Create the MySQL prepared statement, execute it, and store the result.
       // Takes the query specified above and sets the email field to the logged in user's email.
@@ -144,14 +147,14 @@ public final class Utility {
    * User table.
    */
   public static void addNewUser(String firstName, String lastName, String username, String email,
-      int major, boolean isMentor, DataSource pool) {
+      int major, boolean isMentor, HttpServletRequest request) {
     // Set up query to insert new user into database.
     String query = "INSERT INTO User (first_name, last_name, username, email, major_id, is_mentor)"
         + " VALUES (?, ?, ?, ?, ?, ?)";
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = Utility.getConnection(pool);
+      Connection connection = Utility.getConnection(request);
 
       // Create the MySQL INSERT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);

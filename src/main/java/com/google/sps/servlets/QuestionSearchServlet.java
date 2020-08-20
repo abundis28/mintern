@@ -46,9 +46,7 @@ public class QuestionSearchServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Creates pool with connections to access database.
-    DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
-    
+  
     List<Question> questions = new ArrayList<>();
     // The query will return a ResultSet with order depending on the level of similarity to the 
     // input string.
@@ -56,7 +54,7 @@ public class QuestionSearchServlet extends HttpServlet {
         request.getParameter("inputString") + "' IN NATURAL LANGUAGE MODE);";
     // The connection and query are attempted.
     try {
-      Connection connection = Utility.getConnection(pool);
+      Connection connection = Utility.getConnection(request);
       PreparedStatement preparedStatement = connection.prepareStatement(query);
       ResultSet queryResult = preparedStatement.executeQuery();
     
