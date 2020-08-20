@@ -18,7 +18,7 @@
 function loadIndex() {
   addAutoResize();
   fetchAuthIndexQuestion();
-  fetchQuestions('forum');
+  fetchQuestions('forum', 1);
 }
 
 /**
@@ -220,11 +220,13 @@ function fetchAuthVerification() {
  * Fetches questions from server, wraps each in an <li> element, 
  * and adds them to the DOM.
  */
-async function fetchQuestions(page) {
+async function fetchQuestions(pageNumber) {
   let questionId;
   let questionsContainer;
   let hasRedirect;
-  if (page === 'forum') {
+
+  // The single question view doesn't need pages, so it passes -1.
+  if (pageNumber !== -1) {
     // For the forum we pass -1 which means we need to retrieve all questions.
     questionId = -1;
     questionsContainer = document.getElementById('forum');
@@ -232,19 +234,24 @@ async function fetchQuestions(page) {
     // We want the element in the forum to have a link which sends to the single
     // page view.
     hasRedirect = true;
-  } else if (page === 'question') {
+  } else {
     questionId = (new URL(document.location)).searchParams.get("id");
     questionsContainer = document.getElementById('question');
     hasRedirect = false;
   }
-  const response = await fetch('/fetch-questions?id=' + questionId);
+  const response = await fetch('/fetch-questions?id=' + questionId + '&page=' + pageNumber);
   const questionsObject = await response.json();
 
   if (questionsObject.length !== 0) {
     // Check that the ID exist so that it actually has questions in it.
-    questionsObject.forEach(question => {
-      questionsContainer.appendChild(createQuestionElement(question, hasRedirect));
-    });
+
+    if (pageNumber === -1) {
+      questionsObject.forEach(question => {
+        questionsContainer.appendChild(createQuestionElement(question, hasRedirect));
+      });
+    } else {
+      questionsContainer.appendChild(createPageElement(questionsObject));
+    }
   } else {
     // If the ID doesn't exist, redirect to the index.
     window.location.replace('/index.html');
