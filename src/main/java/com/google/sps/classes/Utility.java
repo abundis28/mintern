@@ -129,7 +129,6 @@ public final class Utility {
 
     // Set up query to get username.
     String query = "SELECT username FROM User WHERE id = " + userId;
-
     try {
       // Establish connection to MySQL database.
       Connection connection = DriverManager.getConnection(
@@ -215,16 +214,7 @@ public final class Utility {
   /**
    * Returns true if mentor review is approved or rejected.
    */
-  public static int isReviewed(boolean isApprovalType, int mentorId) {
-    String reviewType = "";
-    if (isApprovalType) {
-      // If isApprovalType is true, set reviewType to 'is_approved' column.
-      reviewType = "is_approved";
-    } else {
-      // If isApprovalType is false, set reviewType to 'is_rejected' column.
-      reviewType = "is_rejected";
-    }
-
+  public static int isReviewed(String reviewType, int mentorId) {
     // Create the MySQL prepared statement.
     String query = "SELECT * FROM MentorEvidence "
         + "WHERE mentor_id = " + Integer.toString(mentorId) + " "
@@ -241,9 +231,9 @@ public final class Utility {
       
       // If query exists, returns true because mentor is found to be approved or rejected.
       if (queryResult.next()) {
-        if (isApprovalType) {
+        if (reviewType.equals("is_approved")) {
           return MENTOR_APPROVED;
-        } else {
+        } else if (reviewType.equals("is_rejected")) {
           return MENTOR_REJECTED;
         }
       }

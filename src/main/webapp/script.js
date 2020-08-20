@@ -220,39 +220,7 @@ function fetchMentorApproval() {
   }
   const mentorApprovalUrl = '/mentor-approval?id=' + mentorId;
   fetch(mentorApprovalUrl).then(response => response.json()).then(approval => {
-    if (approval.userId == mentorId && approval.isApproved) {
-      // If mentor has been approved, show corresponding message.
-      createApprovalMessage(1, 'text-success', 'Congratulations!');
-    } else if (approval.userId == mentorId && approval.isRejected) {
-      // If mentor has been rejected, show corresponding message.
-      createApprovalMessage(2, 'text-danger', 'rejected');
-    } else if (approval.userId == mentorId) {
-      // If mentor is not approved or rejected yet, show corresponding message.
-      createApprovalMessage(3, 'text-mint', 'under review');
-    } else if (approval.isApprover && approval.isApproved) {
-      // If approver is assigned to mentor but mentor is already approved,
-      // show corresponding message.
-      createApprovalMessage(4, 'text-mint', approval.mentorUsername);
-    } else if (approval.isApprover && approval.isRejected) {
-      // If approver is assigned to mentor but mentor is already rejected,
-      // show corresponding message.
-      createApprovalMessage(5, 'text-mint', approval.mentorUsername);
-    } else if (approval.isApprover && approval.hasReviewed) {
-      // If approver is assigned to mentor and has already reviewed them,
-      // show corresponding message.
-      createApprovalMessage(6, 'text-mint', approval.mentorUsername);
-    } else if (approval.isApprover) {
-      // If approver is assigned to mentor and has not reviewed them,
-      // show evidence and approval buttons.
-      createApprovalMessage(7, 'text-mint', approval.mentorUsername);
-
-      // Display paragraph mentor submitted as evidence.
-      const paragraphElement = document.getElementById('paragraph');
-      paragraphElement.innerHTML = approval.paragraph;
-    } else {
-      // If user is not either a mentor or an approver assigned to that mentor, redirect to index.
-      window.location.replace('/index.html');
-    }
+    createApprovalMessage(approval);
   })
 }
 
@@ -321,76 +289,107 @@ function createAuthenticationButton(authenticationUrl, buttonStyle, buttonText, 
 
 /**
  * Create message for the approval page that shows approval status directed to mentor or approver.
- * TODO(oumontiel): Create content for message.
+ * @param {MentorEvidence} approval
+ * TODO(oumontiel): Create content for each condition.
  */
-function createApprovalMessage(reviewStatus, spanColor, spanMessage) {
+function createApprovalMessage(example) {
   // Create elements for messages that will be added and the span that will be appended.
   const approvalSubtitleElement = document.getElementById('approval-subtitle');
   const approvalSmallTextElement = document.getElementById('approval-small-text');
 
-  // Create span element that will be appended to subtitle.
-  const approvalSpanElement = document.createElement('span');
-  approvalSpanElement.setAttribute('class', spanColor);
-  approvalSpanElement.textContent = spanMessage;
-  
-  switch(reviewStatus) {
-    case 1:
-      approvalSubtitleElement.appendChild(approvalSpanElement);
-      approvalSubtitleElement.appendChild(document.createTextNode(
-          ' Your review has been approved!'));
-      approvalSmallTextElement.appendChild(document.createTextNode(
-          'Your username will now show a verified icon to show off your experience.'));
-      break;
-    case 2:
-      approvalSubtitleElement.appendChild(document.createTextNode(
+  if (approval.userId == mentorId && approval.isApproved) {
+    // If mentor has been approved, show corresponding message.
+    approvalSubtitleElement.appendChild(
+        createApprovalSpan('text-success', 'Congratulations!'));
+    approvalSubtitleElement.appendChild(document.createTextNode(
+        ' Your review has been approved!'));
+    approvalSmallTextElement.appendChild(document.createTextNode(
+        'Your username will now show a verified icon to show off your experience.'));
+  } else if (approval.userId == mentorId && approval.isRejected) {
+    // If mentor has been rejected, show corresponding message.
+    approvalSubtitleElement.appendChild(document.createTextNode(
         'We\'re really sorry, your review has been '));
-      approvalSubtitleElement.appendChild(approvalSpanElement);
-      approvalSubtitleElement.appendChild(document.createTextNode('.'));
-      approvalSmallTextElement.appendChild(document.createTextNode(
-          'If you think this is a mistake, click the button to update your information.'));
-      break;
-    case 3:
-      approvalSubtitleElement.appendChild(document.createTextNode(
-          'Your information is '));
-      approvalSubtitleElement.appendChild(approvalSpanElement);
-      approvalSubtitleElement.appendChild(document.createTextNode('.'));
-      approvalSmallTextElement.appendChild(document.createTextNode(
-          'Please check in at another time.'));
-      break;
-    case 4:
-      approvalSubtitleElement.appendChild(approvalSpanElement);
-      approvalSubtitleElement.appendChild(document.createTextNode(
-          ' has been finished getting reviewed. They were approved!'));
-      approvalSmallTextElement.appendChild(document.createTextNode(
-          'You can dismiss this notification.'));
-      break;
-    case 5:
-      approvalSubtitleElement.appendChild(approvalSpanElement);
-      approvalSubtitleElement.appendChild(document.createTextNode(
-          ' has been finished getting reviewed. They were rejected.'));
-      approvalSmallTextElement.appendChild(document.createTextNode(
-          'You can dismiss this notification.'));
-      break;
-    case 6:
-      approvalSubtitleElement.appendChild(document.createTextNode(
-          'You have already reviewed '));
-      approvalSubtitleElement.appendChild(approvalSpanElement);
-      approvalSubtitleElement.appendChild(document.createTextNode('.'));
-      approvalSmallTextElement.appendChild(document.createTextNode(
-          'Thanks for your contribution.'));
-      break;
-    case 7:
-      approvalSubtitleElement.appendChild(document.createTextNode(
-          'Below you can find the information related to the internship experience of '));
-      approvalSubtitleElement.appendChild(approvalSpanElement);
-      approvalSubtitleElement.appendChild(document.createTextNode('.'));
-      approvalSmallTextElement.appendChild(document.createTextNode(
-          'Please review this mentor.'));
-      return;
+    approvalSubtitleElement.appendChild(
+        createApprovalSpan('text-danger', 'rejected'));
+    approvalSubtitleElement.appendChild(document.createTextNode('.'));
+    approvalSmallTextElement.appendChild(document.createTextNode(
+        'If you think this is a mistake, click the button to update your information.'));
+  } else if (approval.userId == mentorId) {
+    // If mentor is not approved or rejected yet, show corresponding message.
+    approvalSubtitleElement.appendChild(document.createTextNode(
+        'Your information is '));
+    approvalSubtitleElement.appendChild(
+      createApprovalSpan('text-mint', 'under review'));
+    approvalSubtitleElement.appendChild(document.createTextNode('.'));
+    approvalSmallTextElement.appendChild(document.createTextNode(
+        'Please check in at another time.'));
+  } else if (approval.isApprover && approval.isApproved) {
+    // If approver is assigned to mentor but mentor is already approved,
+    // show corresponding message.
+    approvalSubtitleElement.appendChild(
+      createApprovalSpan('text-mint', approval.mentorUsername));
+    approvalSubtitleElement.appendChild(document.createTextNode(
+        ' has been finished getting reviewed. They were approved!'));
+    approvalSmallTextElement.appendChild(document.createTextNode(
+        'You can dismiss this notification.'));
+  } else if (approval.isApprover && approval.isRejected) {
+    // If approver is assigned to mentor but mentor is already rejected,
+    // show corresponding message.
+    approvalSubtitleElement.appendChild(
+      createApprovalSpan('text-mint', approval.mentorUsername));
+    approvalSubtitleElement.appendChild(document.createTextNode(
+        ' has been finished getting reviewed. They were rejected.'));
+    approvalSmallTextElement.appendChild(document.createTextNode(
+        'You can dismiss this notification.'));
+  } else if (approval.isApprover && approval.hasReviewed) {
+    // If approver is assigned to mentor and has already reviewed them,
+    // show corresponding message.
+    approvalSubtitleElement.appendChild(document.createTextNode(
+        'You have already reviewed '));
+    approvalSubtitleElement.appendChild(
+      createApprovalSpan('text-mint', approval.mentorUsername));
+    approvalSubtitleElement.appendChild(document.createTextNode('.'));
+    approvalSmallTextElement.appendChild(document.createTextNode(
+        'Thanks for your contribution.'));
+  } else if (approval.isApprover) {
+    // If approver is assigned to mentor and has not reviewed them,
+    // show evidence and approval buttons.
+    approvalSubtitleElement.appendChild(document.createTextNode(
+        'Below you can find the information related to the internship experience of '));
+    approvalSubtitleElement.appendChild(
+      createApprovalSpan('text-mint', approval.mentorUsername));
+    approvalSubtitleElement.appendChild(document.createTextNode('.'));
+    approvalSmallTextElement.appendChild(document.createTextNode(
+        'Please read through this information and verify its validity.'));
+    
+    // Display mentor username.
+    const usernameElement = document.getElementById('username');
+    usernameElement.innerHTML = approval.mentorUsername;
+
+    // Display paragraph mentor submitted as evidence.
+    const paragraphElement = document.getElementById('paragraph');
+    paragraphElement.innerHTML = approval.paragraph;
+    return;
+  } else {
+    // If user is not either a mentor or an approver assigned to that mentor, redirect to index.
+    window.location.replace('/index.html');
   }
+
   // If mentor is not being reviewed, delete review content.
   const approvalContentElement = document.getElementById('approval-content');
   approvalContentElement.innerHTML = '';
+}
+
+/**
+ * 
+ * @param {string} spanColor 
+ * @param {string} spanMessage 
+ */
+function createApprovalSpan(spanColor, spanMessage) {
+  const approvalSpanElement = document.createElement('span');
+  approvalSpanElement.setAttribute('class', spanColor);
+  approvalSpanElement.textContent = spanMessage;
+  return approvalSpanElement;
 }
 
 /**
