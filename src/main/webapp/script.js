@@ -250,7 +250,7 @@ async function fetchQuestions(pageNumber) {
         questionsContainer.appendChild(createQuestionElement(question, hasRedirect));
       });
     } else {
-      questionsContainer.appendChild(createPageElement(questionsObject));
+      questionsContainer.appendChild(createPageElement(questionsObject, pageNumber));
     }
   } else {
     // If the ID doesn't exist, redirect to the index.
@@ -301,6 +301,43 @@ function createNotificationsElement(notification) {
   liElement.appendChild(linkElement);
   liElement.setAttribute('class', 'list-group-item');
   return liElement;
+}
+
+function createPageElement(forumPage, pageNumber) {
+  const pageWrapper = document.createElement('div');
+  forumPage.pageQuestions.forEach(question => {
+    pageWrapper.appendChild(createQuestionElement(question, hasRedirect));
+  });
+
+  const pageIndexes = document.createElement('ul');
+  pageIndexes.setAttribute('class', 'pagination');
+  
+  const previousButton = document.createElement('li');
+  if (forumPage.previousPage) {
+    previousButton.setAttribute('class', 'page-item');
+    previousButton.setAttribute(
+        'onclick', 'fetchQuestions(' + (pageNumber - 1) + ')');
+  } else {
+    previousButton.setAttribute('class', 'page-item disabled');
+  }
+  pageIndexes.appendChild(previousButton);
+
+  const pageNumber = document.createElement('li');
+  pageNumber.setAttribute('class', 'list-group-item');
+  pageNumber.innerText = 'Page ' + pageNumber;
+  pageIndexes.appendChild(pageNumber);
+
+  const nextButton = document.createElement('li');
+  if (forumPage.nextPage) {
+    nextButton.setAttribute('class', 'page-item');
+    previousButton.setAttribute(
+        'onclick', 'fetchQuestions(' + (pageNumber + 1) + ')');
+  } else {
+    nextButton.setAttribute('class', 'page-item disabled');
+  }
+  pageIndexes.appendChild(nextButton);
+
+  pageWrapper.appendChild(pageIndexes)
 }
 
 /** 
