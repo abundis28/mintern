@@ -18,7 +18,17 @@
 function loadIndex() {
   addAutoResize();
   fetchAuthIndexQuestion();
-  fetchQuestions('forum');
+  // Determine whether all the questions should be fetched or just the ones that match the search.
+  const fullTextSearch = (new URL(document.location)).searchParams.get("search");
+  if (fullTextSearch === "1") {
+    // Fetch just the questions related to the string input in the search bar.
+    const stringSearchInput = (new URL(document.location)).searchParams.get("stringSearchInput");
+    searchQuestion(stringSearchInput);
+  } else {
+    // Fetch the whole forum.
+    fetchQuestions('forum');
+    eraseQueryStringFromUrl();
+  }
 }
 
 /**
@@ -97,11 +107,30 @@ function fetchAuthIndexQuestion() {
       createAuthenticationButton(
           user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
 
-      // Show question submission box when logged in.
+      // Show submission forms when logged in.
       const questionSubmission = document.getElementById('post-question');
       if (questionSubmission) {
         questionSubmission.style.display = 'block';
       }
+
+      const answerSubmission = document.getElementById('post-answer');
+      if (answerSubmission) {
+        answerSubmission.style.display = "block";
+      }
+
+      const commentSubmission = document.getElementsByClassName('post-comment');
+      if (commentSubmission != null) {
+        // The timeout is to wait for the dynamically generated forms of each
+        // answer to appear in the DOM so that the attribute can be changed.
+        setTimeout(() => {
+          for (element of commentSubmission) {
+            element.style.display = "block";
+          }
+          // The timeout of 500ms is enough to let the forms load and not make
+          // the user feel like it's taking too long to load the whole page.
+        }, 500);
+      }
+
     } else {
       // If user is logged out, show signup and login buttons in navbar.
 
@@ -414,11 +443,15 @@ function createCommentElement(comment) {
  * Creates an element with the form to upload a comment. 
  */
 function createCommentFormElement(answerId) {
-  const formElement = document.createElement('form');
-
+  const formDiv = document.createElement('div');
+  formDiv.setAttribute('class', 'post-comment');
+  formDiv.setAttribute('style', 'display: none');
+  
   // Attributes to call the servlet.
+  const formElement = document.createElement('form');
   formElement.setAttribute('action', '/post-comment');
   formElement.setAttribute('method', 'POST');
+  formDiv.appendChild(formElement);
   
   const divElement = document.createElement('div');
   divElement.setAttribute('class', 'form-group ml-5');
@@ -456,7 +489,7 @@ function createCommentFormElement(answerId) {
   buttonElement.innerText = "Submit";
   formElement.appendChild(buttonElement);
 
-  return formElement;
+  return formDiv;
 }
 
 /** 
@@ -484,6 +517,7 @@ function backToHomepage() {
   const questionsContainer = document.getElementById('forum');
   questionsContainer.innerHTML = "";
   fetchQuestions('forum');
+  eraseQueryStringFromUrl();
 }
 
 /**
@@ -523,10 +557,17 @@ function notify(type, id) {
 }
 
 /**
+ * Redirects user from any view to the search view in index.
+ */
+function searchRedirect() {
+  let stringSearchInput = document.getElementById("questionSearchInput").value;
+  window.location.replace("index.html?search=1&stringSearchInput=" + stringSearchInput);
+}
+
+/**
  * Searches questions that contain the input string in the title or body elements.
  */
-function searchQuestion() {
-  let stringSearchInput = document.getElementById("questionSearchInput").value;
+function searchQuestion(stringSearchInput) {
   if (stringSearchInput != "") {
     const questionsContainer = document.getElementById('forum');
     questionsContainer.innerHTML = "";
@@ -541,8 +582,10 @@ function searchQuestion() {
   }
 }
 
-// TODO(oumontiel): write the function comment.
-(function() {
+/**
+ * Disables form submissions if there are invalid fields in it.
+ */
+(function validateFormSubmission() {
   'use strict';
   window.addEventListener('load', function() {
     // Fetch all the forms we want to apply custom Bootstrap validation styles to
@@ -559,3 +602,16 @@ function searchQuestion() {
     });
   }, false);
 })();
+
+/**
+ * Erases the query string from the url. This will be used whenever a search is made in the
+ * homepage view (the query string gets a pair of parameters) and the user clicks on the brand
+ * button to return to the full forum page.
+ */
+function eraseQueryStringFromUrl() {
+  const uri = window.location.toString();
+  if (uri.indexOf("?") > 0) {
+      const clean_uri = uri.substring(0, uri.indexOf("?"));
+      window.history.replaceState({}, document.title, clean_uri);
+  }
+}

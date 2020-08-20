@@ -55,7 +55,7 @@ public class NotificationServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Define local time for the new entries in the server.
     Timestamp localTimestamp = Timestamp.valueOf(LocalDateTime.now());
-    // Check if notification is about a question answered or answer commented, along with its id.
+    // Check if notification is about a question answered, answer commented, or mentor approval, along with its id.
     String typeOfNotification = request.getParameter("type");
     int modifiedElementId = Utility.tryParseInt(request.getParameter("modifiedElementId"));
 
@@ -73,6 +73,11 @@ public class NotificationServlet extends HttpServlet {
       query =  "SELECT follower_id FROM AnswerFollower WHERE answer_id = " + modifiedElementId;
       notificationUrl = "/question.html?id=" + getIdOfAnsweredQuestion(modifiedElementId);
       notificationMessage = "Your answer was commented."; 
+    } else if (typeOfNotification.equals("requestApproval")) {
+      // If the notification is for a mentor approval.
+      query = "SELECT approver_id FROM MentorApproval WHERE mentor_id = " + modifiedElementId;
+      notificationUrl = "/approval.html?id=" + modifiedElementId;
+      notificationMessage = "A mentor requests your approval";
     }
     // Creates notification and relationship between its ID and the ID of the concerned users.
     createNotification(query, notificationUrl, notificationMessage, localTimestamp);
