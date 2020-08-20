@@ -53,7 +53,7 @@ public class FetchQuestionsServlet extends HttpServlet {
     // ID of the question to query.
     int questionId = Utility.tryParseInt(request.getParameter("id"));
 
-    if (questionId != SqlConstants.FETCH_ALL_QUESTIONS) {
+    if (questionId == SqlConstants.FETCH_ALL_QUESTIONS) {
       // Nothing needs to be added to the query.
       query = Utility.fetchQuestionsQuery;
     } else {
