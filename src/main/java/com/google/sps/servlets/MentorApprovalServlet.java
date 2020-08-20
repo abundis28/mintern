@@ -49,7 +49,6 @@ public class MentorApprovalServlet extends HttpServlet {
     boolean isApprover = false;
     String mentorUsername = "";
     String paragraph = "";
-
     if (userService.isUserLoggedIn()) {
       // If user is logged in, update variables.
       isApprover = checkForApprover(mentorId, approverId);
