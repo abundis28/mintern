@@ -108,7 +108,6 @@ function fetchAuthIndexQuestion() {
 
       const answerSubmission = document.getElementById('post-answer');
       if (answerSubmission) {
-        console.log('working');
         answerSubmission.style.display = "block";
       }
 
@@ -118,7 +117,6 @@ function fetchAuthIndexQuestion() {
         // answer to appear in the DOM so that the attribute can be changed.
         setTimeout(() => {
           for (element of commentSubmission) {
-            console.log('wap');
             element.style.display = "block";
           }
           // The timeout of 500ms is enough to let the forms load and not make
