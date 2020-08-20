@@ -84,6 +84,9 @@ public class FetchQuestionsServlet extends HttpServlet {
 
     response.setContentType("application/json;");
 
+    // Response object is different for a single question than for the forum pages.
+    // Questions in the forum are wrapped in a ForumPage object with information about
+    // pages.
     if (page != SqlConstants.SINGLE_QUESTION_PAGE) {
       // Forum posts get split by pages.
       ForumPage forumPage = splitPages(questions, page);
