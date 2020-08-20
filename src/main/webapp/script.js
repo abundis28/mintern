@@ -381,7 +381,7 @@ function createApprovalMessage(example) {
 }
 
 /**
- * 
+ * Creates span element that is part of approval message.
  * @param {string} spanColor 
  * @param {string} spanMessage 
  */
