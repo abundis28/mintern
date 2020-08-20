@@ -25,12 +25,12 @@ public class ForumPage {
   private Integer nextPage;
   private Integer previousPage;
   private int numberOfPages;
-  private List<Comment> pageComments;
+  private List<Question> pageQuestions;
 
-  public ForumPage(Integer nextPage, Integer previousPage, int numberOfPages, List<Comment> pageComments) {
+  public ForumPage(Integer nextPage, Integer previousPage, int numberOfPages, List<Question> pageQuestions) {
     this.nextPage = nextPage;
     this.previousPage = previousPage;
     this.numberOfPages = numberOfPages;
-    this.pageComments = pageComments;
+    this.pageQuestions = pageQuestions;
   }
 }
