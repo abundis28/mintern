@@ -83,7 +83,10 @@ function fetchAuthIndexQuestion() {
     const inboxButton = document.getElementById('notificationsDropdown');
     if (user.isUserLoggedIn) {
       // If user is logged in, show logout and inbox buttons in navbar.
-      inboxButton.style.display = 'block';
+      if (inboxButton) {
+        // Check that the element exists.
+        inboxButton.style.display = 'block';
+      }
       fetchNotifications(); 
       if (!user.isUserRegistered) {
         // If logged in user is not registered, redirect to signup page.
@@ -105,6 +108,7 @@ function fetchAuthIndexQuestion() {
 
       const answerSubmission = document.getElementById('post-answer');
       if (answerSubmission) {
+        console.log('working');
         answerSubmission.style.display = "block";
       }
 
@@ -114,6 +118,7 @@ function fetchAuthIndexQuestion() {
         // answer to appear in the DOM so that the attribute can be changed.
         setTimeout(() => {
           for (element of commentSubmission) {
+            console.log('wap');
             element.style.display = "block";
           }
           // The timeout of 500ms is enough to let the forms load and not make
