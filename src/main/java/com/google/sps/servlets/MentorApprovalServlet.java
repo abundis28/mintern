@@ -154,7 +154,7 @@ public class MentorApprovalServlet extends HttpServlet {
     String query = "UPDATE MentorApproval "
         + "SET is_reviewed = TRUE "
         + "WHERE mentor_id = " + Integer.toString(mentorId)
-        + " AND approver_id = " + Integer.toString(approverId);\
+        + " AND approver_id = " + Integer.toString(approverId);
     Utility.executeQuery(query);
   }
 
