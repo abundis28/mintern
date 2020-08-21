@@ -82,4 +82,15 @@ public final class UtilityTest {
 
     Assert.assertEquals(actual, expected);
   }
+  
+  @Test
+  public void nonIntegerValue() {
+    // String with non integer value.
+    String stringToInt = "Non integer value";
+    
+    int actual = Utility.tryParseInt(stringToInt);
+    int expected = 0;
+
+    Assert.assertEquals(actual, expected);
+  }
 }
