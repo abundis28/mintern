@@ -598,7 +598,7 @@ function notify(type, id) {
  * Modifies approval status of a mentor based on approver's feedback.
  * @param {boolean} isApproved 
  */
-function mentorApprove(isApproved) {
+function updateMentorApproval(isApproved) {
   const mentor_id = (new URL(document.location)).searchParams.get('id');
   fetch('mentor-approval?isApproved=' + isApproved + '&id=' + mentor_id, {
     method: 'POST'
