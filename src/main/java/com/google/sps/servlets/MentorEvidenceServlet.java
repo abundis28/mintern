@@ -69,21 +69,7 @@ public class MentorEvidenceServlet extends HttpServlet {
     String query = "UPDATE MentorEvidence "
         + "SET paragraph = '" + paragraph + "' "
         + "WHERE mentor_id = " + userId;
-
-    try {
-      // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
-
-      // Create the MySQL INSERT prepared statement.
-      PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.execute();
-      connection.close();
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, get the log of the error.
-      Logger logger = Logger.getLogger(MentorEvidenceServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
+    Utility.executeQuery(query);
   }
 
   /**
@@ -96,8 +82,8 @@ public class MentorEvidenceServlet extends HttpServlet {
     int[] approvers = {SqlConstants.SHAAR_USER_ID, SqlConstants.ANDRES_USER_ID, SqlConstants.OMAR_USER_ID};
 
     // Set up query to insert new experience tag to user.
-    String query = "INSERT INTO MentorApproval (mentor_id, approver_id, is_approved, is_rejected) "
-        + "VALUES (?, ?, FALSE, FALSE)";
+    String query = "INSERT INTO MentorApproval (mentor_id, approver_id, is_reviewed) "
+        + "VALUES (?, ?, FALSE)";
 
     for (int approverId : approvers) {
       try {

@@ -118,6 +118,7 @@ public final class SqlConstants {
   public static final int MENTOR_EXPERIENCE_INSERT_TAG = 2;
 
   // Constants used for querying mentor evidence.
+  public static final int MENTOR_EVIDENCE_FETCH_APPROVALS = 2;
   public static final int MENTOR_EVIDENCE_FETCH_PARAGRAPH = 5;
 
   // Constants used for inserting approvers to mentors.

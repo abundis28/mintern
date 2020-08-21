@@ -23,7 +23,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <!-- Logo -->
-      <a class="navbar-brand" href="#">
+      <a class="navbar-brand" href="index.html">
         <img src="images/mintern-logo.png" height="50" alt="Mintern logo">
       </a>
       <button
@@ -69,6 +69,13 @@
       <!-- Mentor Evidence Display -->
       <div class="container">
         <div id="paragraph"></div>
+      </div>
+      <!-- Mentor Approval Buttons -->
+      <div class="container">
+        <div class="row d-flex justify-content-center">
+          <button type="button" class="btn btn-success" onclick="updateMentorApproval(true)">Approve</button>
+          <button type="button" class="btn btn-danger" onclick="updateMentorApproval(false)">Reject</button>
+        </div>
       </div>
     </div>
   </body>

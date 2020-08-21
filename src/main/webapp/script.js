@@ -595,6 +595,17 @@ function notify(type, id) {
 }
 
 /**
+ * Modifies approval status of a mentor based on approver's feedback.
+ * @param {boolean} isApproved 
+ */
+function mentorApprove(isApproved) {
+  const mentor_id = (new URL(document.location)).searchParams.get('id');
+  fetch('mentor-approval?isApproved=' + isApproved + '&id=' + mentor_id, {
+    method: 'POST'
+  })
+}
+
+/**
  * Redirects user from any view to the search view in index.
  */
 function searchRedirect() {

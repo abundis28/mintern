@@ -67,14 +67,14 @@ VALUES
   (2, 2, TRUE, FALSE, 'I worked at Google. Please approve.'),
   (3, 2, TRUE, FALSE, 'I worked at Google. Here is a link: link.com');
 
-INSERT INTO MentorApproval (mentor_id, approver_id, is_approved, is_rejected)
+INSERT INTO MentorApproval (mentor_id, approver_id, is_reviewed)
 VALUES
-  (1, 2, TRUE, FALSE),
-  (1, 3, TRUE, FALSE),
-  (2, 1, TRUE, FALSE),
-  (2, 3, TRUE, FALSE),
-  (3, 1, TRUE, FALSE),
-  (3, 2, TRUE, FALSE);
+  (1, 2, TRUE),
+  (1, 3, TRUE),
+  (2, 1, TRUE),
+  (2, 3, TRUE),
+  (3, 1, TRUE),
+  (3, 2, TRUE);
 
 INSERT INTO Question (title, body, asker_id, date_time) 
 VALUES 
