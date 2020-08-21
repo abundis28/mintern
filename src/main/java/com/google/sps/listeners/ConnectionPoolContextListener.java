@@ -79,6 +79,9 @@ public class ConnectionPoolContextListener implements ServletContextListener {
     return pool;
   }
 
+  /**
+   * Destroys pull of connections whenever the webapp is terminated.
+   */
   @Override
   public void contextDestroyed(ServletContextEvent event) {
     if (Utility.localOrDeployed.equals("deploy")) {
@@ -90,6 +93,9 @@ public class ConnectionPoolContextListener implements ServletContextListener {
     }
   }
 
+  /**
+   * Creates pool of connections whenever the webapp is loaded.
+   */
   @Override
   public void contextInitialized(ServletContextEvent event) {
     if (Utility.localOrDeployed.equals("deploy")) {
