@@ -58,9 +58,9 @@ public class FetchQuestionsServlet extends HttpServlet {
       query = Utility.fetchQuestionsQuery;
     } else {
       // Condition to fetch only one question. WHERE condition is inserted before GROUP BY.
-      query = Utility.fetchQuestionsQuery.substring(0, SqlConstants.QUERY_WHERE_CONDITION)
+      query = Utility.fetchQuestionsQuery.substring(0, SqlConstants.QUESTION_QUERY_WHERE_CONDITION)
           + "WHERE Question.id=" + questionId + " " + Utility.fetchQuestionsQuery.substring(
-                SqlConstants.QUERY_WHERE_CONDITION, Utility.fetchQuestionsQuery.length());
+                SqlConstants.QUESTION_QUERY_WHERE_CONDITION, Utility.fetchQuestionsQuery.length());
     }
 
     // The connection and query are attempted.
