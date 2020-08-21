@@ -56,9 +56,7 @@ public class EmailServlet extends HttpServlet {
     // and get their emails concatenated in a string.
     String userEmails =
         Utility.getUserEmailsAsString(Utility.getUsersToNotify(typeOfNotification, modifiedElementId,
-                                              Utility.SQL_CLOUD_URL, Utility.SQL_CLOUD_USER, 
-                                              Utility.SQL_CLOUD_PASSWORD), Utility.SQL_CLOUD_URL, 
-                                              Utility.SQL_CLOUD_USER, Utility.SQL_CLOUD_PASSWORD);
+                                              request), request);
     String subject = "Activity on Mintern!";
     String message = "Dear mintern,\n" +
                      "You have new notifications in Mintern!\n" + 
