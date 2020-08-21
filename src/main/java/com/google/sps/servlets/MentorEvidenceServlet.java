@@ -70,21 +70,7 @@ public class MentorEvidenceServlet extends HttpServlet {
     String query = "UPDATE MentorEvidence "
         + "SET paragraph = '" + paragraph + "' "
         + "WHERE mentor_id = " + userId;
-
-    try {
-      // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
-
-      // Execute the MySQL UPDATE prepared statement.
-      PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.execute();
-      connection.close();
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, get the log of the error.
-      Logger logger = Logger.getLogger(MentorEvidenceServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
+    Utility.executeQuery(query);
   }
 
   /**

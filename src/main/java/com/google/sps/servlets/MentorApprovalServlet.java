@@ -55,7 +55,7 @@ public class MentorApprovalServlet extends HttpServlet {
                                          // second checks if approver has already reviewed.
 
     if (userService.isUserLoggedIn()) {
-      // If user is logged in, update variables. Else, variables stay with default values.
+      // If user is logged in, update variables. Else, empty values will be displayed.
       approver = checkForApprover(mentorId, userId);
       mentorUsername = Utility.getUsername(mentorId);
 
@@ -107,7 +107,32 @@ public class MentorApprovalServlet extends HttpServlet {
     addEvidence(isApproved, mentorId);
 
     // If mentor review is complete, send them a notification.
-    if (Utility.isReviewed("is_approved", mentorId) == Utility.MENTOR_APPROVED) {
+    String notificationType = "";
+    if (Utility.getReviewStatus("is_approved", mentorId) == Utility.MENTOR_APPROVED) {
+      // If mentor is approved, send notification of type 'approved'.
+      notificationType = "approved";
+    } else if (Utility.getReviewStatus("is_rejected", mentorId) == Utility.MENTOR_REJECTED) {
+      // If mentor is rejected, send notification of type 'rejected'.
+      notificationType = "rejected";
+    }
+
+    // Post to notification servlet.
+    if (Utility.getReviewStatus("is_approved", mentorId) == Utility.MENTOR_APPROVED) {
+      // If mentor is approved, send notification of type 'approved'.
+      response.setContentType("text/plain");
+      try {
+        request.getRequestDispatcher("/notification?type=" + notificationType +
+            "&modifiedElementId=" + mentorId).include(request, response);
+      } catch (ServletException exception) {
+        Logger logger = Logger.getLogger(MentorApprovalServlet.class.getName());
+        logger.log(Level.SEVERE, exception.getMessage(), exception);
+      }
+    }
+    
+    
+    
+    // If mentor review is complete, send them a notification.
+    if (Utility.getReviewStatus("is_approved", mentorId) == Utility.MENTOR_APPROVED) {
       // If mentor is approved, send notification of type 'approved'.
       response.setContentType("text/plain");
       try {
@@ -117,7 +142,7 @@ public class MentorApprovalServlet extends HttpServlet {
         Logger logger = Logger.getLogger(MentorApprovalServlet.class.getName());
         logger.log(Level.SEVERE, exception.getMessage(), exception);
       }
-    } else if (Utility.isReviewed("is_rejected", mentorId) == Utility.MENTOR_REJECTED) {
+    } else if (Utility.getReviewStatus("is_rejected", mentorId) == Utility.MENTOR_REJECTED) {
       // If mentor is rejected, send notification of type 'rejected'.
       response.setContentType("text/plain");
       try {
@@ -171,26 +196,12 @@ public class MentorApprovalServlet extends HttpServlet {
    * Updates the is_reviewed variable in MentorApproval table.
    */
   private void addApproval(int mentorId, int approverId) {
-    // Create the MySQL prepared statement.
+    // Create and execute the MySQL query.
     String query = "UPDATE MentorApproval "
         + "SET is_reviewed = TRUE "
         + "WHERE mentor_id = " + Integer.toString(mentorId)
         + " AND approver_id = " + Integer.toString(approverId);
-    
-    try {
-      // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
-      
-      // Execute the MySQL SELECT prepared statement.
-      PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.execute();
-      connection.close();
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(MentorApprovalServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
+    Utility.executeQuery(query);
   }
 
   /**
@@ -201,7 +212,7 @@ public class MentorApprovalServlet extends HttpServlet {
     // Get current number of approvals mentor has.
     int numberOfApprovals = getNumberOfApprovals(mentorId);
     
-    // Create the MySQL prepared statement.
+    // Create and execute the MySQL query.
     String query = "";
     if(isApproved && numberOfApprovals == 1) {
       // If user is approved by approver, and already has one approval,
@@ -221,21 +232,7 @@ public class MentorApprovalServlet extends HttpServlet {
           + "SET is_rejected = TRUE "
           + "WHERE mentor_id = " + Integer.toString(mentorId);
     }
-    
-    try {
-      // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
-      
-      // Execute the MySQL SELECT prepared statement.
-      PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.execute();
-      connection.close();
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(MentorApprovalServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
+    Utility.executeQuery(query);
   }
 
   /**
