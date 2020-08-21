@@ -149,6 +149,28 @@ function fetchAuthIndexQuestion() {
 }
 
 /**
+ * Displays logout button or redirects to index in verification page.
+ */
+function fetchAuthVerification() {
+  fetch('/authentication').then(response => response.json()).then(user => {
+    if (user.isUserLoggedIn) {
+      // If user is logged in, show logout button in navbar.
+      if (!user.isUserRegistered) {
+        // If logged in user is not registered, redirect to signup page.
+        window.location.replace('/signup.html');
+      }
+
+      // Add logout button to navbar.
+      createAuthenticationButton(
+          user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
+    } else {
+      // If user is logged out, show signup and login buttons in navbar.
+      window.location.replace('/index.html');
+    }
+  })
+}
+
+/**
  * Fetches notifications of the signed in user.
  */
 function fetchNotifications() {
@@ -204,28 +226,6 @@ function fetchMentorExperience() {
 
     // Refresh select container to show options.
     $('.selectpicker').selectpicker('refresh');
-  })
-}
-
-/**
- * Displays logout button or redirects to index in verification page.
- */
-function fetchAuthVerification() {
-  fetch('/authentication').then(response => response.json()).then(user => {
-    if (user.isUserLoggedIn) {
-      // If user is logged in, show logout button in navbar.
-      if (!user.isUserRegistered) {
-        // If logged in user is not registered, redirect to signup page.
-        window.location.replace('/signup.html');
-      }
-
-      // Add logout button to navbar.
-      createAuthenticationButton(
-          user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
-    } else {
-      // If user is logged out, show signup and login buttons in navbar.
-      window.location.replace('/index.html');
-    }
   })
 }
 
@@ -318,10 +318,16 @@ function createNotificationsElement(notification) {
   return liElement;
 }
 
-function createPageElement(forumPage, pageNumber, hasRedirect) {
+/**
+ * Creates questions wrapper for limiting posts with pagination.
+ * 
+ * @param {ForumPage} forumPage : object with pagination info and the question list.
+ * @param {int} pageNumber : current page number
+ */
+function createPageElement(forumPage, pageNumber) {
   const pageWrapper = document.createElement('div');
   forumPage.pageQuestions.forEach(question => {
-    pageWrapper.appendChild(createQuestionElement(question, hasRedirect));
+    pageWrapper.appendChild(createQuestionElement(question, /**hasRedirect=*/true));
   });
 
   const pageIndexes = document.createElement('ul');
