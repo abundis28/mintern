@@ -53,7 +53,8 @@ public final class Utility {
       + "LEFT JOIN (SELECT question_id, COUNT(id) answers FROM Answer "
       + "GROUP BY question_id) AnswerCount ON Question.id=AnswerCount.question_id "
       + "LEFT JOIN (SELECT question_id AS follows_question FROM QuestionFollower WHERE follower_id=?) "
-      + "UserFollows ON Question.id=UserFollows.follows_question ";
+      + "UserFollows ON Question.id=UserFollows.follows_question "
+      + "ORDER BY Question.date_time DESC;";
 
   // Query to get answers and comments from a question. Generates the following table:
   //
@@ -63,9 +64,11 @@ public final class Utility {
   // +----+-------------+------+-----------+-----------+-------+----+----------+----+-----------+------+-----------+-----------+----+----------+
   public static final String fetchAnswersAndCommentsQuery = "SELECT * FROM Answer LEFT JOIN " 
       + "(SELECT id, username FROM User) AnswerUsername ON Answer.author_id=AnswerUsername.id "
-      + "LEFT JOIN Comment ON Answer.id=Comment.answer_id LEFT JOIN "
-      + "(SELECT id, username FROM User) CommentUsername ON Comment.author_id=CommentUsername.id"
-      + " WHERE Answer.question_id=?;";
+      + "LEFT JOIN Comment ON Answer.id=Comment.answer_id "
+      + "LEFT JOIN (SELECT id, username FROM User) CommentUsername "
+      + "ON Comment.author_id=CommentUsername.id "
+      + "WHERE Answer.question_id=? "
+      + "ORDER BY Answer.date_time ASC;";
 
   /**
    * Converts objects to JSON using GSON class.

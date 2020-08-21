@@ -55,11 +55,13 @@ public class FetchQuestionsServlet extends HttpServlet {
     int userId = Utility.getUserId();
 
     if (questionId == SqlConstants.FETCH_ALL_QUESTIONS) {
-      // Nothing needs to be added to the query apart from closing it.
-      query = Utility.fetchQuestionsQuery + ";";
+      // Nothing needs to be added to the query.
+      query = Utility.fetchQuestionsQuery;
     } else {
-      // Condition to fetch only one question.
-      query = Utility.fetchQuestionsQuery + "WHERE Question.id=" + questionId + ";";
+      // Condition to fetch only one question. WHERE condition is inserted before GROUP BY.
+      query = Utility.fetchQuestionsQuery.substring(0, SqlConstants.QUESTION_QUERY_WHERE_CONDITION)
+          + "WHERE Question.id=" + questionId + " " + Utility.fetchQuestionsQuery.substring(
+                SqlConstants.QUESTION_QUERY_WHERE_CONDITION, Utility.fetchQuestionsQuery.length());
     }
 
     // The connection and query are attempted.
