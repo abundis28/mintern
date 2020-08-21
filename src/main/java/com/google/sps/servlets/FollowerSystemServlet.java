@@ -30,14 +30,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** 
- * This servlet will post a question to the forum.
- * TODO(shaargtz): join this servlet with fetchQuestions into a single question servlet.
+ * This servlet holds the logic to follow and unfollow a question.
  */
 @WebServlet("/follower-system")
 public class FollowerSystemServlet extends HttpServlet {
 
   /** 
-   * Executes the query to post a question to the database.
+   * Executes the query so that the user follows/unfollows a question.
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
