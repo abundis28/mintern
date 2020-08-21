@@ -215,9 +215,9 @@ public final class Utility {
   }
 
   /**
-   * Returns true if mentor review is approved or rejected.
+   * Returns the mentor review status, which could be approved, rejected or not reviewed.
    */
-  public static int isReviewed(String reviewType, int mentorId) {
+  public static int getReviewStatus(String reviewType, int mentorId) {
     // Create the MySQL prepared statement.
     String query = "SELECT * FROM MentorEvidence "
         + "WHERE mentor_id = " + Integer.toString(mentorId) + " "

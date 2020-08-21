@@ -78,7 +78,7 @@ public class MentorApprovalServlet extends HttpServlet {
     addEvidence(isApproved, mentorId);
 
     // If mentor review is complete, send them a notification.
-    if (Utility.isReviewed("is_approved", mentorId) == Utility.MENTOR_APPROVED) {
+    if (Utility.getReviewStatus("is_approved", mentorId) == Utility.MENTOR_APPROVED) {
       // If mentor is approved, send notification of type 'approved'.
       response.setContentType("text/plain");
       try {
@@ -88,7 +88,7 @@ public class MentorApprovalServlet extends HttpServlet {
         Logger logger = Logger.getLogger(MentorApprovalServlet.class.getName());
         logger.log(Level.SEVERE, exception.getMessage(), exception);
       }
-    } else if (Utility.isReviewed("is_rejected", mentorId) == Utility.MENTOR_REJECTED) {
+    } else if (Utility.getReviewStatus("is_rejected", mentorId) == Utility.MENTOR_REJECTED) {
       // If mentor is rejected, send notification of type 'rejected'.
       response.setContentType("text/plain");
       try {
