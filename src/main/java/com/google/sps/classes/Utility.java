@@ -169,6 +169,8 @@ public final class Utility {
       question.setNumberOfAnswers(queryResult.getInt(
           SqlConstants.QUESTION_FETCH_NUMBEROFANSWERS));
       question.setUserFollowsQuestion((queryResult.getInt(
+          // follows_question returns the ID of the question if the user follows it, or 0
+          // if the user doesn't follow it.
           SqlConstants.QUESTION_FETCH_USERFOLLOWSQUESTION) != 0 ? true : false));
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
