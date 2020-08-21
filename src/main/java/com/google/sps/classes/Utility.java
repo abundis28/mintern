@@ -122,7 +122,7 @@ public final class Utility {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = Utility.getConnection(request);
+      Connection connection = getConnection(request);
 
       // Create the MySQL prepared statement, execute it, and store the result.
       // Takes the query specified above and sets the email field to the logged in user's email.
@@ -155,7 +155,7 @@ public final class Utility {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = Utility.getConnection(request);
+      Connection connection = getConnection(request);
 
       // Create the MySQL INSERT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
