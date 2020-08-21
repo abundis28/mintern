@@ -289,7 +289,7 @@ function createAuthenticationButton(authenticationUrl, buttonStyle, buttonText, 
 
 /**
  * Create message for the approval page that shows approval status directed to mentor or approver.
- * @param {int} mentorId
+ * @param {string} mentorId
  * @param {MentorEvidence} approval
  * TODO(oumontiel): Create content for each condition.
  */
@@ -307,7 +307,7 @@ function createApprovalMessage(mentorId, approval) {
     approvalSmallTextElement.appendChild(document.createTextNode(
         'Your username will now show a verified icon to show off your experience.'));
   } else if (approval.userId == mentorId && approval.isRejected) {
-    // If mentor has been rejected, show corresponding message.
+    // If mentor has been rejected, show corresponding message and add redirect button.
     approvalSubtitleElement.appendChild(document.createTextNode(
         'We\'re really sorry, your review has been '));
     approvalSubtitleElement.appendChild(
@@ -394,6 +394,10 @@ function createApprovalSpan(spanColor, spanMessage) {
   return approvalSpanElement;
 }
 
+/**
+ * Creates button that redirects to verification page for mentor to update their evidence after
+ * being rejected.
+ */
 function createRejectionButton() {
   // Create button to redirect to verification page.
   const redirectButton = document.createElement('button');
