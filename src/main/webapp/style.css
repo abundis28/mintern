@@ -2,19 +2,84 @@
   margin-right: 10px;
 }
 
-#forum {
+#dropdown-override {
+  min-width: 25rem;
+} 
+
+#forum-title {
   width: 60%;
   margin: auto;
   margin-top: 70px;
 }
 
-#post-question {
+#forum {
   width: 60%;
   margin: auto;
+}
+
+#content-container {
+  width: 60%;
+  margin: auto;
+}
+
+#question {
+  margin-top: 100px;
+}
+
+#post-answer {
+  display: none;
+  margin-top: 100px;
+}
+
+#answers {
+  margin-top: 100px;
+}
+
+#answer-body {
+  box-sizing: border-box;
+  resize: none;
+}
+
+#comment-body {
+  box-sizing: border-box;
+  resize: none;
+}
+
+#post-question {
+  display: none;
+  margin: auto;
   margin-top: 20px;
+  width: 60%;
 }
 
 #question-body {
   box-sizing: border-box;
   resize: none;
+}
+
+#notificationsDropdown {
+  display: none;
+}
+
+.nav-pills a {
+  font-size: xx-large;
+  color: #6cb4b8ff
+}
+
+.nav-pills .nav-link.active {
+  background-color: #6cb4b8ff!important;
+}
+
+.signup-subtitle {
+  font-weight: 200;
+}
+
+.signup-title {
+  text-transform: uppercase;
+  font-weight: 200;
+}
+
+.signup-title .name {
+  color: #6cb4b8ff;
+  font-weight: 400;
 }
