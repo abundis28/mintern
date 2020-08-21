@@ -18,7 +18,17 @@
 function loadIndex() {
   addAutoResize();
   fetchAuthIndexQuestion();
-  fetchQuestions(1);
+  // Determine whether all the questions should be fetched or just the ones that match the search.
+  const fullTextSearch = (new URL(document.location)).searchParams.get("search");
+  if (fullTextSearch === "1") {
+    // Fetch just the questions related to the string input in the search bar.
+    const stringSearchInput = (new URL(document.location)).searchParams.get("stringSearchInput");
+    searchQuestion(stringSearchInput);
+  } else {
+    // Fetch the whole forum.
+    fetchQuestions(1);
+    eraseQueryStringFromUrl();
+  }
 }
 
 /**
@@ -83,7 +93,10 @@ function fetchAuthIndexQuestion() {
     const inboxButton = document.getElementById('notificationsDropdown');
     if (user.isUserLoggedIn) {
       // If user is logged in, show logout and inbox buttons in navbar.
-      inboxButton.style.display = 'block';
+      if (inboxButton) {
+        // Check that the element exists.
+        inboxButton.style.display = 'block';
+      }
       fetchNotifications(); 
       if (!user.isUserRegistered) {
         // If logged in user is not registered, redirect to signup page.
@@ -566,6 +579,7 @@ function backToHomepage() {
   const questionsContainer = document.getElementById('forum');
   questionsContainer.innerHTML = "";
   fetchQuestions('forum');
+  eraseQueryStringFromUrl();
 }
 
 /**
@@ -605,10 +619,17 @@ function notify(type, id) {
 }
 
 /**
+ * Redirects user from any view to the search view in index.
+ */
+function searchRedirect() {
+  let stringSearchInput = document.getElementById("questionSearchInput").value;
+  window.location.replace("index.html?search=1&stringSearchInput=" + stringSearchInput);
+}
+
+/**
  * Searches questions that contain the input string in the title or body elements.
  */
-function searchQuestion() {
-  let stringSearchInput = document.getElementById("questionSearchInput").value;
+function searchQuestion(stringSearchInput) {
   if (stringSearchInput != "") {
     const questionsContainer = document.getElementById('forum');
     questionsContainer.innerHTML = "";
@@ -643,3 +664,16 @@ function searchQuestion() {
     });
   }, false);
 })();
+
+/**
+ * Erases the query string from the url. This will be used whenever a search is made in the
+ * homepage view (the query string gets a pair of parameters) and the user clicks on the brand
+ * button to return to the full forum page.
+ */
+function eraseQueryStringFromUrl() {
+  const uri = window.location.toString();
+  if (uri.indexOf("?") > 0) {
+      const clean_uri = uri.substring(0, uri.indexOf("?"));
+      window.history.replaceState({}, document.title, clean_uri);
+  }
+}
