@@ -565,9 +565,8 @@ function createCommentFormElement(answerId) {
 
   // Text area to write the comment.
   const textElement = document.createElement('textarea');
-  textElement.setAttribute('class', 'form-control form-control-sm');
+  textElement.setAttribute('class', 'form-control form-control-sm comment-body');
   textElement.setAttribute('name', 'comment-body');
-  textElement.setAttribute('id', 'comment-body');
   textElement.setAttribute('placeholder', 'Write a comment');
   textElement.setAttribute('data-autoresize', '');
   textElement.setAttribute('rows', '2');

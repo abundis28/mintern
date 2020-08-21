@@ -40,7 +40,7 @@
   resize: none;
 }
 
-#comment-body {
+.comment-body {
   box-sizing: border-box;
   resize: none;
 }
