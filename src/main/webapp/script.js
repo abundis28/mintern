@@ -21,9 +21,10 @@ function loadIndex() {
   // Determine whether all the questions should be fetched or just the ones that match the search.
   const fullTextSearch = (new URL(document.location)).searchParams.get("search");
   if (fullTextSearch === "1") {
-    // Fetch just the questions related to the string input in the search bar.
-    const stringSearchInput = (new URL(document.location)).searchParams.get("stringSearchInput");
-    searchQuestion(stringSearchInput);
+    // Fetch first page of the questions related to the string input in the search bar.
+    const stringSearchInput = 
+        (new URL(document.location)).searchParams.get("stringSearchInput");
+    searchQuestion(stringSearchInput, 2);
   } else {
     // Fetch the whole forum on the first page.
     fetchForum(1);
@@ -184,8 +185,8 @@ async function fetchForum(pageNumber) {
 
   // Empty the HTML for multiple searches in a row.
   questionsContainer.innerHTML = '';
-  questionsContainer.appendChild(
-        createPageElement(questionsObject, pageNumber, /**hasRedirect=*/true));
+  questionsContainer.appendChild(createPageElement(
+      questionsObject, pageNumber, /**hasRedirect=*/true, /**isSearch=*/false));
 }
 
 /**
@@ -316,9 +317,10 @@ function createNotificationsElement(notification) {
  * Creates questions wrapper for limiting posts with pagination.
  * 
  * @param {ForumPage} forumPage : object with pagination info and the question list.
- * @param {int} pageNumber : current page number
+ * @param {int} pageNumber : current page number.
+ * @param {string} searchString : null if the function is called from the forum.
  */
-function createPageElement(forumPage, pageNumber) {
+function createPageElement(forumPage, pageNumber, searchString) {
   const pageWrapper = document.createElement('div');
   forumPage.pageQuestions.forEach(question => {
     pageWrapper.appendChild(createQuestionElement(question, /**hasRedirect=*/true));
@@ -330,8 +332,11 @@ function createPageElement(forumPage, pageNumber) {
   const previousWrapper = document.createElement('li');
   if (forumPage.previousPage) {
     previousWrapper.setAttribute('class', 'page-item');
-    previousWrapper.setAttribute(
-        'onclick', 'fetchQuestions(' + (pageNumber - 1) + ')');
+    if (searchString != '') {
+      nextWrapper.onclick = fetchForum(pageNumber - 1);
+    } else {
+      nextWrapper.onclick = searchQuestion(searchString, pageNumber - 1);
+    }
   } else {
     previousWrapper.setAttribute('class', 'page-item disabled');
   }
@@ -352,8 +357,11 @@ function createPageElement(forumPage, pageNumber) {
   const nextWrapper = document.createElement('li');
   if (forumPage.nextPage) {
     nextWrapper.setAttribute('class', 'page-item');
-    nextWrapper.setAttribute(
-        'onclick', 'fetchQuestions(' + (pageNumber + 1) + ')');
+    if (searchString != '') {
+      nextWrapper.onclick = fetchForum(pageNumber + 1);
+    } else {
+      nextWrapper.onclick = searchQuestion(searchString, pageNumber + 1);
+    }
   } else {
     nextWrapper.setAttribute('class', 'page-item disabled');
   }
@@ -628,18 +636,15 @@ function searchRedirect() {
 /**
  * Searches questions that contain the input string in the title or body elements.
  */
-function searchQuestion(stringSearchInput) {
+function searchQuestion(stringSearchInput, pageNumber) {
   if (stringSearchInput != "") {
     const questionsContainer = document.getElementById('forum');
     questionsContainer.innerHTML = "";
-    fetch('/search-question?inputString=' + stringSearchInput).then(response => 
-        response.json()).then(questionsJson => {
-      for (const question of questionsJson) {
-        // True value parameter for createQuestionElement means that the question does have a 
-        // redirect URL option.
-        questionsContainer.appendChild(createQuestionElement(question, true));
-      }
-    })
+    fetch('/search-question?inputString=' + stringSearchInput + '&page=' + pageNumber)
+        .then(response => response.json()).then(forumPage => {
+          questionsContainer.appendChild(createPageElement(
+              forumPage, pageNumber, /**hasRedirect=*/true, stringSearchInput));
+        })
   }
 }
 
