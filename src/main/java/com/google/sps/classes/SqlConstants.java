@@ -120,7 +120,10 @@ public final class SqlConstants {
   public static final int MENTOR_EVIDENCE_UPDATE_PARAGRAPH = 1;
   public static final int MENTOR_EVIDENCE_UPDATE_USERID = 2;
 
-  // Constatns used for inserting approvers to mentors.
+  // Constants used for inserting approvers to mentors.
   public static final int MENTOR_APPROVAL_INSERT_USERID = 1;
   public static final int MENTOR_APPROVAL_INSERT_APPROVERID = 2;
+
+  // Constant used in building the question query.
+  public static final int QUESTION_QUERY_WHERE_CONDITION = 424;
 }
