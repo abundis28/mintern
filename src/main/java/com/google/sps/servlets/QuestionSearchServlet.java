@@ -46,7 +46,6 @@ public class QuestionSearchServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-  
     List<Question> questions = new ArrayList<>();
     // The query will return a ResultSet with order depending on the level of similarity to the 
     // input string.

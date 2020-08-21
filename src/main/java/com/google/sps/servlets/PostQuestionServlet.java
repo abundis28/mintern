@@ -43,7 +43,6 @@ public class PostQuestionServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    
     String title = request.getParameter("question-title");
     String body = request.getParameter("question-body");
     int askerId = Utility.getUserId(request);

@@ -38,7 +38,6 @@ import javax.sql.DataSource;
  */
 @WebServlet("/post-comment")
 public class PostCommentServlet extends HttpServlet {
-
   /** 
    * This method will execute the query to insert a comment to the database.
    */

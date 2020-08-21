@@ -38,7 +38,6 @@ public class MentorEvidenceServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
     // Get variable from HTML form.
     String paragraph = request.getParameter("paragraph");
 

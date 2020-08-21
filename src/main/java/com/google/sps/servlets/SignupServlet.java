@@ -39,7 +39,6 @@ public class SignupServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    
     // Store majors in map to relate the name of the major (string) with its ID (integer).
     Map<Integer, String> majors = new HashMap<Integer, String>();
     

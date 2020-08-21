@@ -46,7 +46,6 @@ public class FetchAnswersServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
     // ID of the question to which the answers correspond.
     int questionId = Utility.tryParseInt(request.getParameter("id"));
 

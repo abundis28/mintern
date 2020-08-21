@@ -35,7 +35,6 @@ public class TestServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    
     // We begin the JSON string.
     String json = "{";
     // The connection and query are attempted.

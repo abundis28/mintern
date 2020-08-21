@@ -45,7 +45,6 @@ public class FetchQuestionsServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    
     List<Question> questions = new ArrayList<>();
     
     // TODO(shaargtz): move queries from Utility to a new SqlQueries class.
