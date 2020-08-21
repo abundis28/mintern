@@ -60,4 +60,15 @@ public final class UtilityTest {
 
     Assert.assertEquals(actual, expected);
   }
+  
+  @Test
+  public void zeroValue() {
+    // String with value of zero.
+    String stringToInt = "0";
+    
+    int actual = Utility.tryParseInt(stringToInt);
+    int expected = 0;
+
+    Assert.assertEquals(actual, expected);
+  }
 }
