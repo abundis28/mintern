@@ -234,7 +234,7 @@ public final class Utility {
       
       // If query exists, returns true because mentor is found to be approved or rejected.
       if (queryResult.next()) {
-        if (isApprovalType) {
+        if (reviewType.equals("is_approved")) {
           return MENTOR_APPROVED;
         } else {
           return MENTOR_REJECTED;
