@@ -54,6 +54,8 @@ public class FollowerSystemServlet extends HttpServlet {
         deleteFollower(connection, questionId, userId);
       }
 
+      updateFollower(type, connection, questionId, userId);
+
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
       Logger logger = Logger.getLogger(FollowerSystemServlet.class.getName());
@@ -63,31 +65,21 @@ public class FollowerSystemServlet extends HttpServlet {
 
 
   /** 
-   * Makes the current user a follower of the question they clicked.
+   * If the user follows a question, now they don't, and viceversa.
    */
-  private void insertFollower(Connection connection, int questionId, int userId) {
-    try {
-      String insertFollowerQuery = "INSERT INTO QuestionFollower(question_id, follower_id) "
+  private void updateFollower(String type, Connection connection, int questionId, int userId) {
+    String followerQuery;
+    if (type.equals("follow")) {
+      // Inserting follower query.
+      followerQuery = "INSERT INTO QuestionFollower(question_id, follower_id) "
           + "VALUES (?,?)";
-      PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
-      followerStatement.setInt(SqlConstants.FOLLOWER_QUERY_QUESTIONID, questionId);
-      followerStatement.setInt(SqlConstants.FOLLOWER_QUERY_USERID, userId);
-      followerStatement.executeUpdate();
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(FollowerSystemServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
-  }
-
-  /** 
-   * Makes the current user unfollow the question they clicked.
-   */
-  private void deleteFollower(Connection connection, int questionId, int userId) {
-    try {
-      String deleteFollowerQuery = "DELETE FROM QuestionFollower "
+    } else {
+      // Deleting follower query.
+      followerQuery = "DELETE FROM QuestionFollower "
           + "WHERE question_id=? AND follower_id=?;";
-      PreparedStatement followerStatement = connection.prepareStatement(deleteFollowerQuery);
+    }
+    try {
+      PreparedStatement followerStatement = connection.prepareStatement(followerQuery);
       followerStatement.setInt(SqlConstants.FOLLOWER_QUERY_QUESTIONID, questionId);
       followerStatement.setInt(SqlConstants.FOLLOWER_QUERY_USERID, userId);
       followerStatement.executeUpdate();
