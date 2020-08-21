@@ -47,15 +47,7 @@ public class FollowerSystemServlet extends HttpServlet {
     try {
       Connection connection = DriverManager.getConnection(
           Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
-
-      if (type.equals("follow")) {
-        insertFollower(connection, questionId, userId);
-      } else if (type.equals("unfollow")) {
-        deleteFollower(connection, questionId, userId);
-      }
-
       updateFollower(type, connection, questionId, userId);
-
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
       Logger logger = Logger.getLogger(FollowerSystemServlet.class.getName());
