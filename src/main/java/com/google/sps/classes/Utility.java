@@ -18,6 +18,7 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import com.google.sps.classes.SqlConstants;
+import com.google.sps.classes.Utility;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,17 +32,18 @@ import javax.sql.DataSource;
  */
 public final class Utility {
   // Define if running locally or deploying the current branch.
-  private static final String localOrDeployed = "deploy";
+  public static final String localOrDeployed = "local";
 
   public static Connection getConnection(HttpServletRequest request) {
     try {
-      if (localOrDeployed == "local") {
+      if (localOrDeployed.equals("local")) {
         return DriverManager.getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, 
             SQL_LOCAL_PASSWORD);
+      } else {
+        // Creates pool with connections to access database.
+        DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
+        return pool.getConnection();
       }
-      // Creates pool with connections to access database.
-      DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
-      return pool.getConnection();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
       Logger logger = Logger.getLogger(Utility.class.getName());
@@ -55,12 +57,6 @@ public final class Utility {
       "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
   public static final String SQL_LOCAL_USER = "root";
   public static final String SQL_LOCAL_PASSWORD = "";
-
-  // Access constants to cloud sql.
-  private static final String DATABASE_NAME = "Mintern";
-  public static final String SQL_CLOUD_URL = String.format("jdbc:mysql:///%s", DATABASE_NAME);
-  public static final String SQL_CLOUD_USER = "root";
-  public static final String SQL_CLOUD_PASSWORD = "mintern";
 
   // Variables for user login status.
   public static final int USER_LOGGED_OUT_ID = -1;

@@ -16,6 +16,7 @@
 
 package com.google.sps.listeners;
 
+import com.google.sps.classes.Utility;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
@@ -80,22 +81,30 @@ public class ConnectionPoolContextListener implements ServletContextListener {
 
   @Override
   public void contextDestroyed(ServletContextEvent event) {
-    // This function is called when the Servlet is destroyed.
-    HikariDataSource pool = (HikariDataSource) event.getServletContext().getAttribute("my-pool");
-    if (pool != null) {
-      pool.close();
+    if(Utility.localOrDeployed.equals("deploy")) {
+      // This function is called when the Servlet is destroyed.
+      HikariDataSource pool = (HikariDataSource) event.getServletContext().getAttribute("my-pool");
+      if (pool != null) {
+        pool.close();
+      }
+    } else {
+      System.out.println("LOCAAAL ");
     }
   }
 
   @Override
   public void contextInitialized(ServletContextEvent event) {
-    // This function is called when the application starts and will safely create a connection pool
-    // that can be used to connect to.
-    ServletContext servletContext = event.getServletContext();
-    DataSource pool = (DataSource) servletContext.getAttribute("my-pool");
-    if (pool == null) {
-      pool = createConnectionPool();
-      servletContext.setAttribute("my-pool", pool);
+    if(Utility.localOrDeployed.equals("deploy")) {
+      // This function is called when the application starts and will safely create a connection pool
+      // that can be used to connect to.
+      ServletContext servletContext = event.getServletContext();
+      DataSource pool = (DataSource) servletContext.getAttribute("my-pool");
+      if (pool == null) {
+        pool = createConnectionPool();
+        servletContext.setAttribute("my-pool", pool);
+      }
+    } else {
+      System.out.println("LOCAAAL ");
     }
   }
 }
