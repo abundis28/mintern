@@ -32,15 +32,20 @@ import javax.sql.DataSource;
  */
 public final class Utility {
   // Define if running locally or deploying the current branch.
+  // Define localOrDeployed constant as "local" for a local deployment or "deploy" for a cloud deployment.
   public static final String localOrDeployed = "local";
 
+  /**
+   * Returns a connection that it's obtained depending on the defined way of deployment.
+   */
   public static Connection getConnection(HttpServletRequest request) {
     try {
       if (localOrDeployed.equals("local")) {
+        // Creates connection to access the local MySQL database.
         return DriverManager.getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, 
             SQL_LOCAL_PASSWORD);
       } else {
-        // Creates pool with connections to access database.
+        // Obtains pool with connections to access Cloud MySQL from the context listener file.
         DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
         return pool.getConnection();
       }
