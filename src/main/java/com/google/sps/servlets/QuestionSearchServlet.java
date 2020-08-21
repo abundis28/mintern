@@ -49,8 +49,11 @@ public class QuestionSearchServlet extends HttpServlet {
     List<Question> questions = new ArrayList<>();
     // The query will return a ResultSet with order depending on the level of similarity to the 
     // input string.
-    String query = Utility.fetchQuestionsQuery + "WHERE MATCH(title,body) AGAINST('" +
-        request.getParameter("inputString") + "' IN NATURAL LANGUAGE MODE);";
+    String query = 
+        Utility.fetchQuestionsQuery.substring(0, SqlConstants.QUESTION_QUERY_WHERE_CONDITION)
+          + "WHERE MATCH(title,body) AGAINST('" + request.getParameter("inputString")
+          + "' IN NATURAL LANGUAGE MODE) " + Utility.fetchQuestionsQuery.substring(
+                SqlConstants.QUESTION_QUERY_WHERE_CONDITION, Utility.fetchQuestionsQuery.length());
     // The connection and query are attempted.
     try {
       Connection connection = Utility.getConnection(request);

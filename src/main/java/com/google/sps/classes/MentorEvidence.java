@@ -15,23 +15,17 @@
 package com.google.sps.classes;
 
 /**
- * The data of a tag used to categorize questions and add to mentor experience.
+ * The evidence a mentor to verify their internship and their assigned reviewer.
  */
-public final class SubjectTag {
+public final class MentorEvidence {
 
-  private final int id;
-  private final String subject;
-  private final String color;
+  private final boolean isApprover; // This is true if the approver is assigned to the mentor.
+  private final String mentorUsername;
+  private final String paragraph;
 
-  public SubjectTag(int id, String subject, String color) {
-    this.id = id;
-    this.subject = subject;
-    this.color = color;
-  }
-
-  public SubjectTag() {
-    this.id = -1;
-    this.subject = "";
-    this.color = "";
+  public MentorEvidence(boolean isApprover, String mentorUsername, String paragraph) {
+    this.isApprover = isApprover;
+    this.mentorUsername = mentorUsername;
+    this.paragraph = paragraph;
   }
 }
