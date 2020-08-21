@@ -50,7 +50,7 @@ public class MentorApprovalServlet extends HttpServlet {
     String mentorUsername = "";
     String paragraph = "";
     if (userService.isUserLoggedIn()) {
-      // If user is logged in, update variables. Else, variables stay with default values.
+      // If user is logged in, update variables. Else, empty values will be displayed.
       isApprover = checkForApprover(mentorId, approverId);
       mentorUsername = Utility.getUsername(mentorId);
       paragraph = getMentorEvidence(mentorId);

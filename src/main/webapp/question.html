@@ -38,15 +38,15 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarToggler">
         <!-- Search Bar -->
-        <form class="form-inline my-2 my-lg-0 mr-auto">
-          <input class="form-control mr-sm-2" type="search" placeholder="Search">
-          <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Search</button>
-        </form>
+        <div class="form-inline my-2 my-lg-0 mr-auto">
+          <input class="form-control mr-sm-2" type="search" placeholder="Search" id="questionSearchInput">
+          <button class="btn btn-outline-warning my-2 my-sm-0" onclick="searchRedirect()">Search</button>
+        </div>
         <ul class="navbar-nav mt-2 mt-lg-0">
           <!-- Signup and Login/Logout Buttons -->
           <div id="signup"></div>
           <div id="login"></div>
-          <!-- Notifications Dropdown -->
+          <!-- Notifications -->
           <li class="nav-item dropdown">
             <!-- Notifications Icon -->
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -56,9 +56,9 @@
               </svg>
             </a>
             <!-- Notifications Dropdown Hardcoded Items -->
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="#">Notification 1</a>
-              <a class="dropdown-item" href="#">Notification 2</a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown" id="dropdown-override">
+              <!-- Container for addition of notifications. -->
+              <ul class="list-group" id="inbox-dropdown"></ul>
             </div>
           </li>
         </ul>
