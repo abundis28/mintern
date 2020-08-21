@@ -577,7 +577,7 @@ function createCommentFormElement(answerId) {
   const inputQuestionIdElement = document.createElement('input');
   inputQuestionIdElement.setAttribute('type', 'hidden');
   inputQuestionIdElement.setAttribute('name', 'question-id');
-  inputQuestionIdElement.setAttribute('id', 'question-id');
+  inputQuestionIdElement.setAttribute('class', 'question-id');
   inputQuestionIdElement.setAttribute('value', getQuestionId());
   divElement.appendChild(inputQuestionIdElement);
 
@@ -585,7 +585,7 @@ function createCommentFormElement(answerId) {
   const inputAnswerIdElement = document.createElement('input');
   inputAnswerIdElement.setAttribute('type', 'hidden');
   inputAnswerIdElement.setAttribute('name', 'answer-id');
-  inputAnswerIdElement.setAttribute('id', 'answer-id');
+  inputAnswerIdElement.setAttribute('class', 'answer-id');
   inputAnswerIdElement.setAttribute('value', answerId);
   divElement.appendChild(inputAnswerIdElement);
 
@@ -648,7 +648,7 @@ function getQuestionId() {
  * Sets attribute to the corresponding form elements.
  */
 function setQuestionIdValue() {
-  document.getElementById('question-id').value = getQuestionId(); 
+  document.getElementsByClass('question-id').value = getQuestionId(); 
 }
 
 /**
