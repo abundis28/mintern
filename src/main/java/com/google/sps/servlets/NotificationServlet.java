@@ -29,6 +29,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
  
 /**
 * Servlet that handles the fetching and posting of notifications.
@@ -40,12 +41,13 @@ public class NotificationServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
     // Get user's ID from Utility method.
-    int userId = Utility.getUserId();
+    int userId = Utility.getUserId(request);
     // Fetch notifications if user is signed in and convert the ArrayList to JSON
     // using Utility method.
     response.setContentType("application/json;");
-    response.getWriter().println(Utility.convertToJsonUsingGson(getNotifications(userId)));
+    response.getWriter().println(Utility.convertToJsonUsingGson(getNotifications(userId, request)));
   }
 
   /**
@@ -53,6 +55,7 @@ public class NotificationServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
     // Define local time for the new entries in the server.
     Timestamp localTimestamp = Timestamp.valueOf(LocalDateTime.now());
     // Check if notification is about a question answered, answer commented, or mentor approval, along with its id.
@@ -71,7 +74,7 @@ public class NotificationServlet extends HttpServlet {
     } else if (typeOfNotification.equals("answer")) {
       // If the notification is for a new comment in an answer.
       query =  "SELECT follower_id FROM AnswerFollower WHERE answer_id = " + modifiedElementId;
-      notificationUrl = "/question.html?id=" + getIdOfAnsweredQuestion(modifiedElementId);
+      notificationUrl = "/question.html?id=" + getIdOfAnsweredQuestion(modifiedElementId, request);
       notificationMessage = "Your answer was commented."; 
     } else if (typeOfNotification.equals("requestApproval")) {
       // If the notification is for a mentor approval.
@@ -80,13 +83,13 @@ public class NotificationServlet extends HttpServlet {
       notificationMessage = "A mentor requests your approval";
     }
     // Creates notification and relationship between its ID and the ID of the concerned users.
-    createNotification(query, notificationUrl, notificationMessage, localTimestamp);
+    createNotification(query, notificationUrl, notificationMessage, localTimestamp, request);
   }
 
   /**
    * Fetches notifications with the user ID.
    */
-  private List<Notification> getNotifications(int userId) {
+  private List<Notification> getNotifications(int userId, HttpServletRequest request) {
     // Prepare query to select notifications by the subquery of notifications IDs selected by 
     // user ID.
     String query =  "SELECT message, url, date_time FROM Notification WHERE id IN " +
@@ -94,9 +97,7 @@ public class NotificationServlet extends HttpServlet {
                     ") ORDER BY date_time DESC";
     List<Notification> notifications = new ArrayList<>();
     // Query the information from tables and create notification object to be stored in ArrayList.
-    try (Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL,
-                                                             Utility.SQL_LOCAL_USER,
-                                                             Utility.SQL_LOCAL_PASSWORD);
+    try (Connection connection = Utility.getConnection(request);
          PreparedStatement pst = connection.prepareStatement(query);
          ResultSet resultSet = pst.executeQuery()) {
       // Iterate through the result of the query to populate the ArrayList and return it as JSON.
@@ -177,10 +178,9 @@ public class NotificationServlet extends HttpServlet {
    * following users' IDs relationship with the last inserted Notification.
    */
   private void createNotification(String query, String notificationUrl, String notificationMessage,
-                                  Timestamp localTimestamp) {
+                                  Timestamp localTimestamp, HttpServletRequest request) {
     // Set up connection for insertions and query IDs of users to notify with same connection.
-    try (Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL, 
-            Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+    try (Connection connection = Utility.getConnection(request);
           PreparedStatement pst = connection.prepareStatement(query);
           ResultSet resultSet = pst.executeQuery()) {
       // Insert notification and get its ID to relate in UserNotification table.
@@ -202,13 +202,12 @@ public class NotificationServlet extends HttpServlet {
   /**
    * Fetches ID of question that is related to the answer that was commented.
    */
-  private int getIdOfAnsweredQuestion(int answerId) {
+  private int getIdOfAnsweredQuestion(int answerId, HttpServletRequest request) {
     String query = "SELECT question_id FROM Answer WHERE id = " + answerId;
     int answeredQuestionId = -1;
     try {
       // Setup and perform query.
-      Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL, 
-          Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+      Connection connection = Utility.getConnection(request);
       PreparedStatement pst = connection.prepareStatement(query);
       ResultSet resultSet = pst.executeQuery();
       resultSet.next();

@@ -20,7 +20,6 @@ import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -34,6 +33,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 /** 
  * Retrieves the answers to be displayed on the page.
@@ -46,6 +46,7 @@ public class FetchAnswersServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
     // ID of the question to which the answers correspond.
     int questionId = Utility.tryParseInt(request.getParameter("id"));
 
@@ -58,8 +59,7 @@ public class FetchAnswersServlet extends HttpServlet {
 
     // The connection and query are attempted.
     try {
-        Connection connection = DriverManager.getConnection(
-            Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+        Connection connection = Utility.getConnection(request);
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setInt(SqlConstants.ANSWER_SET_QUESTIONID, questionId);
         ResultSet queryResult = preparedStatement.executeQuery();

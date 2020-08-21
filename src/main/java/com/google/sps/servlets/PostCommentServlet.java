@@ -18,7 +18,6 @@ import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,6 +30,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 /** 
  * This servlet will post a comment to an answer.
@@ -44,24 +44,17 @@ public class PostCommentServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  
     String body = request.getParameter("comment-body");
     int questionId = Utility.tryParseInt(request.getParameter("question-id"));
     int answerId = Utility.tryParseInt(request.getParameter("answer-id"));
-    int authorId = Utility.getUserId();
+    int authorId = Utility.getUserId(request);
 
     // First we query the number of questions that exist so that we can update the
     // QuestionFollower table as well.
-    try {
-      Connection connection = DriverManager.getConnection(
-        Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
-      insertNewComment(connection, answerId, body, authorId);
-      insertNewFollower(connection, answerId, authorId);
-    } 
-    catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostCommentServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
+    Connection connection = Utility.getConnection(request);
+    insertNewComment(connection, answerId, body, authorId);
+    insertNewFollower(connection, answerId, authorId);
 
     try {
       // We call the notification servlet to notify of this posted comment.
