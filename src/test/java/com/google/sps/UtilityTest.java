@@ -71,4 +71,15 @@ public final class UtilityTest {
 
     Assert.assertEquals(actual, expected);
   }
+  
+  @Test
+  public void emptyValue() {
+    // String with empty value.
+    String stringToInt = "";
+    
+    int actual = Utility.tryParseInt(stringToInt);
+    int expected = 0;
+
+    Assert.assertEquals(actual, expected);
+  }
 }
