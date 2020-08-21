@@ -37,18 +37,20 @@ public class MentorEvidenceServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    int userId = Utility.getUserId();
+    
     // Get variable from HTML form.
     String paragraph = request.getParameter("paragraph");
 
     // Update mentor evidence and add approvers in database.
-    updateMentorEvidence(paragraph);
-    addApprovers();
+    updateMentorEvidence(userId, paragraph);
+    addApprovers(userId);
 
     // Call NotificationServlet to notify approvers.
     response.setContentType("text/plain");
     try {
       request.getRequestDispatcher("/notification?type=requestApproval&modifiedElementId="
-          + Utility.getUserId()).include(request, response);
+          + userId).include(request, response);
     } catch (ServletException exception) {
       System.out.println(exception.getMessage());
     }
@@ -58,9 +60,7 @@ public class MentorEvidenceServlet extends HttpServlet {
   /**
    * Updates evidence provided by mentor in MentorEvidence table.
    */
-  private void updateMentorEvidence(String paragraph) {
-    int userId = Utility.getUserId();
-
+  private void updateMentorEvidence(int userId, String paragraph) {
     // Set up query to insert new experience tag to user.
     // Use replace in case mentor evidence already exists in database and mentor wants to update
     // their information.
@@ -89,8 +89,7 @@ public class MentorEvidenceServlet extends HttpServlet {
   /**
    * Adds a list of approvers (currently only the admins) to the mentor in the database.
    */
-  private void addApprovers() {
-    int userId = Utility.getUserId();
+  private void addApprovers(int userId) {
     // Create array to store IDs of approvers.
     // TODO(oumontiel): Get IDs from all admins and remove hardcoded IDs.
     int[] approvers = {SqlConstants.SHAAR_USER_ID, SqlConstants.ANDRES_USER_ID, SqlConstants.OMAR_USER_ID};
