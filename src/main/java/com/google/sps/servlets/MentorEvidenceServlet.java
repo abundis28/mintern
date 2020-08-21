@@ -59,14 +59,16 @@ public class MentorEvidenceServlet extends HttpServlet {
    * Updates evidence provided by mentor in MentorEvidence table.
    */
   private void updateMentorEvidence(String paragraph) {
-    int userId = Utility.getUserId();
+    String userId = Integer.toString(Utility.getUserId());
 
     // Set up query to insert new experience tag to user.
     // Use replace in case mentor evidence already exists in database and mentor wants to update
     // their information.
     // TODO(oumontiel): Let mentors know they have the option to update their evidence information
     //                  and add button that redirects to this servlet to allow them that.
-    String query = "REPLACE INTO MentorEvidence (mentor_id, paragraph) VALUES (?, ?)";
+    String query = "UPDATE MentorEvidence "
+        + "SET paragraph = '" + paragraph + "' "
+        + "WHERE mentor_id = " + userId;
 
     try {
       // Establish connection to MySQL database.
@@ -75,8 +77,6 @@ public class MentorEvidenceServlet extends HttpServlet {
 
       // Create the MySQL INSERT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.setString(SqlConstants.MENTOR_EVIDENCE_UPDATE_PARAGRAPH, paragraph);
-      preparedStatement.setInt(SqlConstants.MENTOR_EVIDENCE_UPDATE_USERID, userId);
       preparedStatement.execute();
       connection.close();
     } catch (SQLException exception) {
