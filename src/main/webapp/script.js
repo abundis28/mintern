@@ -192,16 +192,15 @@ async function fetchForum(pageNumber) {
  * Fetches a question's data for the single question view.
  */
 async function fetchSingleQuestion() {
+  const questionId = (new URL(document.location)).searchParams.get("id");
   const response = await fetch('/fetch-questions?id=' + questionId + '&page=-1');
   const questionsObject = await response.json();
-
-  const questionId = (new URL(document.location)).searchParams.get("id");
   const questionsContainer = document.getElementById('question');
-
+  
   if (questionsObject.length > 0) {
     questionsObject.forEach(question => {
       questionsContainer.appendChild(
-            createQuestionElement(question, hasRedirect));
+            createQuestionElement(question, /**hasRedirect=*/false));
     });
   } else {
     // An empty object means the ID doesn't exist, so we redirect to the index.
