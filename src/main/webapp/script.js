@@ -243,7 +243,7 @@ async function fetchQuestions(page) {
   if (questionsObject.length !== 0) {
     // Check that the ID exist so that it actually has questions in it.
     questionsObject.forEach(question => {
-      questionsContainer.appendChild(createQuestionElement(question, hasRedirect));
+      questionsContainer.appendChild(createQuestionElement(question, page));
     });
   } else {
     // If the ID doesn't exist, redirect to the index.
@@ -299,37 +299,45 @@ function createNotificationsElement(notification) {
 /** 
  * Creates an <li> element with question data. 
  * Each element corresponds to a question to be displayed in the DOM.
+ * 
+ * @param {Question} question : information of a single question.
+ * @param {string} page       : check if the element is for the forum or
+ *                              single view.
  */
 function createQuestionElement(question, hasRedirect) {
+  // Div to wrap the media object with question data.
   const questionWrapper = document.createElement('div');
   questionWrapper.setAttribute('class', 'list-group-item');
 
+  // Media object to hold the notification bell and the text.
   const questionElement = document.createElement('div');
   questionElement.setAttribute('class', 'media');
   questionElement.setAttribute('style', 'width: auto');
   questionWrapper.appendChild(questionElement);
 
+  // Notification bell icon.
   const iconElement = document.createElement('i');
   iconElement.setAttribute('id', 'icon' + question.id);
-
   if (question.userFollowsQuestion) {
+    // If the user follows the question, the icon will be solid.
     iconElement.setAttribute('class', 'fas fa-bell fa-2x');
   } else {
+    // If the user doesn't follow the question, the icon will be outlined.
     iconElement.setAttribute('class', 'far fa-bell fa-2x');
   }
-
+  // Add logic to follow or unfollow when clicking the bell.
   iconElement.setAttribute('onclick', 'followUnfollow(' 
       + question.userFollowsQuestion + ', ' + question.id + ')');
-  
   questionElement.appendChild(iconElement);
 
+  // Div to hold all of the text and style it.
   const textContainer = document.createElement('div');
   textContainer.setAttribute('class', 'media-body ml-3');
   questionElement.appendChild(textContainer);
 
+  // Heading for the title.
   const questionTitle = document.createElement('h5');
-
-  if (hasRedirect) {
+  if (page === 'forum') {
     // Add href to redirect from forum to single view.
     const questionURL = document.createElement('a');
     questionURL.setAttribute('href', '/question.html?id=' + question.id);
@@ -338,20 +346,19 @@ function createQuestionElement(question, hasRedirect) {
   } else {
     questionTitle.innerText = question.title;
   }
-
   textContainer.appendChild(questionTitle);
 
   // If the question has a body, show it underneath.
   if (question.body) {
     const bodyElement = document.createElement('p');
     bodyElement.setAttribute('class', 'mb-1');
-    if (question.body.length > 80) {
-      // All of the body should not be displayed if it is very big.
+    if (page === 'forum' && question.body.length > 80) {
+      // All the body should not be displayed in the forum if it is very big.
       bodyElement.innerText = question.body
-          // Reduce the preview of the body to 80 characters
+          // Reduce the preview of the body to 80 characters.
           .substring(0,80)
-          // Remove line breaks and add trailing dots
-          .replace(/(\r\n|\n|\r)/gm,'') + '...';
+          // Remove line breaks and add trailing dots.
+          .replace(/(\r\n|\n|\r)/gm,' ') + '...';
     } else {
       bodyElement.innerText = question.body
           // Remove line breaks from the preview.
@@ -360,9 +367,10 @@ function createQuestionElement(question, hasRedirect) {
     textContainer.appendChild(bodyElement);
   }
 
+  // Element with the username.
   const askerElement = document.createElement('small');
   askerElement.setAttribute('class', 'text-muted');
-  askerElement.innerText = '\t' + question.askerName;
+  askerElement.innerText = question.askerName;
   textContainer.appendChild(askerElement);
 
   // Number of followers is placed to the right side.
