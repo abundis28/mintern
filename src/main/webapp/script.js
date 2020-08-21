@@ -220,7 +220,7 @@ function fetchMentorApproval() {
   }
   const mentorApprovalUrl = '/mentor-approval?id=' + mentorId;
   fetch(mentorApprovalUrl).then(response => response.json()).then(approval => {
-    createApprovalMessage(approval);
+    createApprovalMessage(mentorId, approval);
   })
 }
 
@@ -289,10 +289,11 @@ function createAuthenticationButton(authenticationUrl, buttonStyle, buttonText, 
 
 /**
  * Create message for the approval page that shows approval status directed to mentor or approver.
+ * @param {int} mentorId
  * @param {MentorEvidence} approval
  * TODO(oumontiel): Create content for each condition.
  */
-function createApprovalMessage(example) {
+function createApprovalMessage(mentorId, approval) {
   // Create elements for messages that will be added and the span that will be appended.
   const approvalSubtitleElement = document.getElementById('approval-subtitle');
   const approvalSmallTextElement = document.getElementById('approval-small-text');
