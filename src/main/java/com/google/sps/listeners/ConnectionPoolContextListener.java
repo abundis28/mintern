@@ -81,20 +81,18 @@ public class ConnectionPoolContextListener implements ServletContextListener {
 
   @Override
   public void contextDestroyed(ServletContextEvent event) {
-    if(Utility.localOrDeployed.equals("deploy")) {
+    if (Utility.localOrDeployed.equals("deploy")) {
       // This function is called when the Servlet is destroyed.
       HikariDataSource pool = (HikariDataSource) event.getServletContext().getAttribute("my-pool");
       if (pool != null) {
         pool.close();
       }
-    } else {
-      System.out.println("LOCAAAL ");
     }
   }
 
   @Override
   public void contextInitialized(ServletContextEvent event) {
-    if(Utility.localOrDeployed.equals("deploy")) {
+    if (Utility.localOrDeployed.equals("deploy")) {
       // This function is called when the application starts and will safely create a connection pool
       // that can be used to connect to.
       ServletContext servletContext = event.getServletContext();
@@ -103,8 +101,6 @@ public class ConnectionPoolContextListener implements ServletContextListener {
         pool = createConnectionPool();
         servletContext.setAttribute("my-pool", pool);
       }
-    } else {
-      System.out.println("LOCAAAL ");
     }
   }
 }
