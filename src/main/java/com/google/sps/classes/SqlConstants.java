@@ -129,5 +129,5 @@ public final class SqlConstants {
   public static final int MENTOR_APPROVAL_INSERT_APPROVERID = 2;
 
   // Constant used in building the question query.
-  public static final int QUESTION_QUERY_WHERE_CONDITION = 424;
+  public static final int QUESTION_QUERY_WHERE_CONDITION = 573;
 }
