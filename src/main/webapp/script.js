@@ -544,7 +544,15 @@ function backToHomepage() {
   fetchQuestions('forum');
 }
 
+/** 
+ * Logic to change the follower status of the user regarding a
+ * specific question. 
+ * 
+ * @param {boolean} userFollowsQuestion
+ * @param {int} questionId
+ */
 function followUnfollow(userFollowsQuestion, questionId) {
+  // Grab the icon of that specific question.
   const iconToChange = document.getElementById('icon' + questionId);
   const currentFollowerContainer = 
       document.getElementById('followerCount' + questionId);
