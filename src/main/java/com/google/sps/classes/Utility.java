@@ -56,7 +56,8 @@ public final class Utility {
       + "LEFT JOIN (SELECT username, id AS asker_id FROM User) GetUsername "
       + "ON Question.asker_id=GetUsername.asker_id "
       + "LEFT JOIN (SELECT question_id, COUNT(id) answers FROM Answer "
-      + "GROUP BY question_id) AnswerCount ON Question.id=AnswerCount.question_id ";
+      + "GROUP BY question_id) AnswerCount ON Question.id=AnswerCount.question_id "
+      + "ORDER BY Question.date_time DESC;";
 
   // Query to get answers and comments from a question. Generates the following table:
   //
@@ -66,9 +67,11 @@ public final class Utility {
   // +----+-------------+------+-----------+-----------+-------+----+----------+----+-----------+------+-----------+-----------+----+----------+
   public static final String fetchAnswersAndCommentsQuery = "SELECT * FROM Answer LEFT JOIN " 
       + "(SELECT id, username FROM User) AnswerUsername ON Answer.author_id=AnswerUsername.id "
-      + "LEFT JOIN Comment ON Answer.id=Comment.answer_id LEFT JOIN "
-      + "(SELECT id, username FROM User) CommentUsername ON Comment.author_id=CommentUsername.id"
-      + " WHERE Answer.question_id=?;";
+      + "LEFT JOIN Comment ON Answer.id=Comment.answer_id "
+      + "LEFT JOIN (SELECT id, username FROM User) CommentUsername "
+      + "ON Comment.author_id=CommentUsername.id "
+      + "WHERE Answer.question_id=? "
+      + "ORDER BY Answer.date_time ASC;";
 
   /**
    * Converts objects to JSON using GSON class.
@@ -257,6 +260,26 @@ public final class Utility {
       Logger logger = Logger.getLogger(Utility.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
       return 0;
+    }
+  }
+
+  /**
+   * Takes a MySQL query and executes it.
+   */
+  public static void executeQuery(String query) {
+    try {
+      // Establish connection to MySQL database.
+      Connection connection = DriverManager.getConnection(
+          SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
+      
+      // Execute the MySQL prepared statement.
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      preparedStatement.execute();
+      connection.close();
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
   }
 }
