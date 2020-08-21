@@ -347,7 +347,7 @@ function createApprovalMessage(mentorId, approval) {
     approvalSubtitleElement.appendChild(document.createTextNode('.'));
     approvalSmallTextElement.appendChild(document.createTextNode(
         'If you think this is a mistake, click the button to update your information.'));
-    createRejectionButton();
+    createRedirectToVerification();
   } else if (approval.userId == mentorId) {
     // If mentor is not approved or rejected yet, show corresponding message.
     approvalSubtitleElement.appendChild(document.createTextNode(
@@ -430,7 +430,7 @@ function createApprovalSpan(spanColor, spanMessage) {
  * Creates button that redirects to verification page for mentor to update their evidence after
  * being rejected.
  */
-function createRejectionButton() {
+function createRedirectToVerification() {
   // Create button to redirect to verification page.
   const redirectButton = document.createElement('button');
   redirectButton.type = 'button';
