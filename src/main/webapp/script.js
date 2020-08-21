@@ -304,7 +304,7 @@ function createNotificationsElement(notification) {
  * @param {string} page       : check if the element is for the forum or
  *                              single view.
  */
-function createQuestionElement(question, hasRedirect) {
+function createQuestionElement(question, page) {
   // Div to wrap the media object with question data.
   const questionWrapper = document.createElement('div');
   questionWrapper.setAttribute('class', 'list-group-item');
