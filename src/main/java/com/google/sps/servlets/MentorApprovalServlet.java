@@ -150,26 +150,12 @@ public class MentorApprovalServlet extends HttpServlet {
    * Updates the is_reviewed variable in MentorApproval table.
    */
   private void addApproval(int mentorId, int approverId) {
-    // Create the MySQL prepared statement.
+    // Create and execute the MySQL query.
     String query = "UPDATE MentorApproval "
         + "SET is_reviewed = TRUE "
         + "WHERE mentor_id = " + Integer.toString(mentorId)
-        + " AND approver_id = " + Integer.toString(approverId);
-    
-    try {
-      // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
-      
-      // Execute the MySQL SELECT prepared statement.
-      PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.execute();
-      connection.close();
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(MentorApprovalServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
+        + " AND approver_id = " + Integer.toString(approverId);\
+    Utility.executeQuery(query);
   }
 
   /**
@@ -180,7 +166,7 @@ public class MentorApprovalServlet extends HttpServlet {
     // Get current number of approvals mentor has.
     int numberOfApprovals = getNumberOfApprovals(mentorId);
     
-    // Create the MySQL prepared statement.
+    // Create and execute the MySQL query.
     String query = "";
     if(isApproved && numberOfApprovals == 1) {
       // If user is approved by approver, and already has one approval,
@@ -200,21 +186,7 @@ public class MentorApprovalServlet extends HttpServlet {
           + "SET is_rejected = TRUE "
           + "WHERE mentor_id = " + Integer.toString(mentorId);
     }
-    
-    try {
-      // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
-      
-      // Execute the MySQL SELECT prepared statement.
-      PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.execute();
-      connection.close();
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(MentorApprovalServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
+    Utility.executeQuery(query);
   }
 
   /**

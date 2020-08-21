@@ -222,4 +222,24 @@ public final class Utility {
       return 0;
     }
   }
+
+  /**
+   * Takes a MySQL query and executes it.
+   */
+  public static void executeQuery(String query) {
+    try {
+      // Establish connection to MySQL database.
+      Connection connection = DriverManager.getConnection(
+          SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
+      
+      // Execute the MySQL prepared statement.
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      preparedStatement.execute();
+      connection.close();
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+  }
 }
