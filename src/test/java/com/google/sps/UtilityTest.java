@@ -93,4 +93,15 @@ public final class UtilityTest {
 
     Assert.assertEquals(actual, expected);
   }
+  
+  @Test
+  public void nullValue() {
+    // String with null value.
+    String stringToInt = null;
+    
+    int actual = Utility.tryParseInt(stringToInt);
+    int expected = 0;
+
+    Assert.assertEquals(actual, expected);
+  }
 }
