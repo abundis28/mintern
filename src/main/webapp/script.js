@@ -324,7 +324,7 @@ function createAuthenticationButton(authenticationUrl, buttonStyle, buttonText, 
  * @param {MentorEvidence} approval
  * TODO(oumontiel): Create content for each condition.
  */
-function createApprovalMessage(example) {
+function createApprovalMessage(approval) {
   if (approval.userId == mentorId && approval.isApproved) {
     // If mentor has been approved, show corresponding message.
     

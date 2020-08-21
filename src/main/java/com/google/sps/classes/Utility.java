@@ -231,6 +231,7 @@ public final class Utility {
       // Create and execute the MySQL SELECT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
       ResultSet queryResult = preparedStatement.executeQuery();
+      connection.close();
       
       // If query exists, returns true because mentor is found to be approved or rejected.
       if (queryResult.next()) {
@@ -240,7 +241,6 @@ public final class Utility {
           return MENTOR_REJECTED;
         }
       }
-      connection.close();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
       Logger logger = Logger.getLogger(Utility.class.getName());
