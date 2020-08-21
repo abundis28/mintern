@@ -47,11 +47,13 @@ public class MentorApprovalServlet extends HttpServlet {
     int approverId = Utility.getUserId();
     
     // Set default variables to create MentorEvidence object.
+    // If user is not logged in, it will be created with these empty values, but user will be
+    // redirected back to home page.
     boolean isApprover = false;
     String mentorUsername = "";
     String paragraph = "";
     if (userService.isUserLoggedIn()) {
-      // If user is logged in, update variables. Else, empty values will be displayed.
+      // If user is logged in, update variables.
       isApprover = checkForApprover(mentorId, approverId);
       mentorUsername = Utility.getUsername(mentorId);
       paragraph = getMentorEvidence(mentorId);
@@ -128,7 +130,8 @@ public class MentorApprovalServlet extends HttpServlet {
 
   /**
    * Returns true if approver is assigned to mentee, used to grant access to approval page only to
-   * approvers.
+   * approvers. Though users are not given links to other mentor's approval pages, they could
+   * access them by typing the link to their browser, so this is used to redirect those users.
    */
   private boolean checkForApprover(int mentorId, int approverId) {
     // Create the MySQL prepared statement.
