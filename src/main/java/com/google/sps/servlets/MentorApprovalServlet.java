@@ -78,6 +78,31 @@ public class MentorApprovalServlet extends HttpServlet {
     addEvidence(isApproved, mentorId);
 
     // If mentor review is complete, send them a notification.
+    String notificationType = "";
+    if (Utility.getReviewStatus("is_approved", mentorId) == Utility.MENTOR_APPROVED) {
+      // If mentor is approved, send notification of type 'approved'.
+      notificationType = "approved";
+    } else if (Utility.getReviewStatus("is_rejected", mentorId) == Utility.MENTOR_REJECTED) {
+      // If mentor is rejected, send notification of type 'rejected'.
+      notificationType = "rejected";
+    }
+
+    // Post to notification servlet.
+    if (Utility.getReviewStatus("is_approved", mentorId) == Utility.MENTOR_APPROVED) {
+      // If mentor is approved, send notification of type 'approved'.
+      response.setContentType("text/plain");
+      try {
+        request.getRequestDispatcher("/notification?type=" + notificationType +
+            "&modifiedElementId=" + mentorId).include(request, response);
+      } catch (ServletException exception) {
+        Logger logger = Logger.getLogger(MentorApprovalServlet.class.getName());
+        logger.log(Level.SEVERE, exception.getMessage(), exception);
+      }
+    }
+    
+    
+    
+    // If mentor review is complete, send them a notification.
     if (Utility.getReviewStatus("is_approved", mentorId) == Utility.MENTOR_APPROVED) {
       // If mentor is approved, send notification of type 'approved'.
       response.setContentType("text/plain");
