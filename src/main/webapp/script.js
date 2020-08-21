@@ -268,50 +268,6 @@ function fetchMentorExperience() {
 }
 
 /**
- * Fetches questions from server, wraps each in an <li> element, 
- * and adds them to the DOM.
- */
-// async function fetchQuestions(pageNumber) {
-//   let questionId;
-//   let questionsContainer;
-//   let hasRedirect;
-
-//   // The single question view doesn't need pages, so it passes -1.
-//   if (pageNumber !== -1) {
-//     // For the forum we pass -1 which means we need to retrieve all questions.
-//     questionId = -1;
-//     questionsContainer = document.getElementById('forum');
-
-//     // We want the element in the forum to have a link which sends to the single
-//     // page view.
-//     hasRedirect = true;
-//   } else {
-//     questionId = (new URL(document.location)).searchParams.get("id");
-//     questionsContainer = document.getElementById('question');
-//     hasRedirect = false;
-//   }
-//   const response = await fetch('/fetch-questions?id=' + questionId + '&page=' + pageNumber);
-//   const questionsObject = await response.json();
-
-//   questionsContainer.innerHTML = '';
-
-//   if (questionsObject.length !== 0) {
-//     // Check that the ID exist so that it actually has questions in it.
-
-//     if (pageNumber === -1) {
-//       questionsObject.forEach(question => {
-//         questionsContainer.appendChild(createQuestionElement(question, hasRedirect));
-//       });
-//     } else {
-//       questionsContainer.appendChild(createPageElement(questionsObject, pageNumber, hasRedirect));
-//     }
-//   } else {
-//     // If the ID doesn't exist, redirect to the index.
-//     window.location.replace('/index.html');
-//   }
-// }
-
-/**
  * Creates a signup, login, or logout button and appends it to navbar.
  * @param {string} authenticationUrl 
  * @param {string} buttonStyle 
@@ -647,7 +603,7 @@ function getQuestionId() {
  * Sets attribute to the corresponding form elements.
  */
 function setQuestionIdValue() {
-  document.getElementsByClass('question-id').value = getQuestionId(); 
+  document.getElementsByClassName('question-id').value = getQuestionId(); 
 }
 
 /**
