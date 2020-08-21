@@ -27,6 +27,7 @@
 }
 
 #post-answer {
+  display: none;
   margin-top: 100px;
 }
 
@@ -45,9 +46,10 @@
 }
 
 #post-question {
-  width: 60%;
+  display: none;
   margin: auto;
   margin-top: 20px;
+  width: 60%;
 }
 
 #question-body {

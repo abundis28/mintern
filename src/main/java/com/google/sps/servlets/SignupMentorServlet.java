@@ -136,24 +136,10 @@ public class SignupMentorServlet extends HttpServlet {
   private void addMentorEvidence() {
     int userId = Utility.getUserId();
 
-    // Set up query to insert mentor evidence.
+    // Set up query to insert mentor evidence and execute it.
     String query = "INSERT INTO MentorEvidence "
         + "(mentor_id, approvals, is_approved, is_rejected, paragraph) "
         + "VALUES (" + userId + ", 0, FALSE, FALSE, '')";
-
-    try {
-      // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
-
-      // Create the MySQL INSERT prepared statement.
-      PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.execute();
-      connection.close();
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, get the log of the error.
-      Logger logger = Logger.getLogger(SignupMentorServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
+    Utility.executeQuery(query);
   }
 }
