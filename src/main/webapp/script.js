@@ -24,7 +24,7 @@ function loadIndex() {
     // Fetch first page of the questions related to the string input in the search bar.
     const stringSearchInput = 
         (new URL(document.location)).searchParams.get("stringSearchInput");
-    searchQuestion(stringSearchInput, 2);
+    searchQuestion(stringSearchInput, 1);
   } else {
     // Fetch the whole forum on the first page.
     fetchForum(1);
