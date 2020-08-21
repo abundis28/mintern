@@ -314,6 +314,7 @@ function createApprovalMessage(example) {
     approvalSubtitleElement.appendChild(document.createTextNode('.'));
     approvalSmallTextElement.appendChild(document.createTextNode(
         'If you think this is a mistake, click the button to update your information.'));
+    createRejectionButton();
   } else if (approval.userId == mentorId) {
     // If mentor is not approved or rejected yet, show corresponding message.
     approvalSubtitleElement.appendChild(document.createTextNode(
@@ -390,6 +391,21 @@ function createApprovalSpan(spanColor, spanMessage) {
   approvalSpanElement.setAttribute('class', spanColor);
   approvalSpanElement.textContent = spanMessage;
   return approvalSpanElement;
+}
+
+function createRejectionButton() {
+  // Create button to redirect to verification page.
+  const redirectButton = document.createElement('button');
+  redirectButton.type = 'button';
+  redirectButton.setAttribute('class', 'btn btn-success');
+  redirectButton.onclick = function() {
+    window.location.replace('verification.html');
+  };
+  redirectButton.innerHTML = 'Update information';
+
+  // Append button to HTML element.
+  const approvalMessageElement = document.getElementById('rejected-button');
+  approvalMessageElement.appendChild(redirectButton);
 }
 
 /**
