@@ -25,6 +25,8 @@ import org.junit.Test;
 
 @RunWith(JUnit4.class)
 public final class UtilityTest {
+
+  /** Tests for convertUsingGsonToJson() function */
   @Test
   public void convertUsingGsonToJsonTest() {
     // Object with attributes.
@@ -45,5 +47,17 @@ public final class UtilityTest {
     String actualJson = Utility.convertToJsonUsingGson(tag);
    
     Assert.assertEquals(expectedJson, actualJson);
+  }
+  
+  /** Tests for tryParseInt() function */
+  @Test
+  public void integerValue() {
+    // String with an integer value.
+    String stringToInt = "1";
+    
+    int actual = Utility.tryParseInt(stringToInt);
+    int expected = 1;
+
+    Assert.assertEquals(actual, expected);
   }
 }
