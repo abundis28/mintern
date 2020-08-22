@@ -176,15 +176,14 @@ public final class Utility {
    * Returns username of a user given their ID.
    * Returns empty string if user was not found.
    */
-  public static String getUsername(int userId) {
+  public static String getUsername(int userId, HttpServletRequest request) {
     String username = "";
 
     // Set up query to get username.
     String query = "SELECT username FROM User WHERE id = " + userId;
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
+      Connection connection = DriverManager.getConnection(request);
 
       // Create the MySQL prepared statement, execute it, and store the result.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
