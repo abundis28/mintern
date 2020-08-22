@@ -18,7 +18,17 @@
 function loadIndex() {
   addAutoResize();
   fetchAuthIndexQuestion();
-  fetchQuestions('forum');
+  // Determine whether all the questions should be fetched or just the ones that match the search.
+  const fullTextSearch = (new URL(document.location)).searchParams.get("search");
+  if (fullTextSearch === "1") {
+    // Fetch just the questions related to the string input in the search bar.
+    const stringSearchInput = (new URL(document.location)).searchParams.get("stringSearchInput");
+    searchQuestion(stringSearchInput);
+  } else {
+    // Fetch the whole forum.
+    fetchQuestions('forum');
+    eraseQueryStringFromUrl();
+  }
 }
 
 /**
@@ -44,7 +54,15 @@ function loadSignup() {
  * Function that will call other functions when the verification page loads. 
  */
 function loadVerification() {
-  fetchAuthVerification();
+  fetchAuth();
+}
+
+/**
+ * Function that will call other functions when the approval page loads. 
+ */
+function loadApproval() {
+  fetchAuth();
+  fetchMentorApproval();
 }
 
 /**
@@ -83,8 +101,12 @@ function fetchAuthIndexQuestion() {
     const inboxButton = document.getElementById('notificationsDropdown');
     if (user.isUserLoggedIn) {
       // If user is logged in, show logout and inbox buttons in navbar.
-      inboxButton.style.display = 'block';
-      fetchNotifications(); 
+      if (inboxButton) {
+        // Check that the element exists.
+        inboxButton.style.display = 'block';
+      }
+      fetchNotifications();
+      
       if (!user.isUserRegistered) {
         // If logged in user is not registered, redirect to signup page.
         window.location.replace('signup.html');
@@ -195,12 +217,16 @@ function fetchMentorExperience() {
 }
 
 /**
- * Displays logout button or redirects to index in verification page.
+ * Displays logout button or redirects to index or signup page.
  */
-function fetchAuthVerification() {
+function fetchAuth() {
   fetch('/authentication').then(response => response.json()).then(user => {
     if (user.isUserLoggedIn) {
       // If user is logged in, show logout button in navbar.
+      // Show notifications.
+      inboxButton.style.display = 'block';
+      fetchNotifications();
+
       if (!user.isUserRegistered) {
         // If logged in user is not registered, redirect to signup page.
         window.location.replace('/signup.html');
@@ -211,6 +237,28 @@ function fetchAuthVerification() {
           user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
     } else {
       // If user is logged out, show signup and login buttons in navbar.
+      window.location.replace('/index.html');
+    }
+  })
+}
+
+/**
+ * Fetches and displays information related to mentor evidence.
+ */
+function fetchMentorApproval() {
+  const mentor_id = (new URL(document.location)).searchParams.get('id');
+  const mentorApprovalUrl = '/mentor-approval?id=' + mentor_id.toString();
+  fetch(mentorApprovalUrl).then(response => response.json()).then(approval => {
+    if (approval.isApprover) {
+      // Display mentor username.
+      const usernameElement = document.getElementById('username');
+      usernameElement.innerHTML = approval.mentorUsername;
+
+      // Display paragraph mentor submitted as evidence.
+      const paragraphElement = document.getElementById('paragraph');
+      paragraphElement.innerHTML = approval.paragraph;
+    } else {
+      // If approver is not assigned to mentor, redirect to index.
       window.location.replace('/index.html');
     }
   })
@@ -543,6 +591,7 @@ function backToHomepage() {
   const questionsContainer = document.getElementById('forum');
   questionsContainer.innerHTML = "";
   fetchQuestions('forum');
+  eraseQueryStringFromUrl();
 }
 
 /** 
@@ -642,10 +691,28 @@ function notify(type, id) {
 }
 
 /**
+ * Modifies approval status of a mentor based on approver's feedback.
+ * @param {boolean} isApproved 
+ */
+function mentorApprove(isApproved) {
+  const mentor_id = (new URL(document.location)).searchParams.get('id');
+  fetch('mentor-approval?isApproved=' + isApproved + '&id=' + mentor_id, {
+    method: 'POST'
+  })
+}
+
+/**
+ * Redirects user from any view to the search view in index.
+ */
+function searchRedirect() {
+  let stringSearchInput = document.getElementById("questionSearchInput").value;
+  window.location.replace("index.html?search=1&stringSearchInput=" + stringSearchInput);
+}
+
+/**
  * Searches questions that contain the input string in the title or body elements.
  */
-function searchQuestion() {
-  let stringSearchInput = document.getElementById("questionSearchInput").value;
+function searchQuestion(stringSearchInput) {
   if (stringSearchInput != "") {
     const questionsContainer = document.getElementById('forum');
     questionsContainer.innerHTML = "";
@@ -680,3 +747,16 @@ function searchQuestion() {
     });
   }, false);
 })();
+
+/**
+ * Erases the query string from the url. This will be used whenever a search is made in the
+ * homepage view (the query string gets a pair of parameters) and the user clicks on the brand
+ * button to return to the full forum page.
+ */
+function eraseQueryStringFromUrl() {
+  const uri = window.location.toString();
+  if (uri.indexOf("?") > 0) {
+      const clean_uri = uri.substring(0, uri.indexOf("?"));
+      window.history.replaceState({}, document.title, clean_uri);
+  }
+}
