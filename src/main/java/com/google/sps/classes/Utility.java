@@ -95,7 +95,7 @@ public final class Utility {
     String email = userService.getCurrentUser().getEmail();
 
     // Set up query to check if user is already registered.
-    String query = "SELECT * FROM User WHERE email = '" + email + "'";
+    String query = "SELECT id FROM User WHERE email = '" + email + "'";
 
     try {
       // Establish connection to MySQL database.
@@ -103,7 +103,6 @@ public final class Utility {
           SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
 
       // Create the MySQL prepared statement, execute it, and store the result.
-      // Takes the query specified above and sets the email field to the logged in user's email.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
       ResultSet queryResult = preparedStatement.executeQuery();
 
@@ -119,6 +118,38 @@ public final class Utility {
     }
 
     return userId;
+  }
+
+  /**
+   * Returns username of a user given their ID.
+   * Returns empty string if user was not found.
+   */
+  public static String getUsername(int userId) {
+    String username = "";
+
+    // Set up query to get username.
+    String query = "SELECT username FROM User WHERE id = " + userId;
+    try {
+      // Establish connection to MySQL database.
+      Connection connection = DriverManager.getConnection(
+          SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
+
+      // Create the MySQL prepared statement, execute it, and store the result.
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      ResultSet queryResult = preparedStatement.executeQuery();
+
+      // If user is found, set username to the username retrieved from the database.
+      if (queryResult.next()) {
+        username = queryResult.getString(SqlConstants.USER_FETCH_USERNAME);
+      } 
+      connection.close();
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, get the log of the error.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    return username;
   }
   
   /**
@@ -195,6 +226,26 @@ public final class Utility {
       Logger logger = Logger.getLogger(Utility.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
       return 0;
+    }
+  }
+
+  /**
+   * Takes a MySQL query and executes it.
+   */
+  public static void executeQuery(String query) {
+    try {
+      // Establish connection to MySQL database.
+      Connection connection = DriverManager.getConnection(
+          SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
+      
+      // Execute the MySQL prepared statement.
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      preparedStatement.execute();
+      connection.close();
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
   }
 }

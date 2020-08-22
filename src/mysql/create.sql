@@ -82,8 +82,7 @@ CREATE TABLE MentorEvidence (
 CREATE TABLE MentorApproval (
   mentor_id INT NOT NULL,
   approver_id INT NOT NULL,
-  is_approved BOOLEAN,
-  is_rejected BOOLEAN,
+  is_reviewed BOOLEAN,
   PRIMARY KEY (mentor_id, approver_id),
   FOREIGN KEY (mentor_id)
   REFERENCES User (id),

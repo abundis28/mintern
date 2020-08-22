@@ -54,7 +54,15 @@ function loadSignup() {
  * Function that will call other functions when the verification page loads. 
  */
 function loadVerification() {
-  fetchAuthVerification();
+  fetchAuth();
+}
+
+/**
+ * Function that will call other functions when the approval page loads. 
+ */
+function loadApproval() {
+  fetchAuth();
+  fetchMentorApproval();
 }
 
 /**
@@ -93,8 +101,12 @@ function fetchAuthIndexQuestion() {
     const inboxButton = document.getElementById('notificationsDropdown');
     if (user.isUserLoggedIn) {
       // If user is logged in, show logout and inbox buttons in navbar.
-      inboxButton.style.display = 'block';
-      fetchNotifications(); 
+      if (inboxButton) {
+        // Check that the element exists.
+        inboxButton.style.display = 'block';
+      }
+      fetchNotifications();
+      
       if (!user.isUserRegistered) {
         // If logged in user is not registered, redirect to signup page.
         window.location.replace('signup.html');
@@ -205,12 +217,16 @@ function fetchMentorExperience() {
 }
 
 /**
- * Displays logout button or redirects to index in verification page.
+ * Displays logout button or redirects to index or signup page.
  */
-function fetchAuthVerification() {
+function fetchAuth() {
   fetch('/authentication').then(response => response.json()).then(user => {
     if (user.isUserLoggedIn) {
       // If user is logged in, show logout button in navbar.
+      // Show notifications.
+      inboxButton.style.display = 'block';
+      fetchNotifications();
+
       if (!user.isUserRegistered) {
         // If logged in user is not registered, redirect to signup page.
         window.location.replace('/signup.html');
@@ -221,6 +237,28 @@ function fetchAuthVerification() {
           user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
     } else {
       // If user is logged out, show signup and login buttons in navbar.
+      window.location.replace('/index.html');
+    }
+  })
+}
+
+/**
+ * Fetches and displays information related to mentor evidence.
+ */
+function fetchMentorApproval() {
+  const mentor_id = (new URL(document.location)).searchParams.get('id');
+  const mentorApprovalUrl = '/mentor-approval?id=' + mentor_id.toString();
+  fetch(mentorApprovalUrl).then(response => response.json()).then(approval => {
+    if (approval.isApprover) {
+      // Display mentor username.
+      const usernameElement = document.getElementById('username');
+      usernameElement.innerHTML = approval.mentorUsername;
+
+      // Display paragraph mentor submitted as evidence.
+      const paragraphElement = document.getElementById('paragraph');
+      paragraphElement.innerHTML = approval.paragraph;
+    } else {
+      // If approver is not assigned to mentor, redirect to index.
       window.location.replace('/index.html');
     }
   })
@@ -643,6 +681,17 @@ function setQuestionIdValue() {
  */
 function notify(type, id) {
   fetch('notification?type=' + type + '&modifiedElementId=' + id, {
+    method: 'POST'
+  })
+}
+
+/**
+ * Modifies approval status of a mentor based on approver's feedback.
+ * @param {boolean} isApproved 
+ */
+function mentorApprove(isApproved) {
+  const mentor_id = (new URL(document.location)).searchParams.get('id');
+  fetch('mentor-approval?isApproved=' + isApproved + '&id=' + mentor_id, {
     method: 'POST'
   })
 }
