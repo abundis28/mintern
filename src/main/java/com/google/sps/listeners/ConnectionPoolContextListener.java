@@ -27,17 +27,24 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 import javax.sql.DataSource;
+import org.json.simple.JSONArray;
 
 @WebListener("Creates a connection pool that is stored in the Servlet's context for later use.")
 public class ConnectionPoolContextListener implements ServletContextListener {
+  // Constants ussed to retrieve the keys to the database.
+  private final static int FETCH_SQL_CLOUD_CONNECTION_NAME = 0;
+  private final static int FETCH_SQL_CLOUD_USER = 1;
+  private final static int FETCH_SQL_CLOUD_PASSWORD = 2;
+  private final static int FETCH_SQL_CLOUD_DATABASE_NAME = 3;
 
-  // Saving credentials in environment variables is convenient, but not secure - consider a more
-  // secure solution such as https://cloud.google.com/kms/ to help keep secrets safe.
-  private static final String 
-      CLOUD_SQL_CONNECTION_NAME = "internship-platform-step-2020:us-central1:mintern-instance";
-  private static final String DB_USER = "root";
-  private static final String DB_PASS = "mintern";
-  private static final String DB_NAME = "Mintern";
+  // Retrieve keys to the cloud database.
+  private static final JSONArray arrayOfKeys = Utility.getKeys("CLOUD_SQL_ACCESS");
+  private static final String SQL_CLOUD_CONNECTION_NAME = 
+      arrayOfKeys.get(FETCH_SQL_CLOUD_CONNECTION_NAME);
+  private static final String SQL_CLOUD_USER = arrayOfKeys.get(FETCH_SQL_CLOUD_USER);
+  private static final String SQL_CLOUD_PASSWORD = arrayOfKeys.get(FETCH_SQL_CLOUD_PASSWORD);
+  private static final String SQL_CLOUD_DATABASE_NAME = 
+      arrayOfKeys.get(FETCH_SQL_CLOUD_DATABASE_NAME);
 
   private DataSource createConnectionPool() {
     // [START cloud_sql_mysql_servlet_create]
@@ -45,9 +52,9 @@ public class ConnectionPoolContextListener implements ServletContextListener {
     HikariConfig config = new HikariConfig();
 
     // Configure which instance and what database user to connect with.
-    config.setJdbcUrl(String.format("jdbc:mysql:///%s", DB_NAME));
-    config.setUsername(DB_USER); // e.g. "root", "postgres"
-    config.setPassword(DB_PASS); // e.g. "my-password"
+    config.setJdbcUrl(String.format("jdbc:mysql:///%s", SQL_CLOUD_DATABASE_NAME));
+    config.setUsername(SQL_CLOUD_USER); // e.g. "root", "postgres"
+    config.setPassword(SQL_CLOUD_PASSWORD); // e.g. "my-password"
 
     // maximumPoolSize limits the total number of concurrent connections this pool will keep. Ideal
     // values for this setting are highly variable on app design, infrastructure, and database.
@@ -72,7 +79,7 @@ public class ConnectionPoolContextListener implements ServletContextListener {
 
     // For Java users, the Cloud SQL JDBC Socket Factory can provide authenticated connections.
     config.addDataSourceProperty("socketFactory", "com.google.cloud.sql.mysql.SocketFactory");
-    config.addDataSourceProperty("cloudSqlInstance", CLOUD_SQL_CONNECTION_NAME);
+    config.addDataSourceProperty("cloudSqlInstance", SQL_CLOUD_CONNECTION_NAME);
 
     // Initialize the connection pool using the configuration object.
     DataSource pool = new HikariDataSource(config);

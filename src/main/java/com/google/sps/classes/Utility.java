@@ -19,11 +19,16 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.Utility;
+import java.io.FileReader;
 import java.sql.*;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 // TODO(aabundis): Add JUnit tests for utility functions.
 
@@ -32,8 +37,30 @@ import javax.sql.DataSource;
  */
 public final class Utility {
   // Define if running locally or deploying the current branch.
-  // Define localOrDeployed constant as "local" for a local deployment or "deploy" for a cloud deployment.
+  // Define localOrDeployed constant as "local" for a local deployment or "deploy" for a cloud
+  // deployment.
   public static final String localOrDeployed = "local";
+
+  /**
+   * Retrieves keys from GitIgnored file. Define typeOfKeys parameter as "CLOUD_SQL_ACCESS" to
+   * retrieve keys to MySQL CLOUD DB, or "LOCAL_SQL_ACCESS" to retrieve keys to MySQL local DB.
+   */
+  public static JSONArray getKeys(String typeOfKeys) {
+    JSONParser parser = new JSONParser();
+    JSONArray arrayOfKeys = new JSONArray();
+    try {
+      JSONObject jsonObject = (JSONObject) parser.parse(new FileReader("/~/keys.json"));
+      arrayOfKeys = (JSONArray) jsonObject.get(typeOfKeys);
+    } catch (Exception exception) {
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+    Iterator<JSONObject> iterator = arrayOfKeys.iterator();
+    while (iterator.hasNext()) {
+      System.out.println(iterator.next());
+    }
+    return arrayOfKeys;
+  }
 
   /**
    * Returns a connection that it's obtained depending on the defined way of deployment.
@@ -41,9 +68,15 @@ public final class Utility {
   public static Connection getConnection(HttpServletRequest request) {
     try {
       if (localOrDeployed.equals("local")) {
+        // Retrieve Local MySQL keys from concealed files.
+        JSONArray arrayOfKeys = getKeys("LOCAL_SQL_ACCESS");
+        int FETCH_SQL_LOCAL_URL = 0;
+        int FETCH_SQL_LOCAL_USER = 1;
+        int FETCH_SQL_LOCAL_PASSWORD = 2;
+
         // Creates connection to access the local MySQL database.
-        return DriverManager.getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, 
-            SQL_LOCAL_PASSWORD);
+        return DriverManager.getConnection(arrayOfKeys.get(FETCH_SQL_LOCAL_URL),
+            arrayOfKeys.get(FETCH_SQL_LOCAL_USER), arrayOfKeys.get(FETCH_SQL_LOCAL_PASSWORD));
       } else {
         // Obtains pool with connections to access Cloud MySQL from the context listener file.
         DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
@@ -56,12 +89,6 @@ public final class Utility {
     }
     return null;
   }
-  
-  // Variables needed to connect to MySQL database.
-  public static final String SQL_LOCAL_URL =
-      "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
-  public static final String SQL_LOCAL_USER = "root";
-  public static final String SQL_LOCAL_PASSWORD = "";
 
   // Variables for user login status.
   public static final int USER_LOGGED_OUT_ID = -1;
