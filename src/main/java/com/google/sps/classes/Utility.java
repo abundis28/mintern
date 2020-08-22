@@ -156,7 +156,7 @@ public final class Utility {
     String query = "SELECT username FROM User WHERE id = " + userId;
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(request);
+      Connection connection = getConnection(request);
 
       // Create the MySQL prepared statement, execute it, and store the result.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
