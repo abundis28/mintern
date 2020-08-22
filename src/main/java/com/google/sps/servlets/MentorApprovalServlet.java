@@ -53,9 +53,9 @@ public class MentorApprovalServlet extends HttpServlet {
     String paragraph = "";
     if (userService.isUserLoggedIn()) {
       // If user is logged in, update variables.
-      isApprover = checkForApprover(mentorId, approverId);
-      mentorUsername = Utility.getUsername(mentorId);
-      paragraph = getMentorEvidence(mentorId);
+      isApprover = checkForApprover(mentorId, approverId, request);
+      mentorUsername = Utility.getUsername(mentorId, request);
+      paragraph = getMentorEvidence(mentorId, request);
     }
 
     MentorEvidence mentorEvidence =
@@ -84,15 +84,14 @@ public class MentorApprovalServlet extends HttpServlet {
    * approvers. Though users are not given links to other mentor's approval pages, they could
    * access them by typing the link to their browser, so this is used to redirect those users.
    */
-  private boolean checkForApprover(int mentorId, int approverId) {
+  private boolean checkForApprover(int mentorId, int approverId, HttpServletRequest request) {
     // Create the MySQL prepared statement.
     String query = "SELECT * FROM MentorApproval "
         + "WHERE mentor_id = ? AND approver_id = ?";
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+      Connection connection = DriverManager.getConnection(request);
       
       // Create and execute the MySQL SELECT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -119,7 +118,7 @@ public class MentorApprovalServlet extends HttpServlet {
    * Returns internship evidence of a mentor.
    */
   // TODO(oumontiel): Add more evidence fields.
-  private String getMentorEvidence(int mentorId) {
+  private String getMentorEvidence(int mentorId, HttpServletRequest request) {
     String paragraph = "";
 
     try {
@@ -128,8 +127,7 @@ public class MentorApprovalServlet extends HttpServlet {
           + "WHERE mentor_id = ?";
       
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+      Connection connection = DriverManager.getConnection(request);
       
       // Create the MySQL SELECT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -167,7 +165,7 @@ public class MentorApprovalServlet extends HttpServlet {
    */
   private void addEvidence(boolean isApproved, int mentorId, HttpServletRequest request) {
     // Get current number of approvals mentor has.
-    int numberOfApprovals = getNumberOfApprovals(mentorId);
+    int numberOfApprovals = getNumberOfApprovals(mentorId, request);
     
     // Create and execute the MySQL query.
     String query = "";
@@ -195,7 +193,7 @@ public class MentorApprovalServlet extends HttpServlet {
   /**
    * Returns the current number of approvals a mentor has.
    */
-  private int getNumberOfApprovals(int mentorId) {
+  private int getNumberOfApprovals(int mentorId, HttpServletRequest request) {
     int numberOfApprovals = 0;
 
     // Create the MySQL prepared statement.
@@ -204,8 +202,7 @@ public class MentorApprovalServlet extends HttpServlet {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+      Connection connection = DriverManager.getConnection(request);
       
       // Create and execute the MySQL SELECT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
