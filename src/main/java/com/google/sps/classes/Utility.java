@@ -49,7 +49,7 @@ public final class Utility {
     JSONParser parser = new JSONParser();
     JSONArray arrayOfKeys = new JSONArray();
     try {
-      JSONObject jsonObject = (JSONObject) parser.parse(new FileReader("/~/keys.json"));
+      JSONObject jsonObject = (JSONObject) parser.parse(new FileReader("/../../../keys.json"));
       arrayOfKeys = (JSONArray) jsonObject.get(typeOfKeys);
     } catch (Exception exception) {
       Logger logger = Logger.getLogger(Utility.class.getName());
