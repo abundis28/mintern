@@ -75,8 +75,9 @@ public final class Utility {
         int FETCH_SQL_LOCAL_PASSWORD = 2;
 
         // Creates connection to access the local MySQL database.
-        return DriverManager.getConnection(arrayOfKeys.get(FETCH_SQL_LOCAL_URL),
-            arrayOfKeys.get(FETCH_SQL_LOCAL_USER), arrayOfKeys.get(FETCH_SQL_LOCAL_PASSWORD));
+        return DriverManager.getConnection(arrayOfKeys.get(FETCH_SQL_LOCAL_URL).toString(),
+            arrayOfKeys.get(FETCH_SQL_LOCAL_USER).toString(), 
+            arrayOfKeys.get(FETCH_SQL_LOCAL_PASSWORD).toString());
       } else {
         // Obtains pool with connections to access Cloud MySQL from the context listener file.
         DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
