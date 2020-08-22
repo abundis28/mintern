@@ -91,7 +91,7 @@ public class MentorApprovalServlet extends HttpServlet {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(request);
+      Connection connection = Utility.getConnection(request);
       
       // Create and execute the MySQL SELECT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -127,7 +127,7 @@ public class MentorApprovalServlet extends HttpServlet {
           + "WHERE mentor_id = ?";
       
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(request);
+      Connection connection = Utility.getConnection(request);
       
       // Create the MySQL SELECT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -202,7 +202,7 @@ public class MentorApprovalServlet extends HttpServlet {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(request);
+      Connection connection = Utility.getConnection(request);
       
       // Create and execute the MySQL SELECT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
