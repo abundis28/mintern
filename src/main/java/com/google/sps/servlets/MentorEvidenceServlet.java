@@ -38,19 +38,20 @@ public class MentorEvidenceServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
+    int userId = Utility.getUserId();
+    
     // Get variable from HTML form.
     String paragraph = request.getParameter("paragraph");
 
     // Update mentor evidence and add approvers in database.
-    updateMentorEvidence(paragraph, request);
-    addApprovers(request);
+    updateMentorEvidence(userId, paragraph);
+    addApprovers(userId); //TODO(oumontiel): Only call when there are no approvers.
 
     // Call NotificationServlet to notify approvers.
     response.setContentType("text/plain");
     try {
       request.getRequestDispatcher("/notification?type=requestApproval&modifiedElementId="
-          + Utility.getUserId(request)).include(request, response);
+          + userId).include(request, response);
     } catch (ServletException exception) {
       System.out.println(exception.getMessage());
     }
@@ -60,45 +61,30 @@ public class MentorEvidenceServlet extends HttpServlet {
   /**
    * Updates evidence provided by mentor in MentorEvidence table.
    */
-  private void updateMentorEvidence(String paragraph, HttpServletRequest request) {
-    int userId = Utility.getUserId(request);
-
+  private void updateMentorEvidence(int userId, String paragraph) {
     // Set up query to insert new experience tag to user.
     // Use replace in case mentor evidence already exists in database and mentor wants to update
     // their information.
     // TODO(oumontiel): Let mentors know they have the option to update their evidence information
     //                  and add button that redirects to this servlet to allow them that.
-    String query = "REPLACE INTO MentorEvidence (mentor_id, paragraph) VALUES (?, ?)";
-
-    try {
-      // Establish connection to MySQL database.
-      Connection connection = Utility.getConnection(request);
-
-      // Create the MySQL INSERT prepared statement.
-      PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.setString(SqlConstants.MENTOR_EVIDENCE_UPDATE_PARAGRAPH, paragraph);
-      preparedStatement.setInt(SqlConstants.MENTOR_EVIDENCE_UPDATE_USERID, userId);
-      preparedStatement.execute();
-      connection.close();
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, get the log of the error.
-      Logger logger = Logger.getLogger(MentorEvidenceServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
+    System.out.println("it worked!");
+    String query = "UPDATE MentorEvidence "
+        + "SET paragraph = '" + paragraph + "' "
+        + "WHERE mentor_id = " + userId;
+    Utility.executeQuery(query);
   }
 
   /**
    * Adds a list of approvers (currently only the admins) to the mentor in the database.
    */
-  private void addApprovers(HttpServletRequest request) {
-    int userId = Utility.getUserId(request);
+  private void addApprovers(int userId) {
     // Create array to store IDs of approvers.
     // TODO(oumontiel): Get IDs from all admins and remove hardcoded IDs.
     int[] approvers = {SqlConstants.SHAAR_USER_ID, SqlConstants.ANDRES_USER_ID, SqlConstants.OMAR_USER_ID};
 
     // Set up query to insert new experience tag to user.
-    String query = "INSERT INTO MentorApproval (mentor_id, approver_id, is_approved, is_rejected) "
-        + "VALUES (?, ?, FALSE, FALSE)";
+    String query = "INSERT INTO MentorApproval (mentor_id, approver_id, is_reviewed) "
+        + "VALUES (?, ?, FALSE)";
 
     for (int approverId : approvers) {
       try {
