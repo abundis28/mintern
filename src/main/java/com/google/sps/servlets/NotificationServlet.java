@@ -82,6 +82,15 @@ public class NotificationServlet extends HttpServlet {
       notificationUrl = "/approval.html?id=" + modifiedElementId;
       notificationMessage = "A mentor requests your approval";
     }
+    try {
+      // We call the notification servlet to notify of this posted comment.
+      request.getRequestDispatcher("/email?typeOfNotification=" + typeOfNotification + 
+          "&modifiedElementId=" + modifiedElementId).include(request, response);
+    } catch (ServletException exception) {
+      // If the notification doesn't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(PostCommentServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
     // Creates notification and relationship between its ID and the ID of the concerned users.
     createNotification(query, notificationUrl, notificationMessage, localTimestamp, request);
   }

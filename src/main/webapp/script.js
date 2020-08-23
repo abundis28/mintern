@@ -584,17 +584,6 @@ function setQuestionIdValue() {
 }
 
 /**
- * Sends email to the followers of a modified question  or answer.
- * @param {string} type
- * @param {int} id
- */
-function sendEmail(type, id) {
-  fetch('/email?typeOfNotification=' + type + '&modifiedElementId=' + id, {
-    method: 'POST'
-  })
-}
-
-/**
  * Redirects user in signup page to index if they are already registered.
  * Creates notification when an answer or comment is posted.
  * @param {string} type
