@@ -78,7 +78,7 @@ public final class SqlConstants {
   // Constants used for querying a comment.
   public static final int COMMENT_FETCH_BODY = 11;
   public static final int COMMENT_FETCH_AUTHORNAME = 15;
-  public static final int ANSWER_FETCH_AUTHORID = 12;
+  public static final int COMMENT_FETCH_AUTHORID = 12;
   public static final int COMMENT_FETCH_DATETIME = 13;
 
   // Constants used for inserting an answer.
