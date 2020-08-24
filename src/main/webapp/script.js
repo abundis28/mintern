@@ -357,23 +357,23 @@ function createQuestionElement(question, page) {
   const questionWrapper = document.createElement('div');
   questionWrapper.setAttribute('class', 'list-group-item');
 
-  // Media object to hold the notification bell and the text.
+  // Media object to hold the star icon and the text.
   const questionElement = document.createElement('div');
   questionElement.setAttribute('class', 'media');
   questionElement.setAttribute('style', 'width: auto');
   questionWrapper.appendChild(questionElement);
 
-  // Notification bell icon.
+  // Star icon.
   const iconElement = document.createElement('i');
   iconElement.setAttribute('id', 'icon' + question.id);
   if (question.userFollowsQuestion) {
     // If the user follows the question, the icon will be solid.
-    iconElement.setAttribute('class', 'fas fa-bell fa-2x');
+    iconElement.setAttribute('class', 'fas fa-star fa-2x');
   } else {
     // If the user doesn't follow the question, the icon will be outlined.
-    iconElement.setAttribute('class', 'far fa-bell fa-2x');
+    iconElement.setAttribute('class', 'far fa-star fa-2x');
   }
-  // Add logic to follow or unfollow when clicking the bell.
+  // Add logic to follow or unfollow when clicking the star.
   iconElement.setAttribute('onclick', 'updateFollowerStatus(' 
       + question.userFollowsQuestion + ', ' + question.id + ')');
   questionElement.appendChild(iconElement);
@@ -615,7 +615,7 @@ function updateFollowerStatus(userFollowsQuestion, questionId) {
     fetch('/follower-system?type=follow&question-id=' + questionId);
     
     // Change the button.
-    iconToChange.setAttribute('class', 'far fa-bell fa-2x');
+    iconToChange.setAttribute('class', 'far fa-star fa-2x');
 
     // Update the follower count in the DOM.
     if (currentFollowerCount === 2) {
@@ -631,7 +631,7 @@ function updateFollowerStatus(userFollowsQuestion, questionId) {
     fetch('/follower-system?type=unfollow&question-id=' + questionId);
 
     // Change the button.
-    iconToChange.setAttribute('class', 'fas fa-bell fa-2x');
+    iconToChange.setAttribute('class', 'fas fa-star fa-2x');
 
     // Update the follower count in the DOM.
     if (currentFollowerCount === 0) {
