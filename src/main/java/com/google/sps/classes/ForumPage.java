@@ -27,7 +27,8 @@ public class ForumPage {
   private int numberOfPages;
   private List<Question> pageQuestions;
 
-  public ForumPage(Integer nextPage, Integer previousPage, int numberOfPages, List<Question> pageQuestions) {
+  public ForumPage(
+      Integer nextPage, Integer previousPage, int numberOfPages, List<Question> pageQuestions) {
     this.nextPage = nextPage;
     this.previousPage = previousPage;
     this.numberOfPages = numberOfPages;
