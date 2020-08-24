@@ -42,11 +42,13 @@ public class MentorApprovalServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
 
-    // Get IDs of mentor and approver.
+    // Get IDs of mentor and logged in user.
     int mentorId = Utility.tryParseInt(request.getParameter("id"));
     int userId = Utility.getUserId();
     
     // Set default variables to create MentorEvidence object.
+    // If user is not logged in, it will be created with these empty values, but user will be
+    // redirected back to home page.
     boolean isApprover = false;
     String mentorUsername = "";
     boolean isApproved = false;
@@ -105,17 +107,10 @@ public class MentorApprovalServlet extends HttpServlet {
     addEvidence(isApproved, mentorId);
 
     // If mentor review is complete, send them a notification.
-    String notificationType = "";
-    if (Utility.getReviewStatus("is_approved", mentorId) == Utility.MENTOR_APPROVED) {
-      // If mentor is approved, send notification of type 'approved'.
-      notificationType = "approved";
-    } else if (Utility.getReviewStatus("is_rejected", mentorId) == Utility.MENTOR_REJECTED) {
-      // If mentor is rejected, send notification of type 'rejected'.
-      notificationType = "rejected";
-    }
+    String notificationType = Utility.getReviewStatus(mentorId);
 
     // Post to notification servlet.
-    if (Utility.getReviewStatus("is_approved", mentorId) == Utility.MENTOR_APPROVED) {
+    if (!notificationType.equals("")) {
       // If mentor is approved, send notification of type 'approved'.
       response.setContentType("text/plain");
       try {
@@ -126,36 +121,12 @@ public class MentorApprovalServlet extends HttpServlet {
         logger.log(Level.SEVERE, exception.getMessage(), exception);
       }
     }
-    
-    
-    
-    // If mentor review is complete, send them a notification.
-    if (Utility.getReviewStatus("is_approved", mentorId) == Utility.MENTOR_APPROVED) {
-      // If mentor is approved, send notification of type 'approved'.
-      response.setContentType("text/plain");
-      try {
-        request.getRequestDispatcher("/notification?type=approved&modifiedElementId="
-            + mentorId).include(request, response);
-      } catch (ServletException exception) {
-        Logger logger = Logger.getLogger(MentorApprovalServlet.class.getName());
-        logger.log(Level.SEVERE, exception.getMessage(), exception);
-      }
-    } else if (Utility.getReviewStatus("is_rejected", mentorId) == Utility.MENTOR_REJECTED) {
-      // If mentor is rejected, send notification of type 'rejected'.
-      response.setContentType("text/plain");
-      try {
-        request.getRequestDispatcher("/notification?type=rejected&modifiedElementId="
-            + mentorId).include(request, response);
-      } catch (ServletException exception) {
-        Logger logger = Logger.getLogger(MentorApprovalServlet.class.getName());
-        logger.log(Level.SEVERE, exception.getMessage(), exception);
-      }
-    }
   }
 
   /**
    * Returns true if approver is assigned to mentee, used to grant access to approval page only to
-   * approvers.
+   * approvers. Though users are not given links to other mentor's approval pages, they could
+   * access them by typing the link to their browser, so this is used to redirect those users.
    */
   private boolean checkForApprover(int mentorId, int approverId) {
     // Create the MySQL prepared statement.
