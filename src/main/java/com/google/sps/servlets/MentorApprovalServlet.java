@@ -27,6 +27,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
 
 /**
  * Servlet that handles mentor evidence for approver to see.
@@ -77,6 +78,22 @@ public class MentorApprovalServlet extends HttpServlet {
     // Update database tables related to mentor approval.
     addApproval(mentorId, approverId);
     addEvidence(isApproved, mentorId);
+
+    // If mentor review is complete, send them a notification.
+    String notificationType = Utility.getReviewStatus(mentorId);
+
+    // Post to notification servlet.
+    if (!notificationType.equals("")) {
+      // If mentor is approved, send notification of type 'approved'.
+      response.setContentType("text/plain");
+      try {
+        request.getRequestDispatcher("/notification?type=" + notificationType +
+            "&modifiedElementId=" + mentorId).include(request, response);
+      } catch (ServletException exception) {
+        Logger logger = Logger.getLogger(MentorApprovalServlet.class.getName());
+        logger.log(Level.SEVERE, exception.getMessage(), exception);
+      }
+    }
   }
 
   /**
