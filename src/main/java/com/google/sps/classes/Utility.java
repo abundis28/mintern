@@ -288,4 +288,22 @@ public final class Utility {
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
   }
+
+  /** 
+   * Makes a user follow an answer.
+   */
+  private void insertCommentFollower(Connection connection, int answerId, int authorId) {
+    try {
+      String insertFollowerQuery = "INSERT INTO AnswerFollower(answer_id, follower_id) "
+          + "VALUES (?,?)";
+      PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
+      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_ANSWERID, answerId);
+      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_AUTHORID, authorId);
+      followerStatement.executeUpdate();
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+  }
 }

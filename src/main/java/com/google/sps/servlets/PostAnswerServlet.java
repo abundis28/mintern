@@ -52,7 +52,7 @@ public class PostAnswerServlet extends HttpServlet {
       Connection connection = DriverManager.getConnection(
           Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
       insertNewAnswer(connection, questionId, body, authorId);
-      insertNewFollower(connection, authorId);
+      Utility.insertCommentFollower(connection, getLatestAnswerId(connection), authorId);
     } 
     catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
@@ -110,25 +110,5 @@ public class PostAnswerServlet extends HttpServlet {
     }
 
     return id;
-  }
-
-  /** 
-   * Makes the author of the recently added answer a follower of said answer.
-   * TODO(shaargtz): Move function to Utiliy class to be reused.
-   */
-  private void insertNewFollower(Connection connection, int authorId) {
-    try {
-      int latestAnswerId = getLatestAnswerId(connection);
-      String insertFollowerQuery = "INSERT INTO AnswerFollower(answer_id, follower_id) "
-          + "VALUES (?,?)";
-      PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
-      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_ANSWERID, latestAnswerId);
-      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_AUTHORID, authorId);
-      followerStatement.executeUpdate();
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostAnswerServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
   }
 }

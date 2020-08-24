@@ -55,7 +55,7 @@ public class PostCommentServlet extends HttpServlet {
       Connection connection = DriverManager.getConnection(
         Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
       insertNewComment(connection, answerId, body, authorId);
-      insertNewFollower(connection, answerId, authorId);
+      Utility.insertCommentFollower(connection, answerId, authorId);
     } 
     catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
@@ -88,24 +88,6 @@ public class PostCommentServlet extends HttpServlet {
       questionStatement.setString(SqlConstants.COMMENT_INSERT_BODY, body);
       questionStatement.setInt(SqlConstants.COMMENT_INSERT_AUTHORID, authorId);
       questionStatement.executeUpdate();
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostCommentServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
-  }
-
-  /** 
-   * Makes the author of the comment a follower of the answer to which the comment is a reply.
-   */
-  private void insertNewFollower(Connection connection, int answerId, int authorId) {
-    try {
-      String insertFollowerQuery = "INSERT INTO AnswerFollower(answer_id, follower_id) "
-          + "VALUES (?,?)";
-      PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
-      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_ANSWERID, answerId);
-      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_AUTHORID, authorId);
-      followerStatement.executeUpdate();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
       Logger logger = Logger.getLogger(PostCommentServlet.class.getName());
