@@ -90,32 +90,11 @@ public class FetchQuestionsServlet extends HttpServlet {
     response.setContentType("application/json;");
     if (page != SqlConstants.SINGLE_QUESTION_PAGE) {
       // Forum posts get split by pages.
-      ForumPage forumPage = splitPages(questions, page);
+      ForumPage forumPage = Utility.splitPages(questions, page);
       response.getWriter().println(Utility.convertToJsonUsingGson(forumPage));
     } else {
       // A single question is returned.
       response.getWriter().println(Utility.convertToJsonUsingGson(questions));
     }
-  }
-
-  /** 
-   * Split the query by the page length depending on the current page.
-   */
-  ForumPage splitPages(List<Question> questions, int page) {
-    int numberOfComments = questions.size();
-    int numberOfPages = (int) Math.ceil((double) numberOfComments / SqlConstants.PAGE_SIZE);
-   
-    // If the user is on the first or last page, avoid non-existing indexes.
-    Integer nextPage = page < numberOfPages ? (page + 1) : null;
-    Integer previousPage = page > 1 ? (page - 1) : null;
-    
-    // Indexes for the questions of the current page.
-    int lowerIndex = (page - 1) * SqlConstants.PAGE_SIZE;
-    int upperIndex = page * SqlConstants.PAGE_SIZE;
-
-    List<Question> trimmedQuestions = questions.subList(lowerIndex >= 0 ? lowerIndex : 0,
-        upperIndex <= numberOfComments ? upperIndex : numberOfComments);
-
-    return new ForumPage(nextPage, previousPage, numberOfPages, trimmedQuestions);
   }
 }
