@@ -81,18 +81,10 @@ public class NotificationServlet extends HttpServlet {
       query = "SELECT approver_id FROM MentorApproval WHERE mentor_id = " + modifiedElementId;
       notificationUrl = "/approval.html?id=" + modifiedElementId;
       notificationMessage = "A mentor requests your approval";
-    }
-    try {
-      // We call the notification servlet to notify of this posted comment.
-      request.getRequestDispatcher("/email?typeOfNotification=" + typeOfNotification + 
-          "&modifiedElementId=" + modifiedElementId).include(request, response);
-    } catch (ServletException exception) {
-      // If the notification doesn't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostCommentServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
     // Creates notification and relationship between its ID and the ID of the concerned users.
     createNotification(query, notificationUrl, notificationMessage, localTimestamp, request);
+    // Call email servlet to generate the message and send it as an email.
+    redirectEmailServlet(typeOfNotification, modifiedElementId);
   }
 
   /**
@@ -227,5 +219,20 @@ public class NotificationServlet extends HttpServlet {
       logger.log(Level.SEVERE, ex.getMessage(), ex);
     }
     return answeredQuestionId;
+  }
+
+  /**
+   * Invoke the fetch post method to send a push notification to the user.
+   */
+  private void redirectEmailServlet(String typeOfNotification, int modifiedElementId) {
+    try {
+      // We call the notification servlet to notify of this posted comment.
+      request.getRequestDispatcher("/email?typeOfNotification=" + typeOfNotification + 
+          "&modifiedElementId=" + modifiedElementId).include(request, response);
+    } catch (ServletException exception) {
+      // If the notification doesn't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(PostCommentServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
   }
 }
