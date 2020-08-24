@@ -37,11 +37,6 @@ public final class Utility {
 
   // Variables for user login status.
   public static final int USER_LOGGED_OUT_ID = -1;
-
-  // Variables for mentor review status.
-  public static final int MENTOR_NOT_REVIEWED = 0;
-  public static final int MENTOR_APPROVED = 1;
-  public static final int MENTOR_REJECTED = 2;
   
   // Query to retrieve data from all questions. Can be appended a WHERE condition to select
   // specific questions. Generates the following table:
@@ -223,28 +218,33 @@ public final class Utility {
   /**
    * Returns the mentor review status, which could be approved, rejected or not reviewed.
    */
-  public static int getReviewStatus(String reviewType, int mentorId) {
-    // Create the MySQL prepared statement.
-    String query = "SELECT * FROM MentorEvidence "
+  public static String getReviewStatus(int mentorId) {
+    // Create the MySQL queries for approved and rejected mentor.
+    String approvedQuery = "SELECT * FROM MentorEvidence "
         + "WHERE mentor_id = " + Integer.toString(mentorId) + " "
-        + "AND " + reviewType + " = TRUE";
+        + "AND is_approved = TRUE";
+    String rejectedQuery = "SELECT * FROM MentorEvidence "
+        + "WHERE mentor_id = " + Integer.toString(mentorId) + " "
+        + "AND is_rejected = TRUE";
 
     try {
       // Establish connection to MySQL database.
       Connection connection = DriverManager.getConnection(
           Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
       
-      // Create and execute the MySQL SELECT prepared statement.
-      PreparedStatement preparedStatement = connection.prepareStatement(query);
-      ResultSet queryResult = preparedStatement.executeQuery();
+      // Create and execute the MySQL SELECT prepared statements.
+      PreparedStatement approvedPreparedStatement = connection.prepareStatement(approvedQuery);
+      ResultSet approvedQueryResult = approvedPreparedStatement.executeQuery();
+      PreparedStatement rejectedPreparedStatement = connection.prepareStatement(rejectedQuery);
+      ResultSet rejectedQueryResult = rejectedPreparedStatement.executeQuery();
       
-      // If query exists, returns true because mentor is found to be approved or rejected.
-      if (queryResult.next()) {
-        if (reviewType.equals("is_approved")) {
-          return MENTOR_APPROVED;
-        } else {
-          return MENTOR_REJECTED;
-        }
+      if (approvedQueryResult.next()) {
+        // If query exists for approved prepared statement, return approved status.
+        return "approved";
+      }
+      if (rejectedQueryResult.next()) {
+        // If query exists for rejected prepared statement, return rejected status.
+        return "rejected";
       }
       connection.close();
     } catch (SQLException exception) {
@@ -252,7 +252,8 @@ public final class Utility {
       Logger logger = Logger.getLogger(Utility.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
-    return MENTOR_NOT_REVIEWED;
+    // If no queries were found, return empty string.
+    return "";
   }
 
   /**
