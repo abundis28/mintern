@@ -249,7 +249,7 @@ public final class Utility {
   /** 
    * Split the query by the page length depending on the current page.
    */
-  ForumPage splitPages(List<Question> questions, int page) {
+  public static ForumPage splitPages(List<Question> questions, int page) {
     int numberOfComments = questions.size();
     int numberOfPages = (int) Math.ceil((double) numberOfComments / SqlConstants.PAGE_SIZE);
    
