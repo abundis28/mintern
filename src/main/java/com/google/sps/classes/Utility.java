@@ -252,7 +252,7 @@ public final class Utility {
       Logger logger = Logger.getLogger(Utility.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
-    // If no queries were found, return empty string.
+    // If no queries were found, it means mentor is not reviewed, so return empty string.
     return "";
   }
 
