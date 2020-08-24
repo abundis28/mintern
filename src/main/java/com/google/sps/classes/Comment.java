@@ -24,6 +24,7 @@ public class Comment {
 
   private String body;
   private String authorName;
+  private boolean isVerifiedMentor;
   private Timestamp dateTime;
 
   public void setBody(String body) {
@@ -32,6 +33,10 @@ public class Comment {
 
   public void setAuthorName(String authorName) {
     this.authorName = authorName;
+  }
+
+  public void setIsVerifiedMentor(boolean isVerifiedMentor) {
+    this.isVerifiedMentor = isVerifiedMentor;
   }
 
   public void setDateTime(Timestamp dateTime) {
