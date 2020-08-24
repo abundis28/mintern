@@ -105,7 +105,6 @@ public class PostQuestionServlet extends HttpServlet {
 
   /** 
    * Makes the author of the recently added question a follower of said question.
-   * TODO(shaargtz): Move function to Utiliy class to be reused.
    */
   private void insertNewFollower(Connection connection, int askerId) {
     try {
