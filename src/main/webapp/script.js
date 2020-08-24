@@ -514,7 +514,7 @@ function createAnswerElement(answer) {
   
   const authorElement = document.createElement('small');
   if (answer.isVerifiedMentor) {
-    authorElement.innerHTML = answer.authorName + ' &check;';
+    authorElement.innerText = answer.authorName + '\nVerified Ex-Intern';
   } else {
     authorElement.innerText = answer.authorName;
   }
@@ -541,7 +541,7 @@ function createCommentElement(comment) {
   
   const authorElement = document.createElement('small');
   if (comment.isVerifiedMentor) {
-    authorElement.innerHTML = comment.authorName + ' &check;';
+    authorElement.innerText = comment.authorName + '\nVerified Ex-Intern';
   } else {
     authorElement.innerText = comment.authorName;
   }
