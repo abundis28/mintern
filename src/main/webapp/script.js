@@ -186,10 +186,8 @@ async function fetchSingleQuestion() {
   const questionContainer = document.getElementById('question');
   
   if (questionObject.length > 0) {
-    questionObject.forEach(question => {
-      questionContainer.appendChild(
-            createQuestionElement(question, /**hasRedirect=*/false));
-    });
+    questionContainer.appendChild(
+          createQuestionElement(questionObject[0], /**hasRedirect=*/false));
   } else {
     // An empty object means the ID doesn't exist, so we redirect to the index.
     window.location.replace('/index.html');
