@@ -246,7 +246,6 @@ public final class Utility {
         // If query exists for rejected prepared statement, return rejected status.
         return "rejected";
       }
-      connection.close();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
       Logger logger = Logger.getLogger(Utility.class.getName());

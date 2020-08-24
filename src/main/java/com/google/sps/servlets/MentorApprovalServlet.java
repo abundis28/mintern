@@ -42,25 +42,52 @@ public class MentorApprovalServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
 
-    // Get IDs of mentor and approver.
+    // Get IDs of mentor and logged in user.
     int mentorId = Utility.tryParseInt(request.getParameter("id"));
-    int approverId = Utility.getUserId();
+    int userId = Utility.getUserId();
     
     // Set default variables to create MentorEvidence object.
     // If user is not logged in, it will be created with these empty values, but user will be
     // redirected back to home page.
     boolean isApprover = false;
     String mentorUsername = "";
+    boolean isApproved = false;
+    boolean isRejected = false;
     String paragraph = "";
     if (userService.isUserLoggedIn()) {
-      // If user is logged in, update variables.
-      isApprover = checkForApprover(mentorId, approverId);
+      // If user is logged in, update variables. Else, empty values will be displayed.
+      isApprover = checkForApprover(mentorId, userId);
       mentorUsername = Utility.getUsername(mentorId);
-      paragraph = getMentorEvidence(mentorId);
+
+      // Create the MySQL prepared statement.
+      String query = "SELECT * FROM MentorEvidence "
+          + "WHERE mentor_id = " + Integer.toString(mentorId);
+
+      try {
+        // Establish connection to MySQL database.
+        Connection connection = DriverManager.getConnection(
+            Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+        
+        // Create the MySQL SELECT prepared statement.
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        ResultSet queryResult = preparedStatement.executeQuery();
+
+        // Get results from query.
+        if (queryResult.next()) {
+          isApproved = queryResult.getBoolean(SqlConstants.MENTOR_EVIDENCE_FETCH_ISAPPROVED);
+          isRejected = queryResult.getBoolean(SqlConstants.MENTOR_EVIDENCE_FETCH_ISREJECTED); 
+          paragraph = queryResult.getString(SqlConstants.MENTOR_EVIDENCE_FETCH_PARAGRAPH);
+        }
+        connection.close();
+      } catch (SQLException exception) {
+        // If the connection or the query don't go through, we get the log of what happened.
+        Logger logger = Logger.getLogger(MentorApprovalServlet.class.getName());
+        logger.log(Level.SEVERE, exception.getMessage(), exception);
+      }
     }
 
-    MentorEvidence mentorEvidence =
-        new MentorEvidence(isApprover, mentorUsername, paragraph);
+    MentorEvidence mentorEvidence = new MentorEvidence(
+        userId, isApprover, mentorUsername, isApproved, isRejected, paragraph);
     response.setContentType("application/json");
     response.getWriter().println(Utility.convertToJsonUsingGson(mentorEvidence));
   }
@@ -130,40 +157,6 @@ public class MentorApprovalServlet extends HttpServlet {
     }
     // If no link was found between mentor and approver in MentorApproval table, return false.
     return false;
-  }
-
-  /**
-   * Returns internship evidence of a mentor.
-   */
-  // TODO(oumontiel): Add more evidence fields.
-  private String getMentorEvidence(int mentorId) {
-    String paragraph = "";
-
-    try {
-      // Create the MySQL prepared statement.
-      String query = "SELECT * FROM MentorEvidence "
-          + "WHERE mentor_id = ?";
-      
-      // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
-      
-      // Create the MySQL SELECT prepared statement.
-      PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.setInt(SqlConstants.MENTOR_APPROVAL_FETCH_MENTORID, mentorId);
-      ResultSet queryResult = preparedStatement.executeQuery();
-
-      // Get results from query.
-      if (queryResult.next()) {
-        paragraph = queryResult.getString(SqlConstants.MENTOR_EVIDENCE_FETCH_PARAGRAPH);
-      }
-      connection.close();
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(MentorApprovalServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
-    return paragraph;
   }
 
   /**
