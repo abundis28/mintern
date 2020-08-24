@@ -182,12 +182,12 @@ async function fetchForum(pageNumber) {
 async function fetchSingleQuestion() {
   const questionId = (new URL(document.location)).searchParams.get("id");
   const response = await fetch('/fetch-questions?id=' + questionId + '&page=-1');
-  const questionsObject = await response.json();
-  const questionsContainer = document.getElementById('question');
+  const questionObject = await response.json();
+  const questionContainer = document.getElementById('question');
   
-  if (questionsObject.length > 0) {
-    questionsObject.forEach(question => {
-      questionsContainer.appendChild(
+  if (questionObject.length > 0) {
+    questionObject.forEach(question => {
+      questionContainer.appendChild(
             createQuestionElement(question, /**hasRedirect=*/false));
     });
   } else {
