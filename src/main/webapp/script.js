@@ -159,28 +159,6 @@ function fetchAuthIndexQuestion() {
 }
 
 /**
- * Displays logout button or redirects to index in verification page.
- */
-function fetchAuthVerification() {
-  fetch('/authentication').then(response => response.json()).then(user => {
-    if (user.isUserLoggedIn) {
-      // If user is logged in, show logout button in navbar.
-      if (!user.isUserRegistered) {
-        // If logged in user is not registered, redirect to signup page.
-        window.location.replace('/signup.html');
-      }
-
-      // Add logout button to navbar.
-      createAuthenticationButton(
-          user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
-    } else {
-      // If user is logged out, show signup and login buttons in navbar.
-      window.location.replace('/index.html');
-    }
-  })
-}
-
-/**
  * Fetches the question list in the index and adds pagination elements.
  * Used for homepage and searching.
  * @param {int} pageNumber : current page number to display.
