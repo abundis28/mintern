@@ -51,8 +51,8 @@ public final class UtilityTest {
   
   /** Tests for tryParseInt() function */
   @Test
-  public void integerValue() {
-    // String with an integer value.
+  public void positiveValue() {
+    // String with a positive integer value.
     String stringToInt = "1";
     
     int actual = Utility.tryParseInt(stringToInt);
@@ -68,6 +68,17 @@ public final class UtilityTest {
     
     int actual = Utility.tryParseInt(stringToInt);
     int expected = 0;
+
+    Assert.assertEquals(actual, expected);
+  }
+  
+  @Test
+  public void negativeValue() {
+    // String with a negative integer value.
+    String stringToInt = "-1";
+    
+    int actual = Utility.tryParseInt(stringToInt);
+    int expected = -1;
 
     Assert.assertEquals(actual, expected);
   }
