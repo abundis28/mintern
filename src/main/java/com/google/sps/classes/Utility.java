@@ -216,6 +216,46 @@ public final class Utility {
   }
 
   /**
+   * Returns the mentor review status, which could be approved, rejected or not reviewed.
+   */
+  public static String getReviewStatus(int mentorId) {
+    // Create the MySQL queries for approved and rejected mentor.
+    String approvedQuery = "SELECT * FROM MentorEvidence "
+        + "WHERE mentor_id = " + Integer.toString(mentorId) + " "
+        + "AND is_approved = TRUE";
+    String rejectedQuery = "SELECT * FROM MentorEvidence "
+        + "WHERE mentor_id = " + Integer.toString(mentorId) + " "
+        + "AND is_rejected = TRUE";
+
+    try {
+      // Establish connection to MySQL database.
+      Connection connection = DriverManager.getConnection(
+          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+      
+      // Create and execute the MySQL SELECT prepared statements.
+      PreparedStatement approvedPreparedStatement = connection.prepareStatement(approvedQuery);
+      ResultSet approvedQueryResult = approvedPreparedStatement.executeQuery();
+      PreparedStatement rejectedPreparedStatement = connection.prepareStatement(rejectedQuery);
+      ResultSet rejectedQueryResult = rejectedPreparedStatement.executeQuery();
+      
+      if (approvedQueryResult.next()) {
+        // If query exists for approved prepared statement, return approved status.
+        return "approved";
+      }
+      if (rejectedQueryResult.next()) {
+        // If query exists for rejected prepared statement, return rejected status.
+        return "rejected";
+      }
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+    // If no queries were found, it means mentor is not reviewed, so return empty string.
+    return "";
+  }
+
+  /**
    * Tries to convert a string to an integer and returns 0 if not possible.
    */
   public static int tryParseInt(String string) {
