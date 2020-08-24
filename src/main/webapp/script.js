@@ -348,7 +348,6 @@ function createNotificationsElement(notification) {
 
 /**
  * Creates questions wrapper for limiting posts with pagination.
- * 
  * @param {ForumPage} forumPage : object with pagination info and the question list.
  * @param {int} pageNumber : current page number.
  * @param {string} searchString : null if the function is called from the forum.
