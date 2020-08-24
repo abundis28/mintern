@@ -536,6 +536,7 @@ function createCommentFormElement(answerId) {
   textElement.setAttribute('name', 'comment-body');
   textElement.setAttribute('id', 'comment-body');
   textElement.setAttribute('placeholder', 'Write a comment');
+  textElement.setAttribute('required', '');
   textElement.setAttribute('data-autoresize', '');
   textElement.setAttribute('rows', '2');
   divElement.appendChild(textElement);
