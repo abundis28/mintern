@@ -501,17 +501,6 @@ function createAnswerElement(answer) {
   answerElement.setAttribute('class', 'list-group-item mt-5');
   answerElement.innerText = answer.body;
   
-  // TODO(shaargtz): implement voting system.
-  // const votesElement = document.createElement('small');
-  // votesElement.setAttribute('class', 'float-right');
-  // if (answer.votes === 1) {
-  //   // Avoid writing '1 votes'.
-  //   votesElement.innerText = answer.votes + ' vote';
-  // } else {
-  //   votesElement.innerText = answer.votes + ' votes';
-  // }
-  // answersElement.appendChild(votesElement);
-  
   const authorElement = document.createElement('small');
   authorElement.innerText = answer.authorName;
   answerElement.appendChild(document.createElement('br'));
