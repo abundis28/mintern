@@ -14,6 +14,8 @@
 
 package com.google.sps.servlets;
 
+import com.google.sps.classes.Answer;
+import com.google.sps.classes.Comment;
 import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
@@ -24,6 +26,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -33,11 +37,56 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** 
- * This servlet will post an answer to a question.
- * TODO(shaargtz): join this servlet with fetchAnswers into a single answer servlet.
+ * This servlet will post an answer to a question or fetch answer and comment information.
  */
-@WebServlet("/post-answer")
+@WebServlet("/answer")
 public class PostAnswerServlet extends HttpServlet {
+
+  /** 
+   * Gets the answers for a single question and send them back as JSON.
+   */
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // ID of the question to which the answers correspond.
+    int questionId = Utility.tryParseInt(request.getParameter("id"));
+
+    // Create a map that will hold all of the answers from the query.
+    // Each <int> will be an answer's id, and will be used to avoid creating duplicate
+    // answers and easily add a <Comment> to the corresponding <Answer>.
+    Map<Integer, Answer> answers = new HashMap<>();
+
+    String query = Utility.fetchAnswersAndCommentsQuery;
+
+    // The connection and query are attempted.
+    try {
+        Connection connection = DriverManager.getConnection(
+            Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(SqlConstants.ANSWER_SET_QUESTIONID, questionId);
+        ResultSet queryResult = preparedStatement.executeQuery();
+        // All of the rows from the query are looped if it goes through.
+        while (queryResult.next()) {
+          int currentAnswerId = queryResult.getInt(SqlConstants.ANSWER_FETCH_ID);
+          if (answers.containsKey(currentAnswerId)) {
+            // The comment of the current row corresponds to a previous answer, 
+            // so we add it to its corresponding answer object.
+            answers.get(currentAnswerId).addComment(Utility.buildComment(queryResult));
+          } else {
+            // The comment of the current row corresponds to a new answer,
+            // so we create that answer along with its comment and add it to
+            // the map.
+            answers.put(currentAnswerId, Utility.buildAnswer(queryResult));
+          }
+        }
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(FetchAnswersServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    response.setContentType("application/json;");
+    response.getWriter().println(Utility.convertToJsonUsingGson(answers));
+  }
 
   /** 
    * Executes the query to insert an answer to the database.
