@@ -374,7 +374,7 @@ function createQuestionElement(question, page) {
     iconElement.setAttribute('class', 'far fa-bell fa-2x');
   }
   // Add logic to follow or unfollow when clicking the bell.
-  iconElement.setAttribute('onclick', 'followUnfollow(' 
+  iconElement.setAttribute('onclick', 'updateFollowerStatus(' 
       + question.userFollowsQuestion + ', ' + question.id + ')');
   questionElement.appendChild(iconElement);
 
@@ -600,7 +600,7 @@ function backToHomepage() {
  * @param {boolean} userFollowsQuestion
  * @param {int} questionId
  */
-function followUnfollow(userFollowsQuestion, questionId) {
+function updateFollowerStatus(userFollowsQuestion, questionId) {
   // Grab the icon of that specific question.
   const iconToChange = document.getElementById('icon' + questionId);
   const currentFollowerContainer = 
@@ -645,7 +645,7 @@ function followUnfollow(userFollowsQuestion, questionId) {
   }
 
   // Update the onclick.
-  iconToChange.setAttribute('onclick', 'followUnfollow(' 
+  iconToChange.setAttribute('onclick', 'updateFollowerStatus(' 
     + !userFollowsQuestion + ', ' + questionId + ')');
 }
 
