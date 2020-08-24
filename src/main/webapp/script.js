@@ -513,7 +513,11 @@ function createAnswerElement(answer) {
   // answersElement.appendChild(votesElement);
   
   const authorElement = document.createElement('small');
-  authorElement.innerText = answer.authorName;
+  if (answer.isVerifiedMentor) {
+    authorElement.innerHTML = answer.authorName + ' &check;';
+  } else {
+    authorElement.innerText = answer.authorName;
+  }
   answerElement.appendChild(document.createElement('br'));
   answerElement.appendChild(authorElement);
   
@@ -536,7 +540,11 @@ function createCommentElement(comment) {
   commentElement.innerText = comment.body;
   
   const authorElement = document.createElement('small');
-  authorElement.innerText = comment.authorName;
+  if (comment.isVerifiedMentor) {
+    authorElement.innerHTML = comment.authorName + ' &check;';
+  } else {
+    authorElement.innerText = comment.authorName;
+  }
   commentElement.appendChild(document.createElement('br'));
   commentElement.appendChild(authorElement);
   
