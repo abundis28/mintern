@@ -292,7 +292,7 @@ public final class Utility {
   /** 
    * Makes a user follow an answer.
    */
-  private void insertCommentFollower(Connection connection, int answerId, int authorId) {
+  public static void insertCommentFollower(Connection connection, int answerId, int authorId) {
     try {
       String insertFollowerQuery = "INSERT INTO AnswerFollower(answer_id, follower_id) "
           + "VALUES (?,?)";

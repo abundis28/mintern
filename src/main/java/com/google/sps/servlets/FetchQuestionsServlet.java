@@ -40,48 +40,5 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/fetch-questions")
 public class FetchQuestionsServlet extends HttpServlet {
 
-  /** 
-   * Gets the questions from the query and return them as a JSON string.
-   */
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    List<Question> questions = new ArrayList<>();
-    
-    // TODO(shaargtz): move queries from Utility to a new SqlQueries class.
-    String query = Utility.fetchQuestionsQuery;
-
-    // ID of the question to query.
-    int questionId = Utility.tryParseInt(request.getParameter("id"));
-    int userId = Utility.getUserId();
-
-    if (questionId == SqlConstants.FETCH_ALL_QUESTIONS) {
-      // Nothing needs to be added to the query.
-      query = Utility.fetchQuestionsQuery;
-    } else {
-      // Condition to fetch only one question. WHERE condition is inserted before GROUP BY.
-      query = Utility.fetchQuestionsQuery.substring(0, SqlConstants.QUESTION_QUERY_WHERE_CONDITION)
-          + "WHERE Question.id=" + questionId + " " + Utility.fetchQuestionsQuery.substring(
-                SqlConstants.QUESTION_QUERY_WHERE_CONDITION, Utility.fetchQuestionsQuery.length());
-    }
-
-    // The connection and query are attempted.
-    try {
-      Connection connection = DriverManager
-          .getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
-      PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.setInt(SqlConstants.QUESTION_QUERY_SET_USERID, userId);
-      ResultSet queryResult = preparedStatement.executeQuery();
-      
-      // All of the rows from the query are looped if it goes through.
-      while (queryResult.next()) {
-        questions.add(Utility.buildQuestion(queryResult));
-      }
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(FetchQuestionsServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
-    response.setContentType("application/json;");
-    response.getWriter().println(Utility.convertToJsonUsingGson(questions));
-  }
+  
 }
