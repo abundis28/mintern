@@ -366,6 +366,7 @@ function createQuestionElement(question, page) {
   // Star icon.
   const iconElement = document.createElement('i');
   iconElement.setAttribute('id', 'icon' + question.id);
+  iconElement.setAttribute('style', 'cursor: pointer');
   if (question.userFollowsQuestion) {
     // If the user follows the question, the icon will be solid.
     iconElement.setAttribute('class', 'fas fa-star fa-2x');
@@ -612,7 +613,9 @@ function updateFollowerStatus(userFollowsQuestion, questionId) {
 
   if (userFollowsQuestion) {
     // Unfollow the question.
-    fetch('/follower-system?type=follow&question-id=' + questionId);
+    fetch('/follower-system?type=unfollow&question-id=' + questionId, {
+      method: 'POST'
+    });
     
     // Change the button.
     iconToChange.setAttribute('class', 'far fa-star fa-2x');
@@ -628,7 +631,9 @@ function updateFollowerStatus(userFollowsQuestion, questionId) {
     }
   } else {
     // Follow the question.
-    fetch('/follower-system?type=unfollow&question-id=' + questionId);
+    fetch('/follower-system?type=follow&question-id=' + questionId, {
+      method: 'POST'
+    });
 
     // Change the button.
     iconToChange.setAttribute('class', 'fas fa-star fa-2x');
