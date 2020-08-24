@@ -29,7 +29,8 @@ public class Question {
   private int askerId;
   private Timestamp dateTime;
   private int numberOfFollowers;
-  private int numberOfAnswers;  
+  private int numberOfAnswers;
+  private boolean userFollowsQuestion;
 
   public void setId(int id) {
     this.id = id;
@@ -61,5 +62,9 @@ public class Question {
 
   public void setNumberOfAnswers(int numberOfAnswers) {
     this.numberOfAnswers = numberOfAnswers;
-  }  
+  }
+
+  public void setUserFollowsQuestion(boolean userFollowsQuestion) {
+    this.userFollowsQuestion = userFollowsQuestion;
+  }
 }

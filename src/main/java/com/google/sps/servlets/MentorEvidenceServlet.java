@@ -52,7 +52,8 @@ public class MentorEvidenceServlet extends HttpServlet {
       request.getRequestDispatcher("/notification?type=requestApproval&modifiedElementId="
           + userId).include(request, response);
     } catch (ServletException exception) {
-      System.out.println(exception.getMessage());
+      Logger logger = Logger.getLogger(MentorApprovalServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
     response.sendRedirect("/index.html");
   }

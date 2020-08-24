@@ -283,21 +283,13 @@ function fetchAuth() {
  * Fetches and displays information related to mentor evidence.
  */
 function fetchMentorApproval() {
-  const mentor_id = (new URL(document.location)).searchParams.get('id');
-  const mentorApprovalUrl = '/mentor-approval?id=' + mentor_id.toString();
+  const mentorId = (new URL(document.location)).searchParams.get('id');
+  if (mentorId === null) {
+    window.location.replace('/index.html')
+  }
+  const mentorApprovalUrl = '/mentor-approval?id=' + mentorId;
   fetch(mentorApprovalUrl).then(response => response.json()).then(approval => {
-    if (approval.isApprover) {
-      // Display mentor username.
-      const usernameElement = document.getElementById('username');
-      usernameElement.innerHTML = approval.mentorUsername;
-
-      // Display paragraph mentor submitted as evidence.
-      const paragraphElement = document.getElementById('paragraph');
-      paragraphElement.innerHTML = approval.paragraph;
-    } else {
-      // If approver is not assigned to mentor, redirect to index.
-      window.location.replace('/index.html');
-    }
+    createApprovalMessage(approval);
   })
 }
 
@@ -327,6 +319,50 @@ function createAuthenticationButton(authenticationUrl, buttonStyle, buttonText, 
   const authenticationButtonNavbar = document.getElementById(navbarItem);
   authenticationButtonNavbar.innerHTML = '';
   authenticationButtonNavbar.appendChild(authenticationButtonItem);
+}
+
+/**
+ * Create message for the approval page that shows approval status directed to mentor or approver.
+ * @param {MentorEvidence} approval
+ * TODO(oumontiel): Create content for each condition.
+ */
+function createApprovalMessage(approval) {
+  if (approval.userId == mentorId && approval.isApproved) {
+    // If mentor has been approved, show corresponding message.
+    
+  } else if (approval.userId == mentorId && approval.isRejected) {
+    // If mentor has been rejected, show corresponding message.
+    
+  } else if (approval.userId == mentorId) {
+    // If mentor is not approved or rejected yet, show corresponding message.
+    
+  } else if (approval.isApprover && approval.isApproved) {
+    // If approver is assigned to mentor but mentor is already approved,
+    // show corresponding message.
+    
+  } else if (approval.isApprover && approval.isRejected) {
+    // If approver is assigned to mentor but mentor is already rejected,
+    // show corresponding message.
+    
+  } else if (approval.isApprover && approval.hasReviewed) {
+    // If approver is assigned to mentor and has already reviewed them,
+    // show corresponding message.
+    
+  } else if (approval.isApprover) {
+    // If approver is assigned to mentor and has not reviewed them,
+    // show evidence and approval buttons.
+    
+    // Display mentor username.
+    const usernameElement = document.getElementById('username');
+    usernameElement.innerHTML = approval.mentorUsername;
+
+    // Display paragraph mentor submitted as evidence.
+    const paragraphElement = document.getElementById('paragraph');
+    paragraphElement.innerHTML = approval.paragraph;
+  } else {
+    // If user is not either a mentor or an approver assigned to that mentor, redirect to index.
+    window.location.replace('/index.html');
+  }
 }
 
 /**
@@ -411,37 +447,92 @@ function createPageElement(forumPage, pageNumber, searchString) {
 /** 
  * Creates an <li> element with question data. 
  * Each element corresponds to a question to be displayed in the DOM.
+ * 
+ * @param {Question} question : information of a single question.
+ * @param {string} page       : check if the element is for the forum or
+ *                              single view.
  */
-function createQuestionElement(question, hasRedirect) {
-  const questionElement = document.createElement('li');
-  questionElement.setAttribute('class', 'list-group-item');
+function createQuestionElement(question, page) {
+  // Div to wrap the media object with question data.
+  const questionWrapper = document.createElement('div');
+  questionWrapper.setAttribute('class', 'list-group-item');
 
-  if (hasRedirect) {
-    // Add href to redirect from forum to single view.
-    const questionTitle = document.createElement('a');
-    questionTitle.setAttribute('href', '/question.html?id=' + question.id);
-    questionTitle.innerText = question.title;
-    questionElement.appendChild(questionTitle);
+  // Media object to hold the star icon and the text.
+  const questionElement = document.createElement('div');
+  questionElement.setAttribute('class', 'media');
+  questionElement.setAttribute('style', 'width: auto');
+  questionWrapper.appendChild(questionElement);
+
+  // Star icon.
+  const iconElement = document.createElement('i');
+  iconElement.setAttribute('id', 'icon' + question.id);
+  iconElement.setAttribute('style', 'cursor: pointer');
+  if (question.userFollowsQuestion) {
+    // If the user follows the question, the icon will be solid.
+    iconElement.setAttribute('class', 'fas fa-star fa-2x');
   } else {
-    questionElement.innerText = question.title;
+    // If the user doesn't follow the question, the icon will be outlined.
+    iconElement.setAttribute('class', 'far fa-star fa-2x');
   }
-  
-  // Asker name is placed besides the question.
+  // Add logic to follow or unfollow when clicking the star.
+  iconElement.setAttribute('onclick', 'updateFollowerStatus(' 
+      + question.userFollowsQuestion + ', ' + question.id + ')');
+  questionElement.appendChild(iconElement);
+
+  // Div to hold all of the text and style it.
+  const textContainer = document.createElement('div');
+  textContainer.setAttribute('class', 'media-body ml-3');
+  questionElement.appendChild(textContainer);
+
+  // Heading for the title.
+  const questionTitle = document.createElement('h5');
+  if (page === 'forum') {
+    // Add href to redirect from forum to single view.
+    const questionURL = document.createElement('a');
+    questionURL.setAttribute('href', '/question.html?id=' + question.id);
+    questionURL.innerText = question.title;
+    questionTitle.appendChild(questionURL);
+  } else {
+    questionTitle.innerText = question.title;
+  }
+  textContainer.appendChild(questionTitle);
+
+  // If the question has a body, show it underneath.
+  if (question.body) {
+    const bodyElement = document.createElement('p');
+    bodyElement.setAttribute('class', 'mb-1');
+    if (page === 'forum' && question.body.length > 80) {
+      // All the body should not be displayed in the forum if it is very big.
+      bodyElement.innerText = question.body
+          // Reduce the preview of the body to 80 characters.
+          .substring(0,80)
+          // Remove line breaks and add trailing dots.
+          .replace(/(\r\n|\n|\r)/gm,' ') + '...';
+    } else {
+      bodyElement.innerText = question.body
+          // Remove line breaks from the preview.
+          .replace(/(\r\n|\n|\r)/gm,' ');
+    }
+    textContainer.appendChild(bodyElement);
+  }
+
+  // Element with the username.
   const askerElement = document.createElement('small');
   askerElement.setAttribute('class', 'text-muted');
-  askerElement.innerText = '\t' + question.askerName;
-  questionElement.appendChild(askerElement);
+  askerElement.innerText = question.askerName;
+  textContainer.appendChild(askerElement);
 
-  // Number of followers is placed to the right side at the top.
+  // Number of followers is placed to the right side.
   const followersElement = document.createElement('small');
   followersElement.setAttribute('class', 'float-right');
+  followersElement.setAttribute('id', 'followerCount' + question.id);
   if (question.numberOfFollowers === 1) {
     // Avoid writing '1 followers'.
     followersElement.innerText = question.numberOfFollowers + ' follower';
   } else {
     followersElement.innerText = question.numberOfFollowers + ' followers';
   }
-  questionElement.appendChild(followersElement);
+  textContainer.appendChild(followersElement);
 
   // Number of answers is placed to the right side at the bottom.
   const answersElement = document.createElement('small');
@@ -452,35 +543,16 @@ function createQuestionElement(question, hasRedirect) {
   } else {
     answersElement.innerText = question.numberOfAnswers + ' answers';
   }
-  questionElement.appendChild(document.createElement('br'));
-  questionElement.appendChild(answersElement);
- 
-  // If the question has a body, show it underneath.
-  if (question.body) {
-    const bodyElement = document.createElement('small');
-    if (question.body.length > 100) {
-      // All of the body should not be displayed if it is very big.
-      bodyElement.innerText = question.body
-          // Reduce the preview of the body to 100 characters
-          .substring(0,100)
-          // Remove line breaks and add trailing dots
-          .replace(/(\r\n|\n|\r)/gm,'') + '...';
-    } else {
-      bodyElement.innerText = question.body
-          // Remove line breaks from the preview.
-          .replace(/(\r\n|\n|\r)/gm,' ');
-    }
-    questionElement.appendChild(bodyElement);
-    questionElement.appendChild(document.createElement('br'));
-  } 
+  textContainer.appendChild(document.createElement('br'));
+  textContainer.appendChild(answersElement);
   
   // Date is placed beneath the body or title.
   const dateElement = document.createElement('small');
   dateElement.setAttribute('class', 'text-muted');
   dateElement.innerText = question.dateTime;
-  questionElement.appendChild(dateElement);
+  textContainer.appendChild(dateElement);
 
-  return questionElement;
+  return questionWrapper;
 }
 
 /** 
@@ -564,6 +636,7 @@ function createCommentFormElement(answerId) {
   textElement.setAttribute('class', 'form-control form-control-sm comment-body');
   textElement.setAttribute('name', 'comment-body');
   textElement.setAttribute('placeholder', 'Write a comment');
+  textElement.setAttribute('required', '');
   textElement.setAttribute('data-autoresize', '');
   textElement.setAttribute('rows', '2');
   divElement.appendChild(textElement);
@@ -621,6 +694,66 @@ function backToHomepage() {
   eraseQueryStringFromUrl();
 }
 
+/** 
+ * Logic to change the follower status of the user regarding a
+ * specific question. 
+ * 
+ * @param {boolean} userFollowsQuestion
+ * @param {int} questionId
+ */
+function updateFollowerStatus(userFollowsQuestion, questionId) {
+  // Grab the icon of that specific question.
+  const iconToChange = document.getElementById('icon' + questionId);
+  const currentFollowerContainer = 
+      document.getElementById('followerCount' + questionId);
+  const currentFollowerString = currentFollowerContainer.innerText;
+  const currentFollowerCount = 
+      // Get the number of followers using a regex.
+      parseInt(currentFollowerString.match(/\d/g));
+
+  if (userFollowsQuestion) {
+    // Unfollow the question.
+    fetch('/follower-system?type=unfollow&question-id=' + questionId, {
+      method: 'POST'
+    });
+    
+    // Change the button.
+    iconToChange.setAttribute('class', 'far fa-star fa-2x');
+
+    // Update the follower count in the DOM.
+    if (currentFollowerCount === 2) {
+      // Avoid writing '1 followers'.
+      currentFollowerContainer.innerText = currentFollowerCount - 1
+          + ' follower';
+    } else {
+      currentFollowerContainer.innerText = currentFollowerCount - 1
+          + ' followers';
+    }
+  } else {
+    // Follow the question.
+    fetch('/follower-system?type=follow&question-id=' + questionId, {
+      method: 'POST'
+    });
+
+    // Change the button.
+    iconToChange.setAttribute('class', 'fas fa-star fa-2x');
+
+    // Update the follower count in the DOM.
+    if (currentFollowerCount === 0) {
+      // Avoid writing '1 followers'.
+      currentFollowerContainer.innerText = currentFollowerCount + 1
+          + ' follower';
+    } else {
+      currentFollowerContainer.innerText = currentFollowerCount + 1
+          + ' followers';
+    }
+  }
+
+  // Update the onclick.
+  iconToChange.setAttribute('onclick', 'updateFollowerStatus(' 
+    + !userFollowsQuestion + ', ' + questionId + ')');
+}
+
 /**
  * Redirects user in signup page to index if they are already registered.
  */
@@ -661,11 +794,12 @@ function notify(type, id) {
  * Modifies approval status of a mentor based on approver's feedback.
  * @param {boolean} isApproved 
  */
-function mentorApprove(isApproved) {
-  const mentor_id = (new URL(document.location)).searchParams.get('id');
-  fetch('mentor-approval?isApproved=' + isApproved + '&id=' + mentor_id, {
+function updateMentorApproval(isApproved) {
+  const mentorId = (new URL(document.location)).searchParams.get('id');
+  fetch('mentor-approval?isApproved=' + isApproved + '&id=' + mentorId, {
     method: 'POST'
   })
+  window.location.reload(true);
 }
 
 /**
