@@ -58,7 +58,7 @@ public class MentorApprovalServlet extends HttpServlet {
 
     if (userService.isUserLoggedIn()) {
       // If user is logged in, update variables. Else, empty values will be displayed.
-      approver = checkForApprover(mentorId, userId);
+      approverStatus = checkForApprover(mentorId, userId);
       mentorUsername = Utility.getUsername(mentorId);
 
       // Create the MySQL prepared statement.
@@ -88,8 +88,8 @@ public class MentorApprovalServlet extends HttpServlet {
       }
     }
 
-    MentorEvidence mentorEvidence = new MentorEvidence(
-        userId, mentorUsername, isApproved, isRejected, paragraph, approver[0], approver[1]);
+    MentorEvidence mentorEvidence = new MentorEvidence(userId, mentorUsername, isApproved,
+        isRejected, paragraph, approverStatus[0], approverStatus[1]);
     response.setContentType("application/json");
     response.getWriter().println(Utility.convertToJsonUsingGson(mentorEvidence));
   }
@@ -126,14 +126,10 @@ public class MentorApprovalServlet extends HttpServlet {
   }
 
   /**
-<<<<<<< HEAD
    * Returns whether approver is assigned to mentor (first index) and if they have already reviewed
-   * the mentor (second index).
-=======
-   * Returns true if approver is assigned to mentee, used to grant access to approval page only to
-   * approvers. Though users are not given links to other mentor's approval pages, they could
-   * access them by typing the link to their browser, so this is used to redirect those users.
->>>>>>> 5b001e7ffc3adc4f47d9e50768d0684652507a00
+   * the mentor (second index). Used to grant access to approval page only to approvers. Though
+   * users are not given links to other mentor's approval pages, they could access them by typing
+   * the link to their browser, so this is used to redirect those users.
    */
   private boolean[] checkForApprover(int mentorId, int approverId) {
     boolean[] approver = {false, false};
