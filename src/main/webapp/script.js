@@ -483,9 +483,11 @@ function createPageElement(forumPage, pageNumber, searchString) {
   if (forumPage.previousPage) {
     previousWrapper.setAttribute('class', 'page-item');
     if (searchString != '') {
-      nextWrapper.onclick = fetchForum(pageNumber - 1);
+      previousWrapper.onclick = function() {
+        fetchForum(pageNumber - 1);
+      }
     } else {
-      nextWrapper.onclick = searchQuestion(searchString, pageNumber - 1);
+      previousWrapper.onclick = searchQuestion(searchString, pageNumber - 1);
     }
   } else {
     previousWrapper.setAttribute('class', 'page-item disabled');
@@ -508,7 +510,9 @@ function createPageElement(forumPage, pageNumber, searchString) {
   if (forumPage.nextPage) {
     nextWrapper.setAttribute('class', 'page-item');
     if (searchString != '') {
-      nextWrapper.onclick = fetchForum(pageNumber + 1);
+      nextWrapper.onclick = function() {
+        fetchForum(pageNumber + 1);
+      }
     } else {
       nextWrapper.onclick = searchQuestion(searchString, pageNumber + 1);
     }
