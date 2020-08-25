@@ -101,7 +101,7 @@ function fetchAuthIndexQuestion() {
     const inboxButton = document.getElementById('notificationsDropdown');
     const notificationsBade = document.getElementById('notifications-badge');
     if (user.isUserLoggedIn) {
-      // If user is logged in, show logout and inbox buttons in navbar.
+      // If user is logged in, show logout and inbox buttons and notifications badge in navbar.
       if (inboxButton) {
         // Check that the element exists.
         inboxButton.style.display = 'block';
@@ -168,11 +168,12 @@ function fetchNotifications() {
     notificationsElement.innerHTML = '';
     let numberNotifications = 0;
     for (const notification of notificationsJson) {
+      // Increment counter for each notification.
       numberNotifications++;
       notificationsElement.appendChild(createNotificationsElement(notification));
     }
-    const nofiticationsBadge = document.getElementById("notifications-badge");
-    nofiticationsBadge.innerText = numberNotifications;
+    // Display total number of notifications.
+    document.getElementById("notifications-badge").innerText = numberNotifications;
   });
 }
 
