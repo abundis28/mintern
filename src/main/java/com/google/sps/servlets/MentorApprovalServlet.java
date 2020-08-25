@@ -53,8 +53,8 @@ public class MentorApprovalServlet extends HttpServlet {
     boolean isApproved = false;
     boolean isRejected = false;
     String paragraph = "";
-    boolean[] approver = {false, false}; // First index verifies approver as assigned to mentor and
-                                         // second checks if approver has already reviewed.
+    boolean[] approverStatus = {false, false}; // First index verifies approver is assigned to
+                                               // mentor and second checks if they have reviewed.
 
     if (userService.isUserLoggedIn()) {
       // If user is logged in, update variables. Else, empty values will be displayed.
