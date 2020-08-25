@@ -42,7 +42,7 @@ public class FollowerSystemServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String type = request.getParameter("type");
     int questionId = Utility.tryParseInt(request.getParameter("question-id"));
-    int userId = Utility.getUserId();
+    int userId = Utility.getUserId(request);
 
     try {
       Connection connection = DriverManager.getConnection(

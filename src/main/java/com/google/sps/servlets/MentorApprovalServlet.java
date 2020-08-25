@@ -56,8 +56,8 @@ public class MentorApprovalServlet extends HttpServlet {
     String paragraph = "";
     if (userService.isUserLoggedIn()) {
       // If user is logged in, update variables. Else, empty values will be displayed.
-      isApprover = checkForApprover(mentorId, userId);
-      mentorUsername = Utility.getUsername(mentorId);
+      isApprover = checkForApprover(mentorId, userId, request);
+      mentorUsername = Utility.getUsername(mentorId, request);
 
       // Create the MySQL prepared statement.
       String query = "SELECT * FROM MentorEvidence "
@@ -65,7 +65,7 @@ public class MentorApprovalServlet extends HttpServlet {
 
       try {
         // Establish connection to MySQL database.
-        Connection connection = DriverManager.getConnection(request);
+        Connection connection = Utility.getConnection(request);
         
         // Create the MySQL SELECT prepared statement.
         PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -102,8 +102,8 @@ public class MentorApprovalServlet extends HttpServlet {
     int approverId = Utility.getUserId(request);
 
     // Update database tables related to mentor approval.
-    addApproval(mentorId, approverId);
-    addEvidence(isApproved, mentorId);
+    addApproval(mentorId, approverId, request);
+    addEvidence(isApproved, mentorId, request);
 
     // If mentor review is complete, send them a notification.
     String notificationType = Utility.getReviewStatus(mentorId);
