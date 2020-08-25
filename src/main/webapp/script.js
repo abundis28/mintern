@@ -660,6 +660,9 @@ function createAnswerElement(answer) {
   
   const authorElement = document.createElement('small');
   authorElement.innerText = answer.authorName;
+  if (answer.isVerifiedMentor) {
+    authorElement.innerText += '\nVerified Ex-Intern';
+  }
   answerElement.appendChild(document.createElement('br'));
   answerElement.appendChild(authorElement);
   
@@ -682,7 +685,10 @@ function createCommentElement(comment) {
   commentElement.innerText = comment.body;
   
   const authorElement = document.createElement('small');
-  authorElement.innerText = comment.authorName;
+  authorElement.innerText = answer.authorName;
+  if (answer.isVerifiedMentor) {
+    authorElement.innerText += '\nVerified Ex-Intern';
+  }
   commentElement.appendChild(document.createElement('br'));
   commentElement.appendChild(authorElement);
   

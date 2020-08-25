@@ -97,6 +97,8 @@ public class FetchAnswersServlet extends HttpServlet {
       answer.setBody(queryResult.getString(SqlConstants.ANSWER_FETCH_BODY));
       answer.setAuthorName(queryResult.getString(SqlConstants.ANSWER_FETCH_AUTHORNAME));
       answer.setDateTime(queryResult.getTimestamp(SqlConstants.ANSWER_FETCH_DATETIME));
+      answer.setIsVerifiedMentor((Utility.getReviewStatus(
+        queryResult.getInt(SqlConstants.ANSWER_FETCH_AUTHORID)).equals("approved") ? true : false));
 
       // Adds the comment from the same row.
       answer.addComment(buildComment(queryResult));
@@ -122,6 +124,8 @@ public class FetchAnswersServlet extends HttpServlet {
       comment.setBody(queryResult.getString(SqlConstants.COMMENT_FETCH_BODY));
       comment.setAuthorName(queryResult.getString(SqlConstants.COMMENT_FETCH_AUTHORNAME));
       comment.setDateTime(queryResult.getTimestamp(SqlConstants.COMMENT_FETCH_DATETIME));
+      comment.setIsVerifiedMentor((Utility.getReviewStatus(
+        queryResult.getInt(SqlConstants.COMMENT_FETCH_AUTHORID)).equals("approved") ? true : false));
 
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
