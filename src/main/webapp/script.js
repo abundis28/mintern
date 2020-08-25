@@ -513,10 +513,9 @@ function createAnswerElement(answer) {
   // answersElement.appendChild(votesElement);
   
   const authorElement = document.createElement('small');
+  authorElement.innerText = answer.authorName;
   if (answer.isVerifiedMentor) {
-    authorElement.innerText = answer.authorName + '\nVerified Ex-Intern';
-  } else {
-    authorElement.innerText = answer.authorName;
+    authorElement.innerText += '\nVerified Ex-Intern';
   }
   answerElement.appendChild(document.createElement('br'));
   answerElement.appendChild(authorElement);
@@ -540,10 +539,9 @@ function createCommentElement(comment) {
   commentElement.innerText = comment.body;
   
   const authorElement = document.createElement('small');
-  if (comment.isVerifiedMentor) {
-    authorElement.innerText = comment.authorName + '\nVerified Ex-Intern';
-  } else {
-    authorElement.innerText = comment.authorName;
+  authorElement.innerText = answer.authorName;
+  if (answer.isVerifiedMentor) {
+    authorElement.innerText += '\nVerified Ex-Intern';
   }
   commentElement.appendChild(document.createElement('br'));
   commentElement.appendChild(authorElement);
