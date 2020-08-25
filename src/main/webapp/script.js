@@ -105,7 +105,7 @@ function fetchAuthIndexQuestion() {
       if (inboxButton) {
         // Check that the element exists.
         inboxButton.style.display = 'block';
-        notificationsBadge.style.displa = 'block';
+        notificationsBadge.style.display = 'block';
       }
       fetchNotifications();
       
