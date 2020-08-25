@@ -572,7 +572,7 @@ function createQuestionElement(question, isForum) {
   // Star icon.
   const iconElement = document.createElement('i');
   iconElement.setAttribute('id', 'icon' + question.id);
-  iconElement.setAttribute('style', 'cursor: pointer');
+  iconElement.setAttribute('style', 'cursor: pointer; display: none');
   if (question.userFollowsQuestion) {
     // If the user follows the question, the icon will be solid.
     iconElement.setAttribute('class', 'fas fa-star fa-2x');
