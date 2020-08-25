@@ -84,12 +84,9 @@
   font-weight: 400;
 }
 
-.badge-danger {
-  display: "none";
-}
-
 #notifications-badge {
   font-size: 100%;
   padding: .4em .4em;
   margin: .5em .2em;
+  display: "none";
 }
