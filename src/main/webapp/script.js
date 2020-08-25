@@ -321,7 +321,7 @@ function createAuthenticationButton(authenticationUrl, buttonStyle, buttonText, 
 
 /**
  * Create message for the approval page that shows approval status directed to mentor or approver.
- * @param {int} mentorId
+ * @param {string} mentorId
  * @param {MentorEvidence} approval
  * TODO(oumontiel): Create content for each condition.
  */
@@ -339,7 +339,7 @@ function createApprovalMessage(mentorId, approval) {
     approvalSmallTextElement.appendChild(document.createTextNode(
         'Your username will now show a verified icon to show off your experience.'));
   } else if (approval.userId == mentorId && approval.isRejected) {
-    // If mentor has been rejected, show corresponding message.
+    // If mentor has been rejected, show corresponding message and add redirect button.
     approvalSubtitleElement.appendChild(document.createTextNode(
         'We\'re really sorry, your review has been '));
     approvalSubtitleElement.appendChild(
@@ -347,6 +347,7 @@ function createApprovalMessage(mentorId, approval) {
     approvalSubtitleElement.appendChild(document.createTextNode('.'));
     approvalSmallTextElement.appendChild(document.createTextNode(
         'If you think this is a mistake, click the button to update your information.'));
+    createRedirectToVerification();
   } else if (approval.userId == mentorId) {
     // If mentor is not approved or rejected yet, show corresponding message.
     approvalSubtitleElement.appendChild(document.createTextNode(
@@ -423,6 +424,25 @@ function createApprovalSpan(spanColor, spanMessage) {
   approvalSpanElement.setAttribute('class', spanColor);
   approvalSpanElement.textContent = spanMessage;
   return approvalSpanElement;
+}
+
+/**
+ * Creates button that redirects to verification page for mentor to update their evidence after
+ * being rejected.
+ */
+function createRedirectToVerification() {
+  // Create button to redirect to verification page.
+  const redirectButton = document.createElement('button');
+  redirectButton.type = 'button';
+  redirectButton.setAttribute('class', 'btn btn-success');
+  redirectButton.onclick = function() {
+    window.location.replace('verification.html');
+  };
+  redirectButton.innerHTML = 'Update information';
+
+  // Append button to HTML element.
+  const approvalMessageElement = document.getElementById('rejected-button');
+  approvalMessageElement.appendChild(redirectButton);
 }
 
 /**
