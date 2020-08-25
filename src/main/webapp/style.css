@@ -29,7 +29,7 @@
 }
 
 #answer-body,
-#comment-body,
+.comment-body,
 #question-body {
   box-sizing: border-box;
   resize: none;
@@ -55,16 +55,26 @@
   background-color: #6cb4b8ff!important;
 }
 
-.signup-subtitle {
+.page-small-text {
+  font-weight: 400;
+  font-size: 1.5em;
+  color: #000000;
+}
+
+.page-subtitle {
   font-weight: 200;
 }
 
-.signup-title {
+.page-title {
   font-weight: 200;
   text-transform: uppercase;
 }
 
-.signup-title .name {
+.page-title .name {
   color: #6cb4b8ff;
   font-weight: 400;
+}
+
+.text-mint {
+  color: #6cb4b8ff;
 }

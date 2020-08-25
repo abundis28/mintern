@@ -58,14 +58,18 @@
         </ul>
       </div>
     </nav>
-    <!-- Approval Content -->
-    <div id="approval-content" class="content m-5">
+    <!-- Approval Message -->
+    <div id="approval-message" class="content m-5">
       <div class="container text-center">
-        <h1 class="signup-title">Mentor Approval</h1>
-        <h2 class="signup-subtitle text-muted">Below you can find the information related to internship experience of: <span id="username"></span></h2> 
-        <h2 class="signup-subtitle text-muted">Please read through this information and verify its validity.</h2>
+        <h1 class="page-title">Mentor Approval</h1>
+        <h2 id="approval-subtitle" class="page-subtitle text-muted"></h2> 
+        <h3 id="approval-small-text" class="page-small-text text-muted"></h3>
+        <div id="rejected-button" class="row d-flex justify-content-center"></div>
         <!-- TODO(oumontiel): Add more detailed instructions -->
       </div>
+    </div>
+    <!-- Approval Content -->
+    <div id="approval-content">
       <!-- Mentor Evidence Display -->
       <div class="container">
         <div id="paragraph"></div>
@@ -78,7 +82,5 @@
         </div>
       </div>
     </div>
-    <!-- Approval Message -->
-    <div id="approval-message" class="content m-5"></div>
   </body>
 </html>
