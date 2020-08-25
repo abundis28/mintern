@@ -138,6 +138,7 @@ public final class SqlConstants {
   // Constants used for fetching mentor ID and their approver ID.
   public static final int MENTOR_APPROVAL_FETCH_MENTORID = 1;
   public static final int MENTOR_APPROVAL_FETCH_APPROVERID = 2;
+  public static final int MENTOR_APPROVAL_FETCH_ISREVIEWED = 3;
   
   // Constant used in building the question query.
   public static final int QUESTION_QUERY_WHERE_CONDITION = 573;
