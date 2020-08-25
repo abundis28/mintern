@@ -181,7 +181,7 @@ async function fetchForum(pageNumber) {
  */
 async function fetchSingleQuestion() {
   const questionId = (new URL(document.location)).searchParams.get("id");
-  const response = await fetch('/fetch-questions?id=' + questionId + '&page=-1');
+  const response = await fetch('/question?id=' + questionId + '&page=-1');
   const questionObject = await response.json();
   const questionContainer = document.getElementById('question');
   
