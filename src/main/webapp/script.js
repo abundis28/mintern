@@ -21,12 +21,13 @@ function loadIndex() {
   // Determine whether all the questions should be fetched or just the ones that match the search.
   const fullTextSearch = (new URL(document.location)).searchParams.get("search");
   if (fullTextSearch === "1") {
-    // Fetch just the questions related to the string input in the search bar.
-    const stringSearchInput = (new URL(document.location)).searchParams.get("stringSearchInput");
-    searchQuestion(stringSearchInput);
+    // Fetch first page of the questions related to the string input in the search bar.
+    const stringSearchInput = 
+        (new URL(document.location)).searchParams.get("stringSearchInput");
+    searchQuestion(stringSearchInput, /**pageNumber=*/1);
   } else {
-    // Fetch the whole forum.
-    fetchQuestions('forum');
+    // Fetch the whole forum on the first page.
+    fetchForum(/**pageNumber=*/1);
     eraseQueryStringFromUrl();
   }
 }
@@ -36,7 +37,7 @@ function loadIndex() {
  */
 function loadQuestion() {
   fetchAuthIndexQuestion();
-  fetchQuestions('question');
+  fetchSingleQuestion();
   fetchAnswers();
   setQuestionIdValue();
 }
@@ -158,6 +159,42 @@ function fetchAuthIndexQuestion() {
 }
 
 /**
+ * Fetches the question list in the index and adds pagination elements.
+ * Used for homepage and searching.
+ * @param {int} pageNumber : current page number to display.
+ */
+async function fetchForum(pageNumber) {
+  // Question ID -1 tells the server to fetch all questions.
+  const response = await fetch('/fetch-questions?id=-1&page=' + pageNumber);
+  const questionsObject = await response.json();
+
+  const questionsContainer = document.getElementById('forum');
+
+  // Empty the HTML for multiple searches in a row.
+  questionsContainer.innerHTML = '';
+  questionsContainer.appendChild(createPageElement(
+      questionsObject, pageNumber, /**hasRedirect=*/true, /**isSearch=*/false));
+}
+
+/**
+ * Fetches a question's data for the single question view.
+ */
+async function fetchSingleQuestion() {
+  const questionId = (new URL(document.location)).searchParams.get("id");
+  const response = await fetch('/fetch-questions?id=' + questionId + '&page=-1');
+  const questionObject = await response.json();
+  const questionContainer = document.getElementById('question');
+  
+  if (questionObject.length > 0) {
+    questionContainer.appendChild(
+          createQuestionElement(questionObject[0], /**hasRedirect=*/false));
+  } else {
+    // An empty object means the ID doesn't exist, so we redirect to the index.
+    window.location.replace('/index.html');
+  }
+}
+
+/**
  * Fetches notifications of the signed in user.
  */
 function fetchNotifications() {
@@ -254,41 +291,6 @@ function fetchMentorApproval() {
   fetch(mentorApprovalUrl).then(response => response.json()).then(approval => {
     createApprovalMessage(mentorId, approval);
   })
-}
-
-/**
- * Fetches questions from server, wraps each in an <li> element, 
- * and adds them to the DOM.
- */
-async function fetchQuestions(page) {
-  let questionId;
-  let questionsContainer;
-  let hasRedirect;
-  if (page === 'forum') {
-    // For the forum we pass -1 which means we need to retrieve all questions.
-    questionId = -1;
-    questionsContainer = document.getElementById('forum');
-
-    // We want the element in the forum to have a link which sends to the single
-    // page view.
-    hasRedirect = true;
-  } else if (page === 'question') {
-    questionId = (new URL(document.location)).searchParams.get("id");
-    questionsContainer = document.getElementById('question');
-    hasRedirect = false;
-  }
-  const response = await fetch('/fetch-questions?id=' + questionId);
-  const questionsObject = await response.json();
-
-  if (questionsObject.length !== 0) {
-    // Check that the ID exist so that it actually has questions in it.
-    questionsObject.forEach(question => {
-      questionsContainer.appendChild(createQuestionElement(question, page));
-    });
-  } else {
-    // If the ID doesn't exist, redirect to the index.
-    window.location.replace('/index.html');
-  }
 }
 
 /**
@@ -460,6 +462,68 @@ function createNotificationsElement(notification) {
   liElement.appendChild(linkElement);
   liElement.setAttribute('class', 'list-group-item');
   return liElement;
+}
+
+/**
+ * Creates questions wrapper for limiting posts with pagination.
+ * @param {ForumPage} forumPage : object with pagination info and the question list.
+ * @param {int} pageNumber : current page number.
+ * @param {string} searchString : null if the function is called from the forum.
+ */
+function createPageElement(forumPage, pageNumber, searchString) {
+  const pageWrapper = document.createElement('div');
+  forumPage.pageQuestions.forEach(question => {
+    pageWrapper.appendChild(createQuestionElement(question, /**hasRedirect=*/true));
+  });
+
+  const pageIndexes = document.createElement('ul');
+  pageIndexes.setAttribute('class', 'pagination');
+
+  const previousWrapper = document.createElement('li');
+  if (forumPage.previousPage) {
+    previousWrapper.setAttribute('class', 'page-item');
+    if (searchString != '') {
+      nextWrapper.onclick = fetchForum(pageNumber - 1);
+    } else {
+      nextWrapper.onclick = searchQuestion(searchString, pageNumber - 1);
+    }
+  } else {
+    previousWrapper.setAttribute('class', 'page-item disabled');
+  }
+  const previousButton = document.createElement('a');
+  previousButton.setAttribute('class', 'page-link');
+  previousButton.innerHTML = '&laquo;';
+  previousWrapper.appendChild(previousButton);
+  pageIndexes.appendChild(previousWrapper);
+
+  const currentPage = document.createElement('li');
+  currentPage.setAttribute('class', 'page-item');
+  const pageText = document.createElement('a');
+  pageText.setAttribute('class', 'page-link');
+  pageText.innerText = 'Page ' + pageNumber + ' of ' + forumPage.numberOfPages;
+  currentPage.appendChild(pageText);
+  pageIndexes.appendChild(currentPage);
+
+  const nextWrapper = document.createElement('li');
+  if (forumPage.nextPage) {
+    nextWrapper.setAttribute('class', 'page-item');
+    if (searchString != '') {
+      nextWrapper.onclick = fetchForum(pageNumber + 1);
+    } else {
+      nextWrapper.onclick = searchQuestion(searchString, pageNumber + 1);
+    }
+  } else {
+    nextWrapper.setAttribute('class', 'page-item disabled');
+  }
+  const nextButton = document.createElement('a');
+  nextButton.setAttribute('class', 'page-link');
+  nextButton.innerHTML = '&raquo;';
+  nextWrapper.appendChild(nextButton);
+  pageIndexes.appendChild(nextWrapper);
+
+  pageWrapper.appendChild(pageIndexes);
+
+  return pageWrapper;
 }
 
 /** 
@@ -651,9 +715,8 @@ function createCommentFormElement(answerId) {
 
   // Text area to write the comment.
   const textElement = document.createElement('textarea');
-  textElement.setAttribute('class', 'form-control form-control-sm');
+  textElement.setAttribute('class', 'form-control form-control-sm comment-body');
   textElement.setAttribute('name', 'comment-body');
-  textElement.setAttribute('id', 'comment-body');
   textElement.setAttribute('placeholder', 'Write a comment');
   textElement.setAttribute('required', '');
   textElement.setAttribute('data-autoresize', '');
@@ -664,7 +727,7 @@ function createCommentFormElement(answerId) {
   const inputQuestionIdElement = document.createElement('input');
   inputQuestionIdElement.setAttribute('type', 'hidden');
   inputQuestionIdElement.setAttribute('name', 'question-id');
-  inputQuestionIdElement.setAttribute('id', 'question-id');
+  inputQuestionIdElement.setAttribute('class', 'question-id');
   inputQuestionIdElement.setAttribute('value', getQuestionId());
   divElement.appendChild(inputQuestionIdElement);
 
@@ -672,7 +735,7 @@ function createCommentFormElement(answerId) {
   const inputAnswerIdElement = document.createElement('input');
   inputAnswerIdElement.setAttribute('type', 'hidden');
   inputAnswerIdElement.setAttribute('name', 'answer-id');
-  inputAnswerIdElement.setAttribute('id', 'answer-id');
+  inputAnswerIdElement.setAttribute('class', 'answer-id');
   inputAnswerIdElement.setAttribute('value', answerId);
   divElement.appendChild(inputAnswerIdElement);
 
@@ -706,10 +769,10 @@ function addAutoResize() {
  */
 function backToHomepage() {
   const searchInput = document.getElementById("questionSearchInput");
-  searchInput.value = "";
+  searchInput.value = '';
   const questionsContainer = document.getElementById('forum');
-  questionsContainer.innerHTML = "";
-  fetchQuestions('forum');
+  questionsContainer.innerHTML = '';
+  fetchForum(/**pageNumber=*/1);
   eraseQueryStringFromUrl();
 }
 
@@ -795,7 +858,7 @@ function getQuestionId() {
  * Sets attribute to the corresponding form elements.
  */
 function setQuestionIdValue() {
-  document.getElementById('question-id').value = getQuestionId(); 
+  document.getElementsByClassName('question-id').value = getQuestionId(); 
 }
 
 /**
@@ -832,18 +895,15 @@ function searchRedirect() {
 /**
  * Searches questions that contain the input string in the title or body elements.
  */
-function searchQuestion(stringSearchInput) {
+function searchQuestion(stringSearchInput, pageNumber) {
   if (stringSearchInput != "") {
     const questionsContainer = document.getElementById('forum');
     questionsContainer.innerHTML = "";
-    fetch('/search-question?inputString=' + stringSearchInput).then(response => 
-        response.json()).then(questionsJson => {
-      for (const question of questionsJson) {
-        // True value parameter for createQuestionElement means that the question does have a 
-        // redirect URL option.
-        questionsContainer.appendChild(createQuestionElement(question, true));
-      }
-    })
+    fetch('/search-question?inputString=' + stringSearchInput + '&page=' + pageNumber)
+        .then(response => response.json()).then(forumPage => {
+          questionsContainer.appendChild(createPageElement(
+              forumPage, pageNumber, /**hasRedirect=*/true, stringSearchInput));
+        })
   }
 }
 

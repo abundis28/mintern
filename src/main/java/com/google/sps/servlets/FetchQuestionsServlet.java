@@ -14,6 +14,7 @@
 
 package com.google.sps.servlets;
 
+import com.google.sps.classes.ForumPage;
 import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.Question;
 import com.google.sps.classes.Utility;
@@ -54,6 +55,9 @@ public class FetchQuestionsServlet extends HttpServlet {
     int questionId = Utility.tryParseInt(request.getParameter("id"));
     int userId = Utility.getUserId();
 
+    // Number of page that the user is browsing.
+    int page = Utility.tryParseInt(request.getParameter("page"));
+
     if (questionId == SqlConstants.FETCH_ALL_QUESTIONS) {
       // Nothing needs to be added to the query.
       query = Utility.fetchQuestionsQuery;
@@ -81,7 +85,18 @@ public class FetchQuestionsServlet extends HttpServlet {
       Logger logger = Logger.getLogger(FetchQuestionsServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
+
+    // Response object is different for a single question than for the forum pages.
+    // Questions in the forum are wrapped in a ForumPage object with information about
+    // pages.
     response.setContentType("application/json;");
-    response.getWriter().println(Utility.convertToJsonUsingGson(questions));
+    if (page != SqlConstants.SINGLE_QUESTION_PAGE) {
+      // Forum posts get split by pages.
+      ForumPage forumPage = Utility.splitPages(questions, page);
+      response.getWriter().println(Utility.convertToJsonUsingGson(forumPage));
+    } else {
+      // A single question is returned.
+      response.getWriter().println(Utility.convertToJsonUsingGson(questions));
+    }
   }
 }

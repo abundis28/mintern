@@ -42,8 +42,12 @@ public final class SqlConstants {
   public static final int QUESTION_INSERT_BODY = 2;
   public static final int QUESTION_INSERT_ASKERID = 3;
 
-  // Constant used in the forum.
+  // Constants used in the forum.
   public static final int FETCH_ALL_QUESTIONS = -1;
+  public static final int PAGE_SIZE = 10;
+
+  // Constant used in the single question view.
+  public static final int SINGLE_QUESTION_PAGE = -1;
 
   // Constants used for inserting a follower to a question.
   // QUESTION_FETCH_MAXID is used to get the ID of the question
