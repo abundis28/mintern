@@ -99,11 +99,13 @@ async function fetchAnswers() {
 function fetchAuthIndexQuestion() {
   fetch('/authentication').then(response => response.json()).then(user => {
     const inboxButton = document.getElementById('notificationsDropdown');
+    const notificationsBade = document.getElementById('notifications-badge');
     if (user.isUserLoggedIn) {
       // If user is logged in, show logout and inbox buttons in navbar.
       if (inboxButton) {
         // Check that the element exists.
         inboxButton.style.display = 'block';
+        notificationsBade.style.displa = 'block';
       }
       fetchNotifications();
       
@@ -164,9 +166,13 @@ function fetchNotifications() {
   fetch('/notification').then(response => response.json()).then((notificationsJson) => {
     const notificationsElement = document.getElementById('inbox-dropdown');
     notificationsElement.innerHTML = '';
+    let numberNotifications = 0;
     for (const notification of notificationsJson) {
+      numberNotifications++;
       notificationsElement.appendChild(createNotificationsElement(notification));
     }
+    const nofiticationsBadge = document.getElementById("notifications-badge");
+    nofiticationsBadge.innerText = numberNotifications;
   });
 }
 
