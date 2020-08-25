@@ -258,10 +258,14 @@ function fetchMentorExperience() {
  */
 function fetchAuth() {
   fetch('/authentication').then(response => response.json()).then(user => {
+    const inboxButton = document.getElementById('notifications-dropdown');
     if (user.isUserLoggedIn) {
       // If user is logged in, show logout button in navbar.
       // Show notifications.
-      inboxButton.style.display = 'block';
+      if (inboxButton) {
+        // Check that the element exists.
+        inboxButton.style.display = 'block';
+      }
       fetchNotifications();
 
       if (!user.isUserRegistered) {
