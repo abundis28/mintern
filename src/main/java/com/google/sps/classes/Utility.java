@@ -218,6 +218,48 @@ public final class Utility {
     return question;
   }
 
+  /** 
+   * Creates an answer object from the query data.
+   */
+  public static Answer buildAnswer(ResultSet queryResult) {
+    Answer answer = new Answer();
+    try {
+      answer.setId(queryResult.getInt(SqlConstants.ANSWER_FETCH_ID));
+      answer.setBody(queryResult.getString(SqlConstants.ANSWER_FETCH_BODY));
+      answer.setAuthorName(queryResult.getString(SqlConstants.ANSWER_FETCH_AUTHORNAME));
+      answer.setDateTime(queryResult.getTimestamp(SqlConstants.ANSWER_FETCH_DATETIME));
+
+      // Adds the comment from the same row.
+      answer.addComment(buildComment(queryResult));
+
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    return answer;
+  }
+
+  /** 
+   * Creates a comment object from the query data.
+   */
+  public static Comment buildComment(ResultSet queryResult) {
+    Comment comment = new Comment();
+    try {
+      comment.setBody(queryResult.getString(SqlConstants.COMMENT_FETCH_BODY));
+      comment.setAuthorName(queryResult.getString(SqlConstants.COMMENT_FETCH_AUTHORNAME));
+      comment.setDateTime(queryResult.getTimestamp(SqlConstants.COMMENT_FETCH_DATETIME));
+
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    return comment;
+  }
+
   /**
    * Returns the mentor review status, which could be approved, rejected or not reviewed.
    */
@@ -292,6 +334,24 @@ public final class Utility {
     }
   }
 
+  /** 
+   * Makes a user follow an answer.
+   */
+  public static void insertCommentFollower(Connection connection, int answerId, int authorId) {
+    try {
+      String insertFollowerQuery = "INSERT INTO AnswerFollower(answer_id, follower_id) "
+          + "VALUES (?,?)";
+      PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
+      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_ANSWERID, answerId);
+      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_AUTHORID, authorId);
+      followerStatement.executeUpdate();
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+  }
+  
   /** 
    * Split the query by the page length depending on the current page.
    */

@@ -72,7 +72,7 @@ function loadApproval() {
  */
 async function fetchAnswers() {
   const questionId = (new URL(document.location)).searchParams.get("id");
-  const response = await fetch('/fetch-answers?id=' + questionId);
+  const response = await fetch('/answer?id=' + questionId);
   const answersObject = await response.json();
   const answersContainer = document.getElementById('answers');
   Object.values(answersObject).forEach(answer => {
@@ -646,17 +646,6 @@ function createAnswerElement(answer) {
   const answerElement = document.createElement('li');
   answerElement.setAttribute('class', 'list-group-item mt-5');
   answerElement.innerText = answer.body;
-  
-  // TODO(shaargtz): implement voting system.
-  // const votesElement = document.createElement('small');
-  // votesElement.setAttribute('class', 'float-right');
-  // if (answer.votes === 1) {
-  //   // Avoid writing '1 votes'.
-  //   votesElement.innerText = answer.votes + ' vote';
-  // } else {
-  //   votesElement.innerText = answer.votes + ' votes';
-  // }
-  // answersElement.appendChild(votesElement);
   
   const authorElement = document.createElement('small');
   authorElement.innerText = answer.authorName;
