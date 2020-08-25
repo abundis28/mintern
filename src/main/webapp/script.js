@@ -173,7 +173,7 @@ async function fetchForum(pageNumber) {
   // Empty the HTML for multiple searches in a row.
   questionsContainer.innerHTML = '';
   questionsContainer.appendChild(createPageElement(
-      questionsObject, pageNumber, stringSearchInput));
+      questionsObject, pageNumber, ''));
 }
 
 /**
@@ -482,7 +482,7 @@ function createPageElement(forumPage, pageNumber, searchString) {
   const previousWrapper = document.createElement('li');
   if (forumPage.previousPage) {
     previousWrapper.setAttribute('class', 'page-item');
-    if (searchString != '') {
+    if (searchString == '') {
       previousWrapper.onclick = function() {
         fetchForum(pageNumber - 1);
       }
@@ -511,7 +511,7 @@ function createPageElement(forumPage, pageNumber, searchString) {
   const nextWrapper = document.createElement('li');
   if (forumPage.nextPage) {
     nextWrapper.setAttribute('class', 'page-item');
-    if (searchString != '') {
+    if (searchString == '') {
       nextWrapper.onclick = function() {
         fetchForum(pageNumber + 1);
       }
