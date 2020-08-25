@@ -487,7 +487,9 @@ function createPageElement(forumPage, pageNumber, searchString) {
         fetchForum(pageNumber - 1);
       }
     } else {
-      previousWrapper.onclick = searchQuestion(searchString, pageNumber - 1);
+      previousWrapper.onclick = function() {
+        searchQuestion(searchString, pageNumber - 1);
+      }
     }
   } else {
     previousWrapper.setAttribute('class', 'page-item disabled');
@@ -514,7 +516,9 @@ function createPageElement(forumPage, pageNumber, searchString) {
         fetchForum(pageNumber + 1);
       }
     } else {
-      nextWrapper.onclick = searchQuestion(searchString, pageNumber + 1);
+      nextWrapper.onclick = function() {
+        searchQuestion(searchString, pageNumber + 1);
+      }
     }
   } else {
     nextWrapper.setAttribute('class', 'page-item disabled');
