@@ -28,4 +28,10 @@ public final class SubjectTag {
     this.subject = subject;
     this.color = color;
   }
+
+  public SubjectTag() {
+    this.id = -1;
+    this.subject = "";
+    this.color = "";
+  }
 }

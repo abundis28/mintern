@@ -37,19 +37,14 @@ public final class Utility {
 
   // Variables for user login status.
   public static final int USER_LOGGED_OUT_ID = -1;
-
-  // Variables for mentor review status.
-  public static final int MENTOR_NOT_REVIEWED = 0;
-  public static final int MENTOR_APPROVED = 1;
-  public static final int MENTOR_REJECTED = 2;
   
   // Query to retrieve data from all questions. Can be appended a WHERE condition to select
   // specific questions. Generates the following table:
   //
-  // |-----------------Question-----------------|----FollowerCount--------|-----GetUsername-----|------AnswerCount------|
-  // +----+-------+------+----------+-----------+-------------+-----------+----------+----------+-------------+---------+
-  // | id | title | body | asker_id | date_time | question_id | followers | username | asker_id | question_id | answers |
-  // +----+-------+------+----------+-----------+-------------+-----------+----------+----------+-------------+---------+
+  // |-----------------Question-----------------|----FollowerCount--------|-----GetUsername-----|------AnswerCount------|----UserFollows---|
+  // +----+-------+------+----------+-----------+-------------+-----------+----------+----------+-------------+---------+------------------+
+  // | id | title | body | asker_id | date_time | question_id | followers | username | asker_id | question_id | answers | follows_question |
+  // +----+-------+------+----------+-----------+-------------+-----------+----------+----------+-------------+---------+------------------+
   public static final String fetchQuestionsQuery = "SELECT * FROM Question "
       + "LEFT JOIN (SELECT question_id, COUNT(follower_id) followers FROM QuestionFollower "
       + "GROUP BY question_id) FollowerCount ON Question.id=FollowerCount.question_id "
@@ -57,6 +52,8 @@ public final class Utility {
       + "ON Question.asker_id=GetUsername.asker_id "
       + "LEFT JOIN (SELECT question_id, COUNT(id) answers FROM Answer "
       + "GROUP BY question_id) AnswerCount ON Question.id=AnswerCount.question_id "
+      + "LEFT JOIN (SELECT question_id AS follows_question FROM QuestionFollower WHERE follower_id=?) "
+      + "UserFollows ON Question.id=UserFollows.follows_question "
       + "ORDER BY Question.date_time DESC;";
 
   // Query to get answers and comments from a question. Generates the following table:
@@ -205,6 +202,10 @@ public final class Utility {
           SqlConstants.QUESTION_FETCH_NUMBEROFFOLLOWERS));
       question.setNumberOfAnswers(queryResult.getInt(
           SqlConstants.QUESTION_FETCH_NUMBEROFANSWERS));
+      question.setUserFollowsQuestion((queryResult.getInt(
+          // follows_question returns the ID of the question if the user follows it, or 0
+          // if the user doesn't follow it.
+          SqlConstants.QUESTION_FETCH_USERFOLLOWSQUESTION) != 0 ? true : false));
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
       Logger logger = Logger.getLogger(Utility.class.getName());
@@ -217,36 +218,41 @@ public final class Utility {
   /**
    * Returns the mentor review status, which could be approved, rejected or not reviewed.
    */
-  public static int getReviewStatus(String reviewType, int mentorId) {
-    // Create the MySQL prepared statement.
-    String query = "SELECT * FROM MentorEvidence "
+  public static String getReviewStatus(int mentorId) {
+    // Create the MySQL queries for approved and rejected mentor.
+    String approvedQuery = "SELECT * FROM MentorEvidence "
         + "WHERE mentor_id = " + Integer.toString(mentorId) + " "
-        + "AND " + reviewType + " = TRUE";
+        + "AND is_approved = TRUE";
+    String rejectedQuery = "SELECT * FROM MentorEvidence "
+        + "WHERE mentor_id = " + Integer.toString(mentorId) + " "
+        + "AND is_rejected = TRUE";
 
     try {
       // Establish connection to MySQL database.
       Connection connection = DriverManager.getConnection(
           Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
       
-      // Create and execute the MySQL SELECT prepared statement.
-      PreparedStatement preparedStatement = connection.prepareStatement(query);
-      ResultSet queryResult = preparedStatement.executeQuery();
-      connection.close();
+      // Create and execute the MySQL SELECT prepared statements.
+      PreparedStatement approvedPreparedStatement = connection.prepareStatement(approvedQuery);
+      ResultSet approvedQueryResult = approvedPreparedStatement.executeQuery();
+      PreparedStatement rejectedPreparedStatement = connection.prepareStatement(rejectedQuery);
+      ResultSet rejectedQueryResult = rejectedPreparedStatement.executeQuery();
       
-      // If query exists, returns true because mentor is found to be approved or rejected.
-      if (queryResult.next()) {
-        if (reviewType.equals("is_approved")) {
-          return MENTOR_APPROVED;
-        } else if (reviewType.equals("is_rejected")) {
-          return MENTOR_REJECTED;
-        }
+      if (approvedQueryResult.next()) {
+        // If query exists for approved prepared statement, return approved status.
+        return "approved";
+      }
+      if (rejectedQueryResult.next()) {
+        // If query exists for rejected prepared statement, return rejected status.
+        return "rejected";
       }
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
       Logger logger = Logger.getLogger(Utility.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
-    return MENTOR_NOT_REVIEWED;
+    // If no queries were found, it means mentor is not reviewed, so return empty string.
+    return "";
   }
 
   /**

@@ -42,17 +42,19 @@ public class MentorApprovalServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
 
-    // Get IDs of mentor and approver.
+    // Get IDs of mentor and logged in user.
     int mentorId = Utility.tryParseInt(request.getParameter("id"));
     int userId = Utility.getUserId();
     
     // Set default variables to create MentorEvidence object.
+    // If user is not logged in, it will be created with these default values, but user will be
+    // redirected back to home page.
     String mentorUsername = "";
     boolean isApproved = false;
     boolean isRejected = false;
     String paragraph = "";
-    boolean[] approver = {false, false}; // First index verifies approver as assigned to mentor and
-                                         // second checks if approver has already reviewed.
+    boolean[] approverStatus = {false, false}; // First index verifies approver is assigned to
+                                               // mentor and second checks if they have reviewed.
 
     if (userService.isUserLoggedIn()) {
       // If user is logged in, update variables. Else, empty values will be displayed.
@@ -107,17 +109,10 @@ public class MentorApprovalServlet extends HttpServlet {
     addEvidence(isApproved, mentorId);
 
     // If mentor review is complete, send them a notification.
-    String notificationType = "";
-    if (Utility.getReviewStatus("is_approved", mentorId) == Utility.MENTOR_APPROVED) {
-      // If mentor is approved, send notification of type 'approved'.
-      notificationType = "approved";
-    } else if (Utility.getReviewStatus("is_rejected", mentorId) == Utility.MENTOR_REJECTED) {
-      // If mentor is rejected, send notification of type 'rejected'.
-      notificationType = "rejected";
-    }
+    String notificationType = Utility.getReviewStatus(mentorId);
 
     // Post to notification servlet.
-    if (Utility.getReviewStatus("is_approved", mentorId) == Utility.MENTOR_APPROVED) {
+    if (!notificationType.equals("")) {
       // If mentor is approved, send notification of type 'approved'.
       response.setContentType("text/plain");
       try {
@@ -128,36 +123,17 @@ public class MentorApprovalServlet extends HttpServlet {
         logger.log(Level.SEVERE, exception.getMessage(), exception);
       }
     }
-    
-    
-    
-    // If mentor review is complete, send them a notification.
-    if (Utility.getReviewStatus("is_approved", mentorId) == Utility.MENTOR_APPROVED) {
-      // If mentor is approved, send notification of type 'approved'.
-      response.setContentType("text/plain");
-      try {
-        request.getRequestDispatcher("/notification?type=approved&modifiedElementId="
-            + mentorId).include(request, response);
-      } catch (ServletException exception) {
-        Logger logger = Logger.getLogger(MentorApprovalServlet.class.getName());
-        logger.log(Level.SEVERE, exception.getMessage(), exception);
-      }
-    } else if (Utility.getReviewStatus("is_rejected", mentorId) == Utility.MENTOR_REJECTED) {
-      // If mentor is rejected, send notification of type 'rejected'.
-      response.setContentType("text/plain");
-      try {
-        request.getRequestDispatcher("/notification?type=rejected&modifiedElementId="
-            + mentorId).include(request, response);
-      } catch (ServletException exception) {
-        Logger logger = Logger.getLogger(MentorApprovalServlet.class.getName());
-        logger.log(Level.SEVERE, exception.getMessage(), exception);
-      }
-    }
   }
 
   /**
+<<<<<<< HEAD
    * Returns whether approver is assigned to mentor (first index) and if they have already reviewed
    * the mentor (second index).
+=======
+   * Returns true if approver is assigned to mentee, used to grant access to approval page only to
+   * approvers. Though users are not given links to other mentor's approval pages, they could
+   * access them by typing the link to their browser, so this is used to redirect those users.
+>>>>>>> 5b001e7ffc3adc4f47d9e50768d0684652507a00
    */
   private boolean[] checkForApprover(int mentorId, int approverId) {
     boolean[] approver = {false, false};
