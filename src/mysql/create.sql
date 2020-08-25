@@ -42,11 +42,9 @@ CREATE TABLE UserNotification (
   notification_id INT NOT NULL,
   PRIMARY KEY (user_id, notification_id),
   FOREIGN KEY (user_id)
-  REFERENCES User (id)
-  ON DELETE CASCADE,
+  REFERENCES User (id),
   FOREIGN KEY (notification_id)
   REFERENCES Notification (id)
-  ON DELETE CASCADE
 );
 
 -- Tags used to differentiate questions by subject. Also used to determine mentor experience.
