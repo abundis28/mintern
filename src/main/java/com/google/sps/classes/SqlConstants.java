@@ -42,8 +42,12 @@ public final class SqlConstants {
   public static final int QUESTION_INSERT_BODY = 2;
   public static final int QUESTION_INSERT_ASKERID = 3;
 
-  // Constant used in the forum.
+  // Constants used in the forum.
   public static final int FETCH_ALL_QUESTIONS = -1;
+  public static final int PAGE_SIZE = 10;
+
+  // Constant used in the single question view.
+  public static final int SINGLE_QUESTION_PAGE = -1;
 
   // Constants used for inserting a follower to a question.
   // QUESTION_FETCH_MAXID is used to get the ID of the question
@@ -68,6 +72,7 @@ public final class SqlConstants {
   public static final int ANSWER_FETCH_ID = 1;
   public static final int ANSWER_FETCH_BODY = 3;
   public static final int ANSWER_FETCH_AUTHORNAME = 8;
+  public static final int ANSWER_FETCH_AUTHORID = 4;
   public static final int ANSWER_FETCH_DATETIME = 5;
   public static final int ANSWER_FETCH_VOTES = 6;
 
@@ -77,6 +82,7 @@ public final class SqlConstants {
   // Constants used for querying a comment.
   public static final int COMMENT_FETCH_BODY = 11;
   public static final int COMMENT_FETCH_AUTHORNAME = 15;
+  public static final int COMMENT_FETCH_AUTHORID = 12;
   public static final int COMMENT_FETCH_DATETIME = 13;
 
   // Constants used for inserting an answer.

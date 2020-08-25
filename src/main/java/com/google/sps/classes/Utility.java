@@ -17,9 +17,12 @@ package com.google.sps.classes;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
+import com.google.sps.classes.ForumPage;
 import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.Utility;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
@@ -33,7 +36,7 @@ import javax.sql.DataSource;
 public final class Utility {
   // Define if running locally or deploying the current branch.
   // Define IS_LOCALLY_DEPLOYED constant as true for a local deployment or deploy for a cloud deployment.
-  public static final boolean IS_LOCALLY_DEPLOYED = false;
+  public static final boolean IS_LOCALLY_DEPLOYED = true;
 
   /**
    * Returns a connection that it's obtained depending on the defined way of deployment.
@@ -240,10 +243,52 @@ public final class Utility {
     return question;
   }
 
+  /** 
+   * Creates an answer object from the query data.
+   */
+  public static Answer buildAnswer(ResultSet queryResult) {
+    Answer answer = new Answer();
+    try {
+      answer.setId(queryResult.getInt(SqlConstants.ANSWER_FETCH_ID));
+      answer.setBody(queryResult.getString(SqlConstants.ANSWER_FETCH_BODY));
+      answer.setAuthorName(queryResult.getString(SqlConstants.ANSWER_FETCH_AUTHORNAME));
+      answer.setDateTime(queryResult.getTimestamp(SqlConstants.ANSWER_FETCH_DATETIME));
+
+      // Adds the comment from the same row.
+      answer.addComment(buildComment(queryResult));
+
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    return answer;
+  }
+
+  /** 
+   * Creates a comment object from the query data.
+   */
+  public static Comment buildComment(ResultSet queryResult) {
+    Comment comment = new Comment();
+    try {
+      comment.setBody(queryResult.getString(SqlConstants.COMMENT_FETCH_BODY));
+      comment.setAuthorName(queryResult.getString(SqlConstants.COMMENT_FETCH_AUTHORNAME));
+      comment.setDateTime(queryResult.getTimestamp(SqlConstants.COMMENT_FETCH_DATETIME));
+
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    return comment;
+  }
+
   /**
    * Returns the mentor review status, which could be approved, rejected or not reviewed.
    */
-  public static String getReviewStatus(int mentorId) {
+  public static String getReviewStatus(int mentorId, HttpServletRequest request) {
     // Create the MySQL queries for approved and rejected mentor.
     String approvedQuery = "SELECT * FROM MentorEvidence "
         + "WHERE mentor_id = " + Integer.toString(mentorId) + " "
@@ -254,8 +299,7 @@ public final class Utility {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+      Connection connection = getConnection(request);
       
       // Create and execute the MySQL SELECT prepared statements.
       PreparedStatement approvedPreparedStatement = connection.prepareStatement(approvedQuery);
@@ -311,5 +355,44 @@ public final class Utility {
       Logger logger = Logger.getLogger(Utility.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
+  }
+
+  /** 
+   * Makes a user follow an answer.
+   */
+  public static void insertCommentFollower(Connection connection, int answerId, int authorId) {
+    try {
+      String insertFollowerQuery = "INSERT INTO AnswerFollower(answer_id, follower_id) "
+          + "VALUES (?,?)";
+      PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
+      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_ANSWERID, answerId);
+      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_AUTHORID, authorId);
+      followerStatement.executeUpdate();
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+  }
+  
+  /** 
+   * Split the query by the page length depending on the current page.
+   */
+  public static ForumPage splitPages(List<Question> questions, int page) {
+    int numberOfComments = questions.size();
+    int numberOfPages = (int) Math.ceil((double) numberOfComments / SqlConstants.PAGE_SIZE);
+   
+    // If the user is on the first or last page, avoid non-existing indexes.
+    Integer nextPage = page < numberOfPages ? (page + 1) : null;
+    Integer previousPage = page > 1 ? (page - 1) : null;
+    
+    // Indexes for the questions of the current page.
+    int lowerIndex = (page - 1) * SqlConstants.PAGE_SIZE;
+    int upperIndex = page * SqlConstants.PAGE_SIZE;
+
+    List<Question> trimmedQuestions = questions.subList(lowerIndex >= 0 ? lowerIndex : 0,
+        upperIndex <= numberOfComments ? upperIndex : numberOfComments);
+
+    return new ForumPage(nextPage, previousPage, numberOfPages, trimmedQuestions);
   }
 }

@@ -18,7 +18,6 @@ import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -44,15 +43,8 @@ public class FollowerSystemServlet extends HttpServlet {
     int questionId = Utility.tryParseInt(request.getParameter("question-id"));
     int userId = Utility.getUserId(request);
 
-    try {
-      Connection connection = DriverManager.getConnection(
-          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
-      updateFollower(type, connection, questionId, userId);
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(FollowerSystemServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
+    Connection connection = Utility.getConnection(request);
+    updateFollower(type, connection, questionId, userId);
   }
 
 

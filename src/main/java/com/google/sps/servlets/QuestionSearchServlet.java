@@ -14,6 +14,7 @@
 
 package com.google.sps.servlets;
 
+import com.google.sps.classes.ForumPage;
 import com.google.sps.classes.Question;
 import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.Utility;
@@ -47,6 +48,9 @@ public class QuestionSearchServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     List<Question> questions = new ArrayList<>();
+    // Number of page that the user is browsing.
+    int page = Utility.tryParseInt(request.getParameter("page"));
+    
     // The query will return a ResultSet with order depending on the level of similarity to the 
     // input string.
     String query = 
@@ -70,7 +74,9 @@ public class QuestionSearchServlet extends HttpServlet {
       Logger logger = Logger.getLogger(QuestionSearchServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
+    
+    ForumPage forumPage = Utility.splitPages(questions, page);
     response.setContentType("application/json;");
-    response.getWriter().println(Utility.convertToJsonUsingGson(questions));
+    response.getWriter().println(Utility.convertToJsonUsingGson(forumPage));
   } 
 }

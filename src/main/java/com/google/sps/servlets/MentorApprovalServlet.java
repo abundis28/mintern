@@ -108,7 +108,7 @@ public class MentorApprovalServlet extends HttpServlet {
     addEvidence(isApproved, mentorId, request);
 
     // If mentor review is complete, send them a notification.
-    String notificationType = Utility.getReviewStatus(mentorId);
+    String notificationType = Utility.getReviewStatus(mentorId, request);
 
     // Post to notification servlet.
     if (!notificationType.equals("")) {
