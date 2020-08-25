@@ -15,31 +15,32 @@
 /**
  * Function that will call other functions when the index page loads. 
  */
-function loadIndex() {
-  addAutoResize();
-  fetchAuthIndexQuestion();
+async function loadIndex() {
   // Determine whether all the questions should be fetched or just the ones that match the search.
   const fullTextSearch = (new URL(document.location)).searchParams.get("search");
   if (fullTextSearch === "1") {
     // Fetch first page of the questions related to the string input in the search bar.
     const stringSearchInput = 
         (new URL(document.location)).searchParams.get("stringSearchInput");
-    searchQuestion(stringSearchInput, /**pageNumber=*/1);
+    await searchQuestion(stringSearchInput, /**pageNumber=*/1);
   } else {
     // Fetch the whole forum on the first page.
-    fetchForum(/**pageNumber=*/1);
+    await fetchForum(/**pageNumber=*/1);
     eraseQueryStringFromUrl();
   }
+  addAutoResize();
+  fetchAuthIndexQuestion();
 }
 
 /**
  * Function that will call other functions when the question page loads. 
  */
-function loadQuestion() {
+async function loadQuestion() {
+  await fetchAnswers();
   fetchAuthIndexQuestion();
   fetchSingleQuestion();
-  fetchAnswers();
   setQuestionIdValue();
+  showElementsOnLogin();
 }
 
 /**
@@ -120,7 +121,24 @@ function fetchAuthIndexQuestion() {
       createAuthenticationButton(
           user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
 
-      // Show submission forms when logged in.
+    } else {
+      // If user is logged out, show signup and login buttons in navbar.
+
+      // Add signup button to navbar.
+      createAuthenticationButton(
+          user.authenticationUrl, 'btn-success', 'Sign Up', 'signup');
+
+      // Add login button to navbar.
+      createAuthenticationButton(
+          user.authenticationUrl, 'btn-outline-success', 'Log In', 'login');
+    }
+  })
+}
+
+function showElementsOnLogin() {
+  fetch('/authentication').then(response => response.json()).then(user => {
+    if (user.isUserLoggedIn) {
+      // Show relevant elements when the user is logged in.
       const questionSubmission = document.getElementById('post-question');
       if (questionSubmission) {
         questionSubmission.style.display = 'block';
@@ -133,27 +151,24 @@ function fetchAuthIndexQuestion() {
 
       const commentSubmission = document.getElementsByClassName('post-comment');
       if (commentSubmission != null) {
-        // The timeout is to wait for the dynamically generated forms of each
-        // answer to appear in the DOM so that the attribute can be changed.
-        setTimeout(() => {
-          for (element of commentSubmission) {
-            element.style.display = "block";
-          }
-          // The timeout of 500ms is enough to let the forms load and not make
-          // the user feel like it's taking too long to load the whole page.
-        }, 500);
+        for (element of commentSubmission) {
+          element.style.display = "block";
+        }
       }
 
-    } else {
-      // If user is logged out, show signup and login buttons in navbar.
+      const solidIcon = document.getElementsByClassName('fas fa-star fa-2x');
+      if (solidIcon != null) {
+        for (element of solidIcon) {
+          element.style.display = "block";
+        }
+      }
 
-      // Add signup button to navbar.
-      createAuthenticationButton(
-          user.authenticationUrl, 'btn-success', 'Sign Up', 'signup');
-
-      // Add login button to navbar.
-      createAuthenticationButton(
-          user.authenticationUrl, 'btn-outline-success', 'Log In', 'login');
+      const outlineIcon = document.getElementsByClassName('far fa-star fa-2x');
+      if (outlineIcon != null) {
+        for (element of outlineIcon) {
+          element.style.display = "block";
+        }
+      }
     }
   })
 }
@@ -174,6 +189,8 @@ async function fetchForum(pageNumber) {
   questionsContainer.innerHTML = '';
   questionsContainer.appendChild(createPageElement(
       questionsObject, pageNumber, /**hasRedirect=*/true, /**isSearch=*/false));
+
+  showElementsOnLogin();
 }
 
 /**
@@ -681,8 +698,8 @@ function createCommentElement(comment) {
   commentElement.innerText = comment.body;
   
   const authorElement = document.createElement('small');
-  authorElement.innerText = answer.authorName;
-  if (answer.isVerifiedMentor) {
+  authorElement.innerText = comment.authorName;
+  if (comment.isVerifiedMentor) {
     authorElement.innerText += '\nVerified Ex-Intern';
   }
   commentElement.appendChild(document.createElement('br'));
@@ -897,7 +914,7 @@ function searchRedirect() {
 /**
  * Searches questions that contain the input string in the title or body elements.
  */
-function searchQuestion(stringSearchInput, pageNumber) {
+async function searchQuestion(stringSearchInput, pageNumber) {
   if (stringSearchInput != "") {
     const questionsContainer = document.getElementById('forum');
     questionsContainer.innerHTML = "";
@@ -905,7 +922,7 @@ function searchQuestion(stringSearchInput, pageNumber) {
         .then(response => response.json()).then(forumPage => {
           questionsContainer.appendChild(createPageElement(
               forumPage, pageNumber, /**hasRedirect=*/true, stringSearchInput));
-        })
+        }).then(showElementsOnLogin());
   }
 }
 
