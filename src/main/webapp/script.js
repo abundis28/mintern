@@ -99,13 +99,13 @@ async function fetchAnswers() {
 function fetchAuthIndexQuestion() {
   fetch('/authentication').then(response => response.json()).then(user => {
     const inboxButton = document.getElementById('notificationsDropdown');
-    const notificationsBade = document.getElementById('notifications-badge');
+    const notificationsBadge = document.getElementById('notifications-badge');
     if (user.isUserLoggedIn) {
       // If user is logged in, show logout and inbox buttons and notifications badge in navbar.
       if (inboxButton) {
         // Check that the element exists.
         inboxButton.style.display = 'block';
-        notificationsBade.style.displa = 'block';
+        notificationsBadge.style.displa = 'block';
       }
       fetchNotifications();
       
