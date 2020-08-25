@@ -7,23 +7,15 @@
 } 
 
 #forum-title {
-  width: 60%;
   margin: auto;
   margin-top: 70px;
+  width: 60%;
 }
 
+#content-container,
 #forum {
-  width: 60%;
   margin: auto;
-}
-
-#content-container {
   width: 60%;
-  margin: auto;
-}
-
-#question {
-  margin-top: 100px;
 }
 
 #post-answer {
@@ -31,16 +23,14 @@
   margin-top: 100px;
 }
 
-#answers {
+#answers,
+#question {
   margin-top: 100px;
 }
 
-#answer-body {
-  box-sizing: border-box;
-  resize: none;
-}
-
-#comment-body {
+#answer-body,
+#comment-body,
+#question-body {
   box-sizing: border-box;
   resize: none;
 }
@@ -52,18 +42,13 @@
   width: 60%;
 }
 
-#question-body {
-  box-sizing: border-box;
-  resize: none;
-}
-
-#notificationsDropdown {
+#notifications-dropdown {
   display: none;
 }
 
 .nav-pills a {
+  color: #6cb4b8ff;
   font-size: xx-large;
-  color: #6cb4b8ff
 }
 
 .nav-pills .nav-link.active {
@@ -75,8 +60,8 @@
 }
 
 .signup-title {
-  text-transform: uppercase;
   font-weight: 200;
+  text-transform: uppercase;
 }
 
 .signup-title .name {
