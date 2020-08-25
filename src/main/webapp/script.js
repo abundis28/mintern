@@ -71,7 +71,7 @@ function loadApproval() {
  */
 async function fetchAnswers() {
   const questionId = (new URL(document.location)).searchParams.get("id");
-  const response = await fetch('/fetch-answers?id=' + questionId);
+  const response = await fetch('/answer?id=' + questionId);
   const answersObject = await response.json();
   const answersContainer = document.getElementById('answers');
   Object.values(answersObject).forEach(answer => {
@@ -277,7 +277,7 @@ async function fetchQuestions(page) {
     questionsContainer = document.getElementById('question');
     hasRedirect = false;
   }
-  const response = await fetch('/fetch-questions?id=' + questionId);
+  const response = await fetch('/question?id=' + questionId);
   const questionsObject = await response.json();
 
   if (questionsObject.length !== 0) {
