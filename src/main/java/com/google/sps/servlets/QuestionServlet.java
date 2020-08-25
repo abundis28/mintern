@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletResponse;
  * This servlet will post a question to the forum or fetch question information.
  */
 @WebServlet("/question")
-public class PostQuestionServlet extends HttpServlet {
+public class QuestionServlet extends HttpServlet {
   /** 
    * Gets the questions from the query and return them as a JSON string.
    */
@@ -46,8 +46,7 @@ public class PostQuestionServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     List<Question> questions = new ArrayList<>();
     
-    // TODO(shaargtz): move queries from Utility to a new SqlQueries class.
-    String query = Utility.fetchQuestionsQuery;
+    String query;
 
     // ID of the question to query.
     int questionId = Utility.tryParseInt(request.getParameter("id"));
@@ -77,7 +76,7 @@ public class PostQuestionServlet extends HttpServlet {
       }
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(FetchQuestionsServlet.class.getName());
+      Logger logger = Logger.getLogger(QuestionServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
     response.setContentType("application/json;");
@@ -103,7 +102,7 @@ public class PostQuestionServlet extends HttpServlet {
     } 
     catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostQuestionServlet.class.getName());
+      Logger logger = Logger.getLogger(QuestionServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
     response.sendRedirect("/");
@@ -124,7 +123,7 @@ public class PostQuestionServlet extends HttpServlet {
       questionStatement.executeUpdate();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostQuestionServlet.class.getName());
+      Logger logger = Logger.getLogger(QuestionServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
   }
@@ -142,7 +141,7 @@ public class PostQuestionServlet extends HttpServlet {
       id = queryResult.getInt(SqlConstants.QUESTION_FETCH_MAXID);
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostQuestionServlet.class.getName());
+      Logger logger = Logger.getLogger(QuestionServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
 
@@ -163,7 +162,7 @@ public class PostQuestionServlet extends HttpServlet {
       followerStatement.executeUpdate();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostQuestionServlet.class.getName());
+      Logger logger = Logger.getLogger(QuestionServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
   }

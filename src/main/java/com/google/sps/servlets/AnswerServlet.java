@@ -40,7 +40,7 @@ import javax.servlet.http.HttpServletResponse;
  * This servlet will post an answer to a question or fetch answer and comment information.
  */
 @WebServlet("/answer")
-public class PostAnswerServlet extends HttpServlet {
+public class AnswerServlet extends HttpServlet {
 
   /** 
    * Gets the answers for a single question and send them back as JSON.
@@ -80,7 +80,7 @@ public class PostAnswerServlet extends HttpServlet {
         }
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(FetchAnswersServlet.class.getName());
+      Logger logger = Logger.getLogger(AnswerServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
 
@@ -105,7 +105,7 @@ public class PostAnswerServlet extends HttpServlet {
     } 
     catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostAnswerServlet.class.getName());
+      Logger logger = Logger.getLogger(AnswerServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
     
@@ -115,7 +115,7 @@ public class PostAnswerServlet extends HttpServlet {
           .include(request, response);
     } catch (ServletException exception) {
       // If the notification doesn't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostAnswerServlet.class.getName());
+      Logger logger = Logger.getLogger(AnswerServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
     response.sendRedirect("/question.html?id=" + questionId);
@@ -136,7 +136,7 @@ public class PostAnswerServlet extends HttpServlet {
       answerStatement.executeUpdate();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostAnswerServlet.class.getName());
+      Logger logger = Logger.getLogger(AnswerServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
   }
@@ -154,7 +154,7 @@ public class PostAnswerServlet extends HttpServlet {
       id = queryResult.getInt(SqlConstants.ANSWER_FETCH_MAXID);
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostAnswerServlet.class.getName());
+      Logger logger = Logger.getLogger(AnswerServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
 
