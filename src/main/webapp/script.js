@@ -173,7 +173,7 @@ async function fetchForum(pageNumber) {
   // Empty the HTML for multiple searches in a row.
   questionsContainer.innerHTML = '';
   questionsContainer.appendChild(createPageElement(
-      questionsObject, pageNumber, /**hasRedirect=*/true, /**isSearch=*/false));
+      questionsObject, pageNumber, stringSearchInput));
 }
 
 /**
@@ -187,7 +187,7 @@ async function fetchSingleQuestion() {
   
   if (questionObject.length > 0) {
     questionContainer.appendChild(
-          createQuestionElement(questionObject[0], /**hasRedirect=*/false));
+          createQuestionElement(questionObject[0], /**isForum=*/false));
   } else {
     // An empty object means the ID doesn't exist, so we redirect to the index.
     window.location.replace('/index.html');
@@ -904,7 +904,7 @@ function searchQuestion(stringSearchInput, pageNumber) {
     fetch('/search-question?inputString=' + stringSearchInput + '&page=' + pageNumber)
         .then(response => response.json()).then(forumPage => {
           questionsContainer.appendChild(createPageElement(
-              forumPage, pageNumber, /**hasRedirect=*/true, stringSearchInput));
+              forumPage, pageNumber, stringSearchInput));
         })
   }
 }
