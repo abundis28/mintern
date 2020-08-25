@@ -252,7 +252,7 @@ function fetchMentorApproval() {
   }
   const mentorApprovalUrl = '/mentor-approval?id=' + mentorId;
   fetch(mentorApprovalUrl).then(response => response.json()).then(approval => {
-    createApprovalMessage(approval);
+    createApprovalMessage(mentorId, approval);
   })
 }
 
@@ -321,34 +321,80 @@ function createAuthenticationButton(authenticationUrl, buttonStyle, buttonText, 
 
 /**
  * Create message for the approval page that shows approval status directed to mentor or approver.
+ * @param {string} mentorId
  * @param {MentorEvidence} approval
  * TODO(oumontiel): Create content for each condition.
  */
-function createApprovalMessage(approval) {
+function createApprovalMessage(mentorId, approval) {
+  // Create elements for messages that will be added and the span that will be appended.
+  const approvalSubtitleElement = document.getElementById('approval-subtitle');
+  const approvalSmallTextElement = document.getElementById('approval-small-text');
+
   if (approval.userId == mentorId && approval.isApproved) {
     // If mentor has been approved, show corresponding message.
-    
+    approvalSubtitleElement.appendChild(
+        createApprovalSpan('text-success', 'Congratulations!'));
+    approvalSubtitleElement.appendChild(document.createTextNode(
+        ' Your review has been approved!'));
+    approvalSmallTextElement.appendChild(document.createTextNode(
+        'Your username will now show a verified icon to show off your experience.'));
   } else if (approval.userId == mentorId && approval.isRejected) {
-    // If mentor has been rejected, show corresponding message.
-    
+    // If mentor has been rejected, show corresponding message and add redirect button.
+    approvalSubtitleElement.appendChild(document.createTextNode(
+        'We\'re really sorry, your review has been '));
+    approvalSubtitleElement.appendChild(
+        createApprovalSpan('text-danger', 'rejected'));
+    approvalSubtitleElement.appendChild(document.createTextNode('.'));
+    approvalSmallTextElement.appendChild(document.createTextNode(
+        'If you think this is a mistake, click the button to update your information.'));
+    createRedirectToVerification();
   } else if (approval.userId == mentorId) {
     // If mentor is not approved or rejected yet, show corresponding message.
-    
+    approvalSubtitleElement.appendChild(document.createTextNode(
+        'Your information is '));
+    approvalSubtitleElement.appendChild(
+      createApprovalSpan('text-mint', 'under review'));
+    approvalSubtitleElement.appendChild(document.createTextNode('.'));
+    approvalSmallTextElement.appendChild(document.createTextNode(
+        'Please check in at another time.'));
   } else if (approval.isApprover && approval.isApproved) {
     // If approver is assigned to mentor but mentor is already approved,
     // show corresponding message.
-    
+    approvalSubtitleElement.appendChild(
+      createApprovalSpan('text-mint', approval.mentorUsername));
+    approvalSubtitleElement.appendChild(document.createTextNode(
+        ' has been finished getting reviewed. They were approved!'));
+    approvalSmallTextElement.appendChild(document.createTextNode(
+        'You can dismiss this notification.'));
   } else if (approval.isApprover && approval.isRejected) {
     // If approver is assigned to mentor but mentor is already rejected,
     // show corresponding message.
-    
+    approvalSubtitleElement.appendChild(
+      createApprovalSpan('text-mint', approval.mentorUsername));
+    approvalSubtitleElement.appendChild(document.createTextNode(
+        ' has been finished getting reviewed. They were rejected.'));
+    approvalSmallTextElement.appendChild(document.createTextNode(
+        'You can dismiss this notification.'));
   } else if (approval.isApprover && approval.hasReviewed) {
     // If approver is assigned to mentor and has already reviewed them,
     // show corresponding message.
-    
+    approvalSubtitleElement.appendChild(document.createTextNode(
+        'You have already reviewed '));
+    approvalSubtitleElement.appendChild(
+      createApprovalSpan('text-mint', approval.mentorUsername));
+    approvalSubtitleElement.appendChild(document.createTextNode('.'));
+    approvalSmallTextElement.appendChild(document.createTextNode(
+        'Thanks for your contribution.'));
   } else if (approval.isApprover) {
     // If approver is assigned to mentor and has not reviewed them,
     // show evidence and approval buttons.
+    approvalSubtitleElement.appendChild(document.createTextNode(
+        'Below you can find the information related to the internship experience of '));
+    approvalSubtitleElement.appendChild(
+      createApprovalSpan('text-mint', approval.mentorUsername));
+    approvalSubtitleElement.appendChild(document.createTextNode('.'));
+    approvalSmallTextElement.appendChild(document.createTextNode(
+        'Please read through this information and verify its validity.'));
     
     // Display mentor username.
     const usernameElement = document.getElementById('username');
@@ -357,10 +403,46 @@ function createApprovalMessage(approval) {
     // Display paragraph mentor submitted as evidence.
     const paragraphElement = document.getElementById('paragraph');
     paragraphElement.innerHTML = approval.paragraph;
+    return;
   } else {
     // If user is not either a mentor or an approver assigned to that mentor, redirect to index.
     window.location.replace('/index.html');
   }
+
+  // If mentor is not being reviewed, delete review content.
+  const approvalContentElement = document.getElementById('approval-content');
+  approvalContentElement.innerHTML = '';
+}
+
+/**
+ * Creates span element that is part of approval message.
+ * @param {string} spanColor 
+ * @param {string} spanMessage 
+ */
+function createApprovalSpan(spanColor, spanMessage) {
+  const approvalSpanElement = document.createElement('span');
+  approvalSpanElement.setAttribute('class', spanColor);
+  approvalSpanElement.textContent = spanMessage;
+  return approvalSpanElement;
+}
+
+/**
+ * Creates button that redirects to verification page for mentor to update their evidence after
+ * being rejected.
+ */
+function createRedirectToVerification() {
+  // Create button to redirect to verification page.
+  const redirectButton = document.createElement('button');
+  redirectButton.type = 'button';
+  redirectButton.setAttribute('class', 'btn btn-success');
+  redirectButton.onclick = function() {
+    window.location.replace('verification.html');
+  };
+  redirectButton.innerHTML = 'Update information';
+
+  // Append button to HTML element.
+  const approvalMessageElement = document.getElementById('rejected-button');
+  approvalMessageElement.appendChild(redirectButton);
 }
 
 /**

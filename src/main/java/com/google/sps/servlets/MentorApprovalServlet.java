@@ -47,16 +47,18 @@ public class MentorApprovalServlet extends HttpServlet {
     int userId = Utility.getUserId(request);
     
     // Set default variables to create MentorEvidence object.
-    // If user is not logged in, it will be created with these empty values, but user will be
+    // If user is not logged in, it will be created with these default values, but user will be
     // redirected back to home page.
-    boolean isApprover = false;
     String mentorUsername = "";
     boolean isApproved = false;
     boolean isRejected = false;
     String paragraph = "";
+    boolean[] approverStatus = {false, false}; // First index verifies approver is assigned to
+                                               // mentor and second checks if they have reviewed.
+
     if (userService.isUserLoggedIn()) {
       // If user is logged in, update variables. Else, empty values will be displayed.
-      isApprover = checkForApprover(mentorId, userId, request);
+      approverStatus = checkForApprover(mentorId, userId, request);
       mentorUsername = Utility.getUsername(mentorId, request);
 
       // Create the MySQL prepared statement.
@@ -85,8 +87,8 @@ public class MentorApprovalServlet extends HttpServlet {
       }
     }
 
-    MentorEvidence mentorEvidence = new MentorEvidence(
-        userId, isApprover, mentorUsername, isApproved, isRejected, paragraph);
+    MentorEvidence mentorEvidence = new MentorEvidence(userId, mentorUsername, isApproved,
+        isRejected, paragraph, approverStatus[0], approverStatus[1]);
     response.setContentType("application/json");
     response.getWriter().println(Utility.convertToJsonUsingGson(mentorEvidence));
   }
@@ -123,11 +125,14 @@ public class MentorApprovalServlet extends HttpServlet {
   }
 
   /**
-   * Returns true if approver is assigned to mentee, used to grant access to approval page only to
-   * approvers. Though users are not given links to other mentor's approval pages, they could
-   * access them by typing the link to their browser, so this is used to redirect those users.
+   * Returns whether approver is assigned to mentor (first index) and if they have already reviewed
+   * the mentor (second index). Used to grant access to approval page only to approvers. Though
+   * users are not given links to other mentor's approval pages, they could access them by typing
+   * the link to their browser, so this is used to redirect those users.
    */
-  private boolean checkForApprover(int mentorId, int approverId, HttpServletRequest request) {
+  private boolean[] checkForApprover(int mentorId, int approverId, HttpServletRequest request) {
+    boolean[] approver = {false, false};
+
     // Create the MySQL prepared statement.
     String query = "SELECT * FROM MentorApproval "
         + "WHERE mentor_id = ? AND approver_id = ?";
@@ -142,10 +147,11 @@ public class MentorApprovalServlet extends HttpServlet {
       preparedStatement.setInt(SqlConstants.MENTOR_APPROVAL_FETCH_APPROVERID, approverId);
       ResultSet queryResult = preparedStatement.executeQuery();
 
-      // If link is found between mentor and approver in MentorApproval table, return true.
+      // If link is found between mentor and approver in MentorApproval table, set first index as
+      // true and get result for other index.
       if (queryResult.next()) {
-        connection.close();
-        return true;
+        approver[0] = true;
+        approver[1] = queryResult.getBoolean(SqlConstants.MENTOR_APPROVAL_FETCH_ISREVIEWED);
       }
       connection.close();
     } catch (SQLException exception) {
@@ -153,8 +159,7 @@ public class MentorApprovalServlet extends HttpServlet {
       Logger logger = Logger.getLogger(MentorApprovalServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
-    // If no link was found between mentor and approver in MentorApproval table, return false.
-    return false;
+    return approver;
   }
 
   /**
