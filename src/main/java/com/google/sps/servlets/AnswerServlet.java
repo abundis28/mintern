@@ -20,7 +20,6 @@ import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -35,6 +34,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 /** 
  * This servlet will post an answer to a question or fetch answer and comment information.
@@ -59,8 +59,7 @@ public class AnswerServlet extends HttpServlet {
 
     // The connection and query are attempted.
     try {
-        Connection connection = DriverManager.getConnection(
-            Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+        Connection connection = Utility.getConnection(request);
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setInt(SqlConstants.ANSWER_SET_QUESTIONID, questionId);
         ResultSet queryResult = preparedStatement.executeQuery();
@@ -95,19 +94,11 @@ public class AnswerServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String body = request.getParameter("answer-body");
     int questionId = Utility.tryParseInt(request.getParameter("question-id"));
-    int authorId = Utility.getUserId();
+    int authorId = Utility.getUserId(request);
 
-    try {
-      Connection connection = DriverManager.getConnection(
-          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
-      insertNewAnswer(connection, questionId, body, authorId);
-      Utility.insertCommentFollower(connection, getLatestAnswerId(connection), authorId);
-    } 
-    catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(AnswerServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
+    Connection connection = Utility.getConnection(request);
+    insertNewAnswer(connection, questionId, body, authorId);
+    Utility.insertCommentFollower(connection, getLatestAnswerId(connection), authorId);
     
     try {
       // We call the notification servlet to notify of this posted answer.
