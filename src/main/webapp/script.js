@@ -135,44 +135,6 @@ function fetchAuthIndexQuestion() {
   })
 }
 
-function showElementsOnLogin() {
-  fetch('/authentication').then(response => response.json()).then(user => {
-    if (user.isUserLoggedIn) {
-      // Show relevant elements when the user is logged in.
-      const questionSubmission = document.getElementById('post-question');
-      if (questionSubmission) {
-        questionSubmission.style.display = 'block';
-      }
-
-      const answerSubmission = document.getElementById('post-answer');
-      if (answerSubmission) {
-        answerSubmission.style.display = "block";
-      }
-
-      const commentSubmission = document.getElementsByClassName('post-comment');
-      if (commentSubmission != null) {
-        for (element of commentSubmission) {
-          element.style.display = "block";
-        }
-      }
-
-      const solidIcon = document.getElementsByClassName('fas fa-star fa-2x');
-      if (solidIcon != null) {
-        for (element of solidIcon) {
-          element.style.display = "block";
-        }
-      }
-
-      const outlineIcon = document.getElementsByClassName('far fa-star fa-2x');
-      if (outlineIcon != null) {
-        for (element of outlineIcon) {
-          element.style.display = "block";
-        }
-      }
-    }
-  })
-}
-
 /**
  * Fetches the question list in the index and adds pagination elements.
  * Used for homepage and searching.
@@ -878,6 +840,46 @@ function getQuestionId() {
  */
 function setQuestionIdValue() {
   document.getElementsByClassName('question-id').value = getQuestionId(); 
+}
+
+/**
+ * Displays relevant elements when the user is logged in.
+ */
+function showElementsOnLogin() {
+  fetch('/authentication').then(response => response.json()).then(user => {
+    if (user.isUserLoggedIn) {
+      const questionSubmission = document.getElementById('post-question');
+      if (questionSubmission) {
+        questionSubmission.style.display = 'block';
+      }
+
+      const answerSubmission = document.getElementById('post-answer');
+      if (answerSubmission) {
+        answerSubmission.style.display = "block";
+      }
+
+      const commentSubmission = document.getElementsByClassName('post-comment');
+      if (commentSubmission != null) {
+        for (element of commentSubmission) {
+          element.style.display = "block";
+        }
+      }
+
+      const solidIcon = document.getElementsByClassName('fas fa-star fa-2x');
+      if (solidIcon != null) {
+        for (element of solidIcon) {
+          element.style.display = "block";
+        }
+      }
+
+      const outlineIcon = document.getElementsByClassName('far fa-star fa-2x');
+      if (outlineIcon != null) {
+        for (element of outlineIcon) {
+          element.style.display = "block";
+        }
+      }
+    }
+  })
 }
 
 /**
