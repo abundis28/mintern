@@ -43,7 +43,7 @@ public class MentorEvidenceServlet extends HttpServlet {
     String paragraph = request.getParameter("paragraph");
 
     // Delete existing notifications and approvers to re-create them, in case mentor is re-applying.
-    deleteNotifications(mentorId);
+    deleteApprovalNotifications(mentorId);
     deleteApprovers(mentorId);
 
     // Update mentor evidence and add approvers in database.
@@ -65,7 +65,7 @@ public class MentorEvidenceServlet extends HttpServlet {
   /**
    * Deletes existing notifications related to current mentor's approval from database.
    */
-  private void deleteNotifications(int mentorId) {
+  private void deleteApprovalNotifications(int mentorId) {
     // Set up query to delete all relations of users to notifications of this mentor approval.
     String query = "DELETE FROM UserNotification "
         + "WHERE notification_id IN "
