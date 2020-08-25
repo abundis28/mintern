@@ -473,7 +473,7 @@ function createNotificationsElement(notification) {
 function createPageElement(forumPage, pageNumber, searchString) {
   const pageWrapper = document.createElement('div');
   forumPage.pageQuestions.forEach(question => {
-    pageWrapper.appendChild(createQuestionElement(question, /**hasRedirect=*/true));
+    pageWrapper.appendChild(createQuestionElement(question, /**isForum=*/true));
   });
 
   const pageIndexes = document.createElement('ul');
@@ -483,9 +483,13 @@ function createPageElement(forumPage, pageNumber, searchString) {
   if (forumPage.previousPage) {
     previousWrapper.setAttribute('class', 'page-item');
     if (searchString != '') {
-      nextWrapper.onclick = fetchForum(pageNumber - 1);
+      previousWrapper.onclick = function() {
+        fetchForum(pageNumber - 1);
+      }
     } else {
-      nextWrapper.onclick = searchQuestion(searchString, pageNumber - 1);
+      previousWrapper.onclick = function() {
+        searchQuestion(searchString, pageNumber - 1);
+      }
     }
   } else {
     previousWrapper.setAttribute('class', 'page-item disabled');
@@ -508,9 +512,13 @@ function createPageElement(forumPage, pageNumber, searchString) {
   if (forumPage.nextPage) {
     nextWrapper.setAttribute('class', 'page-item');
     if (searchString != '') {
-      nextWrapper.onclick = fetchForum(pageNumber + 1);
+      nextWrapper.onclick = function() {
+        fetchForum(pageNumber + 1);
+      }
     } else {
-      nextWrapper.onclick = searchQuestion(searchString, pageNumber + 1);
+      nextWrapper.onclick = function() {
+        searchQuestion(searchString, pageNumber + 1);
+      }
     }
   } else {
     nextWrapper.setAttribute('class', 'page-item disabled');
@@ -531,10 +539,9 @@ function createPageElement(forumPage, pageNumber, searchString) {
  * Each element corresponds to a question to be displayed in the DOM.
  * 
  * @param {Question} question : information of a single question.
- * @param {string} page       : check if the element is for the forum or
- *                              single view.
+ * @param {string} isForum    : true if the element is for the forum.
  */
-function createQuestionElement(question, page) {
+function createQuestionElement(question, isForum) {
   // Div to wrap the media object with question data.
   const questionWrapper = document.createElement('div');
   questionWrapper.setAttribute('class', 'list-group-item');
@@ -568,7 +575,7 @@ function createQuestionElement(question, page) {
 
   // Heading for the title.
   const questionTitle = document.createElement('h5');
-  if (page === 'forum') {
+  if (isForum) {
     // Add href to redirect from forum to single view.
     const questionURL = document.createElement('a');
     questionURL.setAttribute('href', '/question.html?id=' + question.id);
@@ -583,7 +590,7 @@ function createQuestionElement(question, page) {
   if (question.body) {
     const bodyElement = document.createElement('p');
     bodyElement.setAttribute('class', 'mb-1');
-    if (page === 'forum' && question.body.length > 80) {
+    if (isForum && question.body.length > 80) {
       // All the body should not be displayed in the forum if it is very big.
       bodyElement.innerText = question.body
           // Reduce the preview of the body to 80 characters.
