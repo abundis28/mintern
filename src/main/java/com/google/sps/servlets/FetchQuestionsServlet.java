@@ -52,6 +52,7 @@ public class FetchQuestionsServlet extends HttpServlet {
 
     // ID of the question to query.
     int questionId = Utility.tryParseInt(request.getParameter("id"));
+    int userId = Utility.getUserId();
 
     if (questionId == SqlConstants.FETCH_ALL_QUESTIONS) {
       // Nothing needs to be added to the query.
@@ -67,6 +68,7 @@ public class FetchQuestionsServlet extends HttpServlet {
     try {
       Connection connection = Utility.getConnection(request);
       PreparedStatement preparedStatement = connection.prepareStatement(query);
+      preparedStatement.setInt(SqlConstants.QUESTION_QUERY_SET_USERID, userId);
       ResultSet queryResult = preparedStatement.executeQuery();
       
       // All of the rows from the query are looped if it goes through.

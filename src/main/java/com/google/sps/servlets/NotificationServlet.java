@@ -78,7 +78,17 @@ public class NotificationServlet extends HttpServlet {
       // If the notification is for a mentor approval.
       query = "SELECT approver_id FROM MentorApproval WHERE mentor_id = " + modifiedElementId;
       notificationUrl = "/approval.html?id=" + modifiedElementId;
-      notificationMessage = "A mentor requests your approval";
+      notificationMessage = "A mentor requests your approval.";
+    } else if (typeOfNotification.equals("approved")) {
+      // If the notification is for a mentor being approved.
+      query = "SELECT id FROM User WHERE id = " + modifiedElementId;
+      notificationUrl = "/approval.html?id=" + modifiedElementId;
+      notificationMessage = "You have been approved as a mentor!";
+    } else if (typeOfNotification.equals("rejected")) {
+      // If the notification is for a mentor being approved.
+      query = "SELECT id FROM User WHERE id = " + modifiedElementId;
+      notificationUrl = "/approval.html?id=" + modifiedElementId;
+      notificationMessage = "Your mentor review has been rejected. Update your information to re-apply!";
     }
     // Creates notification and relationship between its ID and the ID of the concerned users.
     createNotification(query, notificationUrl, notificationMessage, localTimestamp, request);
