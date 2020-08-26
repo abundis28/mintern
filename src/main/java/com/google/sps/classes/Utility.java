@@ -17,6 +17,7 @@ package com.google.sps.classes;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
+import com.google.sps.classes.Keys;
 import com.google.sps.classes.ForumPage;
 import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.Utility;
@@ -45,8 +46,8 @@ public final class Utility {
     try {
       if (IS_LOCALLY_DEPLOYED) {
         // Creates connection to access the local MySQL database.
-        return DriverManager.getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, 
-            SQL_LOCAL_PASSWORD);
+        return DriverManager.getConnection(Keys.SQL_LOCAL_URL, Keys.SQL_LOCAL_USER, 
+            Keys.SQL_LOCAL_PASSWORD);
       } else {
         // Obtains pool with connections to access Cloud MySQL from the context listener file.
         DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
@@ -59,12 +60,6 @@ public final class Utility {
     }
     return null;
   }
-  
-  // Variables needed to connect to MySQL database.
-  public static final String SQL_LOCAL_URL =
-      "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
-  public static final String SQL_LOCAL_USER = "root";
-  public static final String SQL_LOCAL_PASSWORD = "";
 
   // Variables for user login status.
   public static final int USER_LOGGED_OUT_ID = -1;
