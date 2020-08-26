@@ -20,7 +20,7 @@ package com.google.sps.classes;
 public final class HikariConstants {
   public static final int MAX_POOL_SIZE = 20;
   public static final int MIN_IDLE_TIME = 10;
-  public static final int CONNECTION_TIMEOUT = 1000; // 10 seconds
-  public static final int IDLE_TIMEOUT = 60000; // 10 minutes
+  public static final int CONNECTION_TIMEOUT = 10000; // 10 seconds
+  public static final int IDLE_TIMEOUT = 600000; // 10 minutes
   public static final int MAX_LIFETIME = 1800000; // 30 minutes
 }

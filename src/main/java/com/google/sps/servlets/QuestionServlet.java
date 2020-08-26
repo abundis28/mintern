@@ -77,6 +77,7 @@ public class QuestionServlet extends HttpServlet {
       while (queryResult.next()) {
         questions.add(Utility.buildQuestion(queryResult));
       }
+      connection.close();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
       Logger logger = Logger.getLogger(QuestionServlet.class.getName());
@@ -166,6 +167,7 @@ public class QuestionServlet extends HttpServlet {
       followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_QUESTIONID, latestQuestionId);
       followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_ASKERID, askerId);
       followerStatement.executeUpdate();
+      connection.close();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
       Logger logger = Logger.getLogger(QuestionServlet.class.getName());

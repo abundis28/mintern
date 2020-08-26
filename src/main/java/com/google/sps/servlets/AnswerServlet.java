@@ -77,6 +77,7 @@ public class AnswerServlet extends HttpServlet {
             answers.put(currentAnswerId, Utility.buildAnswer(queryResult));
           }
         }
+        connection.close();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
       Logger logger = Logger.getLogger(AnswerServlet.class.getName());
@@ -104,8 +105,13 @@ public class AnswerServlet extends HttpServlet {
       // We call the notification servlet to notify of this posted answer.
       request.getRequestDispatcher("/notification?type=question&modifiedElementId=" + questionId)
           .include(request, response);
+      connection.close();
     } catch (ServletException exception) {
       // If the notification doesn't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(AnswerServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    } catch (SQLException exception) {
+      // If the connection isn't closed we get the log of what happened.
       Logger logger = Logger.getLogger(AnswerServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
