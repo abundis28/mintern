@@ -39,7 +39,6 @@ public class AuthenticationServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    
     UserService userService = UserServiceFactory.getUserService();
     
     // Set default variables to create UserAuthenticationData object.

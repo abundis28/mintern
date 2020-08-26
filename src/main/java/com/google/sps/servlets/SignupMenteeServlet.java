@@ -38,7 +38,6 @@ public class SignupMenteeServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-  
     UserService userService = UserServiceFactory.getUserService();
 
     // Get variables from HTML form.

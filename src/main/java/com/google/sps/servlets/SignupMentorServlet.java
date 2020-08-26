@@ -42,7 +42,6 @@ public class SignupMentorServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
     // Set up list to store subject tags.
     List<SubjectTag> subjectTags = new ArrayList<SubjectTag>();
     
@@ -78,7 +77,6 @@ public class SignupMentorServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
     UserService userService = UserServiceFactory.getUserService();
 
     // Get variables from HTML form.
@@ -141,6 +139,6 @@ public class SignupMentorServlet extends HttpServlet {
     String query = "INSERT INTO MentorEvidence "
         + "(mentor_id, approvals, is_approved, is_rejected, paragraph) "
         + "VALUES (" + userId + ", 0, FALSE, FALSE, '')";
-    Utility.executeQuery(query);
+    Utility.executeQuery(query, request);
   }
 }

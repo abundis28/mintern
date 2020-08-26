@@ -34,11 +34,9 @@ import javax.sql.DataSource;
 
 /** 
  * This servlet will post a comment to an answer.
- * TODO(shaargtz): share logic with PostAnswerServlet.
  */
 @WebServlet("/post-comment")
 public class PostCommentServlet extends HttpServlet {
-
   /** 
    * This method will execute the query to insert a comment to the database.
    */
@@ -54,7 +52,7 @@ public class PostCommentServlet extends HttpServlet {
     // QuestionFollower table as well.
     Connection connection = Utility.getConnection(request);
     insertNewComment(connection, answerId, body, authorId);
-    insertNewFollower(connection, answerId, authorId);
+    Utility.insertCommentFollower(connection, answerId, authorId);
 
     try {
       // We call the notification servlet to notify of this posted comment.
@@ -81,24 +79,6 @@ public class PostCommentServlet extends HttpServlet {
       questionStatement.setString(SqlConstants.COMMENT_INSERT_BODY, body);
       questionStatement.setInt(SqlConstants.COMMENT_INSERT_AUTHORID, authorId);
       questionStatement.executeUpdate();
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostCommentServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
-  }
-
-  /** 
-   * Makes the author of the comment a follower of the answer to which the comment is a reply.
-   */
-  private void insertNewFollower(Connection connection, int answerId, int authorId) {
-    try {
-      String insertFollowerQuery = "INSERT INTO AnswerFollower(answer_id, follower_id) "
-          + "VALUES (?,?)";
-      PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
-      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_ANSWERID, answerId);
-      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_AUTHORID, authorId);
-      followerStatement.executeUpdate();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
       Logger logger = Logger.getLogger(PostCommentServlet.class.getName());

@@ -41,7 +41,6 @@ public class NotificationServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
     // Get user's ID from Utility method.
     int userId = Utility.getUserId(request);
     // Fetch notifications if user is signed in and convert the ArrayList to JSON
@@ -55,7 +54,6 @@ public class NotificationServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
     // Define local time for the new entries in the server.
     Timestamp localTimestamp = Timestamp.valueOf(LocalDateTime.now());
     // Check if notification is about a question answered, answer commented, or mentor approval, along with its id.
