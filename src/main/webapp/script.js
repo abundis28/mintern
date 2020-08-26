@@ -142,16 +142,16 @@ function fetchAuthIndexQuestion() {
  */
 async function fetchForum(pageNumber) {
   // Question ID -1 tells the server to fetch all questions.
-  const response = await fetch('/fetch-questions?id=-1&page=' + pageNumber);
+  const response = await fetch('/question?id=-1&page=' + pageNumber);
   const questionsObject = await response.json();
-
+  console.log(questionsObject);
   const questionsContainer = document.getElementById('forum');
 
   // Empty the HTML for multiple searches in a row.
   questionsContainer.innerHTML = '';
   questionsContainer.appendChild(createPageElement(
-      questionsObject, pageNumber, /**hasRedirect=*/true, /**isSearch=*/false));
-
+      questionsObject, pageNumber, /**seargString=*/''));
+  
   showElementsOnLogin();
 }
 
@@ -160,13 +160,13 @@ async function fetchForum(pageNumber) {
  */
 async function fetchSingleQuestion() {
   const questionId = (new URL(document.location)).searchParams.get("id");
-  const response = await fetch('/fetch-questions?id=' + questionId + '&page=-1');
+  const response = await fetch('/question?id=' + questionId + '&page=-1');
   const questionObject = await response.json();
   const questionContainer = document.getElementById('question');
   
   if (questionObject.length > 0) {
     questionContainer.appendChild(
-          createQuestionElement(questionObject[0], /**hasRedirect=*/false));
+          createQuestionElement(questionObject[0], /**isForum=*/false));
   } else {
     // An empty object means the ID doesn't exist, so we redirect to the index.
     window.location.replace('/index.html');
@@ -461,7 +461,7 @@ function createPageElement(forumPage, pageNumber, searchString) {
   const previousWrapper = document.createElement('li');
   if (forumPage.previousPage) {
     previousWrapper.setAttribute('class', 'page-item');
-    if (searchString != '') {
+    if (searchString == '') {
       previousWrapper.onclick = function() {
         fetchForum(pageNumber - 1);
       }
@@ -490,7 +490,7 @@ function createPageElement(forumPage, pageNumber, searchString) {
   const nextWrapper = document.createElement('li');
   if (forumPage.nextPage) {
     nextWrapper.setAttribute('class', 'page-item');
-    if (searchString != '') {
+    if (searchString == '') {
       nextWrapper.onclick = function() {
         fetchForum(pageNumber + 1);
       }
@@ -923,7 +923,7 @@ async function searchQuestion(stringSearchInput, pageNumber) {
     fetch('/search-question?inputString=' + stringSearchInput + '&page=' + pageNumber)
         .then(response => response.json()).then(forumPage => {
           questionsContainer.appendChild(createPageElement(
-              forumPage, pageNumber, /**hasRedirect=*/true, stringSearchInput));
+              forumPage, pageNumber, stringSearchInput));
         }).then(showElementsOnLogin());
   }
 }

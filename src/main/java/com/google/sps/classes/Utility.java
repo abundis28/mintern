@@ -19,11 +19,14 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import com.google.sps.classes.ForumPage;
 import com.google.sps.classes.SqlConstants;
+import com.google.sps.classes.Utility;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.http.HttpServletRequest;
+import javax.sql.DataSource;
 
 // TODO(aabundis): Add JUnit tests for utility functions.
 
@@ -31,7 +34,32 @@ import java.util.logging.Logger;
  * Utility methods used across classes. Just import class to access all methods.
  */
 public final class Utility {
-  // TODO(oumontiel): Move constants to different file.
+  // Define if running locally or deploying the current branch.
+  // Define IS_LOCALLY_DEPLOYED constant as true for a local deployment or deploy for a cloud deployment.
+  public static final boolean IS_LOCALLY_DEPLOYED = true;
+
+  /**
+   * Returns a connection that it's obtained depending on the defined way of deployment.
+   */
+  public static Connection getConnection(HttpServletRequest request) {
+    try {
+      if (IS_LOCALLY_DEPLOYED) {
+        // Creates connection to access the local MySQL database.
+        return DriverManager.getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, 
+            SQL_LOCAL_PASSWORD);
+      } else {
+        // Obtains pool with connections to access Cloud MySQL from the context listener file.
+        DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
+        return pool.getConnection();
+      }
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+    return null;
+  }
+  
   // Variables needed to connect to MySQL database.
   public static final String SQL_LOCAL_URL =
       "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
@@ -85,7 +113,7 @@ public final class Utility {
    * Returns the ID of a logged in user.
    * If the user is not logged in or if no user ID is found, returns -1.
    */
-  public static int getUserId() {
+  public static int getUserId(HttpServletRequest request) {
     int userId = USER_LOGGED_OUT_ID;
     UserService userService = UserServiceFactory.getUserService();
 
@@ -102,8 +130,7 @@ public final class Utility {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
+      Connection connection = getConnection(request);
 
       // Create the MySQL prepared statement, execute it, and store the result.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -127,15 +154,14 @@ public final class Utility {
    * Returns username of a user given their ID.
    * Returns empty string if user was not found.
    */
-  public static String getUsername(int userId) {
+  public static String getUsername(int userId, HttpServletRequest request) {
     String username = "";
 
     // Set up query to get username.
     String query = "SELECT username FROM User WHERE id = " + userId;
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
+      Connection connection = getConnection(request);
 
       // Create the MySQL prepared statement, execute it, and store the result.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -160,15 +186,14 @@ public final class Utility {
    * User table.
    */
   public static void addNewUser(String firstName, String lastName, String username, String email,
-      int major, boolean isMentor) {
+      int major, boolean isMentor, HttpServletRequest request) {
     // Set up query to insert new user into database.
     String query = "INSERT INTO User (first_name, last_name, username, email, major_id, is_mentor)"
         + " VALUES (?, ?, ?, ?, ?, ?)";
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
+      Connection connection = getConnection(request);
 
       // Create the MySQL INSERT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -263,7 +288,7 @@ public final class Utility {
   /**
    * Returns the mentor review status, which could be approved, rejected or not reviewed.
    */
-  public static String getReviewStatus(int mentorId) {
+  public static String getReviewStatus(int mentorId, HttpServletRequest request) {
     // Create the MySQL queries for approved and rejected mentor.
     String approvedQuery = "SELECT * FROM MentorEvidence "
         + "WHERE mentor_id = " + Integer.toString(mentorId) + " "
@@ -274,8 +299,7 @@ public final class Utility {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+      Connection connection = getConnection(request);
       
       // Create and execute the MySQL SELECT prepared statements.
       PreparedStatement approvedPreparedStatement = connection.prepareStatement(approvedQuery);
@@ -317,11 +341,10 @@ public final class Utility {
   /**
    * Takes a MySQL query and executes it.
    */
-  public static void executeQuery(String query) {
+  public static void executeQuery(String query, HttpServletRequest request) {
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
+      Connection connection = getConnection(request);
       
       // Execute the MySQL prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);

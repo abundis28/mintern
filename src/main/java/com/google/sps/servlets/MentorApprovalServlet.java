@@ -44,7 +44,7 @@ public class MentorApprovalServlet extends HttpServlet {
 
     // Get IDs of mentor and logged in user.
     int mentorId = Utility.tryParseInt(request.getParameter("id"));
-    int userId = Utility.getUserId();
+    int userId = Utility.getUserId(request);
     
     // Set default variables to create MentorEvidence object.
     // If user is not logged in, it will be created with these default values, but user will be
@@ -58,8 +58,8 @@ public class MentorApprovalServlet extends HttpServlet {
 
     if (userService.isUserLoggedIn()) {
       // If user is logged in, update variables. Else, empty values will be displayed.
-      approverStatus = checkForApprover(mentorId, userId);
-      mentorUsername = Utility.getUsername(mentorId);
+      approverStatus = checkForApprover(mentorId, userId, request);
+      mentorUsername = Utility.getUsername(mentorId, request);
 
       // Create the MySQL prepared statement.
       String query = "SELECT * FROM MentorEvidence "
@@ -67,8 +67,7 @@ public class MentorApprovalServlet extends HttpServlet {
 
       try {
         // Establish connection to MySQL database.
-        Connection connection = DriverManager.getConnection(
-            Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+        Connection connection = Utility.getConnection(request);
         
         // Create the MySQL SELECT prepared statement.
         PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -102,14 +101,14 @@ public class MentorApprovalServlet extends HttpServlet {
     // Get request parameters and ID of approver.
     boolean isApproved = Boolean.parseBoolean(request.getParameter("isApproved"));
     int mentorId = Utility.tryParseInt(request.getParameter("id"));
-    int approverId = Utility.getUserId();
+    int approverId = Utility.getUserId(request);
 
     // Update database tables related to mentor approval.
-    addApproval(mentorId, approverId);
-    addEvidence(isApproved, mentorId);
+    addApproval(mentorId, approverId, request);
+    addEvidence(isApproved, mentorId, request);
 
     // If mentor review is complete, send them a notification.
-    String notificationType = Utility.getReviewStatus(mentorId);
+    String notificationType = Utility.getReviewStatus(mentorId, request);
 
     // Post to notification servlet.
     if (!notificationType.equals("")) {
@@ -131,7 +130,7 @@ public class MentorApprovalServlet extends HttpServlet {
    * users are not given links to other mentor's approval pages, they could access them by typing
    * the link to their browser, so this is used to redirect those users.
    */
-  private boolean[] checkForApprover(int mentorId, int approverId) {
+  private boolean[] checkForApprover(int mentorId, int approverId, HttpServletRequest request) {
     boolean[] approver = {false, false};
 
     // Create the MySQL prepared statement.
@@ -140,8 +139,7 @@ public class MentorApprovalServlet extends HttpServlet {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+      Connection connection = Utility.getConnection(request);
       
       // Create and execute the MySQL SELECT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -167,22 +165,22 @@ public class MentorApprovalServlet extends HttpServlet {
   /**
    * Updates the is_reviewed variable in MentorApproval table.
    */
-  private void addApproval(int mentorId, int approverId) {
+  private void addApproval(int mentorId, int approverId, HttpServletRequest request) {
     // Create and execute the MySQL query.
     String query = "UPDATE MentorApproval "
         + "SET is_reviewed = TRUE "
         + "WHERE mentor_id = " + Integer.toString(mentorId)
         + " AND approver_id = " + Integer.toString(approverId);
-    Utility.executeQuery(query);
+    Utility.executeQuery(query, request);
   }
 
   /**
    * Updates is_approved, is_rejected or approvals variables in MentorEvidence table based on
    * approver review.
    */
-  private void addEvidence(boolean isApproved, int mentorId) {
+  private void addEvidence(boolean isApproved, int mentorId, HttpServletRequest request) {
     // Get current number of approvals mentor has.
-    int numberOfApprovals = getNumberOfApprovals(mentorId);
+    int numberOfApprovals = getNumberOfApprovals(mentorId, request);
     
     // Create and execute the MySQL query.
     String query = "";
@@ -204,13 +202,13 @@ public class MentorApprovalServlet extends HttpServlet {
           + "SET is_rejected = TRUE "
           + "WHERE mentor_id = " + Integer.toString(mentorId);
     }
-    Utility.executeQuery(query);
+    Utility.executeQuery(query, request);
   }
 
   /**
    * Returns the current number of approvals a mentor has.
    */
-  private int getNumberOfApprovals(int mentorId) {
+  private int getNumberOfApprovals(int mentorId, HttpServletRequest request) {
     int numberOfApprovals = 0;
 
     // Create the MySQL prepared statement.
@@ -219,8 +217,7 @@ public class MentorApprovalServlet extends HttpServlet {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+      Connection connection = Utility.getConnection(request);
       
       // Create and execute the MySQL SELECT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
