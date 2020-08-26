@@ -167,7 +167,6 @@ async function fetchForum(pageNumber) {
   // Question ID -1 tells the server to fetch all questions.
   const response = await fetch('/question?id=-1&page=' + pageNumber);
   const questionsObject = await response.json();
-  console.log(questionsObject);
   const questionsContainer = document.getElementById('forum');
 
   // Empty the HTML for multiple searches in a row.
