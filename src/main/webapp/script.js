@@ -864,7 +864,7 @@ function getQuestionId() {
  * Sets attribute to the corresponding form elements.
  */
 function setQuestionIdValue() {
-  document.getElementsById('question-id').value = getQuestionId(); 
+  document.getElementById('question-id').value = getQuestionId(); 
 }
 
 /**
