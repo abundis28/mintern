@@ -91,10 +91,12 @@ CREATE TABLE MentorApproval (
 );
 
 -- A question to be posted in the forum.
+-- The fulltext creates an index in which the search takes place.
 CREATE TABLE Question (
   id INT NOT NULL AUTO_INCREMENT,
   title VARCHAR(255),
   body TEXT,
+  FULLTEXT (title,body),
   asker_id INT NOT NULL,
   date_time DATETIME,
   PRIMARY KEY (id),
