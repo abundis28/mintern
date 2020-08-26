@@ -532,20 +532,20 @@ function createQuestionElement(question, isForum) {
   questionWrapper.appendChild(questionElement);
 
   // Star icon.
-  const iconElement = document.createElement('i');
-  iconElement.setAttribute('id', 'icon' + question.id);
-  iconElement.setAttribute('style', 'cursor: pointer; display: none');
+  const starIconElement = document.createElement('i');
+  starIconElement.setAttribute('id', 'icon' + question.id);
+  starIconElement.setAttribute('style', 'cursor: pointer; display: none');
   if (question.userFollowsQuestion) {
     // If the user follows the question, the icon will be solid.
-    iconElement.setAttribute('class', 'fas fa-star fa-2x');
+    starIconElement.setAttribute('class', 'fas fa-star fa-2x');
   } else {
     // If the user doesn't follow the question, the icon will be outlined.
-    iconElement.setAttribute('class', 'far fa-star fa-2x');
+    starIconElement.setAttribute('class', 'far fa-star fa-2x');
   }
   // Add logic to follow or unfollow when clicking the star.
-  iconElement.setAttribute('onclick', 'updateFollowerStatus(' 
+  starIconElement.setAttribute('onclick', 'updateFollowerStatus(' 
       + question.userFollowsQuestion + ', ' + question.id + ')');
-  questionElement.appendChild(iconElement);
+  questionElement.appendChild(starIconElement);
 
   // Div to hold all of the text and style it.
   const textContainer = document.createElement('div');
@@ -865,16 +865,16 @@ function showElementsOnLogin() {
         }
       }
 
-      const solidIcon = document.getElementsByClassName('fas fa-star fa-2x');
-      if (solidIcon != null) {
-        for (element of solidIcon) {
+      const starIconSolid = document.getElementsByClassName('fas fa-star fa-2x');
+      if (starIconSolid != null) {
+        for (element of starIconSolid) {
           element.style.display = "block";
         }
       }
 
-      const outlineIcon = document.getElementsByClassName('far fa-star fa-2x');
-      if (outlineIcon != null) {
-        for (element of outlineIcon) {
+      const starIconOutline = document.getElementsByClassName('far fa-star fa-2x');
+      if (starIconOutline != null) {
+        for (element of starIconOutline) {
           element.style.display = "block";
         }
       }
