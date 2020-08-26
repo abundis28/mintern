@@ -685,8 +685,8 @@ function createCommentElement(comment) {
   commentElement.innerText = comment.body;
   
   const authorElement = document.createElement('small');
-  authorElement.innerText = answer.authorName;
-  if (answer.isVerifiedMentor) {
+  authorElement.innerText = comment.authorName;
+  if (comment.isVerifiedMentor) {
     authorElement.innerText += '\nVerified Ex-Intern';
   }
   commentElement.appendChild(document.createElement('br'));
@@ -864,7 +864,7 @@ function getQuestionId() {
  * Sets attribute to the corresponding form elements.
  */
 function setQuestionIdValue() {
-  document.getElementsByClassName('question-id').value = getQuestionId(); 
+  document.getElementsById('question-id').value = getQuestionId(); 
 }
 
 /**
