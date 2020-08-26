@@ -923,7 +923,7 @@ async function searchQuestion(stringSearchInput, pageNumber) {
         .then(response => response.json()).then(forumPage => {
           questionsContainer.appendChild(createPageElement(
               forumPage, pageNumber, stringSearchInput));
-        }).then(showElementsOnLogin());
+        }).then(response => showElementsOnLogin());
   }
 }
 
