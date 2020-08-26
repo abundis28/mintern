@@ -100,7 +100,7 @@ async function fetchAnswers() {
  */
 function fetchAuthIndexQuestion() {
   fetch('/authentication').then(response => response.json()).then(user => {
-    const inboxButton = document.getElementById('notificationsDropdown');
+    const inboxButton = document.getElementById('notifications-dropdown');
     if (user.isUserLoggedIn) {
       // If user is logged in, show logout and inbox buttons in navbar.
       if (inboxButton) {
@@ -144,7 +144,6 @@ async function fetchForum(pageNumber) {
   // Question ID -1 tells the server to fetch all questions.
   const response = await fetch('/question?id=-1&page=' + pageNumber);
   const questionsObject = await response.json();
-  console.log(questionsObject);
   const questionsContainer = document.getElementById('forum');
 
   // Empty the HTML for multiple searches in a row.
@@ -237,10 +236,14 @@ function fetchMentorExperience() {
  */
 function fetchAuth() {
   fetch('/authentication').then(response => response.json()).then(user => {
+    const inboxButton = document.getElementById('notifications-dropdown');
     if (user.isUserLoggedIn) {
       // If user is logged in, show logout button in navbar.
       // Show notifications.
-      inboxButton.style.display = 'block';
+      if (inboxButton) {
+        // Check that the element exists.
+        inboxButton.style.display = 'block';
+      }
       fetchNotifications();
 
       if (!user.isUserRegistered) {
@@ -839,7 +842,7 @@ function getQuestionId() {
  * Sets attribute to the corresponding form elements.
  */
 function setQuestionIdValue() {
-  document.getElementsByClassName('question-id').value = getQuestionId(); 
+  document.getElementById('question-id').value = getQuestionId();
 }
 
 /**

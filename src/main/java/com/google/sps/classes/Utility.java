@@ -17,6 +17,7 @@ package com.google.sps.classes;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
+import com.google.sps.classes.Keys;
 import com.google.sps.classes.ForumPage;
 import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.Utility;
@@ -36,7 +37,7 @@ import javax.sql.DataSource;
 public final class Utility {
   // Define if running locally or deploying the current branch.
   // Define IS_LOCALLY_DEPLOYED constant as true for a local deployment or deploy for a cloud deployment.
-  public static final boolean IS_LOCALLY_DEPLOYED = true;
+  public static final boolean IS_LOCALLY_DEPLOYED = false;
 
   /**
    * Returns a connection that it's obtained depending on the defined way of deployment.
@@ -45,8 +46,8 @@ public final class Utility {
     try {
       if (IS_LOCALLY_DEPLOYED) {
         // Creates connection to access the local MySQL database.
-        return DriverManager.getConnection(SQL_LOCAL_URL, SQL_LOCAL_USER, 
-            SQL_LOCAL_PASSWORD);
+        return DriverManager.getConnection(Keys.SQL_LOCAL_URL, Keys.SQL_LOCAL_USER, 
+            Keys.SQL_LOCAL_PASSWORD);
       } else {
         // Obtains pool with connections to access Cloud MySQL from the context listener file.
         DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
@@ -59,12 +60,6 @@ public final class Utility {
     }
     return null;
   }
-  
-  // Variables needed to connect to MySQL database.
-  public static final String SQL_LOCAL_URL =
-      "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
-  public static final String SQL_LOCAL_USER = "root";
-  public static final String SQL_LOCAL_PASSWORD = "";
 
   // Variables for user login status.
   public static final int USER_LOGGED_OUT_ID = -1;
@@ -212,6 +207,69 @@ public final class Utility {
       Logger logger = Logger.getLogger(Utility.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
+  }
+
+  /**
+   * Queries the mails of users to notify and returns them in a single string. Includes url, user
+   * and password to give the user the ability to choose between local and cloud SQL variables.
+   */
+  public static String getUserEmailsAsString(List<Integer> userIds, HttpServletRequest request) {
+    String userEmails = new String();
+    for (int userId : userIds) {
+      // Query the email of the current user.
+      String query = "SELECT email FROM User WHERE id = " + userId;
+      try (Connection connection = getConnection(request);
+        PreparedStatement pst = connection.prepareStatement(query);
+        ResultSet rs = pst.executeQuery()) {
+        rs.next();
+        // Concatenate the user's email and a comma for the InternetAddress parser to separate.
+        userEmails = userEmails.concat(rs.getString(1));
+        userEmails = userEmails.concat(",");
+        connection.close();
+      } catch (SQLException ex) {
+        Logger lgr = Logger.getLogger(Utility.class.getName());
+        lgr.log(Level.SEVERE, ex.getMessage(), ex);
+      }
+    }
+    // Erase the last comma.
+    userEmails = userEmails.substring(0, userEmails.length() - 1);
+    return userEmails;
+  }
+
+  /**
+   * Queries IDs of the author of the modified question/answer and its followers. Includes url, 
+   * user and password to give the user the ability to choose between local and cloud SQL 
+   * variables.
+   */
+  public static List<Integer> getUsersToNotify(String typeOfNotification, int modifiedElementId,
+                                               HttpServletRequest request) {
+    List<Integer> usersToNotify = new ArrayList<>();
+    String query = "";
+    if (typeOfNotification.equals("question")) {
+      // If the notification is for an anwer to a question.
+      query =  "SELECT follower_id FROM QuestionFollower WHERE question_id = " +
+                      modifiedElementId;
+    } else if (typeOfNotification.equals("answer")) {
+      // If the notification is for a new comment in an answer.
+      query =  "SELECT follower_id FROM AnswerFollower WHERE answer_id = " +
+                      modifiedElementId;
+    }
+    if (query.equals("")) { return usersToNotify; }
+    // Query the infor1mation from the corresponding table defined in the query.
+    try (Connection connection = getConnection(request);
+        PreparedStatement pst = connection.prepareStatement(query);
+        ResultSet rs = pst.executeQuery()) {
+      while(rs.next()){
+        // Add the current ID (first column of ResultSet) to the list.
+        usersToNotify.add(rs.getInt(1));
+      }
+      // Close the connection once the query was performed have been performed.
+      connection.close();
+    } catch (SQLException ex) {
+      Logger lgr = Logger.getLogger(Utility.class.getName());
+      lgr.log(Level.SEVERE, ex.getMessage(), ex);
+    }
+    return usersToNotify;
   }
 
   /** 

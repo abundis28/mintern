@@ -16,6 +16,7 @@
 
 package com.google.sps.listeners;
 
+import com.google.sps.classes.Keys;
 import com.google.sps.classes.HikariConstants;
 import com.google.sps.classes.Utility;
 import com.zaxxer.hikari.HikariConfig;
@@ -32,22 +33,14 @@ import javax.sql.DataSource;
 @WebListener("Creates a connection pool that is stored in the Servlet's context for later use.")
 public class ConnectionPoolContextListener implements ServletContextListener {
 
-  // Saving credentials in environment variables is convenient, but not secure - consider a more
-  // secure solution such as https://cloud.google.com/kms/ to help keep secrets safe.
-  private static final String 
-      CLOUD_SQL_CONNECTION_NAME = "internship-platform-step-2020:us-central1:mintern-instance";
-  private static final String DB_USER = "root";
-  private static final String DB_PASS = "mintern";
-  private static final String DB_NAME = "Mintern";
-
   private DataSource createConnectionPool() {
     // The configuration object specifies behaviors for the connection pool.
     HikariConfig config = new HikariConfig();
 
     // Configure which instance and what database user to connect with.
-    config.setJdbcUrl(String.format("jdbc:mysql:///%s", DB_NAME));
-    config.setUsername(DB_USER);
-    config.setPassword(DB_PASS);
+    config.setJdbcUrl(String.format("jdbc:mysql:///%s", Keys.SQL_CLOUD_DATABASE_NAME));
+    config.setUsername(Keys.SQL_CLOUD_USER); // e.g. "root", "postgres"
+    config.setPassword(Keys.SQL_CLOUD_PASSWORD); // e.g. "my-password"
 
     // maximumPoolSize limits the total number of concurrent connections this pool will keep. Ideal
     // values for this setting are highly variable on app design, infrastructure, and database.
@@ -72,7 +65,7 @@ public class ConnectionPoolContextListener implements ServletContextListener {
 
     // For Java users, the Cloud SQL JDBC Socket Factory can provide authenticated connections.
     config.addDataSourceProperty("socketFactory", "com.google.cloud.sql.mysql.SocketFactory");
-    config.addDataSourceProperty("cloudSqlInstance", CLOUD_SQL_CONNECTION_NAME);
+    config.addDataSourceProperty("cloudSqlInstance", Keys.SQL_CLOUD_CONNECTION_NAME);
 
     // Initialize the connection pool using the configuration object.
     DataSource pool = new HikariDataSource(config);
