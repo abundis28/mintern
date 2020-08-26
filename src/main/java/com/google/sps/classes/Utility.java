@@ -18,9 +18,12 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import com.google.sps.classes.Keys;
+import com.google.sps.classes.ForumPage;
 import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.Utility;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
@@ -33,15 +36,15 @@ import javax.sql.DataSource;
  */
 public final class Utility {
   // Define if running locally or deploying the current branch.
-  // Define localOrDeployed constant as "local" for a local deployment or "deploy" for a cloud deployment.
-  public static final String localOrDeployed = "deploy";
+  // Define IS_LOCALLY_DEPLOYED constant as true for a local deployment or deploy for a cloud deployment.
+  public static final boolean IS_LOCALLY_DEPLOYED = true;
 
   /**
    * Returns a connection that it's obtained depending on the defined way of deployment.
    */
   public static Connection getConnection(HttpServletRequest request) {
     try {
-      if (localOrDeployed.equals("local")) {
+      if (IS_LOCALLY_DEPLOYED) {
         // Creates connection to access the local MySQL database.
         return DriverManager.getConnection(Keys.SQL_LOCAL_URL, Keys.SQL_LOCAL_USER, 
             Keys.SQL_LOCAL_PASSWORD);
@@ -64,10 +67,10 @@ public final class Utility {
   // Query to retrieve data from all questions. Can be appended a WHERE condition to select
   // specific questions. Generates the following table:
   //
-  // |-----------------Question-----------------|----FollowerCount--------|-----GetUsername-----|------AnswerCount------|
-  // +----+-------+------+----------+-----------+-------------+-----------+----------+----------+-------------+---------+
-  // | id | title | body | asker_id | date_time | question_id | followers | username | asker_id | question_id | answers |
-  // +----+-------+------+----------+-----------+-------------+-----------+----------+----------+-------------+---------+
+  // |-----------------Question-----------------|----FollowerCount--------|-----GetUsername-----|------AnswerCount------|----UserFollows---|
+  // +----+-------+------+----------+-----------+-------------+-----------+----------+----------+-------------+---------+------------------+
+  // | id | title | body | asker_id | date_time | question_id | followers | username | asker_id | question_id | answers | follows_question |
+  // +----+-------+------+----------+-----------+-------------+-----------+----------+----------+-------------+---------+------------------+
   public static final String fetchQuestionsQuery = "SELECT * FROM Question "
       + "LEFT JOIN (SELECT question_id, COUNT(follower_id) followers FROM QuestionFollower "
       + "GROUP BY question_id) FollowerCount ON Question.id=FollowerCount.question_id "
@@ -75,6 +78,8 @@ public final class Utility {
       + "ON Question.asker_id=GetUsername.asker_id "
       + "LEFT JOIN (SELECT question_id, COUNT(id) answers FROM Answer "
       + "GROUP BY question_id) AnswerCount ON Question.id=AnswerCount.question_id "
+      + "LEFT JOIN (SELECT question_id AS follows_question FROM QuestionFollower WHERE follower_id=?) "
+      + "UserFollows ON Question.id=UserFollows.follows_question "
       + "ORDER BY Question.date_time DESC;";
 
   // Query to get answers and comments from a question. Generates the following table:
@@ -220,6 +225,10 @@ public final class Utility {
           SqlConstants.QUESTION_FETCH_NUMBEROFFOLLOWERS));
       question.setNumberOfAnswers(queryResult.getInt(
           SqlConstants.QUESTION_FETCH_NUMBEROFANSWERS));
+      question.setUserFollowsQuestion((queryResult.getInt(
+          // follows_question returns the ID of the question if the user follows it, or 0
+          // if the user doesn't follow it.
+          SqlConstants.QUESTION_FETCH_USERFOLLOWSQUESTION) != 0 ? true : false));
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
       Logger logger = Logger.getLogger(Utility.class.getName());
@@ -227,6 +236,87 @@ public final class Utility {
     }
     
     return question;
+  }
+
+  /** 
+   * Creates an answer object from the query data.
+   */
+  public static Answer buildAnswer(ResultSet queryResult) {
+    Answer answer = new Answer();
+    try {
+      answer.setId(queryResult.getInt(SqlConstants.ANSWER_FETCH_ID));
+      answer.setBody(queryResult.getString(SqlConstants.ANSWER_FETCH_BODY));
+      answer.setAuthorName(queryResult.getString(SqlConstants.ANSWER_FETCH_AUTHORNAME));
+      answer.setDateTime(queryResult.getTimestamp(SqlConstants.ANSWER_FETCH_DATETIME));
+
+      // Adds the comment from the same row.
+      answer.addComment(buildComment(queryResult));
+
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    return answer;
+  }
+
+  /** 
+   * Creates a comment object from the query data.
+   */
+  public static Comment buildComment(ResultSet queryResult) {
+    Comment comment = new Comment();
+    try {
+      comment.setBody(queryResult.getString(SqlConstants.COMMENT_FETCH_BODY));
+      comment.setAuthorName(queryResult.getString(SqlConstants.COMMENT_FETCH_AUTHORNAME));
+      comment.setDateTime(queryResult.getTimestamp(SqlConstants.COMMENT_FETCH_DATETIME));
+
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    return comment;
+  }
+
+  /**
+   * Returns the mentor review status, which could be approved, rejected or not reviewed.
+   */
+  public static String getReviewStatus(int mentorId, HttpServletRequest request) {
+    // Create the MySQL queries for approved and rejected mentor.
+    String approvedQuery = "SELECT * FROM MentorEvidence "
+        + "WHERE mentor_id = " + Integer.toString(mentorId) + " "
+        + "AND is_approved = TRUE";
+    String rejectedQuery = "SELECT * FROM MentorEvidence "
+        + "WHERE mentor_id = " + Integer.toString(mentorId) + " "
+        + "AND is_rejected = TRUE";
+
+    try {
+      // Establish connection to MySQL database.
+      Connection connection = getConnection(request);
+      
+      // Create and execute the MySQL SELECT prepared statements.
+      PreparedStatement approvedPreparedStatement = connection.prepareStatement(approvedQuery);
+      ResultSet approvedQueryResult = approvedPreparedStatement.executeQuery();
+      PreparedStatement rejectedPreparedStatement = connection.prepareStatement(rejectedQuery);
+      ResultSet rejectedQueryResult = rejectedPreparedStatement.executeQuery();
+      
+      if (approvedQueryResult.next()) {
+        // If query exists for approved prepared statement, return approved status.
+        return "approved";
+      }
+      if (rejectedQueryResult.next()) {
+        // If query exists for rejected prepared statement, return rejected status.
+        return "rejected";
+      }
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+    // If no queries were found, it means mentor is not reviewed, so return empty string.
+    return "";
   }
 
   /**
@@ -260,5 +350,44 @@ public final class Utility {
       Logger logger = Logger.getLogger(Utility.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
+  }
+
+  /** 
+   * Makes a user follow an answer.
+   */
+  public static void insertCommentFollower(Connection connection, int answerId, int authorId) {
+    try {
+      String insertFollowerQuery = "INSERT INTO AnswerFollower(answer_id, follower_id) "
+          + "VALUES (?,?)";
+      PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
+      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_ANSWERID, answerId);
+      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_AUTHORID, authorId);
+      followerStatement.executeUpdate();
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+  }
+  
+  /** 
+   * Split the query by the page length depending on the current page.
+   */
+  public static ForumPage splitPages(List<Question> questions, int page) {
+    int numberOfComments = questions.size();
+    int numberOfPages = (int) Math.ceil((double) numberOfComments / SqlConstants.PAGE_SIZE);
+   
+    // If the user is on the first or last page, avoid non-existing indexes.
+    Integer nextPage = page < numberOfPages ? (page + 1) : null;
+    Integer previousPage = page > 1 ? (page - 1) : null;
+    
+    // Indexes for the questions of the current page.
+    int lowerIndex = (page - 1) * SqlConstants.PAGE_SIZE;
+    int upperIndex = page * SqlConstants.PAGE_SIZE;
+
+    List<Question> trimmedQuestions = questions.subList(lowerIndex >= 0 ? lowerIndex : 0,
+        upperIndex <= numberOfComments ? upperIndex : numberOfComments);
+
+    return new ForumPage(nextPage, previousPage, numberOfPages, trimmedQuestions);
   }
 }

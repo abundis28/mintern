@@ -19,13 +19,22 @@ package com.google.sps.classes;
  */
 public final class MentorEvidence {
 
-  private final boolean isApprover; // This is true if the approver is assigned to the mentor.
+  private final int userId;
   private final String mentorUsername;
+  private final boolean isApproved;
+  private final boolean isRejected;
   private final String paragraph;
+  private final boolean isApprover; // This is true if the approver is assigned to the mentor.
+  private final boolean hasReviewed; // This is to check whether approver has already reviewed mentor.
 
-  public MentorEvidence(boolean isApprover, String mentorUsername, String paragraph) {
-    this.isApprover = isApprover;
+  public MentorEvidence(int userId, String mentorUsername, boolean isApproved, boolean isRejected,
+      String paragraph, boolean isApprover, boolean hasReviewed) {
+    this.userId = userId;
     this.mentorUsername = mentorUsername;
+    this.isApproved = isApproved;
+    this.isRejected = isRejected;
     this.paragraph = paragraph;
+    this.isApprover = isApprover;
+    this.hasReviewed = hasReviewed;
   }
 }

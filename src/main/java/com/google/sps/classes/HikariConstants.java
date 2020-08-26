@@ -14,32 +14,13 @@
 
 package com.google.sps.classes;
 
-import java.sql.Timestamp;
-import java.util.Date;
-
 /**
- * Class to create a comment for the forum. It will be used for Gson conversion.
+ * Constants used for setup of Hikari pool of connection
  */
-public class Comment {
-
-  private String body;
-  private String authorName;
-  private boolean isVerifiedMentor;
-  private Timestamp dateTime;
-
-  public void setBody(String body) {
-    this.body = body;
-  }
-
-  public void setAuthorName(String authorName) {
-    this.authorName = authorName;
-  }
-
-  public void setIsVerifiedMentor(boolean isVerifiedMentor) {
-    this.isVerifiedMentor = isVerifiedMentor;
-  }
-
-  public void setDateTime(Timestamp dateTime) {
-    this.dateTime = dateTime;
-  }
+public final class HikariConstants {
+  public static final int MAX_POOL_SIZE = 20;
+  public static final int MIN_IDLE_TIME = 10;
+  public static final int CONNECTION_TIMEOUT = 1000; // 10 seconds
+  public static final int IDLE_TIMEOUT = 60000; // 10 minutes
+  public static final int MAX_LIFETIME = 1800000; // 30 minutes
 }

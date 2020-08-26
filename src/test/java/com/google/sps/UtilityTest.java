@@ -25,6 +25,8 @@ import org.junit.Test;
 
 @RunWith(JUnit4.class)
 public final class UtilityTest {
+
+  /** Tests for convertUsingGsonToJson() function */
   @Test
   public void convertUsingGsonToJsonTest() {
     // Object with attributes.
@@ -45,5 +47,72 @@ public final class UtilityTest {
     String actualJson = Utility.convertToJsonUsingGson(tag);
    
     Assert.assertEquals(expectedJson, actualJson);
+  }
+  
+  /** Tests for tryParseInt() function */
+  @Test
+  public void positiveValue() {
+    // String with a positive integer value.
+    String stringToInt = "1";
+    
+    int actual = Utility.tryParseInt(stringToInt);
+    int expected = 1;
+
+    Assert.assertEquals(actual, expected);
+  }
+  
+  @Test
+  public void zeroValue() {
+    // String with value of zero.
+    String stringToInt = "0";
+    
+    int actual = Utility.tryParseInt(stringToInt);
+    int expected = 0;
+
+    Assert.assertEquals(actual, expected);
+  }
+  
+  @Test
+  public void negativeValue() {
+    // String with a negative integer value.
+    String stringToInt = "-1";
+    
+    int actual = Utility.tryParseInt(stringToInt);
+    int expected = -1;
+
+    Assert.assertEquals(actual, expected);
+  }
+  
+  @Test
+  public void emptyValue() {
+    // String with empty value.
+    String stringToInt = "";
+    
+    int actual = Utility.tryParseInt(stringToInt);
+    int expected = 0;
+
+    Assert.assertEquals(actual, expected);
+  }
+  
+  @Test
+  public void nonIntegerValue() {
+    // String with non integer value.
+    String stringToInt = "Non integer value";
+    
+    int actual = Utility.tryParseInt(stringToInt);
+    int expected = 0;
+
+    Assert.assertEquals(actual, expected);
+  }
+  
+  @Test
+  public void nullValue() {
+    // String with null value.
+    String stringToInt = null;
+    
+    int actual = Utility.tryParseInt(stringToInt);
+    int expected = 0;
+
+    Assert.assertEquals(actual, expected);
   }
 }

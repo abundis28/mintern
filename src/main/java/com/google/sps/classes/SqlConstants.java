@@ -32,14 +32,22 @@ public final class SqlConstants {
   public static final int QUESTION_FETCH_DATETIME = 5;
   public static final int QUESTION_FETCH_NUMBEROFFOLLOWERS = 7;
   public static final int QUESTION_FETCH_NUMBEROFANSWERS = 11;
+  public static final int QUESTION_FETCH_USERFOLLOWSQUESTION = 12;
+
+  // Constant used to check if the user follows a question.
+  public static final int QUESTION_QUERY_SET_USERID = 1;
 
   // Constants used for inserting a question.
   public static final int QUESTION_INSERT_TITLE = 1;
   public static final int QUESTION_INSERT_BODY = 2;
   public static final int QUESTION_INSERT_ASKERID = 3;
 
-  // Constant used in the forum.
+  // Constants used in the forum.
   public static final int FETCH_ALL_QUESTIONS = -1;
+  public static final int PAGE_SIZE = 10;
+
+  // Constant used in the single question view.
+  public static final int SINGLE_QUESTION_PAGE = -1;
 
   // Constants used for inserting a follower to a question.
   // QUESTION_FETCH_MAXID is used to get the ID of the question
@@ -64,6 +72,7 @@ public final class SqlConstants {
   public static final int ANSWER_FETCH_ID = 1;
   public static final int ANSWER_FETCH_BODY = 3;
   public static final int ANSWER_FETCH_AUTHORNAME = 8;
+  public static final int ANSWER_FETCH_AUTHORID = 4;
   public static final int ANSWER_FETCH_DATETIME = 5;
   public static final int ANSWER_FETCH_VOTES = 6;
 
@@ -73,6 +82,7 @@ public final class SqlConstants {
   // Constants used for querying a comment.
   public static final int COMMENT_FETCH_BODY = 11;
   public static final int COMMENT_FETCH_AUTHORNAME = 15;
+  public static final int COMMENT_FETCH_AUTHORID = 12;
   public static final int COMMENT_FETCH_DATETIME = 13;
 
   // Constants used for inserting an answer.
@@ -119,16 +129,23 @@ public final class SqlConstants {
 
   // Constants used for querying mentor evidence.
   public static final int MENTOR_EVIDENCE_FETCH_APPROVALS = 2;
+  public static final int MENTOR_EVIDENCE_FETCH_ISAPPROVED = 3;
+  public static final int MENTOR_EVIDENCE_FETCH_ISREJECTED = 4;
   public static final int MENTOR_EVIDENCE_FETCH_PARAGRAPH = 5;
 
   // Constants used for inserting approvers to mentors.
   public static final int MENTOR_APPROVAL_INSERT_USERID = 1;
   public static final int MENTOR_APPROVAL_INSERT_APPROVERID = 2;
 
-  // Constants used for querying a MentorApproval row.
+  // Constants used in the follower system.
+  public static final int FOLLOWER_QUERY_QUESTIONID = 1;
+  public static final int FOLLOWER_QUERY_USERID = 2;
+  
+  // Constants used for fetching mentor ID and their approver ID.
   public static final int MENTOR_APPROVAL_FETCH_MENTORID = 1;
   public static final int MENTOR_APPROVAL_FETCH_APPROVERID = 2;
+  public static final int MENTOR_APPROVAL_FETCH_ISREVIEWED = 3;
   
   // Constant used in building the question query.
-  public static final int QUESTION_QUERY_WHERE_CONDITION = 424;
+  public static final int QUESTION_QUERY_WHERE_CONDITION = 573;
 }

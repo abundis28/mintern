@@ -17,6 +17,9 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
     
+    <!-- FontAwesome icons -->
+    <script src="https://kit.fontawesome.com/96f9ad965c.js" crossorigin="anonymous"></script>
+    
     <title>Mintern</title>
   </head>
   <body onload="loadQuestion()">
@@ -40,7 +43,7 @@
         <!-- Search Bar -->
         <div class="form-inline my-2 my-lg-0 mr-auto">
           <input class="form-control mr-sm-2" type="search" placeholder="Search" id="questionSearchInput">
-          <button class="btn btn-outline-warning my-2 my-sm-0" onclick="searchRedirect()">Search</button>
+          <button class="btn btn-outline-info my-2 my-sm-0" onclick="searchRedirect()">Search</button>
         </div>
         <ul class="navbar-nav mt-2 mt-lg-0">
           <!-- Signup and Login/Logout Buttons -->
@@ -70,9 +73,9 @@
       <!-- Answer submission -->
       <div id="post-answer">
         <h4>Answer this question</h4>
-        <form action=/post-answer method="POST">
+        <form action=/answer method="POST">
           <div class="form-group">
-            <textarea class="form-control form-control-sm" name="answer-body" id="answer-body" placeholder="Elaborate on your anwer" data-autoresize rows="3"></textarea>
+            <textarea class="form-control form-control-sm" name="answer-body" id="answer-body" placeholder="Elaborate on your answer" data-autoresize rows="3" required></textarea>
             <input type="hidden" name="question-id" id="question-id">
           </div>
           <button type="submit" class="btn btn-outline-info float-right">Submit</button>

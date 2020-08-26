@@ -14,7 +14,9 @@
 
 package com.google.sps.servlets;
 
+import com.google.sps.classes.ForumPage;
 import com.google.sps.classes.SqlConstants;
+import com.google.sps.classes.Question;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
 import java.sql.Connection;
@@ -22,7 +24,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.annotation.WebServlet;
@@ -32,11 +36,66 @@ import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
 /** 
- * This servlet will post a question to the forum.
- * TODO(shaargtz): join this servlet with fetchQuestions into a single question servlet.
+ * This servlet will post a question to the forum or fetch question information.
  */
-@WebServlet("/post-question")
-public class PostQuestionServlet extends HttpServlet {
+@WebServlet("/question")
+public class QuestionServlet extends HttpServlet {
+  /** 
+   * Gets the questions from the query and return them as a JSON string.
+   */
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    List<Question> questions = new ArrayList<>();
+    
+    String query;
+
+    // ID of the question to query.
+    int questionId = Utility.tryParseInt(request.getParameter("id"));
+    int userId = Utility.getUserId(request);
+
+    // Number of page that the user is browsing.
+    int page = Utility.tryParseInt(request.getParameter("page"));
+
+    if (questionId == SqlConstants.FETCH_ALL_QUESTIONS) {
+      // Nothing needs to be added to the query.
+      query = Utility.fetchQuestionsQuery;
+    } else {
+      // Condition to fetch only one question. WHERE condition is inserted before GROUP BY.
+      query = Utility.fetchQuestionsQuery.substring(0, SqlConstants.QUESTION_QUERY_WHERE_CONDITION)
+          + "WHERE Question.id=" + questionId + " " + Utility.fetchQuestionsQuery.substring(
+                SqlConstants.QUESTION_QUERY_WHERE_CONDITION, Utility.fetchQuestionsQuery.length());
+    }
+
+    // The connection and query are attempted.
+    try {
+      Connection connection = Utility.getConnection(request);
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      preparedStatement.setInt(SqlConstants.QUESTION_QUERY_SET_USERID, userId);
+      ResultSet queryResult = preparedStatement.executeQuery();
+      
+      // All of the rows from the query are looped if it goes through.
+      while (queryResult.next()) {
+        questions.add(Utility.buildQuestion(queryResult));
+      }
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(QuestionServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    // Response object is different for a single question than for the forum pages.
+    // Questions in the forum are wrapped in a ForumPage object with information about
+    // pages.
+    response.setContentType("application/json;");
+    if (page != SqlConstants.SINGLE_QUESTION_PAGE) {
+      // Forum posts get split by pages.
+      ForumPage forumPage = Utility.splitPages(questions, page);
+      response.getWriter().println(Utility.convertToJsonUsingGson(forumPage));
+    } else {
+      // A single question is returned.
+      response.getWriter().println(Utility.convertToJsonUsingGson(questions));
+    }
+  }
 
   /** 
    * Executes the query to post a question to the database.
@@ -70,7 +129,7 @@ public class PostQuestionServlet extends HttpServlet {
       questionStatement.executeUpdate();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostQuestionServlet.class.getName());
+      Logger logger = Logger.getLogger(QuestionServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
   }
@@ -88,7 +147,7 @@ public class PostQuestionServlet extends HttpServlet {
       id = queryResult.getInt(SqlConstants.QUESTION_FETCH_MAXID);
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostQuestionServlet.class.getName());
+      Logger logger = Logger.getLogger(QuestionServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
 
@@ -97,7 +156,6 @@ public class PostQuestionServlet extends HttpServlet {
 
   /** 
    * Makes the author of the recently added question a follower of said question.
-   * TODO(shaargtz): Move function to Utiliy class to be reused.
    */
   private void insertNewFollower(Connection connection, int askerId) {
     try {
@@ -110,7 +168,7 @@ public class PostQuestionServlet extends HttpServlet {
       followerStatement.executeUpdate();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostQuestionServlet.class.getName());
+      Logger logger = Logger.getLogger(QuestionServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
   }
