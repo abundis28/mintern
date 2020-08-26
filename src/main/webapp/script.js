@@ -100,12 +100,14 @@ async function fetchAnswers() {
  */
 function fetchAuthIndexQuestion() {
   fetch('/authentication').then(response => response.json()).then(user => {
+    const notificationsBadge = document.getElementById('notifications-badge');
     const inboxButton = document.getElementById('notifications-dropdown');
     if (user.isUserLoggedIn) {
-      // If user is logged in, show logout and inbox buttons in navbar.
+      // If user is logged in, show logout and inbox buttons and notifications badge in navbar.
       if (inboxButton) {
         // Check that the element exists.
         inboxButton.style.display = 'block';
+        notificationsBadge.style.display = 'block';
       }
       fetchNotifications();
       
@@ -179,9 +181,14 @@ function fetchNotifications() {
   fetch('/notification').then(response => response.json()).then((notificationsJson) => {
     const notificationsElement = document.getElementById('inbox-dropdown');
     notificationsElement.innerHTML = '';
+    let numberOfNotifications = 0;
     for (const notification of notificationsJson) {
+      // Increment counter for each notification.
+      numberOfNotifications++;
       notificationsElement.appendChild(createNotificationsElement(notification));
     }
+    // Display total number of notifications.
+    document.getElementById("notifications-badge").innerText = numberOfNotifications;
   });
 }
 

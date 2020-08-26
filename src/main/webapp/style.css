@@ -75,6 +75,13 @@
   font-weight: 400;
 }
 
+#notifications-badge {
+  font-size: 100%;
+  padding: .4em .4em;
+  margin: .5em .2em;
+  display: "none";
+} 
+
 .text-mint {
   color: #6cb4b8ff;
 }
