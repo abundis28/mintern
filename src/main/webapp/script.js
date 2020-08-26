@@ -105,7 +105,7 @@ function fetchAuthIndexQuestion() {
       if (inboxButton) {
         // Check that the element exists.
         inboxButton.style.display = 'block';
-        notificationsBadge.style.displa = 'block';
+        notificationsBadge.style.display = 'block';
       }
       fetchNotifications();
       
@@ -166,14 +166,14 @@ function fetchNotifications() {
   fetch('/notification').then(response => response.json()).then((notificationsJson) => {
     const notificationsElement = document.getElementById('inbox-dropdown');
     notificationsElement.innerHTML = '';
-    let numberNotifications = 0;
+    let numberOfNotifications = 0;
     for (const notification of notificationsJson) {
       // Increment counter for each notification.
-      numberNotifications++;
+      numberOfNotifications++;
       notificationsElement.appendChild(createNotificationsElement(notification));
     }
     // Display total number of notifications.
-    document.getElementById("notifications-badge").innerText = numberNotifications;
+    document.getElementById("notifications-badge").innerText = numberOfNotifications;
   });
 }
 
