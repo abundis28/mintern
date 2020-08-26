@@ -99,7 +99,7 @@ async function fetchAnswers() {
  */
 function fetchAuthIndexQuestion() {
   fetch('/authentication').then(response => response.json()).then(user => {
-    const inboxButton = document.getElementById('notificationsDropdown');
+    const inboxButton = document.getElementById('notifications-dropdown');
     if (user.isUserLoggedIn) {
       // If user is logged in, show logout and inbox buttons in navbar.
       if (inboxButton) {
@@ -258,10 +258,14 @@ function fetchMentorExperience() {
  */
 function fetchAuth() {
   fetch('/authentication').then(response => response.json()).then(user => {
+    const inboxButton = document.getElementById('notifications-dropdown');
     if (user.isUserLoggedIn) {
       // If user is logged in, show logout button in navbar.
       // Show notifications.
-      inboxButton.style.display = 'block';
+      if (inboxButton) {
+        // Check that the element exists.
+        inboxButton.style.display = 'block';
+      }
       fetchNotifications();
 
       if (!user.isUserRegistered) {
@@ -681,8 +685,8 @@ function createCommentElement(comment) {
   commentElement.innerText = comment.body;
   
   const authorElement = document.createElement('small');
-  authorElement.innerText = answer.authorName;
-  if (answer.isVerifiedMentor) {
+  authorElement.innerText = comment.authorName;
+  if (comment.isVerifiedMentor) {
     authorElement.innerText += '\nVerified Ex-Intern';
   }
   commentElement.appendChild(document.createElement('br'));
@@ -860,7 +864,7 @@ function getQuestionId() {
  * Sets attribute to the corresponding form elements.
  */
 function setQuestionIdValue() {
-  document.getElementsByClassName('question-id').value = getQuestionId(); 
+  document.getElementById('question-id').value = getQuestionId(); 
 }
 
 /**
