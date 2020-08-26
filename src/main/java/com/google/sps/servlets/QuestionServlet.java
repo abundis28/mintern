@@ -20,7 +20,6 @@ import com.google.sps.classes.Question;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -34,6 +33,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 /** 
  * This servlet will post a question to the forum or fetch question information.
@@ -51,7 +51,7 @@ public class QuestionServlet extends HttpServlet {
 
     // ID of the question to query.
     int questionId = Utility.tryParseInt(request.getParameter("id"));
-    int userId = Utility.getUserId();
+    int userId = Utility.getUserId(request);
 
     // Number of page that the user is browsing.
     int page = Utility.tryParseInt(request.getParameter("page"));
@@ -68,8 +68,7 @@ public class QuestionServlet extends HttpServlet {
 
     // The connection and query are attempted.
     try {
-      Connection connection = DriverManager
-          .getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+      Connection connection = Utility.getConnection(request);
       PreparedStatement preparedStatement = connection.prepareStatement(query);
       preparedStatement.setInt(SqlConstants.QUESTION_QUERY_SET_USERID, userId);
       ResultSet queryResult = preparedStatement.executeQuery();
@@ -105,21 +104,13 @@ public class QuestionServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String title = request.getParameter("question-title");
     String body = request.getParameter("question-body");
-    int askerId = Utility.getUserId();
+    int askerId = Utility.getUserId(request);
 
     // First we query the number of questions that exist so that we can update the
     // QuestionFollower table as well.
-    try {
-      Connection connection = DriverManager
-          .getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
-      insertNewQuestion(connection, title, body, askerId);
-      insertNewFollower(connection, askerId);
-    } 
-    catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(QuestionServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
+    Connection connection = Utility.getConnection(request);
+    insertNewQuestion(connection, title, body, askerId);
+    insertNewFollower(connection, askerId);
     response.sendRedirect("/");
   }
 

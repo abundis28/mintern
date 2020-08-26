@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
+import javax.sql.DataSource;
 
 /**
  * Servlet that handles mentor evidence in database.
@@ -37,14 +38,14 @@ public class MentorEvidenceServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    int userId = Utility.getUserId();
+    int userId = Utility.getUserId(request);
     
     // Get variable from HTML form.
     String paragraph = request.getParameter("paragraph");
 
     // Update mentor evidence and add approvers in database.
-    updateMentorEvidence(userId, paragraph);
-    addApprovers(userId); //TODO(oumontiel): Only call when there are no approvers.
+    updateMentorEvidence(userId, paragraph, request);
+    addApprovers(userId, request); //TODO(oumontiel): Only call when there are no approvers.
 
     // Call NotificationServlet to notify approvers.
     response.setContentType("text/plain");
@@ -61,23 +62,22 @@ public class MentorEvidenceServlet extends HttpServlet {
   /**
    * Updates evidence provided by mentor in MentorEvidence table.
    */
-  private void updateMentorEvidence(int userId, String paragraph) {
+  private void updateMentorEvidence(int userId, String paragraph, HttpServletRequest request) {
     // Set up query to insert new experience tag to user.
     // Use replace in case mentor evidence already exists in database and mentor wants to update
     // their information.
     // TODO(oumontiel): Let mentors know they have the option to update their evidence information
     //                  and add button that redirects to this servlet to allow them that.
-    System.out.println("it worked!");
     String query = "UPDATE MentorEvidence "
         + "SET paragraph = '" + paragraph + "' "
         + "WHERE mentor_id = " + userId;
-    Utility.executeQuery(query);
+    Utility.executeQuery(query, request);
   }
 
   /**
    * Adds a list of approvers (currently only the admins) to the mentor in the database.
    */
-  private void addApprovers(int userId) {
+  private void addApprovers(int userId, HttpServletRequest request) {
     // Create array to store IDs of approvers.
     // TODO(oumontiel): Get IDs from all admins and remove hardcoded IDs.
     int[] approvers = {SqlConstants.SHAAR_USER_ID, SqlConstants.ANDRES_USER_ID, SqlConstants.OMAR_USER_ID};
@@ -89,8 +89,7 @@ public class MentorEvidenceServlet extends HttpServlet {
     for (int approverId : approvers) {
       try {
         // Establish connection to MySQL database.
-        Connection connection = DriverManager.getConnection(
-            Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+        Connection connection = Utility.getConnection(request);
 
         // Create the MySQL INSERT prepared statement.
         PreparedStatement preparedStatement = connection.prepareStatement(query);
