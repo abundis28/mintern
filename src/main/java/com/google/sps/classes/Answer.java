@@ -28,6 +28,7 @@ public class Answer {
   private int id;
   private String body;
   private String authorName;
+  private boolean isVerifiedMentor;
   private Timestamp dateTime;
   private int votes;
   private List<Comment> commentList = new ArrayList<>();
@@ -42,6 +43,10 @@ public class Answer {
 
   public void setAuthorName(String authorName) {
     this.authorName = authorName;
+  }
+
+  public void setIsVerifiedMentor(boolean isVerifiedMentor) {
+    this.isVerifiedMentor = isVerifiedMentor;
   }
 
   public void setDateTime(Timestamp dateTime) {

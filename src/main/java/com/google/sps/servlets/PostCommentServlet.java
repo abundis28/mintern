@@ -18,7 +18,6 @@ import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,45 +30,42 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 /** 
  * This servlet will post a comment to an answer.
- * TODO(shaargtz): share logic with PostAnswerServlet.
  */
 @WebServlet("/post-comment")
 public class PostCommentServlet extends HttpServlet {
-
   /** 
    * This method will execute the query to insert a comment to the database.
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  
     String body = request.getParameter("comment-body");
     int questionId = Utility.tryParseInt(request.getParameter("question-id"));
     int answerId = Utility.tryParseInt(request.getParameter("answer-id"));
-    int authorId = Utility.getUserId();
+    int authorId = Utility.getUserId(request);
 
     // First we query the number of questions that exist so that we can update the
     // QuestionFollower table as well.
-    try {
-      Connection connection = DriverManager.getConnection(
-        Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
-      insertNewComment(connection, answerId, body, authorId);
-      insertNewFollower(connection, answerId, authorId);
-    } 
-    catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostCommentServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
+    Connection connection = Utility.getConnection(request);
+    insertNewComment(connection, answerId, body, authorId);
+    Utility.insertCommentFollower(connection, answerId, authorId);
 
     try {
       // We call the notification servlet to notify of this posted comment.
       request.getRequestDispatcher("/notification?type=answer&modifiedElementId=" + answerId)
           .include(request, response);
+      connection.close();
     } catch (ServletException exception) {
       // If the notification doesn't go through, we get the log of what happened.
       Logger logger = Logger.getLogger(PostCommentServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    } catch (SQLException exception) {
+      // If the connection isn't closed we get the log of what happened.
+      Logger logger = Logger.getLogger(AnswerServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
     response.sendRedirect("/question.html?id=" + questionId);
@@ -88,24 +84,6 @@ public class PostCommentServlet extends HttpServlet {
       questionStatement.setString(SqlConstants.COMMENT_INSERT_BODY, body);
       questionStatement.setInt(SqlConstants.COMMENT_INSERT_AUTHORID, authorId);
       questionStatement.executeUpdate();
-    } catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(PostCommentServlet.class.getName());
-      logger.log(Level.SEVERE, exception.getMessage(), exception);
-    }
-  }
-
-  /** 
-   * Makes the author of the comment a follower of the answer to which the comment is a reply.
-   */
-  private void insertNewFollower(Connection connection, int answerId, int authorId) {
-    try {
-      String insertFollowerQuery = "INSERT INTO AnswerFollower(answer_id, follower_id) "
-          + "VALUES (?,?)";
-      PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
-      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_ANSWERID, answerId);
-      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_AUTHORID, authorId);
-      followerStatement.executeUpdate();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
       Logger logger = Logger.getLogger(PostCommentServlet.class.getName());

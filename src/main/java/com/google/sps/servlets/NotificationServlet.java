@@ -29,6 +29,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
+import javax.sql.DataSource;
  
 /**
 * Servlet that handles the fetching and posting of notifications.
@@ -41,11 +43,11 @@ public class NotificationServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get user's ID from Utility method.
-    int userId = Utility.getUserId();
+    int userId = Utility.getUserId(request);
     // Fetch notifications if user is signed in and convert the ArrayList to JSON
     // using Utility method.
     response.setContentType("application/json;");
-    response.getWriter().println(Utility.convertToJsonUsingGson(getNotifications(userId)));
+    response.getWriter().println(Utility.convertToJsonUsingGson(getNotifications(userId, request)));
   }
 
   /**
@@ -55,7 +57,8 @@ public class NotificationServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Define local time for the new entries in the server.
     Timestamp localTimestamp = Timestamp.valueOf(LocalDateTime.now());
-    // Check if notification is about a question answered, answer commented, or mentor approval, along with its id.
+    // Check if notification is about a question answered, answer commented, or mentor approval, 
+    // along with its id.
     String typeOfNotification = request.getParameter("type");
     int modifiedElementId = Utility.tryParseInt(request.getParameter("modifiedElementId"));
 
@@ -71,7 +74,7 @@ public class NotificationServlet extends HttpServlet {
     } else if (typeOfNotification.equals("answer")) {
       // If the notification is for a new comment in an answer.
       query =  "SELECT follower_id FROM AnswerFollower WHERE answer_id = " + modifiedElementId;
-      notificationUrl = "/question.html?id=" + getIdOfAnsweredQuestion(modifiedElementId);
+      notificationUrl = "/question.html?id=" + getIdOfAnsweredQuestion(modifiedElementId, request);
       notificationMessage = "Your answer was commented."; 
     } else if (typeOfNotification.equals("requestApproval")) {
       // If the notification is for a mentor approval.
@@ -90,13 +93,17 @@ public class NotificationServlet extends HttpServlet {
       notificationMessage = "Your mentor review has been rejected. Update your information to re-apply!";
     }
     // Creates notification and relationship between its ID and the ID of the concerned users.
-    createNotification(query, notificationUrl, notificationMessage, localTimestamp);
+    createNotification(query, notificationUrl, notificationMessage, localTimestamp, request);
+    if (!Utility.IS_LOCALLY_DEPLOYED) {
+      // If deployiong to cloud, call email servlet to generate a message and send it in an email.
+      redirectEmailServlet(typeOfNotification, modifiedElementId, request, response);
+    }
   }
 
   /**
    * Fetches notifications with the user ID.
    */
-  private List<Notification> getNotifications(int userId) {
+  private List<Notification> getNotifications(int userId, HttpServletRequest request) {
     // Prepare query to select notifications by the subquery of notifications IDs selected by 
     // user ID.
     String query =  "SELECT message, url, date_time FROM Notification WHERE id IN " +
@@ -104,9 +111,7 @@ public class NotificationServlet extends HttpServlet {
                     ") ORDER BY date_time DESC";
     List<Notification> notifications = new ArrayList<>();
     // Query the information from tables and create notification object to be stored in ArrayList.
-    try (Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL,
-                                                             Utility.SQL_LOCAL_USER,
-                                                             Utility.SQL_LOCAL_PASSWORD);
+    try (Connection connection = Utility.getConnection(request);
          PreparedStatement pst = connection.prepareStatement(query);
          ResultSet resultSet = pst.executeQuery()) {
       // Iterate through the result of the query to populate the ArrayList and return it as JSON.
@@ -187,10 +192,9 @@ public class NotificationServlet extends HttpServlet {
    * following users' IDs relationship with the last inserted Notification.
    */
   private void createNotification(String query, String notificationUrl, String notificationMessage,
-                                  Timestamp localTimestamp) {
+                                  Timestamp localTimestamp, HttpServletRequest request) {
     // Set up connection for insertions and query IDs of users to notify with same connection.
-    try (Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL, 
-            Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+    try (Connection connection = Utility.getConnection(request);
           PreparedStatement pst = connection.prepareStatement(query);
           ResultSet resultSet = pst.executeQuery()) {
       // Insert notification and get its ID to relate in UserNotification table.
@@ -212,13 +216,12 @@ public class NotificationServlet extends HttpServlet {
   /**
    * Fetches ID of question that is related to the answer that was commented.
    */
-  private int getIdOfAnsweredQuestion(int answerId) {
+  private int getIdOfAnsweredQuestion(int answerId, HttpServletRequest request) {
     String query = "SELECT question_id FROM Answer WHERE id = " + answerId;
     int answeredQuestionId = -1;
     try {
       // Setup and perform query.
-      Connection connection = DriverManager.getConnection(Utility.SQL_LOCAL_URL, 
-          Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+      Connection connection = Utility.getConnection(request);
       PreparedStatement pst = connection.prepareStatement(query);
       ResultSet resultSet = pst.executeQuery();
       resultSet.next();
@@ -229,5 +232,25 @@ public class NotificationServlet extends HttpServlet {
       logger.log(Level.SEVERE, ex.getMessage(), ex);
     }
     return answeredQuestionId;
+  }
+
+  /**
+   * Invoke the fetch post method to send a push notification to the user.
+   */
+  private void redirectEmailServlet(String typeOfNotification, int modifiedElementId,
+                                    HttpServletRequest request, HttpServletResponse response) {
+    try {
+      // We call the notification servlet to notify of this posted comment.
+      request.getRequestDispatcher("/email?typeOfNotification=" + typeOfNotification + 
+          "&modifiedElementId=" + modifiedElementId).include(request, response);
+    } catch (ServletException exception) {
+      // If the notification doesn't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(NotificationServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    } catch (IOException exception) {
+      // If the notification doesn't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(NotificationServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
   }
 }

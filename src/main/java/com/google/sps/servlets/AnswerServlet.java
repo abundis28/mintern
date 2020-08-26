@@ -20,7 +20,6 @@ import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -30,16 +29,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 /** 
- * Retrieves the answers to be displayed on the page.
+ * This servlet will post an answer to a question or fetch answer and comment information.
  */
-@WebServlet("/fetch-answers")
-public class FetchAnswersServlet extends HttpServlet {
+@WebServlet("/answer")
+public class AnswerServlet extends HttpServlet {
 
   /** 
    * Gets the answers for a single question and send them back as JSON.
@@ -58,8 +59,7 @@ public class FetchAnswersServlet extends HttpServlet {
 
     // The connection and query are attempted.
     try {
-        Connection connection = DriverManager.getConnection(
-            Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+        Connection connection = Utility.getConnection(request);
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setInt(SqlConstants.ANSWER_SET_QUESTIONID, questionId);
         ResultSet queryResult = preparedStatement.executeQuery();
@@ -69,17 +69,18 @@ public class FetchAnswersServlet extends HttpServlet {
           if (answers.containsKey(currentAnswerId)) {
             // The comment of the current row corresponds to a previous answer, 
             // so we add it to its corresponding answer object.
-            answers.get(currentAnswerId).addComment(buildComment(queryResult));
+            answers.get(currentAnswerId).addComment(Utility.buildComment(queryResult));
           } else {
             // The comment of the current row corresponds to a new answer,
             // so we create that answer along with its comment and add it to
             // the map.
-            answers.put(currentAnswerId, buildAnswer(queryResult));
+            answers.put(currentAnswerId, Utility.buildAnswer(queryResult));
           }
         }
+        connection.close();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(FetchAnswersServlet.class.getName());
+      Logger logger = Logger.getLogger(AnswerServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
 
@@ -88,47 +89,72 @@ public class FetchAnswersServlet extends HttpServlet {
   }
 
   /** 
-   * Creates an answer object from the query data.
+   * Executes the query to insert an answer to the database.
    */
-  private Answer buildAnswer(ResultSet queryResult) {
-    Answer answer = new Answer();
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String body = request.getParameter("answer-body");
+    int questionId = Utility.tryParseInt(request.getParameter("question-id"));
+    int authorId = Utility.getUserId(request);
+
+    Connection connection = Utility.getConnection(request);
+    insertNewAnswer(connection, questionId, body, authorId);
+    Utility.insertCommentFollower(connection, getLatestAnswerId(connection), authorId);
+    
     try {
-      answer.setId(queryResult.getInt(SqlConstants.ANSWER_FETCH_ID));
-      answer.setBody(queryResult.getString(SqlConstants.ANSWER_FETCH_BODY));
-      answer.setAuthorName(queryResult.getString(SqlConstants.ANSWER_FETCH_AUTHORNAME));
-      answer.setDateTime(queryResult.getTimestamp(SqlConstants.ANSWER_FETCH_DATETIME));
-
-      // Adds the comment from the same row.
-      answer.addComment(buildComment(queryResult));
-
-      // TODO(shaargtz): Implement voting system.
-      // answer.setVotes(queryResult.getInt(SqlConstants.ANSWER_FETCH_VOTES));
-
+      // We call the notification servlet to notify of this posted answer.
+      request.getRequestDispatcher("/notification?type=question&modifiedElementId=" + questionId)
+          .include(request, response);
+      connection.close();
+    } catch (ServletException exception) {
+      // If the notification doesn't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(AnswerServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
     } catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(FetchAnswersServlet.class.getName());
+      // If the connection isn't closed we get the log of what happened.
+      Logger logger = Logger.getLogger(AnswerServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
-
-    return answer;
+    response.sendRedirect("/question.html?id=" + questionId);
   }
 
   /** 
-   * Creates a comment object from the query data.
+   * Inserts an answer into the database.
    */
-  private Comment buildComment(ResultSet queryResult) {
-    Comment comment = new Comment();
+  private void insertNewAnswer(Connection connection, int questionId, String body, int authorId) {
     try {
-      comment.setBody(queryResult.getString(SqlConstants.COMMENT_FETCH_BODY));
-      comment.setAuthorName(queryResult.getString(SqlConstants.COMMENT_FETCH_AUTHORNAME));
-      comment.setDateTime(queryResult.getTimestamp(SqlConstants.COMMENT_FETCH_DATETIME));
-
+      // NOW() is the function to get the current date and time in MySQL.
+      String insertAnswerQuery = "INSERT INTO Answer(question_id, body, author_id, date_time) "
+          + "VALUES (?,?,?,NOW())";
+      PreparedStatement answerStatement = connection.prepareStatement(insertAnswerQuery);
+      answerStatement.setInt(SqlConstants.ANSWER_INSERT_QUESTIONID, questionId);
+      answerStatement.setString(SqlConstants.ANSWER_INSERT_BODY, body);
+      answerStatement.setInt(SqlConstants.ANSWER_INSERT_AUTHORID, authorId);
+      answerStatement.executeUpdate();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
-      Logger logger = Logger.getLogger(FetchAnswersServlet.class.getName());
+      Logger logger = Logger.getLogger(AnswerServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+  }
+
+  /** 
+   * Gets the ID from the last answer posted. Returns -1 on query failure.
+   */
+  private int getLatestAnswerId(Connection connection) {
+    int id = -1;
+    try {
+      String maxIdQuery = "SELECT MAX(id) FROM Answer;";
+      PreparedStatement maxIdStatement = connection.prepareStatement(maxIdQuery);
+      ResultSet queryResult = maxIdStatement.executeQuery();
+      queryResult.next();
+      id = queryResult.getInt(SqlConstants.ANSWER_FETCH_MAXID);
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(AnswerServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
 
-    return comment;
+    return id;
   }
 }

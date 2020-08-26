@@ -17,13 +17,17 @@ package com.google.sps.classes;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
+import com.google.sps.classes.Keys;
 import com.google.sps.classes.ForumPage;
 import com.google.sps.classes.SqlConstants;
+import com.google.sps.classes.Utility;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.http.HttpServletRequest;
+import javax.sql.DataSource;
 
 // TODO(aabundis): Add JUnit tests for utility functions.
 
@@ -31,12 +35,31 @@ import java.util.logging.Logger;
  * Utility methods used across classes. Just import class to access all methods.
  */
 public final class Utility {
-  // TODO(oumontiel): Move constants to different file.
-  // Variables needed to connect to MySQL database.
-  public static final String SQL_LOCAL_URL =
-      "jdbc:mysql://localhost:3306/Mintern?useSSL=false&serverTimezone=America/Mexico_City";
-  public static final String SQL_LOCAL_USER = "root";
-  public static final String SQL_LOCAL_PASSWORD = "";
+  // Define if running locally or deploying the current branch.
+  // Define IS_LOCALLY_DEPLOYED constant as true for a local deployment or deploy for a cloud deployment.
+  public static final boolean IS_LOCALLY_DEPLOYED = false;
+
+  /**
+   * Returns a connection that it's obtained depending on the defined way of deployment.
+   */
+  public static Connection getConnection(HttpServletRequest request) {
+    try {
+      if (IS_LOCALLY_DEPLOYED) {
+        // Creates connection to access the local MySQL database.
+        return DriverManager.getConnection(Keys.SQL_LOCAL_URL, Keys.SQL_LOCAL_USER, 
+            Keys.SQL_LOCAL_PASSWORD);
+      } else {
+        // Obtains pool with connections to access Cloud MySQL from the context listener file.
+        DataSource pool = (DataSource) request.getServletContext().getAttribute("my-pool");
+        return pool.getConnection();
+      }
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+    return null;
+  }
 
   // Variables for user login status.
   public static final int USER_LOGGED_OUT_ID = -1;
@@ -85,7 +108,7 @@ public final class Utility {
    * Returns the ID of a logged in user.
    * If the user is not logged in or if no user ID is found, returns -1.
    */
-  public static int getUserId() {
+  public static int getUserId(HttpServletRequest request) {
     int userId = USER_LOGGED_OUT_ID;
     UserService userService = UserServiceFactory.getUserService();
 
@@ -102,8 +125,7 @@ public final class Utility {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
+      Connection connection = getConnection(request);
 
       // Create the MySQL prepared statement, execute it, and store the result.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -127,15 +149,14 @@ public final class Utility {
    * Returns username of a user given their ID.
    * Returns empty string if user was not found.
    */
-  public static String getUsername(int userId) {
+  public static String getUsername(int userId, HttpServletRequest request) {
     String username = "";
 
     // Set up query to get username.
     String query = "SELECT username FROM User WHERE id = " + userId;
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
+      Connection connection = getConnection(request);
 
       // Create the MySQL prepared statement, execute it, and store the result.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -160,15 +181,14 @@ public final class Utility {
    * User table.
    */
   public static void addNewUser(String firstName, String lastName, String username, String email,
-      int major, boolean isMentor) {
+      int major, boolean isMentor, HttpServletRequest request) {
     // Set up query to insert new user into database.
     String query = "INSERT INTO User (first_name, last_name, username, email, major_id, is_mentor)"
         + " VALUES (?, ?, ?, ?, ?, ?)";
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
+      Connection connection = getConnection(request);
 
       // Create the MySQL INSERT prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -187,6 +207,69 @@ public final class Utility {
       Logger logger = Logger.getLogger(Utility.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
+  }
+
+  /**
+   * Queries the mails of users to notify and returns them in a single string. Includes url, user
+   * and password to give the user the ability to choose between local and cloud SQL variables.
+   */
+  public static String getUserEmailsAsString(List<Integer> userIds, HttpServletRequest request) {
+    String userEmails = new String();
+    for (int userId : userIds) {
+      // Query the email of the current user.
+      String query = "SELECT email FROM User WHERE id = " + userId;
+      try (Connection connection = getConnection(request);
+        PreparedStatement pst = connection.prepareStatement(query);
+        ResultSet rs = pst.executeQuery()) {
+        rs.next();
+        // Concatenate the user's email and a comma for the InternetAddress parser to separate.
+        userEmails = userEmails.concat(rs.getString(1));
+        userEmails = userEmails.concat(",");
+        connection.close();
+      } catch (SQLException ex) {
+        Logger lgr = Logger.getLogger(Utility.class.getName());
+        lgr.log(Level.SEVERE, ex.getMessage(), ex);
+      }
+    }
+    // Erase the last comma.
+    userEmails = userEmails.substring(0, userEmails.length() - 1);
+    return userEmails;
+  }
+
+  /**
+   * Queries IDs of the author of the modified question/answer and its followers. Includes url, 
+   * user and password to give the user the ability to choose between local and cloud SQL 
+   * variables.
+   */
+  public static List<Integer> getUsersToNotify(String typeOfNotification, int modifiedElementId,
+                                               HttpServletRequest request) {
+    List<Integer> usersToNotify = new ArrayList<>();
+    String query = "";
+    if (typeOfNotification.equals("question")) {
+      // If the notification is for an anwer to a question.
+      query =  "SELECT follower_id FROM QuestionFollower WHERE question_id = " +
+                      modifiedElementId;
+    } else if (typeOfNotification.equals("answer")) {
+      // If the notification is for a new comment in an answer.
+      query =  "SELECT follower_id FROM AnswerFollower WHERE answer_id = " +
+                      modifiedElementId;
+    }
+    if (query.equals("")) { return usersToNotify; }
+    // Query the infor1mation from the corresponding table defined in the query.
+    try (Connection connection = getConnection(request);
+        PreparedStatement pst = connection.prepareStatement(query);
+        ResultSet rs = pst.executeQuery()) {
+      while(rs.next()){
+        // Add the current ID (first column of ResultSet) to the list.
+        usersToNotify.add(rs.getInt(1));
+      }
+      // Close the connection once the query was performed have been performed.
+      connection.close();
+    } catch (SQLException ex) {
+      Logger lgr = Logger.getLogger(Utility.class.getName());
+      lgr.log(Level.SEVERE, ex.getMessage(), ex);
+    }
+    return usersToNotify;
   }
 
   /** 
@@ -218,10 +301,52 @@ public final class Utility {
     return question;
   }
 
+  /** 
+   * Creates an answer object from the query data.
+   */
+  public static Answer buildAnswer(ResultSet queryResult) {
+    Answer answer = new Answer();
+    try {
+      answer.setId(queryResult.getInt(SqlConstants.ANSWER_FETCH_ID));
+      answer.setBody(queryResult.getString(SqlConstants.ANSWER_FETCH_BODY));
+      answer.setAuthorName(queryResult.getString(SqlConstants.ANSWER_FETCH_AUTHORNAME));
+      answer.setDateTime(queryResult.getTimestamp(SqlConstants.ANSWER_FETCH_DATETIME));
+
+      // Adds the comment from the same row.
+      answer.addComment(buildComment(queryResult));
+
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    return answer;
+  }
+
+  /** 
+   * Creates a comment object from the query data.
+   */
+  public static Comment buildComment(ResultSet queryResult) {
+    Comment comment = new Comment();
+    try {
+      comment.setBody(queryResult.getString(SqlConstants.COMMENT_FETCH_BODY));
+      comment.setAuthorName(queryResult.getString(SqlConstants.COMMENT_FETCH_AUTHORNAME));
+      comment.setDateTime(queryResult.getTimestamp(SqlConstants.COMMENT_FETCH_DATETIME));
+
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    return comment;
+  }
+
   /**
    * Returns the mentor review status, which could be approved, rejected or not reviewed.
    */
-  public static String getReviewStatus(int mentorId) {
+  public static String getReviewStatus(int mentorId, HttpServletRequest request) {
     // Create the MySQL queries for approved and rejected mentor.
     String approvedQuery = "SELECT * FROM MentorEvidence "
         + "WHERE mentor_id = " + Integer.toString(mentorId) + " "
@@ -232,8 +357,7 @@ public final class Utility {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+      Connection connection = getConnection(request);
       
       // Create and execute the MySQL SELECT prepared statements.
       PreparedStatement approvedPreparedStatement = connection.prepareStatement(approvedQuery);
@@ -275,11 +399,10 @@ public final class Utility {
   /**
    * Takes a MySQL query and executes it.
    */
-  public static void executeQuery(String query) {
+  public static void executeQuery(String query, HttpServletRequest request) {
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          SQL_LOCAL_URL, SQL_LOCAL_USER, SQL_LOCAL_PASSWORD);
+      Connection connection = getConnection(request);
       
       // Execute the MySQL prepared statement.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -292,6 +415,24 @@ public final class Utility {
     }
   }
 
+  /** 
+   * Makes a user follow an answer.
+   */
+  public static void insertCommentFollower(Connection connection, int answerId, int authorId) {
+    try {
+      String insertFollowerQuery = "INSERT INTO AnswerFollower(answer_id, follower_id) "
+          + "VALUES (?,?)";
+      PreparedStatement followerStatement = connection.prepareStatement(insertFollowerQuery);
+      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_ANSWERID, answerId);
+      followerStatement.setInt(SqlConstants.FOLLOWER_INSERT_AUTHORID, authorId);
+      followerStatement.executeUpdate();
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(Utility.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+  }
+  
   /** 
    * Split the query by the page length depending on the current page.
    */

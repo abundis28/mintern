@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
+import javax.sql.DataSource;
 
 /**
  * Servlet that handles mentor evidence in database.
@@ -37,18 +38,18 @@ public class MentorEvidenceServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    int mentorId = Utility.getUserId();
+    int mentorId = Utility.getUserId(request);
     
     // Get variable from HTML form.
     String paragraph = request.getParameter("paragraph");
 
     // Delete existing notifications and approvers to re-create them, in case mentor is re-applying.
-    deleteApprovalNotifications(mentorId);
-    deleteApprovers(mentorId);
+    deleteApprovalNotifications(mentorId, request);
+    deleteApprovers(mentorId, request);
 
     // Update mentor evidence and add approvers in database.
-    updateMentorEvidence(mentorId, paragraph);
-    addApprovers(mentorId); //TODO(oumontiel): Only call when there are no approvers.
+    updateMentorEvidence(mentorId, paragraph, request);
+    addApprovers(mentorId, request);
 
     // Call NotificationServlet to notify approvers.
     response.setContentType("text/plain");
@@ -65,47 +66,47 @@ public class MentorEvidenceServlet extends HttpServlet {
   /**
    * Deletes existing notifications related to current mentor's approval from database.
    */
-  private void deleteApprovalNotifications(int mentorId) {
+  private void deleteApprovalNotifications(int mentorId, HttpServletRequest request) {
     // Set up query to delete all relations of users to notifications of this mentor approval.
     String query = "DELETE FROM UserNotification "
         + "WHERE notification_id IN "
         + "(SELECT id FROM Notification "
         + "WHERE url = '/approval.html?id=" + mentorId + "')";
-    Utility.executeQuery(query);
+    Utility.executeQuery(query, request);
 
     // Set up query to delete all notifications related to mentor.
     query = "DELETE FROM Notification "
         + "WHERE url = '/approval.html?id=" + mentorId + "'";
-    Utility.executeQuery(query);
+    Utility.executeQuery(query, request);
   }
 
   /**
    * Deletes approvers assigned to mentor from database.
    */
-  private void deleteApprovers(int mentorId) {
+  private void deleteApprovers(int mentorId, HttpServletRequest request) {
     // Set up query to delete assigned approvers.
     String query = "DELETE FROM MentorApproval "
         + "WHERE mentor_id = " + mentorId;
-    Utility.executeQuery(query);
+    Utility.executeQuery(query, request);
   }
 
   /**
    * Updates evidence provided by mentor in MentorEvidence table.
    */
-  private void updateMentorEvidence(int mentorId, String paragraph) {
+  private void updateMentorEvidence(int mentorId, String paragraph, HttpServletRequest request) {
     // Set up query to insert new experience tag to user.
     // Use replace in case mentor evidence already exists in database and mentor wants to update
     // their information.
     String query = "UPDATE MentorEvidence "
         + "SET paragraph = '" + paragraph + "', is_rejected = FALSE "
         + "WHERE mentor_id = " + mentorId;
-    Utility.executeQuery(query);
+    Utility.executeQuery(query, request);
   }
 
   /**
    * Adds a list of approvers (currently only the admins) to the mentor in the database.
    */
-  private void addApprovers(int mentorId) {
+  private void addApprovers(int mentorId, HttpServletRequest request) {
     // Create array to store IDs of approvers.
     // TODO(oumontiel): Get IDs from all admins and remove hardcoded IDs.
     int[] approvers = {SqlConstants.SHAAR_USER_ID, SqlConstants.ANDRES_USER_ID, SqlConstants.OMAR_USER_ID};
@@ -114,7 +115,7 @@ public class MentorEvidenceServlet extends HttpServlet {
       // Set up query to insert approver to mentor's list of approvers to user.
       String query = "INSERT INTO MentorApproval (mentor_id, approver_id, is_reviewed) "
           + "VALUES (" + mentorId + ", " + approverId + ", FALSE)";
-      Utility.executeQuery(query);
+      Utility.executeQuery(query, request);
     }
   }
 }

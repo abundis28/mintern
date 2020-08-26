@@ -72,7 +72,7 @@ function loadApproval() {
  */
 async function fetchAnswers() {
   const questionId = (new URL(document.location)).searchParams.get("id");
-  const response = await fetch('/fetch-answers?id=' + questionId);
+  const response = await fetch('/answer?id=' + questionId);
   const answersObject = await response.json();
   const answersContainer = document.getElementById('answers');
   Object.values(answersObject).forEach(answer => {
@@ -99,12 +99,14 @@ async function fetchAnswers() {
  */
 function fetchAuthIndexQuestion() {
   fetch('/authentication').then(response => response.json()).then(user => {
-    const inboxButton = document.getElementById('notificationsDropdown');
+    const notificationsBadge = document.getElementById('notifications-badge');
+    const inboxButton = document.getElementById('notifications-dropdown');
     if (user.isUserLoggedIn) {
-      // If user is logged in, show logout and inbox buttons in navbar.
+      // If user is logged in, show logout and inbox buttons and notifications badge in navbar.
       if (inboxButton) {
         // Check that the element exists.
         inboxButton.style.display = 'block';
+        notificationsBadge.style.display = 'block';
       }
       fetchNotifications();
       
@@ -165,15 +167,14 @@ function fetchAuthIndexQuestion() {
  */
 async function fetchForum(pageNumber) {
   // Question ID -1 tells the server to fetch all questions.
-  const response = await fetch('/fetch-questions?id=-1&page=' + pageNumber);
+  const response = await fetch('/question?id=-1&page=' + pageNumber);
   const questionsObject = await response.json();
-
   const questionsContainer = document.getElementById('forum');
 
   // Empty the HTML for multiple searches in a row.
   questionsContainer.innerHTML = '';
   questionsContainer.appendChild(createPageElement(
-      questionsObject, pageNumber, /**hasRedirect=*/true, /**isSearch=*/false));
+      questionsObject, pageNumber, ''));
 }
 
 /**
@@ -181,13 +182,13 @@ async function fetchForum(pageNumber) {
  */
 async function fetchSingleQuestion() {
   const questionId = (new URL(document.location)).searchParams.get("id");
-  const response = await fetch('/fetch-questions?id=' + questionId + '&page=-1');
+  const response = await fetch('/question?id=' + questionId + '&page=-1');
   const questionObject = await response.json();
   const questionContainer = document.getElementById('question');
   
   if (questionObject.length > 0) {
     questionContainer.appendChild(
-          createQuestionElement(questionObject[0], /**hasRedirect=*/false));
+          createQuestionElement(questionObject[0], /**isForum=*/false));
   } else {
     // An empty object means the ID doesn't exist, so we redirect to the index.
     window.location.replace('/index.html');
@@ -201,9 +202,14 @@ function fetchNotifications() {
   fetch('/notification').then(response => response.json()).then((notificationsJson) => {
     const notificationsElement = document.getElementById('inbox-dropdown');
     notificationsElement.innerHTML = '';
+    let numberOfNotifications = 0;
     for (const notification of notificationsJson) {
+      // Increment counter for each notification.
+      numberOfNotifications++;
       notificationsElement.appendChild(createNotificationsElement(notification));
     }
+    // Display total number of notifications.
+    document.getElementById("notifications-badge").innerText = numberOfNotifications;
   });
 }
 
@@ -258,10 +264,14 @@ function fetchMentorExperience() {
  */
 function fetchAuth() {
   fetch('/authentication').then(response => response.json()).then(user => {
+    const inboxButton = document.getElementById('notifications-dropdown');
     if (user.isUserLoggedIn) {
       // If user is logged in, show logout button in navbar.
       // Show notifications.
-      inboxButton.style.display = 'block';
+      if (inboxButton) {
+        // Check that the element exists.
+        inboxButton.style.display = 'block';
+      }
       fetchNotifications();
 
       if (!user.isUserRegistered) {
@@ -470,7 +480,7 @@ function createNotificationsElement(notification) {
 function createPageElement(forumPage, pageNumber, searchString) {
   const pageWrapper = document.createElement('div');
   forumPage.pageQuestions.forEach(question => {
-    pageWrapper.appendChild(createQuestionElement(question, /**hasRedirect=*/true));
+    pageWrapper.appendChild(createQuestionElement(question, /**isForum=*/true));
   });
 
   const pageIndexes = document.createElement('ul');
@@ -479,10 +489,14 @@ function createPageElement(forumPage, pageNumber, searchString) {
   const previousWrapper = document.createElement('li');
   if (forumPage.previousPage) {
     previousWrapper.setAttribute('class', 'page-item');
-    if (searchString != '') {
-      nextWrapper.onclick = fetchForum(pageNumber - 1);
+    if (searchString == '') {
+      previousWrapper.onclick = function() {
+        fetchForum(pageNumber - 1);
+      }
     } else {
-      nextWrapper.onclick = searchQuestion(searchString, pageNumber - 1);
+      previousWrapper.onclick = function() {
+        searchQuestion(searchString, pageNumber - 1);
+      }
     }
   } else {
     previousWrapper.setAttribute('class', 'page-item disabled');
@@ -504,10 +518,14 @@ function createPageElement(forumPage, pageNumber, searchString) {
   const nextWrapper = document.createElement('li');
   if (forumPage.nextPage) {
     nextWrapper.setAttribute('class', 'page-item');
-    if (searchString != '') {
-      nextWrapper.onclick = fetchForum(pageNumber + 1);
+    if (searchString == '') {
+      nextWrapper.onclick = function() {
+        fetchForum(pageNumber + 1);
+      }
     } else {
-      nextWrapper.onclick = searchQuestion(searchString, pageNumber + 1);
+      nextWrapper.onclick = function() {
+        searchQuestion(searchString, pageNumber + 1);
+      }
     }
   } else {
     nextWrapper.setAttribute('class', 'page-item disabled');
@@ -528,10 +546,9 @@ function createPageElement(forumPage, pageNumber, searchString) {
  * Each element corresponds to a question to be displayed in the DOM.
  * 
  * @param {Question} question : information of a single question.
- * @param {string} page       : check if the element is for the forum or
- *                              single view.
+ * @param {string} isForum    : true if the element is for the forum.
  */
-function createQuestionElement(question, page) {
+function createQuestionElement(question, isForum) {
   // Div to wrap the media object with question data.
   const questionWrapper = document.createElement('div');
   questionWrapper.setAttribute('class', 'list-group-item');
@@ -565,7 +582,7 @@ function createQuestionElement(question, page) {
 
   // Heading for the title.
   const questionTitle = document.createElement('h5');
-  if (page === 'forum') {
+  if (isForum) {
     // Add href to redirect from forum to single view.
     const questionURL = document.createElement('a');
     questionURL.setAttribute('href', '/question.html?id=' + question.id);
@@ -580,7 +597,7 @@ function createQuestionElement(question, page) {
   if (question.body) {
     const bodyElement = document.createElement('p');
     bodyElement.setAttribute('class', 'mb-1');
-    if (page === 'forum' && question.body.length > 80) {
+    if (isForum && question.body.length > 80) {
       // All the body should not be displayed in the forum if it is very big.
       bodyElement.innerText = question.body
           // Reduce the preview of the body to 80 characters.
@@ -644,19 +661,11 @@ function createAnswerElement(answer) {
   answerElement.setAttribute('class', 'list-group-item mt-5');
   answerElement.innerText = answer.body;
   
-  // TODO(shaargtz): implement voting system.
-  // const votesElement = document.createElement('small');
-  // votesElement.setAttribute('class', 'float-right');
-  // if (answer.votes === 1) {
-  //   // Avoid writing '1 votes'.
-  //   votesElement.innerText = answer.votes + ' vote';
-  // } else {
-  //   votesElement.innerText = answer.votes + ' votes';
-  // }
-  // answersElement.appendChild(votesElement);
-  
   const authorElement = document.createElement('small');
   authorElement.innerText = answer.authorName;
+  if (answer.isVerifiedMentor) {
+    authorElement.innerText += '\nVerified Ex-Intern';
+  }
   answerElement.appendChild(document.createElement('br'));
   answerElement.appendChild(authorElement);
   
@@ -680,6 +689,9 @@ function createCommentElement(comment) {
   
   const authorElement = document.createElement('small');
   authorElement.innerText = comment.authorName;
+  if (comment.isVerifiedMentor) {
+    authorElement.innerText += '\nVerified Ex-Intern';
+  }
   commentElement.appendChild(document.createElement('br'));
   commentElement.appendChild(authorElement);
   
@@ -855,18 +867,7 @@ function getQuestionId() {
  * Sets attribute to the corresponding form elements.
  */
 function setQuestionIdValue() {
-  document.getElementsByClassName('question-id').value = getQuestionId(); 
-}
-
-/**
- * Creates notification when an answer or comment is posted.
- * @param {string} type
- * @param {int} id
- */
-function notify(type, id) {
-  fetch('notification?type=' + type + '&modifiedElementId=' + id, {
-    method: 'POST'
-  })
+  document.getElementById('question-id').value = getQuestionId(); 
 }
 
 /**
@@ -899,7 +900,7 @@ function searchQuestion(stringSearchInput, pageNumber) {
     fetch('/search-question?inputString=' + stringSearchInput + '&page=' + pageNumber)
         .then(response => response.json()).then(forumPage => {
           questionsContainer.appendChild(createPageElement(
-              forumPage, pageNumber, /**hasRedirect=*/true, stringSearchInput));
+              forumPage, pageNumber, stringSearchInput));
         })
   }
 }
