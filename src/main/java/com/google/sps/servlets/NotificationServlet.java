@@ -57,7 +57,8 @@ public class NotificationServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Define local time for the new entries in the server.
     Timestamp localTimestamp = Timestamp.valueOf(LocalDateTime.now());
-    // Check if notification is about a question answered, answer commented, or mentor approval, along with its id.
+    // Check if notification is about a question answered, answer commented, or mentor approval, 
+    // along with its id.
     String typeOfNotification = request.getParameter("type");
     int modifiedElementId = Utility.tryParseInt(request.getParameter("modifiedElementId"));
 
@@ -234,7 +235,8 @@ public class NotificationServlet extends HttpServlet {
   /**
    * Invoke the fetch post method to send a push notification to the user.
    */
-  private void redirectEmailServlet(String typeOfNotification, int modifiedElementId, HttpServletRequest request, HttpServletResponse response) {
+  private void redirectEmailServlet(String typeOfNotification, int modifiedElementId,
+                                    HttpServletRequest request, HttpServletResponse response) {
     try {
       // We call the notification servlet to notify of this posted comment.
       request.getRequestDispatcher("/email?typeOfNotification=" + typeOfNotification + 
