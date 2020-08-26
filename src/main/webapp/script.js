@@ -391,7 +391,7 @@ function createApprovalMessage(mentorId, approval) {
     // If approver is assigned to mentor and has already reviewed them,
     // show corresponding message.
     approvalSubtitleElement.appendChild(document.createTextNode(
-        'You have already reviewed '));
+        'You have reviewed '));
     approvalSubtitleElement.appendChild(
       createApprovalSpan('text-mint', approval.mentorUsername));
     approvalSubtitleElement.appendChild(document.createTextNode('.'));
@@ -407,14 +407,11 @@ function createApprovalMessage(mentorId, approval) {
     approvalSubtitleElement.appendChild(document.createTextNode('.'));
     approvalSmallTextElement.appendChild(document.createTextNode(
         'Please read through this information and verify its validity.'));
-    
-    // Display mentor username.
-    const usernameElement = document.getElementById('username');
-    usernameElement.innerHTML = approval.mentorUsername;
 
     // Display paragraph mentor submitted as evidence.
     const paragraphElement = document.getElementById('paragraph');
     paragraphElement.innerHTML = approval.paragraph;
+    paragraphElement.setAttribute('class', 'd-flex justify-content-center m-5');
     return;
   } else {
     // If user is not either a mentor or an approver assigned to that mentor, redirect to index.
