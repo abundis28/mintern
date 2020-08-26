@@ -67,6 +67,7 @@ public class FollowerSystemServlet extends HttpServlet {
       followerStatement.setInt(SqlConstants.FOLLOWER_QUERY_QUESTIONID, questionId);
       followerStatement.setInt(SqlConstants.FOLLOWER_QUERY_USERID, userId);
       followerStatement.executeUpdate();
+      connection.close();
     } catch (SQLException exception) {
       // If the connection or the query don't go through, we get the log of what happened.
       Logger logger = Logger.getLogger(FollowerSystemServlet.class.getName());

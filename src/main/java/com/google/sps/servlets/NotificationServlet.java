@@ -29,6 +29,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
 import javax.sql.DataSource;
  
 /**
@@ -92,6 +93,8 @@ public class NotificationServlet extends HttpServlet {
     }
     // Creates notification and relationship between its ID and the ID of the concerned users.
     createNotification(query, notificationUrl, notificationMessage, localTimestamp, request);
+    // Call email servlet to generate the message and send it as an email.
+    redirectEmailServlet(typeOfNotification, modifiedElementId, request, response);
   }
 
   /**
@@ -226,5 +229,24 @@ public class NotificationServlet extends HttpServlet {
       logger.log(Level.SEVERE, ex.getMessage(), ex);
     }
     return answeredQuestionId;
+  }
+
+  /**
+   * Invoke the fetch post method to send a push notification to the user.
+   */
+  private void redirectEmailServlet(String typeOfNotification, int modifiedElementId, HttpServletRequest request, HttpServletResponse response) {
+    try {
+      // We call the notification servlet to notify of this posted comment.
+      request.getRequestDispatcher("/email?typeOfNotification=" + typeOfNotification + 
+          "&modifiedElementId=" + modifiedElementId).include(request, response);
+    } catch (ServletException exception) {
+      // If the notification doesn't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(NotificationServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    } catch (IOException exception) {
+      // If the notification doesn't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(NotificationServlet.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
   }
 }
