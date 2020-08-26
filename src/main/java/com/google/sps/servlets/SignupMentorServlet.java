@@ -29,6 +29,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 /**
  * Servlet that inserts a new mentor to the database.
@@ -49,8 +50,7 @@ public class SignupMentorServlet extends HttpServlet {
 
     try {
       // Establish connection to MySQL database.
-      Connection connection = DriverManager.getConnection(
-          Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+      Connection connection = Utility.getConnection(request);
 
       // Create the MySQL prepared statement, execute it, and store the result.
       PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -91,19 +91,19 @@ public class SignupMentorServlet extends HttpServlet {
     Boolean isMentor = true;
 
     // Insert user and mentor experience to the database.
-    Utility.addNewUser(firstName, lastName, username, email, major, isMentor);
+    Utility.addNewUser(firstName, lastName, username, email, major, isMentor, request);
     if (experienceTags != null) {
-      addMentorExperience(experienceTags);
+      addMentorExperience(experienceTags, request);
     }
-    addMentorEvidence();
+    addMentorEvidence(request);
     response.sendRedirect("/verification.html");
   }
 
   /**
    * Inserts experience tags with corresponding user to MentorExperience table in database.
    */
-  private void addMentorExperience(String[] experienceTags) {
-    int userId = Utility.getUserId();
+  private void addMentorExperience(String[] experienceTags, HttpServletRequest request) {
+    int userId = Utility.getUserId(request);
     
     for (String tag : experienceTags) {
       // Set up query to insert new experience tag to user.
@@ -111,8 +111,7 @@ public class SignupMentorServlet extends HttpServlet {
 
       try {
         // Establish connection to MySQL database.
-        Connection connection = DriverManager.getConnection(
-            Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+        Connection connection = Utility.getConnection(request);
 
         // Create the MySQL INSERT prepared statement.
         PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -133,13 +132,13 @@ public class SignupMentorServlet extends HttpServlet {
   /**
    * Inserts a new entry to MentorEvidence table with default values.
    */
-  private void addMentorEvidence() {
-    int userId = Utility.getUserId();
+  private void addMentorEvidence(HttpServletRequest request) {
+    int userId = Utility.getUserId(request);
 
     // Set up query to insert mentor evidence and execute it.
     String query = "INSERT INTO MentorEvidence "
         + "(mentor_id, approvals, is_approved, is_rejected, paragraph) "
         + "VALUES (" + userId + ", 0, FALSE, FALSE, '')";
-    Utility.executeQuery(query);
+    Utility.executeQuery(query, request);
   }
 }

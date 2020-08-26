@@ -21,12 +21,13 @@ function loadIndex() {
   // Determine whether all the questions should be fetched or just the ones that match the search.
   const fullTextSearch = (new URL(document.location)).searchParams.get("search");
   if (fullTextSearch === "1") {
-    // Fetch just the questions related to the string input in the search bar.
-    const stringSearchInput = (new URL(document.location)).searchParams.get("stringSearchInput");
-    searchQuestion(stringSearchInput);
+    // Fetch first page of the questions related to the string input in the search bar.
+    const stringSearchInput = 
+        (new URL(document.location)).searchParams.get("stringSearchInput");
+    searchQuestion(stringSearchInput, /**pageNumber=*/1);
   } else {
-    // Fetch the whole forum.
-    fetchQuestions('forum');
+    // Fetch the whole forum on the first page.
+    fetchForum(/**pageNumber=*/1);
     eraseQueryStringFromUrl();
   }
 }
@@ -36,7 +37,7 @@ function loadIndex() {
  */
 function loadQuestion() {
   fetchAuthIndexQuestion();
-  fetchQuestions('question');
+  fetchSingleQuestion();
   fetchAnswers();
   setQuestionIdValue();
 }
@@ -71,7 +72,7 @@ function loadApproval() {
  */
 async function fetchAnswers() {
   const questionId = (new URL(document.location)).searchParams.get("id");
-  const response = await fetch('/fetch-answers?id=' + questionId);
+  const response = await fetch('/answer?id=' + questionId);
   const answersObject = await response.json();
   const answersContainer = document.getElementById('answers');
   Object.values(answersObject).forEach(answer => {
@@ -98,8 +99,8 @@ async function fetchAnswers() {
  */
 function fetchAuthIndexQuestion() {
   fetch('/authentication').then(response => response.json()).then(user => {
-    const inboxButton = document.getElementById('notificationsDropdown');
     const notificationsBadge = document.getElementById('notifications-badge');
+    const inboxButton = document.getElementById('notifications-dropdown');
     if (user.isUserLoggedIn) {
       // If user is logged in, show logout and inbox buttons and notifications badge in navbar.
       if (inboxButton) {
@@ -157,6 +158,41 @@ function fetchAuthIndexQuestion() {
           user.authenticationUrl, 'btn-outline-success', 'Log In', 'login');
     }
   })
+}
+
+/**
+ * Fetches the question list in the index and adds pagination elements.
+ * Used for homepage and searching.
+ * @param {int} pageNumber : current page number to display.
+ */
+async function fetchForum(pageNumber) {
+  // Question ID -1 tells the server to fetch all questions.
+  const response = await fetch('/question?id=-1&page=' + pageNumber);
+  const questionsObject = await response.json();
+  const questionsContainer = document.getElementById('forum');
+
+  // Empty the HTML for multiple searches in a row.
+  questionsContainer.innerHTML = '';
+  questionsContainer.appendChild(createPageElement(
+      questionsObject, pageNumber, ''));
+}
+
+/**
+ * Fetches a question's data for the single question view.
+ */
+async function fetchSingleQuestion() {
+  const questionId = (new URL(document.location)).searchParams.get("id");
+  const response = await fetch('/question?id=' + questionId + '&page=-1');
+  const questionObject = await response.json();
+  const questionContainer = document.getElementById('question');
+  
+  if (questionObject.length > 0) {
+    questionContainer.appendChild(
+          createQuestionElement(questionObject[0], /**isForum=*/false));
+  } else {
+    // An empty object means the ID doesn't exist, so we redirect to the index.
+    window.location.replace('/index.html');
+  }
 }
 
 /**
@@ -228,10 +264,14 @@ function fetchMentorExperience() {
  */
 function fetchAuth() {
   fetch('/authentication').then(response => response.json()).then(user => {
+    const inboxButton = document.getElementById('notifications-dropdown');
     if (user.isUserLoggedIn) {
       // If user is logged in, show logout button in navbar.
       // Show notifications.
-      inboxButton.style.display = 'block';
+      if (inboxButton) {
+        // Check that the element exists.
+        inboxButton.style.display = 'block';
+      }
       fetchNotifications();
 
       if (!user.isUserRegistered) {
@@ -261,41 +301,6 @@ function fetchMentorApproval() {
   fetch(mentorApprovalUrl).then(response => response.json()).then(approval => {
     createApprovalMessage(mentorId, approval);
   })
-}
-
-/**
- * Fetches questions from server, wraps each in an <li> element, 
- * and adds them to the DOM.
- */
-async function fetchQuestions(page) {
-  let questionId;
-  let questionsContainer;
-  let hasRedirect;
-  if (page === 'forum') {
-    // For the forum we pass -1 which means we need to retrieve all questions.
-    questionId = -1;
-    questionsContainer = document.getElementById('forum');
-
-    // We want the element in the forum to have a link which sends to the single
-    // page view.
-    hasRedirect = true;
-  } else if (page === 'question') {
-    questionId = (new URL(document.location)).searchParams.get("id");
-    questionsContainer = document.getElementById('question');
-    hasRedirect = false;
-  }
-  const response = await fetch('/fetch-questions?id=' + questionId);
-  const questionsObject = await response.json();
-
-  if (questionsObject.length !== 0) {
-    // Check that the ID exist so that it actually has questions in it.
-    questionsObject.forEach(question => {
-      questionsContainer.appendChild(createQuestionElement(question, page));
-    });
-  } else {
-    // If the ID doesn't exist, redirect to the index.
-    window.location.replace('/index.html');
-  }
 }
 
 /**
@@ -469,15 +474,84 @@ function createNotificationsElement(notification) {
   return liElement;
 }
 
+/**
+ * Creates questions wrapper for limiting posts with pagination.
+ * @param {ForumPage} forumPage : object with pagination info and the question list.
+ * @param {int} pageNumber : current page number.
+ * @param {string} searchString : null if the function is called from the forum.
+ */
+function createPageElement(forumPage, pageNumber, searchString) {
+  const pageWrapper = document.createElement('div');
+  forumPage.pageQuestions.forEach(question => {
+    pageWrapper.appendChild(createQuestionElement(question, /**isForum=*/true));
+  });
+
+  const pageIndexes = document.createElement('ul');
+  pageIndexes.setAttribute('class', 'pagination');
+
+  const previousWrapper = document.createElement('li');
+  if (forumPage.previousPage) {
+    previousWrapper.setAttribute('class', 'page-item');
+    if (searchString == '') {
+      previousWrapper.onclick = function() {
+        fetchForum(pageNumber - 1);
+      }
+    } else {
+      previousWrapper.onclick = function() {
+        searchQuestion(searchString, pageNumber - 1);
+      }
+    }
+  } else {
+    previousWrapper.setAttribute('class', 'page-item disabled');
+  }
+  const previousButton = document.createElement('a');
+  previousButton.setAttribute('class', 'page-link');
+  previousButton.innerHTML = '&laquo;';
+  previousWrapper.appendChild(previousButton);
+  pageIndexes.appendChild(previousWrapper);
+
+  const currentPage = document.createElement('li');
+  currentPage.setAttribute('class', 'page-item');
+  const pageText = document.createElement('a');
+  pageText.setAttribute('class', 'page-link');
+  pageText.innerText = 'Page ' + pageNumber + ' of ' + forumPage.numberOfPages;
+  currentPage.appendChild(pageText);
+  pageIndexes.appendChild(currentPage);
+
+  const nextWrapper = document.createElement('li');
+  if (forumPage.nextPage) {
+    nextWrapper.setAttribute('class', 'page-item');
+    if (searchString == '') {
+      nextWrapper.onclick = function() {
+        fetchForum(pageNumber + 1);
+      }
+    } else {
+      nextWrapper.onclick = function() {
+        searchQuestion(searchString, pageNumber + 1);
+      }
+    }
+  } else {
+    nextWrapper.setAttribute('class', 'page-item disabled');
+  }
+  const nextButton = document.createElement('a');
+  nextButton.setAttribute('class', 'page-link');
+  nextButton.innerHTML = '&raquo;';
+  nextWrapper.appendChild(nextButton);
+  pageIndexes.appendChild(nextWrapper);
+
+  pageWrapper.appendChild(pageIndexes);
+
+  return pageWrapper;
+}
+
 /** 
  * Creates an <li> element with question data. 
  * Each element corresponds to a question to be displayed in the DOM.
  * 
  * @param {Question} question : information of a single question.
- * @param {string} page       : check if the element is for the forum or
- *                              single view.
+ * @param {string} isForum    : true if the element is for the forum.
  */
-function createQuestionElement(question, page) {
+function createQuestionElement(question, isForum) {
   // Div to wrap the media object with question data.
   const questionWrapper = document.createElement('div');
   questionWrapper.setAttribute('class', 'list-group-item');
@@ -511,7 +585,7 @@ function createQuestionElement(question, page) {
 
   // Heading for the title.
   const questionTitle = document.createElement('h5');
-  if (page === 'forum') {
+  if (isForum) {
     // Add href to redirect from forum to single view.
     const questionURL = document.createElement('a');
     questionURL.setAttribute('href', '/question.html?id=' + question.id);
@@ -526,7 +600,7 @@ function createQuestionElement(question, page) {
   if (question.body) {
     const bodyElement = document.createElement('p');
     bodyElement.setAttribute('class', 'mb-1');
-    if (page === 'forum' && question.body.length > 80) {
+    if (isForum && question.body.length > 80) {
       // All the body should not be displayed in the forum if it is very big.
       bodyElement.innerText = question.body
           // Reduce the preview of the body to 80 characters.
@@ -590,19 +664,11 @@ function createAnswerElement(answer) {
   answerElement.setAttribute('class', 'list-group-item mt-5');
   answerElement.innerText = answer.body;
   
-  // TODO(shaargtz): implement voting system.
-  // const votesElement = document.createElement('small');
-  // votesElement.setAttribute('class', 'float-right');
-  // if (answer.votes === 1) {
-  //   // Avoid writing '1 votes'.
-  //   votesElement.innerText = answer.votes + ' vote';
-  // } else {
-  //   votesElement.innerText = answer.votes + ' votes';
-  // }
-  // answersElement.appendChild(votesElement);
-  
   const authorElement = document.createElement('small');
   authorElement.innerText = answer.authorName;
+  if (answer.isVerifiedMentor) {
+    authorElement.innerText += '\nVerified Ex-Intern';
+  }
   answerElement.appendChild(document.createElement('br'));
   answerElement.appendChild(authorElement);
   
@@ -626,6 +692,9 @@ function createCommentElement(comment) {
   
   const authorElement = document.createElement('small');
   authorElement.innerText = comment.authorName;
+  if (comment.isVerifiedMentor) {
+    authorElement.innerText += '\nVerified Ex-Intern';
+  }
   commentElement.appendChild(document.createElement('br'));
   commentElement.appendChild(authorElement);
   
@@ -658,9 +727,8 @@ function createCommentFormElement(answerId) {
 
   // Text area to write the comment.
   const textElement = document.createElement('textarea');
-  textElement.setAttribute('class', 'form-control form-control-sm');
+  textElement.setAttribute('class', 'form-control form-control-sm comment-body');
   textElement.setAttribute('name', 'comment-body');
-  textElement.setAttribute('id', 'comment-body');
   textElement.setAttribute('placeholder', 'Write a comment');
   textElement.setAttribute('required', '');
   textElement.setAttribute('data-autoresize', '');
@@ -671,7 +739,7 @@ function createCommentFormElement(answerId) {
   const inputQuestionIdElement = document.createElement('input');
   inputQuestionIdElement.setAttribute('type', 'hidden');
   inputQuestionIdElement.setAttribute('name', 'question-id');
-  inputQuestionIdElement.setAttribute('id', 'question-id');
+  inputQuestionIdElement.setAttribute('class', 'question-id');
   inputQuestionIdElement.setAttribute('value', getQuestionId());
   divElement.appendChild(inputQuestionIdElement);
 
@@ -679,7 +747,7 @@ function createCommentFormElement(answerId) {
   const inputAnswerIdElement = document.createElement('input');
   inputAnswerIdElement.setAttribute('type', 'hidden');
   inputAnswerIdElement.setAttribute('name', 'answer-id');
-  inputAnswerIdElement.setAttribute('id', 'answer-id');
+  inputAnswerIdElement.setAttribute('class', 'answer-id');
   inputAnswerIdElement.setAttribute('value', answerId);
   divElement.appendChild(inputAnswerIdElement);
 
@@ -713,10 +781,10 @@ function addAutoResize() {
  */
 function backToHomepage() {
   const searchInput = document.getElementById("questionSearchInput");
-  searchInput.value = "";
+  searchInput.value = '';
   const questionsContainer = document.getElementById('forum');
-  questionsContainer.innerHTML = "";
-  fetchQuestions('forum');
+  questionsContainer.innerHTML = '';
+  fetchForum(/**pageNumber=*/1);
   eraseQueryStringFromUrl();
 }
 
@@ -806,17 +874,6 @@ function setQuestionIdValue() {
 }
 
 /**
- * Creates notification when an answer or comment is posted.
- * @param {string} type
- * @param {int} id
- */
-function notify(type, id) {
-  fetch('notification?type=' + type + '&modifiedElementId=' + id, {
-    method: 'POST'
-  })
-}
-
-/**
  * Modifies approval status of a mentor based on approver's feedback.
  * @param {boolean} isApproved 
  */
@@ -839,18 +896,15 @@ function searchRedirect() {
 /**
  * Searches questions that contain the input string in the title or body elements.
  */
-function searchQuestion(stringSearchInput) {
+function searchQuestion(stringSearchInput, pageNumber) {
   if (stringSearchInput != "") {
     const questionsContainer = document.getElementById('forum');
     questionsContainer.innerHTML = "";
-    fetch('/search-question?inputString=' + stringSearchInput).then(response => 
-        response.json()).then(questionsJson => {
-      for (const question of questionsJson) {
-        // True value parameter for createQuestionElement means that the question does have a 
-        // redirect URL option.
-        questionsContainer.appendChild(createQuestionElement(question, true));
-      }
-    })
+    fetch('/search-question?inputString=' + stringSearchInput + '&page=' + pageNumber)
+        .then(response => response.json()).then(forumPage => {
+          questionsContainer.appendChild(createPageElement(
+              forumPage, pageNumber, stringSearchInput));
+        })
   }
 }
 

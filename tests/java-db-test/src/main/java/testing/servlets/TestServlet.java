@@ -1,12 +1,12 @@
 package testing.servlets;
 
+import com.google.sps.classes.Utility;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -38,7 +38,7 @@ public class TestServlet extends HttpServlet {
     // We begin the JSON string.
     String json = "{";
     // The connection and query are attempted.
-    try (Connection connection = DriverManager.getConnection(url, user, password);
+    try (Connection connection = Utility.getConnection(request);
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         ResultSet queryResult = preparedStatement.executeQuery()) {
           // All of the rows from the query are looped if it goes through.

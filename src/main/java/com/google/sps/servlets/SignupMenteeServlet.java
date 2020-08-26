@@ -25,6 +25,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 /**
  * Servlet that inserts a new mentee to the database.
@@ -50,7 +51,7 @@ public class SignupMenteeServlet extends HttpServlet {
     Boolean isMentor = false;
 
     // Insert user to the database.
-    Utility.addNewUser(firstName, lastName, username, email, major, isMentor);
+    Utility.addNewUser(firstName, lastName, username, email, major, isMentor, request);
     response.sendRedirect("/index.html");
   }
 }

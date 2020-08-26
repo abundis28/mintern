@@ -14,12 +14,12 @@
 
 package com.google.sps.servlets;
 
+import com.google.sps.classes.ForumPage;
 import com.google.sps.classes.Question;
 import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.Utility;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,6 +31,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 /**
  * Search questions by text input.
@@ -47,6 +48,9 @@ public class QuestionSearchServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     List<Question> questions = new ArrayList<>();
+    // Number of page that the user is browsing.
+    int page = Utility.tryParseInt(request.getParameter("page"));
+    
     // The query will return a ResultSet with order depending on the level of similarity to the 
     // input string.
     String query = 
@@ -56,10 +60,9 @@ public class QuestionSearchServlet extends HttpServlet {
                 SqlConstants.QUESTION_QUERY_WHERE_CONDITION, Utility.fetchQuestionsQuery.length());
     // The connection and query are attempted.
     try {
-      Connection connection = DriverManager
-          .getConnection(Utility.SQL_LOCAL_URL, Utility.SQL_LOCAL_USER, Utility.SQL_LOCAL_PASSWORD);
+      Connection connection = Utility.getConnection(request);
       PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.setInt(SqlConstants.QUESTION_QUERY_SET_USERID, Utility.getUserId());
+      preparedStatement.setInt(SqlConstants.QUESTION_QUERY_SET_USERID, Utility.getUserId(request));
       ResultSet queryResult = preparedStatement.executeQuery();
     
       // All of the rows from the query are looped if it goes through.
@@ -71,7 +74,9 @@ public class QuestionSearchServlet extends HttpServlet {
       Logger logger = Logger.getLogger(QuestionSearchServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
+    
+    ForumPage forumPage = Utility.splitPages(questions, page);
     response.setContentType("application/json;");
-    response.getWriter().println(Utility.convertToJsonUsingGson(questions));
+    response.getWriter().println(Utility.convertToJsonUsingGson(forumPage));
   } 
 }

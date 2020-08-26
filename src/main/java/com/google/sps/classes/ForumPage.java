@@ -14,32 +14,24 @@
 
 package com.google.sps.classes;
 
-import java.sql.Timestamp;
-import java.util.Date;
+import com.google.sps.classes.Question;
+import java.util.List;
 
 /**
- * Class to create a comment for the forum. It will be used for Gson conversion.
+ * Class to display posts by pages in the forum.
  */
-public class Comment {
+public class ForumPage {
 
-  private String body;
-  private String authorName;
-  private boolean isVerifiedMentor;
-  private Timestamp dateTime;
+  private Integer nextPage;
+  private Integer previousPage;
+  private int numberOfPages;
+  private List<Question> pageQuestions;
 
-  public void setBody(String body) {
-    this.body = body;
-  }
-
-  public void setAuthorName(String authorName) {
-    this.authorName = authorName;
-  }
-
-  public void setIsVerifiedMentor(boolean isVerifiedMentor) {
-    this.isVerifiedMentor = isVerifiedMentor;
-  }
-
-  public void setDateTime(Timestamp dateTime) {
-    this.dateTime = dateTime;
+  public ForumPage(
+      Integer nextPage, Integer previousPage, int numberOfPages, List<Question> pageQuestions) {
+    this.nextPage = nextPage;
+    this.previousPage = previousPage;
+    this.numberOfPages = numberOfPages;
+    this.pageQuestions = pageQuestions;
   }
 }
