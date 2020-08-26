@@ -886,17 +886,6 @@ function showElementsOnLogin() {
 }
 
 /**
- * Creates notification when an answer or comment is posted.
- * @param {string} type
- * @param {int} id
- */
-function notify(type, id) {
-  fetch('notification?type=' + type + '&modifiedElementId=' + id, {
-    method: 'POST'
-  })
-}
-
-/**
  * Modifies approval status of a mentor based on approver's feedback.
  * @param {boolean} isApproved 
  */
