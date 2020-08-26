@@ -94,8 +94,10 @@ public class NotificationServlet extends HttpServlet {
     }
     // Creates notification and relationship between its ID and the ID of the concerned users.
     createNotification(query, notificationUrl, notificationMessage, localTimestamp, request);
-    // Call email servlet to generate the message and send it as an email.
-    redirectEmailServlet(typeOfNotification, modifiedElementId, request, response);
+    if (!Utility.IS_LOCALLY_DEPLOYED) {
+      // If deployiong to cloud, call email servlet to generate a message and send it in an email.
+      redirectEmailServlet(typeOfNotification, modifiedElementId, request, response);
+    }
   }
 
   /**
