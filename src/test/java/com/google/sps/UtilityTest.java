@@ -14,6 +14,12 @@
  
 package com.google.sps;
 
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+import org.mockito.ArgumentMatchers;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+
 import com.google.sps.classes.ForumPage;
 import com.google.sps.classes.Question;
 import com.google.sps.classes.SubjectTag;
@@ -118,5 +124,17 @@ public final class UtilityTest {
     int expected = 0;
 
     Assert.assertEquals(actual, expected);
+  }
+
+  /** Testing for splitPages function */
+  @Test
+  public void splitPagesEmptyList() {
+    // Empty list.
+    List<Question> emptyList = new ArrayList<>();
+
+    ForumPage actual = Utility.splitPages(emptyList, 1);
+    ForumPage expected = new ForumPage(null, null, 0, emptyList);
+
+    Assert.assertTrue(EqualsBuilder.reflectionEquals(expected,actual));
   }
 }
