@@ -16,12 +16,15 @@ package com.google.sps;
 
 import com.google.sps.classes.SubjectTag;
 import com.google.sps.classes.Utility;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.junit.Test;
+import static org.mockito.Mockito.*;
 
 @RunWith(JUnit4.class)
 public final class UtilityTest {
@@ -112,6 +115,19 @@ public final class UtilityTest {
     
     int actual = Utility.tryParseInt(stringToInt);
     int expected = 0;
+
+    Assert.assertEquals(actual, expected);
+  }
+
+  /** Tests for getUsername() function */
+  @Test
+  public void validId() {
+    // ID with valid user.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    int userId = 1;
+    
+    String actual = Utility.getUsername(userId, request);
+    String expected = "shaargtz";
 
     Assert.assertEquals(actual, expected);
   }
