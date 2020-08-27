@@ -155,4 +155,16 @@ public final class UtilityTest {
 
     Assert.assertEquals(actual, expected);
   }
+
+  @Test
+  public void negativeId() {
+    // Invalid ID with negative value.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    int userId = -1;
+    
+    String actual = Utility.getUsername(userId, request);
+    String expected = "";
+
+    Assert.assertEquals(actual, expected);
+  }
 }
