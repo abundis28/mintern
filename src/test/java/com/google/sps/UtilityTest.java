@@ -127,7 +127,9 @@ public final class UtilityTest {
     // Empty list.
     List<Question> emptyList = new ArrayList<>();
 
-    ForumPage actual = Utility.splitPages(emptyList, 1);
+    // This would be an empty search result, and when searching
+    // by default we get page number 1.
+    ForumPage actual = Utility.splitPages(emptyList, /**pageNumber=*/1);
     ForumPage expected = new ForumPage(null, null, 0, emptyList);
 
     Assert.assertTrue(EqualsBuilder.reflectionEquals(expected,actual));
