@@ -164,4 +164,23 @@ public final class UtilityTest {
     Assert.assertEquals(actual, expected);
     loggedInUser.tearDown();
   }
+
+  @Test
+  public void registeredUser() {
+    // UserService that is logged in and also registered.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    LocalServiceTestHelper loggedInUser =
+        new LocalServiceTestHelper(new LocalUserServiceTestConfig())
+        .setEnvIsLoggedIn(true)
+        .setEnvAuthDomain("itesm.mx")
+        .setEnvEmail("a00825358@itesm.mx");
+    UserService userService = UserServiceFactory.getUserService();
+    loggedInUser.setUp();
+    
+    int actual = Utility.getUserId(request);
+    int expected = SqlConstants.OMAR_USER_ID;
+
+    Assert.assertEquals(actual, expected);
+    loggedInUser.tearDown();
+  }
 }
