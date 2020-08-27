@@ -14,18 +14,13 @@
  
 package com.google.sps;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-import org.mockito.ArgumentMatchers;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-
 import com.google.sps.classes.ForumPage;
 import com.google.sps.classes.Question;
 import com.google.sps.classes.SubjectTag;
 import com.google.sps.classes.Utility;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
