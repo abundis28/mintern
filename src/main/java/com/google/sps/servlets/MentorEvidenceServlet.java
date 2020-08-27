@@ -38,20 +38,24 @@ public class MentorEvidenceServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    int userId = Utility.getUserId(request);
+    int mentorId = Utility.getUserId(request);
     
     // Get variable from HTML form.
     String paragraph = request.getParameter("paragraph");
 
+    // Delete existing notifications and approvers to re-create them, in case mentor is re-applying.
+    deleteApprovalNotifications(mentorId, request);
+    deleteApprovers(mentorId, request);
+
     // Update mentor evidence and add approvers in database.
-    updateMentorEvidence(userId, paragraph, request);
-    addApprovers(userId, request); //TODO(oumontiel): Only call when there are no approvers.
+    updateMentorEvidence(mentorId, paragraph, request);
+    addApprovers(mentorId, request);
 
     // Call NotificationServlet to notify approvers.
     response.setContentType("text/plain");
     try {
       request.getRequestDispatcher("/notification?type=requestApproval&modifiedElementId="
-          + userId).include(request, response);
+          + mentorId).include(request, response);
     } catch (ServletException exception) {
       Logger logger = Logger.getLogger(MentorApprovalServlet.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
@@ -60,48 +64,58 @@ public class MentorEvidenceServlet extends HttpServlet {
   }
 
   /**
+   * Deletes existing notifications related to current mentor's approval from database.
+   */
+  private void deleteApprovalNotifications(int mentorId, HttpServletRequest request) {
+    // Set up query to delete all relations of users to notifications of this mentor approval.
+    String query = "DELETE FROM UserNotification "
+        + "WHERE notification_id IN "
+        + "(SELECT id FROM Notification "
+        + "WHERE url = '/approval.html?id=" + mentorId + "')";
+    Utility.executeQuery(query, request);
+
+    // Set up query to delete all notifications related to mentor.
+    query = "DELETE FROM Notification "
+        + "WHERE url = '/approval.html?id=" + mentorId + "'";
+    Utility.executeQuery(query, request);
+  }
+
+  /**
+   * Deletes approvers assigned to mentor from database.
+   */
+  private void deleteApprovers(int mentorId, HttpServletRequest request) {
+    // Set up query to delete assigned approvers.
+    String query = "DELETE FROM MentorApproval "
+        + "WHERE mentor_id = " + mentorId;
+    Utility.executeQuery(query, request);
+  }
+
+  /**
    * Updates evidence provided by mentor in MentorEvidence table.
    */
-  private void updateMentorEvidence(int userId, String paragraph, HttpServletRequest request) {
+  private void updateMentorEvidence(int mentorId, String paragraph, HttpServletRequest request) {
     // Set up query to insert new experience tag to user.
     // Use replace in case mentor evidence already exists in database and mentor wants to update
     // their information.
-    // TODO(oumontiel): Let mentors know they have the option to update their evidence information
-    //                  and add button that redirects to this servlet to allow them that.
     String query = "UPDATE MentorEvidence "
-        + "SET paragraph = '" + paragraph + "' "
-        + "WHERE mentor_id = " + userId;
+        + "SET paragraph = '" + paragraph + "', is_rejected = FALSE "
+        + "WHERE mentor_id = " + mentorId;
     Utility.executeQuery(query, request);
   }
 
   /**
    * Adds a list of approvers (currently only the admins) to the mentor in the database.
    */
-  private void addApprovers(int userId, HttpServletRequest request) {
+  private void addApprovers(int mentorId, HttpServletRequest request) {
     // Create array to store IDs of approvers.
     // TODO(oumontiel): Get IDs from all admins and remove hardcoded IDs.
     int[] approvers = {SqlConstants.SHAAR_USER_ID, SqlConstants.ANDRES_USER_ID, SqlConstants.OMAR_USER_ID};
 
-    // Set up query to insert new experience tag to user.
-    String query = "INSERT INTO MentorApproval (mentor_id, approver_id, is_reviewed) "
-        + "VALUES (?, ?, FALSE)";
-
     for (int approverId : approvers) {
-      try {
-        // Establish connection to MySQL database.
-        Connection connection = Utility.getConnection(request);
-
-        // Create the MySQL INSERT prepared statement.
-        PreparedStatement preparedStatement = connection.prepareStatement(query);
-        preparedStatement.setInt(SqlConstants.MENTOR_APPROVAL_INSERT_USERID, userId);
-        preparedStatement.setInt(SqlConstants.MENTOR_APPROVAL_INSERT_APPROVERID, approverId);
-        preparedStatement.execute();
-        connection.close();
-      } catch (SQLException exception) {
-        // If the connection or the query don't go through, get the log of the error.
-        Logger logger = Logger.getLogger(MentorEvidenceServlet.class.getName());
-        logger.log(Level.SEVERE, exception.getMessage(), exception);
-      }
+      // Set up query to insert approver to mentor's list of approvers to user.
+      String query = "INSERT INTO MentorApproval (mentor_id, approver_id, is_reviewed) "
+          + "VALUES (" + mentorId + ", " + approverId + ", FALSE)";
+      Utility.executeQuery(query, request);
     }
   }
 }

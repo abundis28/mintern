@@ -17,19 +17,19 @@ INSERT INTO User (first_name, last_name, username, email, major_id, is_mentor)
 VALUES 
   ('Mariano', 'Shaar', 'shaargtz', 'a00825287@itesm.mx', 1, TRUE),
   ('Andres', 'Abundis', 'aabundis', 'a01283152@itesm.mx', 3, TRUE),
-  ('Omar', 'Montiel', 'oumontiel', 'a01206177@itesm.mx', 1, TRUE),
-  ('Ernesto', 'Garcia', 'ernestognw', 'a00825923@itesm.mx', 1, FALSE),
+  ('Omar', 'Montiel', 'oumontiel', 'a00825358@itesm.mx', 1, TRUE),
+  ('Ernesto', 'Adame', 'ernestoadame', 'a00825923@itesm.mx', 1, FALSE),
   ('Diego', 'Gomez', 'dgomez', 'a00824758@itesm.mx', 1, FALSE),
   ('Rodrigo', 'Ayup', 'ayup', 'a01234245@itesm.mx', 1, FALSE),
-  ('Daniel', 'Trevino', 'danieltrevino', 'a00825596@itesm.mx', 1, FALSE);
+  ('Daniel', 'Hernandez', 'danielhdz', 'a00825596@itesm.mx', 1, FALSE);
 
 INSERT INTO Notification (message, url, date_time) 
 VALUES
-  ('You got an answer', 'questions/1', '2020-07-29 13:00:00.000000'),
-  ('You got an answer', 'questions/2', '2020-07-29 14:00:00.000000'),
-  ('You got an answer', 'questions/3', '2020-07-29 16:00:00.000000'),
-  ('You got an answer', 'questions/4', '2020-07-29 17:00:00.000000'),
-  ('Somebody commented your answer', 'questions/2', '2020-07-29 19:00:00.000000');
+  ('You got an answer', '/question.html?id=1', '2020-07-29 13:00:00.000000'),
+  ('You got an answer', '/question.html?id=2', '2020-07-29 14:00:00.000000'),
+  ('You got an answer', '/question.html?id=3', '2020-07-29 16:00:00.000000'),
+  ('You got an answer', '/question.html?id=4', '2020-07-29 17:00:00.000000'),
+  ('Somebody commented your answer', '/question.html?id=2', '2020-07-29 19:00:00.000000');
 
 INSERT INTO UserNotification (user_id, notification_id)
 VALUES
