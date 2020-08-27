@@ -14,18 +14,30 @@
  
 package com.google.sps;
 
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
+import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.SubjectTag;
 import com.google.sps.classes.Utility;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import static org.mockito.Mockito.*;
+
 
 @RunWith(JUnit4.class)
 public final class UtilityTest {
-
+  
   /** Tests for convertUsingGsonToJson() function */
   @Test
   public void convertUsingGsonToJsonTest() {
@@ -114,5 +126,23 @@ public final class UtilityTest {
     int expected = 0;
 
     Assert.assertEquals(actual, expected);
+  }
+  
+  /** Tests for getUserId() function */
+  @Test
+  public void loggedOutUser() {
+    // UserService that is logged out.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    LocalServiceTestHelper loggedOutUser =
+        new LocalServiceTestHelper(new LocalUserServiceTestConfig())
+        .setEnvIsLoggedIn(false);
+    UserService userService = UserServiceFactory.getUserService();
+    loggedOutUser.setUp();
+    
+    int actual = Utility.getUserId(request);
+    int expected = Utility.USER_LOGGED_OUT_ID;
+
+    Assert.assertEquals(actual, expected);
+    loggedOutUser.tearDown();
   }
 }
