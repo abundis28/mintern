@@ -145,4 +145,23 @@ public final class UtilityTest {
     Assert.assertEquals(actual, expected);
     loggedOutUser.tearDown();
   }
+
+  @Test
+  public void loggedInUser() {
+    // UserService that is logged in, but not registered.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    LocalServiceTestHelper loggedInUser =
+        new LocalServiceTestHelper(new LocalUserServiceTestConfig())
+        .setEnvIsLoggedIn(true)
+        .setEnvAuthDomain("itesm.mx")
+        .setEnvEmail("non-registered@itesm.mx");
+    UserService userService = UserServiceFactory.getUserService();
+    loggedInUser.setUp();
+    
+    int actual = Utility.getUserId(request);
+    int expected = Utility.USER_LOGGED_OUT_ID;
+
+    Assert.assertEquals(actual, expected);
+    loggedInUser.tearDown();
+  }
 }
