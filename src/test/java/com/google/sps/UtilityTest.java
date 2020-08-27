@@ -122,12 +122,25 @@ public final class UtilityTest {
   /** Tests for getUsername() function */
   @Test
   public void validId() {
-    // ID with valid user.
+    // ID with found user.
     HttpServletRequest request = mock(HttpServletRequest.class);
     int userId = 1;
     
     String actual = Utility.getUsername(userId, request);
     String expected = "shaargtz";
+
+    Assert.assertEquals(actual, expected);
+  }
+
+  /** Tests for getUsername() function */
+  @Test
+  public void validIdWithNoUser() {
+    // ID with no user.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    int userId = 2147483647;
+    
+    String actual = Utility.getUsername(userId, request);
+    String expected = "";
 
     Assert.assertEquals(actual, expected);
   }
