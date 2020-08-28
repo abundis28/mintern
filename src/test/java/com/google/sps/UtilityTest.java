@@ -812,4 +812,51 @@ public final class UtilityTest {
 
     Assert.assertTrue(notificationId == 0);
   }
+
+  /** Tests function buildAnswerFull(). */
+  @Test
+  public void buildAnswer_validResultSet_successfulBuild() {
+    ResultSet resultSetMock = mock(ResultSet.class);
+    try {
+      // Mock behaviors for answer creation.
+      when(resultSetMock.getInt(SqlConstants.ANSWER_FETCH_ID)).thenReturn(1);
+      when(resultSetMock.getString(SqlConstants.ANSWER_FETCH_BODY)).thenReturn(
+          "You may get it at your college!");
+      when(resultSetMock.getString(SqlConstants.ANSWER_FETCH_AUTHORNAME)).thenReturn(
+          "Andres Abundis");
+      when(resultSetMock.getTimestamp(SqlConstants.ANSWER_FETCH_DATETIME)).thenReturn(
+          new Timestamp(1598899890));
+      // Mock behaviors for answer creation.
+      when(resultSetMock.getString(SqlConstants.COMMENT_FETCH_BODY)).thenReturn(
+          "Great answer!");
+      when(resultSetMock.getString(SqlConstants.COMMENT_FETCH_AUTHORNAME)).thenReturn(
+          "Gloria Park");
+      when(resultSetMock.getTimestamp(SqlConstants.COMMENT_FETCH_DATETIME)).thenReturn(
+          new Timestamp(1599899890));
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(UtilityTest.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+    Answer actualAnswer = Utility.buildAnswer(resultSetMock);
+
+    // Create comment to insert in the answer.
+    Comment expectedComment = new Comment();
+    expectedComment.setBody("Great answer!");
+    expectedComment.setAuthorName("Gloria Park");
+    expectedComment.setDateTime(new Timestamp(1599899890));
+    // Create answer to be compared.
+    Answer expectedAnswer = new Answer();
+    expectedAnswer.setId(1);
+    expectedAnswer.setBody("You may get it at your college!");
+    expectedAnswer.setAuthorName("Andres Abundis");
+    expectedAnswer.setDateTime(new Timestamp(1598899890));
+    // Insert previously created expectedComment to expectedAnswer.
+    expectedAnswer.addComment(expectedComment);
+
+    Assert.assertEquals(Utility.convertToJsonUsingGson(expectedAnswer), 
+                        Utility.convertToJsonUsingGson(actualAnswer));
+                        
+    // TODO(aabundis): update test to assert with the EqualsBuilder.
+  }
 }
