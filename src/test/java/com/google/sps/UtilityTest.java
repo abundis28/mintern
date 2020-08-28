@@ -142,12 +142,52 @@ public final class UtilityTest {
         + "AND email = 'a0jsmith@itesm.mx' "
         + "AND major_id = 1 "
         + "AND is_mentor = FALSE";
-    int userId = -1;
-    Connection connection = Utility.getConnection(request);
-    PreparedStatement preparedStatement = connection.prepareStatement(query);
-    ResultSet queryResult = preparedStatement.executeQuery();
-    queryResult.next();
-    userId = queryResult.getInt(1);
+    int userId = 0;
+    try {
+      Connection connection = Utility.getConnection(request);
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      ResultSet queryResult = preparedStatement.executeQuery();
+      queryResult.next();
+      userId = queryResult.getInt(1);
+    } catch (SQLException exception) {
+      Logger logger = Logger.getLogger(UtilityTest.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    Assert.assertTrue(userId > 0);
+  }
+
+  @Test
+  public void emptyUser() {
+    // User with empty values.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    String firstName = "";
+    String lastName = "";
+    String username = "";
+    String email = "";
+    int major = 1;
+    boolean is_mentor = false;
+    Utility.addNewUser(firstName, lastName, username, email, major, is_mentor, request);
+
+    // Get ID to see if user was inserted.
+    String query = "SELECT id FROM User "
+        + "WHERE first_name = '' "
+        + "AND last_name = '' "
+        + "AND username = '' "
+        + "AND email = '' "
+        + "AND major_id = 1 "
+        + "AND is_mentor = FALSE";
+    int userId = 0;
+    try {
+      Connection connection = Utility.getConnection(request);
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      ResultSet queryResult = preparedStatement.executeQuery();
+      queryResult.next();
+      userId = queryResult.getInt(1);
+    } catch (SQLException exception) {
+      Logger logger = Logger.getLogger(UtilityTest.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
 
     Assert.assertTrue(userId > 0);
   }
