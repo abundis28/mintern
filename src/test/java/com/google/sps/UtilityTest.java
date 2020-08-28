@@ -149,4 +149,31 @@ public final class UtilityTest {
 
     Assert.assertTrue(notificationId > 0);
   }
+
+  @Test
+  public void updateQuery() {
+    // ID with found user.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    String testQuery = "UPDATE Notification "
+        + "SET url = '/new-sample-url' "
+        + "WHERE message = 'Sample message'";
+    Utility.executeQuery(testQuery, request);
+
+    // Get ID to see if notification was inserted.
+    String query = "SELECT url FROM Notification "
+        + "WHERE message = 'Sample message' ";
+    String notificationUrl = "";
+    try {
+      Connection connection = Utility.getConnection(request);
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      ResultSet queryResult = preparedStatement.executeQuery();
+      queryResult.next();
+      notificationUrl = queryResult.getString(1);
+    } catch (SQLException exception) {
+      Logger logger = Logger.getLogger(UtilityTest.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    Assert.assertEquals(notificationUrl, "/new-sample-url");
+  }
 }
