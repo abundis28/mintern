@@ -85,7 +85,7 @@ public final class UtilityTest {
 
     Assert.assertEquals(actual, expected);
   }
-  
+
   @Test
   public void negativeValue() {
     // String with a negative integer value.
@@ -119,7 +119,6 @@ public final class UtilityTest {
     Assert.assertEquals(actual, expected);
   }
   
-  @Ignore
   @Test
   public void nullValue() {
     // String with null value.
@@ -132,7 +131,8 @@ public final class UtilityTest {
   }
 
   @Test
-  public void getUserToNotifyFull() {
+  public void getUserToNotifyQuestion() {
+    // Get list of users' IDs who follow an specific question.
     HttpServletRequest request = mock(HttpServletRequest.class);
     String typeOfNotification = "question";
     int modifiedElementId = 2;
@@ -158,6 +158,7 @@ public final class UtilityTest {
 
   @Test
   public void buildCommentFull() {
+    // Compares a comment created from a mocked result set.
     ResultSet resultSetMock = mock(ResultSet.class);
     try {
       when(resultSetMock.next()).thenReturn(true).thenReturn(false);
@@ -165,10 +166,11 @@ public final class UtilityTest {
       when(resultSetMock.getString(SqlConstants.COMMENT_FETCH_AUTHORNAME)).thenReturn("Andres Abundis");
       when(resultSetMock.getTimestamp(SqlConstants.COMMENT_FETCH_DATETIME)).thenReturn(new Timestamp(1598899890));
     } catch (SQLException exception) {
-      // If the connection or the query don't go through, we get the log of what happened.
+      // Log if the result set data acquisition found trouble.
       Logger logger = Logger.getLogger(UtilityTest.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
+    // Build the actual commment from the result set.
     Comment actualComment = Utility.buildComment(resultSetMock);
 
     Comment expectedComment = new Comment();
