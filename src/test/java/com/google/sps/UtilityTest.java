@@ -138,9 +138,22 @@ public final class UtilityTest {
 
   @Test
   public void underTenElements() {
-    Question testQuestion = new Question();
+    // Empty questions with different IDs for testing, 
+    // the content of the question isn't being tested.
+    Question testQuestion1 = new Question();
+    testQuestion1.setId(1);
+    Question testQuestion2 = new Question();
+    testQuestion2.setId(2);
+    Question testQuestion3 = new Question();
+    testQuestion3.setId(3);
+    Question testQuestion4 = new Question();
+    testQuestion4.setId(4);
+    Question testQuestion5 = new Question();
+    testQuestion5.setId(5);
+
+    // We pass a list of 5 elements.
     List<Question> testList = new ArrayList<>(
-      List.of(testQuestion,testQuestion,testQuestion,testQuestion,testQuestion)
+      List.of(testQuestion1, testQuestion2, testQuestion3, testQuestion4, testQuestion5)
     );
 
     // This would be a small search result, and when searching
