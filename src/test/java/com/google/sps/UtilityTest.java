@@ -123,7 +123,7 @@ public final class UtilityTest {
 
   /** Testing for splitPages function */
   @Test
-  public void emptyList() {
+  public void splitPages_emptyList_Success() {
     // Empty list.
     List<Question> emptyList = new ArrayList<>();
 
@@ -137,7 +137,7 @@ public final class UtilityTest {
   }
 
   @Test
-  public void underTenElements() {
+  public void splitPages_underTenElements_Success() {
     // Empty questions with different IDs for testing, 
     // the content of the question isn't being tested.
     Question testQuestion1 = new Question();
@@ -166,7 +166,7 @@ public final class UtilityTest {
   }
 
   @Test
-  public void overTenElements() {
+  public void splitPages_overTenElements_Success() {
     // Empty questions with different IDs for testing, 
     // the content of the question isn't being tested.
     Question testQuestion1 = new Question();
@@ -224,7 +224,7 @@ public final class UtilityTest {
   }
 
   @Test
-  public void justTenElements() {
+  public void splitPages_justTenElements_Success() {
     // Empty questions with different IDs for testing, 
     // the content of the question isn't being tested.
     Question testQuestion1 = new Question();
