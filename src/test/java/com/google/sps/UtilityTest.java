@@ -222,4 +222,44 @@ public final class UtilityTest {
 
     Assert.assertTrue(EqualsBuilder.reflectionEquals(expected,actual));
   }
+
+  @Test
+  public void justTenElements() {
+    // Empty questions with different IDs for testing, 
+    // the content of the question isn't being tested.
+    Question testQuestion1 = new Question();
+    testQuestion1.setId(1);
+    Question testQuestion2 = new Question();
+    testQuestion2.setId(2);
+    Question testQuestion3 = new Question();
+    testQuestion3.setId(3);
+    Question testQuestion4 = new Question();
+    testQuestion4.setId(4);
+    Question testQuestion5 = new Question();
+    testQuestion5.setId(5);
+    Question testQuestion6 = new Question();
+    testQuestion6.setId(6);
+    Question testQuestion7 = new Question();
+    testQuestion7.setId(7);
+    Question testQuestion8 = new Question();
+    testQuestion8.setId(8);
+    Question testQuestion9 = new Question();
+    testQuestion9.setId(9);
+    Question testQuestion10 = new Question();
+    testQuestion10.setId(10);
+
+    // We pass a list of 10 elements.
+    List<Question> testList = new ArrayList<>(
+      List.of(testQuestion1, testQuestion2, testQuestion3, testQuestion4, testQuestion5,
+          testQuestion6, testQuestion7, testQuestion8, testQuestion9, testQuestion10)
+    );
+
+    // This would be a result with the limit of the page size, and when searching
+    // by default we get page number 1.
+    ForumPage actual = Utility.splitPages(/*questions=*/testList, /*pageNumber=*/1);
+    ForumPage expected = new ForumPage(
+      /*nextPage=*/null, /*previousPage=*/null, /*numberOfPages=*/1, /*pageQuestions=*/testList);
+
+    Assert.assertTrue(EqualsBuilder.reflectionEquals(expected,actual));
+  }
 }
