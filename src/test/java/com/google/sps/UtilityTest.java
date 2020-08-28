@@ -17,7 +17,6 @@ package com.google.sps;
 import com.google.sps.classes.SubjectTag;
 import com.google.sps.classes.Utility;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
