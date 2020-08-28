@@ -137,15 +137,17 @@ public final class UtilityTest {
   }
 
   @Test
-  public void normalList() {
-    // Empty list.
-    List<Question> emptyList = new ArrayList<>();
+  public void underTenElements() {
+    Question testQuestion = new Question();
+    List<Question> testList = new ArrayList<>(
+      List.of(testQuestion,testQuestion,testQuestion,testQuestion,testQuestion)
+    );
 
-    // This would be an empty search result, and when searching
+    // This would be a small search result, and when searching
     // by default we get page number 1.
-    ForumPage actual = Utility.splitPages(/*questions=*/emptyList, /*pageNumber=*/1);
+    ForumPage actual = Utility.splitPages(/*questions=*/testList, /*pageNumber=*/1);
     ForumPage expected = new ForumPage(
-      /*nextPage=*/null, /*previousPage=*/null, /*numberOfPages=*/0, /*pageQuestions=*/emptyList);
+      /*nextPage=*/null, /*previousPage=*/null, /*numberOfPages=*/1, /*pageQuestions=*/testList);
 
     Assert.assertTrue(EqualsBuilder.reflectionEquals(expected,actual));
   }
