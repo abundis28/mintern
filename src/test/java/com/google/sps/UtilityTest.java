@@ -186,7 +186,7 @@ public final class UtilityTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     
     // Only the emails of the first two users should be returned.
-    List<Integer> userIds = new ArrayList<>(List.of(-1, 1, -2, 2);
+    List<Integer> userIds = new ArrayList<>(List.of(-1, 1, -2, 2));
 
     String actual = Utility.getUserEmailsAsString(userIds, request);
     String expected = "a00825287@itesm.mx,a01283152@itesm.mx";
