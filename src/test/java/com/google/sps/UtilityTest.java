@@ -157,7 +157,7 @@ public final class UtilityTest {
     // Mock request for running function.
     HttpServletRequest request = mock(HttpServletRequest.class);
     
-    // Get the email of the first two users.
+    // No email should appear since this ID does not exist.
     List<Integer> userIds = new ArrayList<>(List.of(-1));
 
     String actual = Utility.getUserEmailsAsString(userIds, request);
@@ -171,7 +171,7 @@ public final class UtilityTest {
     // Mock request for running function.
     HttpServletRequest request = mock(HttpServletRequest.class);
     
-    // Get the email of the first two users.
+    // No emails should appear since none of these IDs exist.
     List<Integer> userIds = new ArrayList<>(List.of(-1, -2, -3));
 
     String actual = Utility.getUserEmailsAsString(userIds, request);
