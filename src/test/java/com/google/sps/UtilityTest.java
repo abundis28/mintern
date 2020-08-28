@@ -23,6 +23,8 @@ import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.SubjectTag;
 import com.google.sps.classes.Utility;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -130,6 +132,95 @@ public final class UtilityTest {
     Assert.assertEquals(actual, expected);
   }
 
+  /** 
+   *  Tests for getUserEmailsAsString.
+   *  These only work by having an active MySQL database created with mysql/create.sql
+   *  and then populating with mysql/testPopulate.sql.
+   */
+  @Test
+  public void getUserEmailsAsString_normalSingleUserQuery_Success() {
+    // Mock request for running function.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    
+    // Get the email of the first user.
+    List<Integer> userIds = new ArrayList<>(List.of(1));
+
+    String actual = Utility.getUserEmailsAsString(userIds, request);
+    String expected = "a00825287@itesm.mx";
+
+    Assert.assertEquals(actual, expected);
+  }
+
+  @Test
+  public void getUserEmailsAsString_normalMultipleUserQuery_Success() {
+    // Mock request for running function.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    
+    // Get the email of the first two users.
+    List<Integer> userIds = new ArrayList<>(List.of(1, 2));
+
+    String actual = Utility.getUserEmailsAsString(userIds, request);
+    String expected = "a00825287@itesm.mx,a01283152@itesm.mx";
+
+    Assert.assertEquals(actual, expected);
+  }
+
+  @Test
+  public void getUserEmailsAsString_nonExistentUserQuery_Success() {
+    // Mock request for running function.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    
+    // No email should appear since this ID does not exist.
+    List<Integer> userIds = new ArrayList<>(List.of(-1));
+
+    String actual = Utility.getUserEmailsAsString(userIds, request);
+    String expected = "";
+
+    Assert.assertEquals(actual, expected);
+  }
+
+  @Test
+  public void getUserEmailsAsString_manyNonExistentUsersQuery_Success() {
+    // Mock request for running function.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    
+    // No emails should appear since none of these IDs exist.
+    List<Integer> userIds = new ArrayList<>(List.of(-1, -2, -3));
+
+    String actual = Utility.getUserEmailsAsString(userIds, request);
+    String expected = "";
+
+    Assert.assertEquals(actual, expected);
+  }
+
+  @Test
+  public void getUserEmailsAsString_emptyList_Success() {
+    // Mock request for running function.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    
+    // No emails should be returned.
+    List<Integer> userIds = new ArrayList<>();
+
+    String actual = Utility.getUserEmailsAsString(userIds, request);
+    String expected = "";
+
+    Assert.assertEquals(actual, expected);
+  }
+
+  @Test
+  public void getUserEmailsAsString_existingAndNonExistingUsers_Success() {
+    // Mock request for running function.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    
+    // Only the emails of the first two users should be returned.
+    List<Integer> userIds = new ArrayList<>(List.of(-1, 1, -2, 2));
+
+    String actual = Utility.getUserEmailsAsString(userIds, request);
+    String expected = "a00825287@itesm.mx,a01283152@itesm.mx";
+
+    Assert.assertEquals(actual, expected);
+  }
+  
   /** Tests for getUserId() function */
   @Test
   public void getUserId_loggedOutUser_returnsUSER_LOGGED_OUT_ID() {
