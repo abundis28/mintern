@@ -29,8 +29,6 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 
-// TODO(aabundis): Add JUnit tests for utility functions.
-
 /**
  * Utility methods used across classes. Just import class to access all methods.
  */
