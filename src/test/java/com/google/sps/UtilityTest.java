@@ -161,8 +161,6 @@ public final class UtilityTest {
     List<Integer> userIds = new ArrayList<>(List.of(-1));
 
     String actual = Utility.getUserEmailsAsString(userIds, request);
-    System.out.println("AAAAAAAAAAAAAAAAAAAAA");
-    System.out.println(actual);
     String expected = "";
 
     Assert.assertEquals(actual, expected);
