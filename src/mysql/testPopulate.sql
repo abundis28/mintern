@@ -65,7 +65,7 @@ INSERT INTO MentorEvidence (mentor_id, approvals, is_approved, is_rejected, para
 VALUES
   (1, 2, TRUE, FALSE, 'I worked at Google. Hi.'),
   (2, 2, TRUE, FALSE, 'I worked at Google. Please approve.'),
-  (3, 2, TRUE, FALSE, 'I worked at Google. Here is a link: link.com');
+  (3, 2, TRUE, FALSE, 'I worked at Google. Here is a link: link.com'),
   (6, 0, FALSE, TRUE, 'I worked at Google. Here is a link: link.com'),
   (7, 1, FALSE, FALSE, 'I worked at Google. Here is a link: link.com');
 

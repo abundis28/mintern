@@ -135,9 +135,10 @@ public final class UtilityTest {
   public void rejectedMentor() {
     // Mentor that has been rejected.
     HttpServletRequest request = mock(HttpServletRequest.class);
-    int userId = 6;
+    int mentorId = 6;
     
-    String actual = Utility.getReviewStatus(userId, request);
+    String actual = Utility.getReviewStatus(mentorId, request);
+    System.out.println(actual);
     String expected = "rejected";
 
     Assert.assertEquals(actual, expected);
@@ -147,9 +148,9 @@ public final class UtilityTest {
   public void underReviewMentor() {
     // Mentor that is still under review
     HttpServletRequest request = mock(HttpServletRequest.class);
-    int userId = 7;
+    int mentorId = 7;
     
-    String actual = Utility.getReviewStatus(userId, request);
+    String actual = Utility.getReviewStatus(mentorId, request);
     String expected = "";
 
     Assert.assertEquals(actual, expected);
@@ -159,9 +160,9 @@ public final class UtilityTest {
   public void invalidMentor() {
     // ID that does not correspond to any mentor.
     HttpServletRequest request = mock(HttpServletRequest.class);
-    int userId = 2147483647;
+    int mentorId = 2147483647;
     
-    String actual = Utility.getReviewStatus(userId, request);
+    String actual = Utility.getReviewStatus(mentorId, request);
     String expected = "";
 
     Assert.assertEquals(actual, expected);
