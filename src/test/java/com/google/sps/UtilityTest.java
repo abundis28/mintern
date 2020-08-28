@@ -14,33 +14,25 @@
  
 package com.google.sps;
 
-<<<<<<< HEAD
-import static org.mockito.Mockito.*;
-import com.google.sps.classes.Question;
-=======
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 import com.google.sps.classes.Answer;
 import com.google.sps.classes.Comment;
->>>>>>> master
+import com.google.sps.classes.ForumPage;
+import com.google.sps.classes.Question;
 import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.SubjectTag;
 import com.google.sps.classes.Utility;
 import java.sql.*;
-<<<<<<< HEAD
-import java.util.logging.Level;
-import java.util.logging.Logger;
-=======
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
->>>>>>> master
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.junit.Assert;
 import org.junit.Before;
@@ -146,6 +138,148 @@ public final class UtilityTest {
     Assert.assertEquals(actual, expected);
   }
 
+  /** Testing for splitPages function */
+  @Test
+  public void splitPages_emptyList_Success() {
+    // Empty list.
+    List<Question> emptyList = new ArrayList<>();
+
+    // This would be an empty search result, and when searching
+    // by default we get page number 1.
+    ForumPage actual = Utility.splitPages(/*questions=*/emptyList, /*pageNumber=*/1);
+    ForumPage expected = new ForumPage(
+      /*nextPage=*/null, /*previousPage=*/null, /*numberOfPages=*/0, /*pageQuestions=*/emptyList);
+
+    Assert.assertTrue(EqualsBuilder.reflectionEquals(expected,actual));
+  }
+
+  @Test
+  public void splitPages_underTenElements_Success() {
+    // Empty questions with different IDs for testing, 
+    // the content of the question isn't being tested.
+    Question testQuestion1 = new Question();
+    testQuestion1.setId(1);
+    Question testQuestion2 = new Question();
+    testQuestion2.setId(2);
+    Question testQuestion3 = new Question();
+    testQuestion3.setId(3);
+    Question testQuestion4 = new Question();
+    testQuestion4.setId(4);
+    Question testQuestion5 = new Question();
+    testQuestion5.setId(5);
+
+    // We pass a list of 5 elements.
+    List<Question> testList = new ArrayList<>(
+      List.of(testQuestion1, testQuestion2, testQuestion3, testQuestion4, testQuestion5)
+    );
+
+    // This would be a small search result, and when searching
+    // by default we get page number 1.
+    ForumPage actual = Utility.splitPages(/*questions=*/testList, /*pageNumber=*/1);
+    ForumPage expected = new ForumPage(
+      /*nextPage=*/null, /*previousPage=*/null, /*numberOfPages=*/1, /*pageQuestions=*/testList);
+
+    Assert.assertTrue(EqualsBuilder.reflectionEquals(expected,actual));
+  }
+
+  @Test
+  public void splitPages_overTenElements_Success() {
+    // Empty questions with different IDs for testing, 
+    // the content of the question isn't being tested.
+    Question testQuestion1 = new Question();
+    testQuestion1.setId(1);
+    Question testQuestion2 = new Question();
+    testQuestion2.setId(2);
+    Question testQuestion3 = new Question();
+    testQuestion3.setId(3);
+    Question testQuestion4 = new Question();
+    testQuestion4.setId(4);
+    Question testQuestion5 = new Question();
+    testQuestion5.setId(5);
+    Question testQuestion6 = new Question();
+    testQuestion6.setId(6);
+    Question testQuestion7 = new Question();
+    testQuestion7.setId(7);
+    Question testQuestion8 = new Question();
+    testQuestion8.setId(8);
+    Question testQuestion9 = new Question();
+    testQuestion9.setId(9);
+    Question testQuestion10 = new Question();
+    testQuestion10.setId(10);
+    Question testQuestion11 = new Question();
+    testQuestion11.setId(11);
+    Question testQuestion12 = new Question();
+    testQuestion12.setId(12);
+    Question testQuestion13 = new Question();
+    testQuestion13.setId(13);
+    Question testQuestion14 = new Question();
+    testQuestion14.setId(14);
+    Question testQuestion15 = new Question();
+    testQuestion15.setId(15);
+
+    // We pass a list of 15 elements.
+    List<Question> testList = new ArrayList<>(
+      List.of(testQuestion1, testQuestion2, testQuestion3, testQuestion4, testQuestion5,
+          testQuestion6, testQuestion7, testQuestion8, testQuestion9, testQuestion10,
+          testQuestion11, testQuestion12, testQuestion13, testQuestion14, testQuestion15)
+    );
+
+    // Since the page size is 10, we should get the first 10 questions of the list on
+    // the first page.
+    List<Question> trimmedTestList = new ArrayList<>(
+      List.of(testQuestion1, testQuestion2, testQuestion3, testQuestion4, testQuestion5,
+          testQuestion6, testQuestion7, testQuestion8, testQuestion9, testQuestion10)
+    );
+
+    // This would be a big search result with more than 1 page, and when searching
+    // by default we get page number 1.
+    ForumPage actual = Utility.splitPages(/*questions=*/testList, /*pageNumber=*/1);
+    ForumPage expected = new ForumPage(
+      /*nextPage=*/2, /*previousPage=*/null, /*numberOfPages=*/2, /*pageQuestions=*/trimmedTestList);
+
+    Assert.assertTrue(EqualsBuilder.reflectionEquals(expected,actual));
+  }
+
+  @Test
+  public void splitPages_justTenElements_Success() {
+    // Empty questions with different IDs for testing, 
+    // the content of the question isn't being tested.
+    Question testQuestion1 = new Question();
+    testQuestion1.setId(1);
+    Question testQuestion2 = new Question();
+    testQuestion2.setId(2);
+    Question testQuestion3 = new Question();
+    testQuestion3.setId(3);
+    Question testQuestion4 = new Question();
+    testQuestion4.setId(4);
+    Question testQuestion5 = new Question();
+    testQuestion5.setId(5);
+    Question testQuestion6 = new Question();
+    testQuestion6.setId(6);
+    Question testQuestion7 = new Question();
+    testQuestion7.setId(7);
+    Question testQuestion8 = new Question();
+    testQuestion8.setId(8);
+    Question testQuestion9 = new Question();
+    testQuestion9.setId(9);
+    Question testQuestion10 = new Question();
+    testQuestion10.setId(10);
+
+    // We pass a list of 10 elements.
+    List<Question> testList = new ArrayList<>(
+      List.of(testQuestion1, testQuestion2, testQuestion3, testQuestion4, testQuestion5,
+          testQuestion6, testQuestion7, testQuestion8, testQuestion9, testQuestion10)
+    );
+
+    // This would be a result with the limit of the page size, and when searching
+    // by default we get page number 1.
+    ForumPage actual = Utility.splitPages(/*questions=*/testList, /*pageNumber=*/1);
+    ForumPage expected = new ForumPage(
+      /*nextPage=*/null, /*previousPage=*/null, /*numberOfPages=*/1, /*pageQuestions=*/testList);
+
+    Assert.assertTrue(EqualsBuilder.reflectionEquals(expected,actual));
+  }
+  
   /** 
    * Tests for buildQuestion function.
    * Testing for null input is out of scope since it never happens.
@@ -154,29 +288,29 @@ public final class UtilityTest {
   public void buildQuestion_normalResult_success() {
     ResultSet testResultSet = mock(ResultSet.class);
     try {
-      when(testResultTest.getInt(SqlConstants.QUESTION_FETCH_ID))
+      when(testResultSet.getInt(SqlConstants.QUESTION_FETCH_ID))
           .thenReturn(1);
-      when(testResultTest.getString(SqlConstants.QUESTION_FETCH_TITLE))
+      when(testResultSet.getString(SqlConstants.QUESTION_FETCH_TITLE))
           .thenReturn("Title");
-      when(testResultTest.getString(SqlConstants.QUESTION_FETCH_BODY))
+      when(testResultSet.getString(SqlConstants.QUESTION_FETCH_BODY))
           .thenReturn("Body");
-      when(testResultTest.getInt(SqlConstants.QUESTION_FETCH_ASKERID))
+      when(testResultSet.getInt(SqlConstants.QUESTION_FETCH_ASKERID))
           .thenReturn(2);
-      when(testResultTest.getString(SqlConstants.QUESTION_FETCH_ASKERNAME))
+      when(testResultSet.getString(SqlConstants.QUESTION_FETCH_ASKERNAME))
           .thenReturn("Asker");
-      when(testResultTest.getTimestamp(SqlConstants.QUESTION_FETCH_DATETIME))
+      when(testResultSet.getTimestamp(SqlConstants.QUESTION_FETCH_DATETIME))
           .thenReturn(new Timestamp(1598899890));
-      when(testResultTest.getInt(SqlConstants.QUESTION_FETCH_NUMBEROFFOLLOWERS))
+      when(testResultSet.getInt(SqlConstants.QUESTION_FETCH_NUMBEROFFOLLOWERS))
           .thenReturn(3);
-      when(testResultTest.getInt(SqlConstants.QUESTION_FETCH_NUMBEROFANSWERS))
+      when(testResultSet.getInt(SqlConstants.QUESTION_FETCH_NUMBEROFANSWERS))
           .thenReturn(4);
-      when(testResultTest.getInt(SqlConstants.QUESTION_FETCH_USERFOLLOWSQUESTION))
+      when(testResultSet.getInt(SqlConstants.QUESTION_FETCH_USERFOLLOWSQUESTION))
           .thenReturn(5);
     } catch (SQLException exception) {
       Logger logger = Logger.getLogger(UtilityTest.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
-    Question actual = Utility.buildQuestion(testResultTest);
+    Question actual = Utility.buildQuestion(testResultSet);
     Question expected = new Question();
     expected.setId(1);
     expected.setTitle("Title");
