@@ -668,7 +668,6 @@ public final class UtilityTest {
     Assert.assertEquals(Utility.convertToJsonUsingGson(expectedAnswer), 
                         Utility.convertToJsonUsingGson(actualAnswer));
                         
-    // Asserting the equality of JSONs because of trouble with the EqualsBuilder.
-    // Assert.assertTrue(EqualsBuilder.reflectionEquals(expectedAnswer,actualAnswer));
+    // TODO(aabundis): update test to assert with the EqualsBuilder.
   }
 }
