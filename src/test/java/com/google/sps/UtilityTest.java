@@ -121,12 +121,23 @@ public final class UtilityTest {
 
   /** Tests for getUsername function */
   @Test
-  public void normalQueryTest() {
+  public void normalUserQuery() {
     // Mock request for running function.
     HttpServletRequest request = mock(HttpServletRequest.class);
     
     String actual = Utility.getUsername(/**userId=*/1, request);
     String expected = "shaargtz";
+
+    Assert.assertEquals(actual, expected);
+  }
+
+  @Test
+  public void nonExistentUserQuery() {
+    // Mock request for running function.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    
+    String actual = Utility.getUsername(/**userId=*/-1, request);
+    String expected = "";
 
     Assert.assertEquals(actual, expected);
   }
