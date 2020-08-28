@@ -37,7 +37,7 @@ import javax.sql.DataSource;
 public final class Utility {
   // Define if running locally or deploying the current branch.
   // Define IS_LOCALLY_DEPLOYED constant as true for a local deployment or deploy for a cloud deployment.
-  public static final boolean IS_LOCALLY_DEPLOYED = false;
+  public static final boolean IS_LOCALLY_DEPLOYED = true;
 
   /**
    * Returns a connection that it's obtained depending on the defined way of deployment.
@@ -221,10 +221,11 @@ public final class Utility {
       try (Connection connection = getConnection(request);
         PreparedStatement pst = connection.prepareStatement(query);
         ResultSet rs = pst.executeQuery()) {
-        rs.next();
-        // Concatenate the user's email and a comma for the InternetAddress parser to separate.
-        userEmails = userEmails.concat(rs.getString(1));
-        userEmails = userEmails.concat(",");
+        if (rs.next()) {
+          // Concatenate the user's email and a comma for the InternetAddress parser to separate.
+          userEmails = userEmails.concat(rs.getString(1));
+          userEmails = userEmails.concat(",");
+        }
         connection.close();
       } catch (SQLException ex) {
         Logger lgr = Logger.getLogger(Utility.class.getName());
@@ -232,7 +233,7 @@ public final class Utility {
       }
     }
     // Erase the last comma.
-    userEmails = userEmails.substring(0, userEmails.length() - 1);
+    if (userEmails.length() > 0) userEmails = userEmails.substring(0, userEmails.length() - 1);
     return userEmails;
   }
 

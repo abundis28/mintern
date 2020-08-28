@@ -157,7 +157,94 @@ public final class UtilityTest {
 
     List<Integer> actual = Utility.getUsersToNotify(typeOfNotification, modifiedElementId, request);
     List<Integer> expected = new ArrayList<>();
+  }
+  
+  /** 
+   *  Tests for getUserEmailsAsString.
+   *  These only work by having an active MySQL database created with mysql/create.sql
+   *  and then populating with mysql/testPopulate.sql.
+   */
+  @Test
+  public void getUserEmailsAsString_normalSingleUserQuery_Success() {
+    // Mock request for running function.
+    HttpServletRequest request = mock(HttpServletRequest.class);
     
+    // Get the email of the first user.
+    List<Integer> userIds = new ArrayList<>(List.of(1));
+
+    String actual = Utility.getUserEmailsAsString(userIds, request);
+    String expected = "a00825287@itesm.mx";
+
+    Assert.assertEquals(actual, expected);
+  }
+
+  @Test
+  public void getUserEmailsAsString_normalMultipleUserQuery_Success() {
+    // Mock request for running function.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    
+    // Get the email of the first two users.
+    List<Integer> userIds = new ArrayList<>(List.of(1, 2));
+
+    String actual = Utility.getUserEmailsAsString(userIds, request);
+    String expected = "a00825287@itesm.mx,a01283152@itesm.mx";
+
+    Assert.assertEquals(actual, expected);
+  }
+
+  @Test
+  public void getUserEmailsAsString_nonExistentUserQuery_Success() {
+    // Mock request for running function.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    
+    // No email should appear since this ID does not exist.
+    List<Integer> userIds = new ArrayList<>(List.of(-1));
+
+    String actual = Utility.getUserEmailsAsString(userIds, request);
+    String expected = "";
+
+    Assert.assertEquals(actual, expected);
+  }
+
+  @Test
+  public void getUserEmailsAsString_manyNonExistentUsersQuery_Success() {
+    // Mock request for running function.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    
+    // No emails should appear since none of these IDs exist.
+    List<Integer> userIds = new ArrayList<>(List.of(-1, -2, -3));
+
+    String actual = Utility.getUserEmailsAsString(userIds, request);
+    String expected = "";
+
+    Assert.assertEquals(actual, expected);
+  }
+
+  @Test
+  public void getUserEmailsAsString_emptyList_Success() {
+    // Mock request for running function.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    
+    // No emails should be returned.
+    List<Integer> userIds = new ArrayList<>();
+
+    String actual = Utility.getUserEmailsAsString(userIds, request);
+    String expected = "";
+
+    Assert.assertEquals(actual, expected);
+  }
+
+  @Test
+  public void getUserEmailsAsString_existingAndNonExistingUsers_Success() {
+    // Mock request for running function.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    
+    // Only the emails of the first two users should be returned.
+    List<Integer> userIds = new ArrayList<>(List.of(-1, 1, -2, 2));
+
+    String actual = Utility.getUserEmailsAsString(userIds, request);
+    String expected = "a00825287@itesm.mx,a01283152@itesm.mx";
+
     Assert.assertEquals(actual, expected);
   }
   
@@ -451,5 +538,89 @@ public final class UtilityTest {
     expectedComment.setDateTime(new Timestamp(1598899890));
 
     Assert.assertTrue(EqualsBuilder.reflectionEquals(expectedComment,actualComment));
+  }
+  
+  /** Tests for executeQuery() function */
+  @Test
+  public void executeQuery_insertQuery_doesInsert() {
+    // Query that inserts into database.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    String testQuery = "INSERT INTO Notification (message, url, date_time) "
+        + "VALUES ('Sample message', '/sample-url', '2020-01-01 12:00:00.000000')";
+    Utility.executeQuery(testQuery, request);
+
+    // Get ID to see if notification was inserted.
+    String query = "SELECT id FROM Notification "
+        + "WHERE message = 'Sample message' "
+        + "AND url = '/sample-url' "
+        + "AND date_time = '2020-01-01 12:00:00.000000'";
+    int notificationId = 0;
+    try {
+      Connection connection = Utility.getConnection(request);
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      ResultSet queryResult = preparedStatement.executeQuery();
+      queryResult.next();
+      notificationId = queryResult.getInt(1);
+    } catch (SQLException exception) {
+      Logger logger = Logger.getLogger(UtilityTest.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    Assert.assertTrue(notificationId > 0);
+  }
+
+  @Test
+  public void executeQuery_updateQuery_doesUpdate() {
+    // Query that updates row in database.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    String testQuery = "UPDATE Notification "
+        + "SET url = '/new-sample-url' "
+        + "WHERE message = 'Sample message'";
+    Utility.executeQuery(testQuery, request);
+
+    // Get ID to see if notification was inserted.
+    String query = "SELECT url FROM Notification "
+        + "WHERE message = 'Sample message' ";
+    String notificationUrl = "";
+    try {
+      Connection connection = Utility.getConnection(request);
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      ResultSet queryResult = preparedStatement.executeQuery();
+      queryResult.next();
+      notificationUrl = queryResult.getString(1);
+    } catch (SQLException exception) {
+      Logger logger = Logger.getLogger(UtilityTest.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    Assert.assertEquals(notificationUrl, "/new-sample-url");
+  }
+
+  @Test
+  public void executeQuery_incorrectQuery_doesNothing() {
+    // Query that throws error.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    String testQuery = "INSERT INTO Notification (message, url, date_time, wrong_column) "
+        + "VALUES ('Another sample message', '/sample-url-2', '2020-02-01 12:00:00.000000')";
+    Utility.executeQuery(testQuery, request);
+
+    // Get ID to see if notification was inserted.
+    String query = "SELECT id FROM Notification "
+        + "WHERE message = 'Another sample message' "
+        + "AND url = '/sample-url-2' "
+        + "AND date_time = '2020-02-01 12:00:00.000000'";
+    int notificationId = 0;
+    try {
+      Connection connection = Utility.getConnection(request);
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      ResultSet queryResult = preparedStatement.executeQuery();
+      queryResult.next();
+      notificationId = queryResult.getInt(1);
+    } catch (SQLException exception) {
+      Logger logger = Logger.getLogger(UtilityTest.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    Assert.assertTrue(notificationId == 0);
   }
 }
