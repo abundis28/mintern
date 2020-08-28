@@ -37,7 +37,7 @@ import javax.sql.DataSource;
 public final class Utility {
   // Define if running locally or deploying the current branch.
   // Define IS_LOCALLY_DEPLOYED constant as true for a local deployment or deploy for a cloud deployment.
-  public static final boolean IS_LOCALLY_DEPLOYED = false;
+  public static final boolean IS_LOCALLY_DEPLOYED = true;
 
   /**
    * Returns a connection that it's obtained depending on the defined way of deployment.

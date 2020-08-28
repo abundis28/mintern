@@ -14,8 +14,13 @@
  
 package com.google.sps;
 
+import static org.mockito.Mockito.*;
 import com.google.sps.classes.SubjectTag;
 import com.google.sps.classes.Utility;
+import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.servlet.http.HttpServletRequest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -114,5 +119,34 @@ public final class UtilityTest {
     int expected = 0;
 
     Assert.assertEquals(actual, expected);
+  }
+
+  /** Tests for executeQuery() function */
+  @Test
+  public void insertQuery() {
+    // ID with found user.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    String testQuery = "INSERT INTO Notification (message, url, date_time) "
+        + "VALUES ('Sample message', '/sample-url', '2020-01-01 12:00:00.000000')";
+    Utility.executeQuery(testQuery, request);
+
+    // Get ID to see if notification was inserted.
+    String query = "SELECT id FROM Notification "
+        + "WHERE message = 'Sample message' "
+        + "AND url = '/sample-url' "
+        + "AND date_time = '2020-01-01 12:00:00.000000'";
+    int notificationId = 0;
+    try {
+      Connection connection = Utility.getConnection(request);
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      ResultSet queryResult = preparedStatement.executeQuery();
+      queryResult.next();
+      notificationId = queryResult.getInt(1);
+    } catch (SQLException exception) {
+      Logger logger = Logger.getLogger(UtilityTest.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    Assert.assertTrue(notificationId > 0);
   }
 }
