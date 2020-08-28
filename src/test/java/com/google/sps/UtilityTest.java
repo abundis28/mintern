@@ -163,8 +163,10 @@ public final class UtilityTest {
     try {
       when(resultSetMock.next()).thenReturn(true).thenReturn(false);
       when(resultSetMock.getString(SqlConstants.COMMENT_FETCH_BODY)).thenReturn("Great answer!");
-      when(resultSetMock.getString(SqlConstants.COMMENT_FETCH_AUTHORNAME)).thenReturn("Andres Abundis");
-      when(resultSetMock.getTimestamp(SqlConstants.COMMENT_FETCH_DATETIME)).thenReturn(new Timestamp(1598899890));
+      when(resultSetMock.getString(SqlConstants.COMMENT_FETCH_AUTHORNAME)).thenReturn(
+          "Andres Abundis");
+      when(resultSetMock.getTimestamp(SqlConstants.COMMENT_FETCH_DATETIME)).thenReturn(
+          new Timestamp(1598899890));
     } catch (SQLException exception) {
       // Log if the result set data acquisition found trouble.
       Logger logger = Logger.getLogger(UtilityTest.class.getName());
