@@ -154,4 +154,16 @@ public final class UtilityTest {
 
     Assert.assertEquals(actual, expected);
   }
+
+  @Test
+  public void invalidMentor() {
+    // ID that does not correspond to any mentor.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    int userId = 2147483647;
+    
+    String actual = Utility.getReviewStatus(userId, request);
+    String expected = "";
+
+    Assert.assertEquals(actual, expected);
+  }
 }
