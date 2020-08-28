@@ -142,4 +142,16 @@ public final class UtilityTest {
 
     Assert.assertEquals(actual, expected);
   }
+
+  @Test
+  public void underReviewMentor() {
+    // Mentor that is still under review
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    int userId = 7;
+    
+    String actual = Utility.getReviewStatus(userId, request);
+    String expected = "";
+
+    Assert.assertEquals(actual, expected);
+  }
 }
