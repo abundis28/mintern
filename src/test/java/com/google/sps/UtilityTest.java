@@ -151,4 +151,20 @@ public final class UtilityTest {
 
     Assert.assertEquals(actual, expected);
   }
+
+  @Test
+  public void nonExistentUserQuery() {
+    // Mock request for running function.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    
+    // Get the email of the first two users.
+    List<Integer> userIds = new ArrayList<>(List.of(-1));
+
+    String actual = Utility.getUserEmailsAsString(userIds, request);
+    System.out.println("AAAAAAAAAAAAAAAAAAAAA");
+    System.out.println(actual);
+    String expected = "";
+
+    Assert.assertEquals(actual, expected);
+  }
 }
