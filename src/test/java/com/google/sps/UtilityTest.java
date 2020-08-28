@@ -123,7 +123,21 @@ public final class UtilityTest {
 
   /** Testing for splitPages function */
   @Test
-  public void splitPagesEmptyList() {
+  public void emptyList() {
+    // Empty list.
+    List<Question> emptyList = new ArrayList<>();
+
+    // This would be an empty search result, and when searching
+    // by default we get page number 1.
+    ForumPage actual = Utility.splitPages(/*questions=*/emptyList, /*pageNumber=*/1);
+    ForumPage expected = new ForumPage(
+      /*nextPage=*/null, /*previousPage=*/null, /*numberOfPages=*/0, /*pageQuestions=*/emptyList);
+
+    Assert.assertTrue(EqualsBuilder.reflectionEquals(expected,actual));
+  }
+
+  @Test
+  public void normalList() {
     // Empty list.
     List<Question> emptyList = new ArrayList<>();
 
