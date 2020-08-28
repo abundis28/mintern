@@ -15,9 +15,14 @@
 package com.google.sps;
 
 import static org.mockito.Mockito.*;
+import com.google.sps.classes.Question;
+import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.SubjectTag;
 import com.google.sps.classes.Utility;
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -146,7 +151,7 @@ public final class UtilityTest {
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
 
-    Question actual = Utility.testResultTest(testResultTest);
+    Question actual = Utility.buildQuestion(testResultTest);
     Question expected = new Question();
     expected.setId(1);
     expected.setTitle("Title");
@@ -158,6 +163,6 @@ public final class UtilityTest {
     expected.setNumberOfAnswers(4);
     expected.setUserFollowsQuestion(true);
     
-    Assert.assertEquals(actual, expected);
+    Assert.assertTrue(EqualsBuilder.reflectionEquals(expected,actual));
   }
 }
