@@ -152,7 +152,7 @@ public final class UtilityTest {
    */
   @Test
   public void buildQuestion_normalResult_success() {
-    ResultSet testResultTest = mock(ResultSet.class);
+    ResultSet testResultSet = mock(ResultSet.class);
     try {
       when(testResultTest.getInt(SqlConstants.QUESTION_FETCH_ID))
           .thenReturn(1);
