@@ -128,7 +128,7 @@ public final class UtilityTest {
    * Testing for null input is out of scope since it never happens.
    */
   @Test
-  public void normalResult() {
+  public void buildQuestion_normalResult_success() {
     ResultSet testResultTest = mock(ResultSet.class);
     try {
       when(testResultTest.getInt(SqlConstants.QUESTION_FETCH_ID))
