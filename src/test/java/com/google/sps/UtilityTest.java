@@ -193,4 +193,18 @@ public final class UtilityTest {
 
     Assert.assertEquals(actual, expected);
   }
+
+  @Test
+  public void emptyList() {
+    // Mock request for running function.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    
+    // No emails should be returned.
+    List<Integer> userIds = new ArrayList<>();
+
+    String actual = Utility.getUserEmailsAsString(userIds, request);
+    String expected = "";
+
+    Assert.assertEquals(actual, expected);
+  }
 }
