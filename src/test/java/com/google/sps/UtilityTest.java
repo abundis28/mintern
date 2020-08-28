@@ -14,8 +14,10 @@
  
 package com.google.sps;
 
+import static org.mockito.Mockito.*;
 import com.google.sps.classes.SubjectTag;
 import com.google.sps.classes.Utility;
+import javax.servlet.http.HttpServletRequest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -112,6 +114,55 @@ public final class UtilityTest {
     
     int actual = Utility.tryParseInt(stringToInt);
     int expected = 0;
+
+    Assert.assertEquals(actual, expected);
+  }
+
+  /** Tests for getReviewStatus() function */
+  @Test
+  public void approvedMentor() {
+    // Mentor that has already been approved.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    int mentorId = 1;
+    
+    String actual = Utility.getReviewStatus(mentorId, request);
+    String expected = "approved";
+
+    Assert.assertEquals(actual, expected);
+  }
+
+  @Test
+  public void rejectedMentor() {
+    // Mentor that has been rejected.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    int userId = 6;
+    
+    String actual = Utility.getReviewStatus(userId, request);
+    String expected = "rejected";
+
+    Assert.assertEquals(actual, expected);
+  }
+
+  @Test
+  public void underReviewMentor() {
+    // Mentor that is still under review
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    int userId = 7;
+    
+    String actual = Utility.getReviewStatus(userId, request);
+    String expected = "";
+
+    Assert.assertEquals(actual, expected);
+  }
+
+  @Test
+  public void invalidMentor() {
+    // ID that does not correspond to any mentor.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    int userId = 2147483647;
+    
+    String actual = Utility.getReviewStatus(userId, request);
+    String expected = "";
 
     Assert.assertEquals(actual, expected);
   }
