@@ -121,9 +121,8 @@ public final class UtilityTest {
 
   /** 
    *  Tests for getUserEmailsAsString .
-   *  These only work by using the testPopulate.sql right
-   *  after creating the database with create.sql,
-   *  both files are in the mysql folder.
+   *  These only work by having an active MySQL database created with mysql/create.sql
+   *  and then populating with mysql/testPopulate.sql.
    */
   @Test
   public void normalSingleUserQuery() {
