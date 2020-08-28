@@ -14,8 +14,11 @@
  
 package com.google.sps;
 
+import static org.mockito.Mockito.*;
 import com.google.sps.classes.SubjectTag;
 import com.google.sps.classes.Utility;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -112,6 +115,26 @@ public final class UtilityTest {
     
     int actual = Utility.tryParseInt(stringToInt);
     int expected = 0;
+
+    Assert.assertEquals(actual, expected);
+  }
+
+  /** 
+   *  Tests for getUserEmailsAsString .
+   *  These only work by using the testPopulate.sql right
+   *  after creating the database with create.sql,
+   *  both files are in the mysql folder.
+   */
+  @Test
+  public void normalSingleUserQuery() {
+    // Mock request for running function.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    
+    // Get the email of the first user.
+    List<Integer> userIds = new ArrayList<>(List.of(1));
+
+    String actual = Utility.getUserEmailsAsString(userIds, request);
+    String expected = "a00825287@itesm.mx";
 
     Assert.assertEquals(actual, expected);
   }
