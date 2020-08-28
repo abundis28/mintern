@@ -14,8 +14,13 @@
  
 package com.google.sps;
 
+import static org.mockito.Mockito.*;
 import com.google.sps.classes.SubjectTag;
 import com.google.sps.classes.Utility;
+import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.servlet.http.HttpServletRequest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -114,5 +119,36 @@ public final class UtilityTest {
     int expected = 0;
 
     Assert.assertEquals(actual, expected);
+  }
+  
+  /** Tests for addNewUser() function */
+  @Test
+  public void normalUser() {
+    // User with normal values.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    String firstName = "John";
+    String lastName = "Smith";
+    String username = "jsmith";
+    String email = "a0jsmith@itesm.mx";
+    int major = 1;
+    boolean is_mentor = false;
+    Utility.addNewUser(firstName, lastName, username, email, major, is_mentor, request);
+
+    // Get ID to see if user was inserted.
+    String query = "SELECT id FROM User "
+        + "WHERE first_name = 'John' "
+        + "AND last_name = 'Smith' "
+        + "AND username = 'jsmith' "
+        + "AND email = 'a0jsmith@itesm.mx' "
+        + "AND major_id = 1 "
+        + "AND is_mentor = FALSE";
+    int userId = -1;
+    Connection connection = Utility.getConnection(request);
+    PreparedStatement preparedStatement = connection.prepareStatement(query);
+    ResultSet queryResult = preparedStatement.executeQuery();
+    queryResult.next();
+    userId = queryResult.getInt(1);
+
+    Assert.assertTrue(userId > 0);
   }
 }
