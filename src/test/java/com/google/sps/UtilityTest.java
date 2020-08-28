@@ -16,6 +16,7 @@ package com.google.sps;
 
 import com.google.sps.classes.SubjectTag;
 import com.google.sps.classes.Utility;
+import java.sql.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -113,6 +114,49 @@ public final class UtilityTest {
     int actual = Utility.tryParseInt(stringToInt);
     int expected = 0;
 
+    Assert.assertEquals(actual, expected);
+  }
+
+  /** Tests for buildQuestion function */
+  @Test
+  public void normalResult() {
+    ResultSet testResultTest = mock(ResultSet.class);
+    try {
+      when(testResultTest.getInt(SqlConstants.QUESTION_FETCH_ID))
+          .thenReturn(1);
+      when(testResultTest.getString(SqlConstants.QUESTION_FETCH_TITLE))
+          .thenReturn("Title");
+      when(testResultTest.getString(SqlConstants.QUESTION_FETCH_BODY))
+          .thenReturn("Body");
+      when(testResultTest.getInt(SqlConstants.QUESTION_FETCH_ASKERID))
+          .thenReturn(2);
+      when(testResultTest.getString(SqlConstants.QUESTION_FETCH_ASKERNAME))
+          .thenReturn("Asker");
+      when(testResultTest.getTimestamp(SqlConstants.QUESTION_FETCH_DATETIME))
+          .thenReturn(new Timestamp(1598899890));
+      when(testResultTest.getInt(SqlConstants.QUESTION_FETCH_NUMBEROFFOLLOWERS))
+          .thenReturn(3);
+      when(testResultTest.getInt(SqlConstants.QUESTION_FETCH_NUMBEROFANSWERS))
+          .thenReturn(4);
+      when(testResultTest.getInt(SqlConstants.QUESTION_FETCH_USERFOLLOWSQUESTION))
+          .thenReturn(5);
+    } catch (SQLException exception) {
+      Logger logger = Logger.getLogger(UtilityTest.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    Question actual = Utility.testResultTest(testResultTest);
+    Question expected = new Question();
+    expected.setId(1);
+    expected.setTitle("Title");
+    expected.setBody("Body");
+    expected.setAskerId(2);
+    expected.setAskerName("Asker");
+    expected.setDateTime(new Timestamp(1598899890));
+    expected.setNumberOfFollowers(3);
+    expected.setNumberOfAnswers(4);
+    expected.setUserFollowsQuestion(true);
+    
     Assert.assertEquals(actual, expected);
   }
 }
