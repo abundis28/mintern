@@ -125,7 +125,7 @@ public final class UtilityTest {
    *  and then populating with mysql/testPopulate.sql.
    */
   @Test
-  public void normalSingleUserQuery() {
+  public void getUserEmailsAsString_normalSingleUserQuery_Success() {
     // Mock request for running function.
     HttpServletRequest request = mock(HttpServletRequest.class);
     
@@ -139,7 +139,7 @@ public final class UtilityTest {
   }
 
   @Test
-  public void normalMultipleUserQuery() {
+  public void getUserEmailsAsString_normalMultipleUserQuery_Success() {
     // Mock request for running function.
     HttpServletRequest request = mock(HttpServletRequest.class);
     
@@ -167,7 +167,7 @@ public final class UtilityTest {
   }
 
   @Test
-  public void manyNonExistentUsersQuery() {
+  public void getUserEmailsAsString_manyNonExistentUsersQuery_Success() {
     // Mock request for running function.
     HttpServletRequest request = mock(HttpServletRequest.class);
     
@@ -181,7 +181,7 @@ public final class UtilityTest {
   }
 
   @Test
-  public void existingAndNonExistingUsers() {
+  public void getUserEmailsAsString_existingAndNonExistingUsers_Success() {
     // Mock request for running function.
     HttpServletRequest request = mock(HttpServletRequest.class);
     
@@ -195,7 +195,7 @@ public final class UtilityTest {
   }
 
   @Test
-  public void emptyList() {
+  public void getUserEmailsAsString_emptyList_Success() {
     // Mock request for running function.
     HttpServletRequest request = mock(HttpServletRequest.class);
     
