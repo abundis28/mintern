@@ -15,8 +15,14 @@
 package com.google.sps;
 
 import static org.mockito.Mockito.*;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
+import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.SubjectTag;
 import com.google.sps.classes.Utility;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,13 +30,16 @@ import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
 
 @RunWith(JUnit4.class)
 public final class UtilityTest {
-
+  
   /** Tests for convertUsingGsonToJson() function */
   @Test
-  public void convertUsingGsonToJsonTest() {
+  public void convertUsingGsonToJson_test_returnsJson() {
     // Object with attributes.
     SubjectTag tag = new SubjectTag(5, "Interviews", "red");
     String expectedJson = "{\"id\":5,\"subject\":\"Interviews\",\"color\":\"red\"}";
@@ -41,7 +50,7 @@ public final class UtilityTest {
   }
 
   @Test
-  public void convertUsingGsonToJsonEmptyTest() {
+  public void convertUsingGsonToJson_emptyTest_returnsJsonWithEmptyValues() {
     // Empty object that will take the default values in the constructor.
     SubjectTag tag = new SubjectTag();
     String expectedJson = "{\"id\":-1,\"subject\":\"\",\"color\":\"\"}";
@@ -53,7 +62,7 @@ public final class UtilityTest {
   
   /** Tests for tryParseInt() function */
   @Test
-  public void positiveValue() {
+  public void tryParseInt_positiveValue_returnsPositiveInt() {
     // String with a positive integer value.
     String stringToInt = "1";
     
@@ -64,7 +73,7 @@ public final class UtilityTest {
   }
   
   @Test
-  public void zeroValue() {
+  public void tryParseInt_zeroValue_returnsZero() {
     // String with value of zero.
     String stringToInt = "0";
     
@@ -75,7 +84,7 @@ public final class UtilityTest {
   }
   
   @Test
-  public void negativeValue() {
+  public void tryParseInt_negativeValue_returnsNegativeInt() {
     // String with a negative integer value.
     String stringToInt = "-1";
     
@@ -86,7 +95,7 @@ public final class UtilityTest {
   }
   
   @Test
-  public void emptyValue() {
+  public void tryParseInt_emptyValue_returnsZero() {
     // String with empty value.
     String stringToInt = "";
     
@@ -97,7 +106,7 @@ public final class UtilityTest {
   }
   
   @Test
-  public void nonIntegerValue() {
+  public void tryParseInt_nonIntegerValue_returnsZero() {
     // String with non integer value.
     String stringToInt = "Non integer value";
     
@@ -108,7 +117,7 @@ public final class UtilityTest {
   }
   
   @Test
-  public void nullValue() {
+  public void tryParseInt_nullValue_returnsZero() {
     // String with null value.
     String stringToInt = null;
     
@@ -118,9 +127,114 @@ public final class UtilityTest {
     Assert.assertEquals(actual, expected);
   }
 
+  /** Tests for getUserId() function */
+  @Test
+  public void getUserId_loggedOutUser_returnsUSER_LOGGED_OUT_ID() {
+    // UserService that is logged out.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    LocalServiceTestHelper loggedOutUser =
+        new LocalServiceTestHelper(new LocalUserServiceTestConfig())
+        .setEnvIsLoggedIn(false);
+    UserService userService = UserServiceFactory.getUserService();
+    loggedOutUser.setUp();
+    
+    int actual = Utility.getUserId(request);
+    int expected = Utility.USER_LOGGED_OUT_ID;
+
+    Assert.assertEquals(actual, expected);
+    loggedOutUser.tearDown();
+  }
+
+  @Test
+  public void getUserId_loggedInUser_returnsUSER_LOGGED_OUT_ID() {
+    // UserService that is logged in, but not registered.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    LocalServiceTestHelper loggedInUser =
+        new LocalServiceTestHelper(new LocalUserServiceTestConfig())
+        .setEnvIsLoggedIn(true)
+        .setEnvAuthDomain("itesm.mx")
+        .setEnvEmail("non-registered@itesm.mx");
+    UserService userService = UserServiceFactory.getUserService();
+    loggedInUser.setUp();
+    
+    int actual = Utility.getUserId(request);
+    int expected = Utility.USER_LOGGED_OUT_ID;
+
+    Assert.assertEquals(actual, expected);
+    loggedInUser.tearDown();
+  }
+
+  @Test
+  public void getUserId_registeredUser_returnsId() {
+    // UserService that is logged in and also registered.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    LocalServiceTestHelper loggedInUser =
+        new LocalServiceTestHelper(new LocalUserServiceTestConfig())
+        .setEnvIsLoggedIn(true)
+        .setEnvAuthDomain("itesm.mx")
+        .setEnvEmail("a00825358@itesm.mx");
+    UserService userService = UserServiceFactory.getUserService();
+    loggedInUser.setUp();
+    
+    int actual = Utility.getUserId(request);
+    int expected = SqlConstants.OMAR_USER_ID;
+
+    Assert.assertEquals(actual, expected);
+    loggedInUser.tearDown();
+  }
+
+  /** Tests for getUsername() function */
+  @Test
+  public void getUsername_validId_returnsUsername() {
+    // ID with found user.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    int userId = 1;
+    
+    String actual = Utility.getUsername(userId, request);
+    String expected = "shaargtz";
+
+    Assert.assertEquals(actual, expected);
+  }
+
+  @Test
+  public void getUsername_validIdWithNoUser_returnsEmptyString() {
+    // ID with no user.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    int userId = 2147483647;
+    
+    String actual = Utility.getUsername(userId, request);
+    String expected = "";
+
+    Assert.assertEquals(actual, expected);
+  }
+
+  @Test
+  public void getUsername_zeroId_returnsEmptyString() {
+    // Invalid ID with value of zero.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    int userId = 0;
+    
+    String actual = Utility.getUsername(userId, request);
+    String expected = "";
+
+    Assert.assertEquals(actual, expected);
+  }
+
+  @Test
+  public void getUsername_negativeId_returnsEmptyString() {
+    // Invalid ID with negative value.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    int userId = -1;
+    
+    String actual = Utility.getUsername(userId, request);
+    String expected = "";
+
+    Assert.assertEquals(actual, expected);
+  }
+
   /** Tests for getReviewStatus() function */
   @Test
-  public void approvedMentor() {
+  public void getReviewStatus_approvedMentor_returnsApproved() {
     // Mentor that has already been approved.
     HttpServletRequest request = mock(HttpServletRequest.class);
     int mentorId = 1;
@@ -132,20 +246,19 @@ public final class UtilityTest {
   }
 
   @Test
-  public void rejectedMentor() {
+  public void getReviewStatus_rejectedMentor_returnsRejected() {
     // Mentor that has been rejected.
     HttpServletRequest request = mock(HttpServletRequest.class);
     int mentorId = 6;
     
     String actual = Utility.getReviewStatus(mentorId, request);
-    System.out.println(actual);
     String expected = "rejected";
 
     Assert.assertEquals(actual, expected);
   }
 
   @Test
-  public void underReviewMentor() {
+  public void getReviewStatus_underReviewMentor_returnsEmptyString() {
     // Mentor that is still under review
     HttpServletRequest request = mock(HttpServletRequest.class);
     int mentorId = 7;
@@ -157,7 +270,7 @@ public final class UtilityTest {
   }
 
   @Test
-  public void invalidMentor() {
+  public void getReviewStatus_invalidMentor_returnsEmptyString() {
     // ID that does not correspond to any mentor.
     HttpServletRequest request = mock(HttpServletRequest.class);
     int mentorId = 2147483647;
