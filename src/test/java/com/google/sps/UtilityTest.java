@@ -115,4 +115,16 @@ public final class UtilityTest {
 
     Assert.assertEquals(actual, expected);
   }
+
+  /** Tests for getUsername function */
+  @Test
+  public void normalQueryTest() {
+    // Mock request for running function.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    
+    int actual = Utility.getUsername(/**userId=*/1, request);
+    int expected = "shaargtz";
+
+    Assert.assertEquals(actual, expected);
+  }
 }
