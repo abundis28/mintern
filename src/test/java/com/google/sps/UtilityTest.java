@@ -120,7 +120,7 @@ public final class UtilityTest {
   }
 
   /** 
-   *  Tests for getUserEmailsAsString .
+   *  Tests for getUserEmailsAsString.
    *  These only work by having an active MySQL database created with mysql/create.sql
    *  and then populating with mysql/testPopulate.sql.
    */
