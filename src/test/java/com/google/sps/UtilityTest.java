@@ -125,8 +125,8 @@ public final class UtilityTest {
     // Mock request for running function.
     HttpServletRequest request = mock(HttpServletRequest.class);
     
-    int actual = Utility.getUsername(/**userId=*/1, request);
-    int expected = "shaargtz";
+    String actual = Utility.getUsername(/**userId=*/1, request);
+    String expected = "shaargtz";
 
     Assert.assertEquals(actual, expected);
   }
