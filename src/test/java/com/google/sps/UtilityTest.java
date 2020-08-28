@@ -138,7 +138,7 @@ public final class UtilityTest {
 
   /** Tests for getUsersToNotify(). */
   @Test
-  public void getUserToNotifyQuestion() {
+  public void getUserToNotify_QuestionAndType_retrievesList() {
     // Get list of users' IDs who follow an specific question.
     HttpServletRequest request = mock(HttpServletRequest.class);
     String typeOfNotification = "question";
@@ -149,7 +149,7 @@ public final class UtilityTest {
   }
 
   @Test
-  public void getUsersToNotifyNoType() {
+  public void getUsersToNotify_NoType_emptyListRetrieved() {
     // No type of notification included.
     HttpServletRequest request = mock(HttpServletRequest.class);
     String typeOfNotification = "";
@@ -254,6 +254,7 @@ public final class UtilityTest {
     Assert.assertEquals(actual, expected);
   }
 
+  @Test
   public void getUsername_negativeId_returnsEmptyString() {
     // Invalid ID with negative value.
     HttpServletRequest request = mock(HttpServletRequest.class);
@@ -426,7 +427,7 @@ public final class UtilityTest {
 
   /** Tests for buildComment(). */
   @Test
-  public void buildComment() {
+  public void buildComment_validResultSet_successfulBuild() {
     // Compares a comment created from a mocked result set.
     ResultSet resultSetMock = mock(ResultSet.class);
     try {
