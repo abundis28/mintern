@@ -14,14 +14,28 @@
  
 package com.google.sps;
 
+import com.google.sps.classes.Answer;
+import com.google.sps.classes.Comment;
+import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.SubjectTag;
 import com.google.sps.classes.Utility;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.junit.Test;
+import static org.mockito.Mockito.*;
 
 @RunWith(JUnit4.class)
 public final class UtilityTest {
@@ -60,7 +74,7 @@ public final class UtilityTest {
 
     Assert.assertEquals(actual, expected);
   }
-  
+
   @Test
   public void zeroValue() {
     // String with value of zero.
@@ -82,7 +96,7 @@ public final class UtilityTest {
 
     Assert.assertEquals(actual, expected);
   }
-  
+
   @Test
   public void emptyValue() {
     // String with empty value.
@@ -93,7 +107,7 @@ public final class UtilityTest {
 
     Assert.assertEquals(actual, expected);
   }
-  
+
   @Test
   public void nonIntegerValue() {
     // String with non integer value.
@@ -105,6 +119,7 @@ public final class UtilityTest {
     Assert.assertEquals(actual, expected);
   }
   
+  @Ignore
   @Test
   public void nullValue() {
     // String with null value.
@@ -114,5 +129,53 @@ public final class UtilityTest {
     int expected = 0;
 
     Assert.assertEquals(actual, expected);
+  }
+
+  @Test
+  public void getUserToNotifyFull() {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    String typeOfNotification = "question";
+    int modifiedElementId = 2;
+
+    List<Integer> actual = Utility.getUsersToNotify(typeOfNotification, modifiedElementId, request);
+    List<Integer> expected = new ArrayList<>(List.of(4,6,7));
+
+    Assert.assertEquals(actual, expected);
+  }
+
+  @Test
+  public void getUserToNotifyNoType() {
+    // No type of notification included.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    String typeOfNotification = "";
+    int modifiedElementId = 2;
+
+    List<Integer> actual = Utility.getUsersToNotify(typeOfNotification, modifiedElementId, request);
+    List<Integer> expected = new ArrayList<>();
+    
+    Assert.assertEquals(actual, expected);
+  }
+
+  @Test
+  public void buildCommentFull() {
+    ResultSet resultSetMock = mock(ResultSet.class);
+    try {
+      when(resultSetMock.next()).thenReturn(true).thenReturn(false);
+      when(resultSetMock.getString(SqlConstants.COMMENT_FETCH_BODY)).thenReturn("Great answer!");
+      when(resultSetMock.getString(SqlConstants.COMMENT_FETCH_AUTHORNAME)).thenReturn("Andres Abundis");
+      when(resultSetMock.getTimestamp(SqlConstants.COMMENT_FETCH_DATETIME)).thenReturn(new Timestamp(1598899890));
+    } catch (SQLException exception) {
+      // If the connection or the query don't go through, we get the log of what happened.
+      Logger logger = Logger.getLogger(UtilityTest.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+    Comment actualComment = Utility.buildComment(resultSetMock);
+
+    Comment expectedComment = new Comment();
+    expectedComment.setBody("Great answer!");
+    expectedComment.setAuthorName("Andres Abundis");
+    expectedComment.setDateTime(new Timestamp(1598899890));
+
+    Assert.assertTrue(EqualsBuilder.reflectionEquals(expectedComment,actualComment));
   }
 }
