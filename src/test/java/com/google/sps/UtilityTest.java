@@ -14,16 +14,25 @@
  
 package com.google.sps;
 
+<<<<<<< HEAD
+import static org.mockito.Mockito.*;
+import com.google.sps.classes.Question;
+=======
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 import com.google.sps.classes.Answer;
 import com.google.sps.classes.Comment;
+>>>>>>> master
 import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.SubjectTag;
 import com.google.sps.classes.Utility;
 import java.sql.*;
+<<<<<<< HEAD
+import java.util.logging.Level;
+import java.util.logging.Logger;
+=======
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
@@ -31,6 +40,7 @@ import java.util.logging.Logger;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+>>>>>>> master
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.junit.Assert;
 import org.junit.Before;
@@ -136,6 +146,51 @@ public final class UtilityTest {
     Assert.assertEquals(actual, expected);
   }
 
+  /** 
+   * Tests for buildQuestion function.
+   * Testing for null input is out of scope since it never happens.
+   */
+  @Test
+  public void buildQuestion_normalResult_success() {
+    ResultSet testResultSet = mock(ResultSet.class);
+    try {
+      when(testResultTest.getInt(SqlConstants.QUESTION_FETCH_ID))
+          .thenReturn(1);
+      when(testResultTest.getString(SqlConstants.QUESTION_FETCH_TITLE))
+          .thenReturn("Title");
+      when(testResultTest.getString(SqlConstants.QUESTION_FETCH_BODY))
+          .thenReturn("Body");
+      when(testResultTest.getInt(SqlConstants.QUESTION_FETCH_ASKERID))
+          .thenReturn(2);
+      when(testResultTest.getString(SqlConstants.QUESTION_FETCH_ASKERNAME))
+          .thenReturn("Asker");
+      when(testResultTest.getTimestamp(SqlConstants.QUESTION_FETCH_DATETIME))
+          .thenReturn(new Timestamp(1598899890));
+      when(testResultTest.getInt(SqlConstants.QUESTION_FETCH_NUMBEROFFOLLOWERS))
+          .thenReturn(3);
+      when(testResultTest.getInt(SqlConstants.QUESTION_FETCH_NUMBEROFANSWERS))
+          .thenReturn(4);
+      when(testResultTest.getInt(SqlConstants.QUESTION_FETCH_USERFOLLOWSQUESTION))
+          .thenReturn(5);
+    } catch (SQLException exception) {
+      Logger logger = Logger.getLogger(UtilityTest.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+    Question actual = Utility.buildQuestion(testResultTest);
+    Question expected = new Question();
+    expected.setId(1);
+    expected.setTitle("Title");
+    expected.setBody("Body");
+    expected.setAskerId(2);
+    expected.setAskerName("Asker");
+    expected.setDateTime(new Timestamp(1598899890));
+    expected.setNumberOfFollowers(3);
+    expected.setNumberOfAnswers(4);
+    expected.setUserFollowsQuestion(true);
+    
+    Assert.assertTrue(EqualsBuilder.reflectionEquals(expected,actual));
+  }
+  
   /** Tests for getUsersToNotify(). */
   @Test
   public void getUserToNotify_QuestionAndType_retrievesList() {
