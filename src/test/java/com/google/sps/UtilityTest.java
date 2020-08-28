@@ -130,6 +130,7 @@ public final class UtilityTest {
     Assert.assertEquals(actual, expected);
   }
 
+  /** Tests for getUsersToNotify(). */
   @Test
   public void getUserToNotifyQuestion() {
     // Get list of users' IDs who follow an specific question.
@@ -144,7 +145,7 @@ public final class UtilityTest {
   }
 
   @Test
-  public void getUserToNotifyNoType() {
+  public void getUsersToNotifyNoType() {
     // No type of notification included.
     HttpServletRequest request = mock(HttpServletRequest.class);
     String typeOfNotification = "";
@@ -155,9 +156,9 @@ public final class UtilityTest {
     
     Assert.assertEquals(actual, expected);
   }
-
+  /** Tests for buildComment(). */
   @Test
-  public void buildCommentFull() {
+  public void buildComment() {
     // Compares a comment created from a mocked result set.
     ResultSet resultSetMock = mock(ResultSet.class);
     try {
