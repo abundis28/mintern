@@ -288,29 +288,29 @@ public final class UtilityTest {
   public void buildQuestion_normalResult_success() {
     ResultSet testResultSet = mock(ResultSet.class);
     try {
-      when(testResultTest.getInt(SqlConstants.QUESTION_FETCH_ID))
+      when(testResultSet.getInt(SqlConstants.QUESTION_FETCH_ID))
           .thenReturn(1);
-      when(testResultTest.getString(SqlConstants.QUESTION_FETCH_TITLE))
+      when(testResultSet.getString(SqlConstants.QUESTION_FETCH_TITLE))
           .thenReturn("Title");
-      when(testResultTest.getString(SqlConstants.QUESTION_FETCH_BODY))
+      when(testResultSet.getString(SqlConstants.QUESTION_FETCH_BODY))
           .thenReturn("Body");
-      when(testResultTest.getInt(SqlConstants.QUESTION_FETCH_ASKERID))
+      when(testResultSet.getInt(SqlConstants.QUESTION_FETCH_ASKERID))
           .thenReturn(2);
-      when(testResultTest.getString(SqlConstants.QUESTION_FETCH_ASKERNAME))
+      when(testResultSet.getString(SqlConstants.QUESTION_FETCH_ASKERNAME))
           .thenReturn("Asker");
-      when(testResultTest.getTimestamp(SqlConstants.QUESTION_FETCH_DATETIME))
+      when(testResultSet.getTimestamp(SqlConstants.QUESTION_FETCH_DATETIME))
           .thenReturn(new Timestamp(1598899890));
-      when(testResultTest.getInt(SqlConstants.QUESTION_FETCH_NUMBEROFFOLLOWERS))
+      when(testResultSet.getInt(SqlConstants.QUESTION_FETCH_NUMBEROFFOLLOWERS))
           .thenReturn(3);
-      when(testResultTest.getInt(SqlConstants.QUESTION_FETCH_NUMBEROFANSWERS))
+      when(testResultSet.getInt(SqlConstants.QUESTION_FETCH_NUMBEROFANSWERS))
           .thenReturn(4);
-      when(testResultTest.getInt(SqlConstants.QUESTION_FETCH_USERFOLLOWSQUESTION))
+      when(testResultSet.getInt(SqlConstants.QUESTION_FETCH_USERFOLLOWSQUESTION))
           .thenReturn(5);
     } catch (SQLException exception) {
       Logger logger = Logger.getLogger(UtilityTest.class.getName());
       logger.log(Level.SEVERE, exception.getMessage(), exception);
     }
-    Question actual = Utility.buildQuestion(testResultTest);
+    Question actual = Utility.buildQuestion(testResultSet);
     Question expected = new Question();
     expected.setId(1);
     expected.setTitle("Title");
