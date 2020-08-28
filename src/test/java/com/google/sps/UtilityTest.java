@@ -393,4 +393,88 @@ public final class UtilityTest {
 
     Assert.assertTrue(userId == 0);
   }
+
+  /** Tests for executeQuery() function */
+  @Test
+  public void executeQuery_insertQuery_doesInsert() {
+    // Query that inserts into database.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    String testQuery = "INSERT INTO Notification (message, url, date_time) "
+        + "VALUES ('Sample message', '/sample-url', '2020-01-01 12:00:00.000000')";
+    Utility.executeQuery(testQuery, request);
+
+    // Get ID to see if notification was inserted.
+    String query = "SELECT id FROM Notification "
+        + "WHERE message = 'Sample message' "
+        + "AND url = '/sample-url' "
+        + "AND date_time = '2020-01-01 12:00:00.000000'";
+    int notificationId = 0;
+    try {
+      Connection connection = Utility.getConnection(request);
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      ResultSet queryResult = preparedStatement.executeQuery();
+      queryResult.next();
+      notificationId = queryResult.getInt(1);
+    } catch (SQLException exception) {
+      Logger logger = Logger.getLogger(UtilityTest.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    Assert.assertTrue(notificationId > 0);
+  }
+
+  @Test
+  public void executeQuery_updateQuery_doesUpdate() {
+    // Query that updates row in database.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    String testQuery = "UPDATE Notification "
+        + "SET url = '/new-sample-url' "
+        + "WHERE message = 'Sample message'";
+    Utility.executeQuery(testQuery, request);
+
+    // Get ID to see if notification was inserted.
+    String query = "SELECT url FROM Notification "
+        + "WHERE message = 'Sample message' ";
+    String notificationUrl = "";
+    try {
+      Connection connection = Utility.getConnection(request);
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      ResultSet queryResult = preparedStatement.executeQuery();
+      queryResult.next();
+      notificationUrl = queryResult.getString(1);
+    } catch (SQLException exception) {
+      Logger logger = Logger.getLogger(UtilityTest.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    Assert.assertEquals(notificationUrl, "/new-sample-url");
+  }
+
+  @Test
+  public void executeQuery_incorrectQuery_doesNothing() {
+    // Query that throws error.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    String testQuery = "INSERT INTO Notification (message, url, date_time, wrong_column) "
+        + "VALUES ('Another sample message', '/sample-url-2', '2020-02-01 12:00:00.000000')";
+    Utility.executeQuery(testQuery, request);
+
+    // Get ID to see if notification was inserted.
+    String query = "SELECT id FROM Notification "
+        + "WHERE message = 'Another sample message' "
+        + "AND url = '/sample-url-2' "
+        + "AND date_time = '2020-02-01 12:00:00.000000'";
+    int notificationId = 0;
+    try {
+      Connection connection = Utility.getConnection(request);
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      ResultSet queryResult = preparedStatement.executeQuery();
+      queryResult.next();
+      notificationId = queryResult.getInt(1);
+    } catch (SQLException exception) {
+      Logger logger = Logger.getLogger(UtilityTest.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    Assert.assertTrue(notificationId == 0);
+  }
 }
