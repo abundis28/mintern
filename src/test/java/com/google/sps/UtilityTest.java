@@ -22,6 +22,9 @@ import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig
 import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.SubjectTag;
 import com.google.sps.classes.Utility;
+import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import org.junit.Assert;
@@ -279,5 +282,115 @@ public final class UtilityTest {
     String expected = "";
 
     Assert.assertEquals(actual, expected);
+  }
+
+  /** 
+   * Tests for addNewUser() function.
+   * A new user is being inserted in each test, so a query to check its existence is the way to
+   * assert the functionality.
+   */
+  @Test
+  public void addNewUser_normalUser_insertsToUser() {
+    // User with normal values.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    String firstName = "John";
+    String lastName = "Smith";
+    String username = "jsmith";
+    String email = "a0jsmith@itesm.mx";
+    int major = 1;
+    boolean is_mentor = false;
+    Utility.addNewUser(firstName, lastName, username, email, major, is_mentor, request);
+
+    // Get ID to see if user was inserted.
+    String query = "SELECT id FROM User "
+        + "WHERE first_name = 'John' "
+        + "AND last_name = 'Smith' "
+        + "AND username = 'jsmith' "
+        + "AND email = 'a0jsmith@itesm.mx' "
+        + "AND major_id = 1 "
+        + "AND is_mentor = FALSE";
+    int userId = 0;
+    try {
+      Connection connection = Utility.getConnection(request);
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      ResultSet queryResult = preparedStatement.executeQuery();
+      queryResult.next();
+      userId = queryResult.getInt(1);
+    } catch (SQLException exception) {
+      Logger logger = Logger.getLogger(UtilityTest.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    Assert.assertTrue(userId > 0);
+  }
+
+  @Test
+  public void addNewUser_emptyUser_insertsToUser() {
+    // User with empty values.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    String firstName = "";
+    String lastName = "";
+    String username = "";
+    String email = "";
+    int major = 1;
+    boolean is_mentor = false;
+    Utility.addNewUser(firstName, lastName, username, email, major, is_mentor, request);
+
+    // Get ID to see if user was inserted.
+    String query = "SELECT id FROM User "
+        + "WHERE first_name = '' "
+        + "AND last_name = '' "
+        + "AND username = '' "
+        + "AND email = '' "
+        + "AND major_id = 1 "
+        + "AND is_mentor = FALSE";
+    int userId = 0;
+    try {
+      Connection connection = Utility.getConnection(request);
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      ResultSet queryResult = preparedStatement.executeQuery();
+      queryResult.next();
+      userId = queryResult.getInt(1);
+    } catch (SQLException exception) {
+      Logger logger = Logger.getLogger(UtilityTest.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    Assert.assertTrue(userId > 0);
+  }
+
+  @Test
+  public void addNewUser_invalidMajorUser_doesNotInsert() {
+    // User with major that is not in Major table.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    String firstName = "";
+    String lastName = "";
+    String username = "";
+    String email = "";
+    int major = 0;
+    boolean is_mentor = false;
+    Utility.addNewUser(firstName, lastName, username, email, major, is_mentor, request);
+
+    // Get ID to see if user was inserted.
+    String query = "SELECT id FROM User "
+        + "WHERE first_name = '' "
+        + "AND last_name = '' "
+        + "AND username = '' "
+        + "AND email = '' "
+        + "AND major_id = 0 "
+        + "AND is_mentor = FALSE";
+    int userId = 0;
+    try {
+      Connection connection = Utility.getConnection(request);
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      ResultSet queryResult = preparedStatement.executeQuery();
+      queryResult.next();
+      userId = queryResult.getInt(1);
+    } catch (SQLException exception) {
+      Logger logger = Logger.getLogger(UtilityTest.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    Assert.assertTrue(userId == 0);
   }
 }
