@@ -153,7 +153,7 @@ public final class UtilityTest {
   }
 
   @Test
-  public void nonExistentUserQuery() {
+  public void getUserEmailsAsString_nonExistentUserQuery_Success() {
     // Mock request for running function.
     HttpServletRequest request = mock(HttpServletRequest.class);
     
