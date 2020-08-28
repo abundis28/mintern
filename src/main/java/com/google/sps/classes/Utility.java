@@ -254,6 +254,18 @@ public final class Utility {
       // If the notification is for a new comment in an answer.
       query =  "SELECT follower_id FROM AnswerFollower WHERE answer_id = " +
                       modifiedElementId;
+    } else if (typeOfNotification.equals("requestApproval")) {
+      // If the notification is for a new approval request.
+      query =  "SELECT approver_id FROM MentorApproval WHERE mentor_id = " +
+                      modifiedElementId;
+    } else if (typeOfNotification.equals("approved")) {
+      // If the notification is for an approved mentor.
+      query =  "SELECT mentor_id FROM MentorEvidence WHERE mentor_id = " +
+                      modifiedElementId;
+    } else if (typeOfNotification.equals("rejected")) {
+      // If the notification is for a rejected mentor.
+      query =  "SELECT mentor_id FROM MentorEvidence WHERE mentor_id = " +
+                      modifiedElementId;
     }
     if (query.equals("")) { return usersToNotify; }
     // Query the infor1mation from the corresponding table defined in the query.
