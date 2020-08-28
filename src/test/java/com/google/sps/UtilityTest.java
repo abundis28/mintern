@@ -14,21 +14,24 @@
  
 package com.google.sps;
 
-import static org.mockito.Mockito.*;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
+import com.google.sps.classes.Answer;
+import com.google.sps.classes.Comment;
 import com.google.sps.classes.SqlConstants;
 import com.google.sps.classes.SubjectTag;
 import com.google.sps.classes.Utility;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -37,6 +40,7 @@ import org.junit.runners.JUnit4;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import static org.mockito.Mockito.*;
 
 
 @RunWith(JUnit4.class)
@@ -76,7 +80,7 @@ public final class UtilityTest {
 
     Assert.assertEquals(actual, expected);
   }
-  
+
   @Test
   public void tryParseInt_zeroValue_returnsZero() {
     // String with value of zero.
@@ -87,7 +91,7 @@ public final class UtilityTest {
 
     Assert.assertEquals(actual, expected);
   }
-  
+
   @Test
   public void tryParseInt_negativeValue_returnsNegativeInt() {
     // String with a negative integer value.
@@ -98,7 +102,7 @@ public final class UtilityTest {
 
     Assert.assertEquals(actual, expected);
   }
-  
+
   @Test
   public void tryParseInt_emptyValue_returnsZero() {
     // String with empty value.
@@ -109,7 +113,7 @@ public final class UtilityTest {
 
     Assert.assertEquals(actual, expected);
   }
-  
+
   @Test
   public void tryParseInt_nonIntegerValue_returnsZero() {
     // String with non integer value.
@@ -132,6 +136,29 @@ public final class UtilityTest {
     Assert.assertEquals(actual, expected);
   }
 
+  /** Tests for getUsersToNotify(). */
+  @Test
+  public void getUserToNotify_QuestionAndType_retrievesList() {
+    // Get list of users' IDs who follow an specific question.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    String typeOfNotification = "question";
+    int modifiedElementId = 2;
+
+    List<Integer> actual = Utility.getUsersToNotify(typeOfNotification, modifiedElementId, request);
+    List<Integer> expected = new ArrayList<>(List.of(4,6,7));
+  }
+
+  @Test
+  public void getUsersToNotify_NoType_emptyListRetrieved() {
+    // No type of notification included.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    String typeOfNotification = "";
+    int modifiedElementId = 2;
+
+    List<Integer> actual = Utility.getUsersToNotify(typeOfNotification, modifiedElementId, request);
+    List<Integer> expected = new ArrayList<>();
+  }
+  
   /** 
    *  Tests for getUserEmailsAsString.
    *  These only work by having an active MySQL database created with mysql/create.sql
@@ -485,6 +512,34 @@ public final class UtilityTest {
     Assert.assertTrue(userId == 0);
   }
 
+  /** Tests for buildComment(). */
+  @Test
+  public void buildComment_validResultSet_successfulBuild() {
+    // Compares a comment created from a mocked result set.
+    ResultSet resultSetMock = mock(ResultSet.class);
+    try {
+      when(resultSetMock.next()).thenReturn(true).thenReturn(false);
+      when(resultSetMock.getString(SqlConstants.COMMENT_FETCH_BODY)).thenReturn("Great answer!");
+      when(resultSetMock.getString(SqlConstants.COMMENT_FETCH_AUTHORNAME)).thenReturn(
+          "Andres Abundis");
+      when(resultSetMock.getTimestamp(SqlConstants.COMMENT_FETCH_DATETIME)).thenReturn(
+          new Timestamp(1598899890));
+    } catch (SQLException exception) {
+      // Log if the result set data acquisition found trouble.
+      Logger logger = Logger.getLogger(UtilityTest.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+    // Build the actual commment from the result set.
+    Comment actualComment = Utility.buildComment(resultSetMock);
+
+    Comment expectedComment = new Comment();
+    expectedComment.setBody("Great answer!");
+    expectedComment.setAuthorName("Andres Abundis");
+    expectedComment.setDateTime(new Timestamp(1598899890));
+
+    Assert.assertTrue(EqualsBuilder.reflectionEquals(expectedComment,actualComment));
+  }
+  
   /** Tests for executeQuery() function */
   @Test
   public void executeQuery_insertQuery_doesInsert() {
