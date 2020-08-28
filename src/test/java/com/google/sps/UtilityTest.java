@@ -14,6 +14,7 @@
  
 package com.google.sps;
 
+import static org.mockito.Mockito.*;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
@@ -32,7 +33,6 @@ import org.junit.runners.JUnit4;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import static org.mockito.Mockito.*;
 
 
 @RunWith(JUnit4.class)
@@ -40,7 +40,7 @@ public final class UtilityTest {
   
   /** Tests for convertUsingGsonToJson() function */
   @Test
-  public void convertUsingGsonToJsonTest() {
+  public void convertUsingGsonToJson_test_returnsJson() {
     // Object with attributes.
     SubjectTag tag = new SubjectTag(5, "Interviews", "red");
     String expectedJson = "{\"id\":5,\"subject\":\"Interviews\",\"color\":\"red\"}";
@@ -51,7 +51,7 @@ public final class UtilityTest {
   }
 
   @Test
-  public void convertUsingGsonToJsonEmptyTest() {
+  public void convertUsingGsonToJson_emptyTest_returnsJsonWithEmptyValues() {
     // Empty object that will take the default values in the constructor.
     SubjectTag tag = new SubjectTag();
     String expectedJson = "{\"id\":-1,\"subject\":\"\",\"color\":\"\"}";
@@ -63,7 +63,7 @@ public final class UtilityTest {
   
   /** Tests for tryParseInt() function */
   @Test
-  public void positiveValue() {
+  public void tryParseInt_positiveValue_returnsPositiveInt() {
     // String with a positive integer value.
     String stringToInt = "1";
     
@@ -74,7 +74,7 @@ public final class UtilityTest {
   }
   
   @Test
-  public void zeroValue() {
+  public void tryParseInt_zeroValue_returnsZero() {
     // String with value of zero.
     String stringToInt = "0";
     
@@ -85,7 +85,7 @@ public final class UtilityTest {
   }
   
   @Test
-  public void negativeValue() {
+  public void tryParseInt_negativeValue_returnsNegativeInt() {
     // String with a negative integer value.
     String stringToInt = "-1";
     
@@ -96,7 +96,7 @@ public final class UtilityTest {
   }
   
   @Test
-  public void emptyValue() {
+  public void tryParseInt_emptyValue_returnsZero() {
     // String with empty value.
     String stringToInt = "";
     
@@ -107,7 +107,7 @@ public final class UtilityTest {
   }
   
   @Test
-  public void nonIntegerValue() {
+  public void tryParseInt_nonIntegerValue_returnsZero() {
     // String with non integer value.
     String stringToInt = "Non integer value";
     
@@ -118,7 +118,7 @@ public final class UtilityTest {
   }
   
   @Test
-  public void nullValue() {
+  public void tryParseInt_nullValue_returnsZero() {
     // String with null value.
     String stringToInt = null;
     
@@ -127,10 +127,10 @@ public final class UtilityTest {
 
     Assert.assertEquals(actual, expected);
   }
-  
+
   /** Tests for getUserId() function */
   @Test
-  public void loggedOutUser() {
+  public void getUserId_loggedOutUser_returnsUSER_LOGGED_OUT_ID() {
     // UserService that is logged out.
     HttpServletRequest request = mock(HttpServletRequest.class);
     LocalServiceTestHelper loggedOutUser =
@@ -147,7 +147,7 @@ public final class UtilityTest {
   }
 
   @Test
-  public void loggedInUser() {
+  public void getUserId_loggedInUser_returnsUSER_LOGGED_OUT_ID() {
     // UserService that is logged in, but not registered.
     HttpServletRequest request = mock(HttpServletRequest.class);
     LocalServiceTestHelper loggedInUser =
@@ -166,7 +166,7 @@ public final class UtilityTest {
   }
 
   @Test
-  public void registeredUser() {
+  public void getUserId_registeredUser_returnsId() {
     // UserService that is logged in and also registered.
     HttpServletRequest request = mock(HttpServletRequest.class);
     LocalServiceTestHelper loggedInUser =
@@ -182,5 +182,54 @@ public final class UtilityTest {
 
     Assert.assertEquals(actual, expected);
     loggedInUser.tearDown();
+  }
+
+  /** Tests for getUsername() function */
+  @Test
+  public void getUsername_validId_returnsUsername() {
+    // ID with found user.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    int userId = 1;
+    
+    String actual = Utility.getUsername(userId, request);
+    String expected = "shaargtz";
+
+    Assert.assertEquals(actual, expected);
+  }
+
+  @Test
+  public void getUsername_validIdWithNoUser_returnsEmptyString() {
+    // ID with no user.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    int userId = 2147483647;
+    
+    String actual = Utility.getUsername(userId, request);
+    String expected = "";
+
+    Assert.assertEquals(actual, expected);
+  }
+
+  @Test
+  public void getUsername_zeroId_returnsEmptyString() {
+    // Invalid ID with value of zero.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    int userId = 0;
+    
+    String actual = Utility.getUsername(userId, request);
+    String expected = "";
+
+    Assert.assertEquals(actual, expected);
+  }
+
+  @Test
+  public void getUsername_negativeId_returnsEmptyString() {
+    // Invalid ID with negative value.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    int userId = -1;
+    
+    String actual = Utility.getUsername(userId, request);
+    String expected = "";
+
+    Assert.assertEquals(actual, expected);
   }
 }
