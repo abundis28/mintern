@@ -144,7 +144,7 @@ public final class UtilityTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     
     // Get the email of the first two users.
-    List<Integer> userIds = new ArrayList<>(List.of(1,2));
+    List<Integer> userIds = new ArrayList<>(List.of(1, 2));
 
     String actual = Utility.getUserEmailsAsString(userIds, request);
     String expected = "a00825287@itesm.mx,a01283152@itesm.mx";
@@ -159,6 +159,20 @@ public final class UtilityTest {
     
     // Get the email of the first two users.
     List<Integer> userIds = new ArrayList<>(List.of(-1));
+
+    String actual = Utility.getUserEmailsAsString(userIds, request);
+    String expected = "";
+
+    Assert.assertEquals(actual, expected);
+  }
+
+  @Test
+  public void manyNonExistentUsersQuery() {
+    // Mock request for running function.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    
+    // Get the email of the first two users.
+    List<Integer> userIds = new ArrayList<>(List.of(-1, -2, -3));
 
     String actual = Utility.getUserEmailsAsString(userIds, request);
     String expected = "";
