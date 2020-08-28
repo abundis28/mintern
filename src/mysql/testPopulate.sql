@@ -20,8 +20,8 @@ VALUES
   ('Omar', 'Montiel', 'oumontiel', 'a00825358@itesm.mx', 1, TRUE),
   ('Ernesto', 'Adame', 'ernestoadame', 'a00825923@itesm.mx', 1, FALSE),
   ('Diego', 'Gomez', 'dgomez', 'a00824758@itesm.mx', 1, FALSE),
-  ('Rodrigo', 'Ayup', 'ayup', 'a01234245@itesm.mx', 1, FALSE),
-  ('Daniel', 'Hernandez', 'danielhdz', 'a00825596@itesm.mx', 1, FALSE);
+  ('Rodrigo', 'Ayup', 'ayup', 'a01234245@itesm.mx', 1, TRUE),
+  ('Daniel', 'Hernandez', 'danielhdz', 'a00825596@itesm.mx', 1, TRUE);
 
 INSERT INTO Notification (message, url, date_time) 
 VALUES
@@ -65,7 +65,9 @@ INSERT INTO MentorEvidence (mentor_id, approvals, is_approved, is_rejected, para
 VALUES
   (1, 2, TRUE, FALSE, 'I worked at Google. Hi.'),
   (2, 2, TRUE, FALSE, 'I worked at Google. Please approve.'),
-  (3, 2, TRUE, FALSE, 'I worked at Google. Here is a link: link.com');
+  (3, 2, TRUE, FALSE, 'I worked at Google. Here is a link: link.com'),
+  (6, 0, FALSE, TRUE, 'I worked at Google. Here is a link: link.com'),
+  (7, 1, FALSE, FALSE, 'I worked at Google. Here is a link: link.com');
 
 INSERT INTO MentorApproval (mentor_id, approver_id, is_reviewed)
 VALUES
