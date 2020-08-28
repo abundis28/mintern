@@ -124,7 +124,7 @@ public final class UtilityTest {
   /** Tests for executeQuery() function */
   @Test
   public void insertQuery() {
-    // ID with found user.
+    // Query that inserts into database.
     HttpServletRequest request = mock(HttpServletRequest.class);
     String testQuery = "INSERT INTO Notification (message, url, date_time) "
         + "VALUES ('Sample message', '/sample-url', '2020-01-01 12:00:00.000000')";
@@ -152,7 +152,7 @@ public final class UtilityTest {
 
   @Test
   public void updateQuery() {
-    // ID with found user.
+    // Query that updates row in database.
     HttpServletRequest request = mock(HttpServletRequest.class);
     String testQuery = "UPDATE Notification "
         + "SET url = '/new-sample-url' "
@@ -175,5 +175,33 @@ public final class UtilityTest {
     }
 
     Assert.assertEquals(notificationUrl, "/new-sample-url");
+  }
+
+  @Test
+  public void incorrectQuery() {
+    // Query that throws error.
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    String testQuery = "INSERT INTO Notification (message, url, date_time, wrong_column) "
+        + "VALUES ('Another sample message', '/sample-url-2', '2020-02-01 12:00:00.000000')";
+    Utility.executeQuery(testQuery, request);
+
+    // Get ID to see if notification was inserted.
+    String query = "SELECT id FROM Notification "
+        + "WHERE message = 'Another sample message' "
+        + "AND url = '/sample-url-2' "
+        + "AND date_time = '2020-02-01 12:00:00.000000'";
+    int notificationId = 0;
+    try {
+      Connection connection = Utility.getConnection(request);
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      ResultSet queryResult = preparedStatement.executeQuery();
+      queryResult.next();
+      notificationId = queryResult.getInt(1);
+    } catch (SQLException exception) {
+      Logger logger = Logger.getLogger(UtilityTest.class.getName());
+      logger.log(Level.SEVERE, exception.getMessage(), exception);
+    }
+
+    Assert.assertTrue(notificationId == 0);
   }
 }
