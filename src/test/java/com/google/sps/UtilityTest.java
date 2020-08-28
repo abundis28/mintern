@@ -121,7 +121,11 @@ public final class UtilityTest {
     Assert.assertEquals(actual, expected);
   }
   
-  /** Tests for addNewUser() function */
+  /** 
+   * Tests for addNewUser() function.
+   * A new user is being inserted in each test, so a query to check its existence is the way to
+   * assert the functionality.
+   */
   @Test
   public void normalUser() {
     // User with normal values.
