@@ -14,6 +14,7 @@
  
 package com.google.sps;
 
+import static org.mockito.Mockito.*;
 import com.google.sps.classes.SubjectTag;
 import com.google.sps.classes.Utility;
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +24,6 @@ import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.junit.Test;
-import static org.mockito.Mockito.*;
 
 @RunWith(JUnit4.class)
 public final class UtilityTest {
@@ -120,7 +120,7 @@ public final class UtilityTest {
 
   /** Tests for getUsername() function */
   @Test
-  public void validId() {
+  public void getUsername_validId_returnsUsername() {
     // ID with found user.
     HttpServletRequest request = mock(HttpServletRequest.class);
     int userId = 1;
@@ -132,7 +132,7 @@ public final class UtilityTest {
   }
 
   @Test
-  public void validIdWithNoUser() {
+  public void getUsername_validIdWithNoUser_returnsEmptyString() {
     // ID with no user.
     HttpServletRequest request = mock(HttpServletRequest.class);
     int userId = 2147483647;
@@ -144,7 +144,7 @@ public final class UtilityTest {
   }
 
   @Test
-  public void zeroId() {
+  public void getUsername_zeroId_returnsEmptyString() {
     // Invalid ID with value of zero.
     HttpServletRequest request = mock(HttpServletRequest.class);
     int userId = 0;
@@ -156,7 +156,7 @@ public final class UtilityTest {
   }
 
   @Test
-  public void negativeId() {
+  public void getUsername_negativeId_returnsEmptyString() {
     // Invalid ID with negative value.
     HttpServletRequest request = mock(HttpServletRequest.class);
     int userId = -1;
