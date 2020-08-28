@@ -37,7 +37,7 @@ import javax.sql.DataSource;
 public final class Utility {
   // Define if running locally or deploying the current branch.
   // Define IS_LOCALLY_DEPLOYED constant as true for a local deployment or deploy for a cloud deployment.
-  public static final boolean IS_LOCALLY_DEPLOYED = false;
+  public static final boolean IS_LOCALLY_DEPLOYED = true;
 
   /**
    * Returns a connection that it's obtained depending on the defined way of deployment.
@@ -221,10 +221,11 @@ public final class Utility {
       try (Connection connection = getConnection(request);
         PreparedStatement pst = connection.prepareStatement(query);
         ResultSet rs = pst.executeQuery()) {
-        rs.next();
-        // Concatenate the user's email and a comma for the InternetAddress parser to separate.
-        userEmails = userEmails.concat(rs.getString(1));
-        userEmails = userEmails.concat(",");
+        if (rs.next()) {
+          // Concatenate the user's email and a comma for the InternetAddress parser to separate.
+          userEmails = userEmails.concat(rs.getString(1));
+          userEmails = userEmails.concat(",");
+        }
         connection.close();
       } catch (SQLException ex) {
         Logger lgr = Logger.getLogger(Utility.class.getName());
@@ -232,7 +233,7 @@ public final class Utility {
       }
     }
     // Erase the last comma.
-    userEmails = userEmails.substring(0, userEmails.length() - 1);
+    if (userEmails.length() > 0) userEmails = userEmails.substring(0, userEmails.length() - 1);
     return userEmails;
   }
 
@@ -252,6 +253,18 @@ public final class Utility {
     } else if (typeOfNotification.equals("answer")) {
       // If the notification is for a new comment in an answer.
       query =  "SELECT follower_id FROM AnswerFollower WHERE answer_id = " +
+                      modifiedElementId;
+    } else if (typeOfNotification.equals("requestApproval")) {
+      // If the notification is for a new approval request.
+      query =  "SELECT approver_id FROM MentorApproval WHERE mentor_id = " +
+                      modifiedElementId;
+    } else if (typeOfNotification.equals("approved")) {
+      // If the notification is for an approved mentor.
+      query =  "SELECT mentor_id FROM MentorEvidence WHERE mentor_id = " +
+                      modifiedElementId;
+    } else if (typeOfNotification.equals("rejected")) {
+      // If the notification is for a rejected mentor.
+      query =  "SELECT mentor_id FROM MentorEvidence WHERE mentor_id = " +
                       modifiedElementId;
     }
     if (query.equals("")) { return usersToNotify; }

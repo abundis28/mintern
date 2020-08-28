@@ -15,31 +15,32 @@
 /**
  * Function that will call other functions when the index page loads. 
  */
-function loadIndex() {
-  addAutoResize();
-  fetchAuthIndexQuestion();
+async function loadIndex() {
   // Determine whether all the questions should be fetched or just the ones that match the search.
   const fullTextSearch = (new URL(document.location)).searchParams.get("search");
   if (fullTextSearch === "1") {
     // Fetch first page of the questions related to the string input in the search bar.
     const stringSearchInput = 
         (new URL(document.location)).searchParams.get("stringSearchInput");
-    searchQuestion(stringSearchInput, /**pageNumber=*/1);
+    await searchQuestion(stringSearchInput, /**pageNumber=*/1);
   } else {
     // Fetch the whole forum on the first page.
-    fetchForum(/**pageNumber=*/1);
+    await fetchForum(/**pageNumber=*/1);
     eraseQueryStringFromUrl();
   }
+  addAutoResize();
+  fetchAuthIndexQuestion();
 }
 
 /**
  * Function that will call other functions when the question page loads. 
  */
-function loadQuestion() {
+async function loadQuestion() {
+  await fetchAnswers();
   fetchAuthIndexQuestion();
   fetchSingleQuestion();
-  fetchAnswers();
   setQuestionIdValue();
+  showElementsOnLogin();
 }
 
 /**
@@ -122,30 +123,6 @@ function fetchAuthIndexQuestion() {
       createAuthenticationButton(
           user.authenticationUrl, 'btn-outline-success', 'Log Out', 'login');
 
-      // Show submission forms when logged in.
-      const questionSubmission = document.getElementById('post-question');
-      if (questionSubmission) {
-        questionSubmission.style.display = 'block';
-      }
-
-      const answerSubmission = document.getElementById('post-answer');
-      if (answerSubmission) {
-        answerSubmission.style.display = "block";
-      }
-
-      const commentSubmission = document.getElementsByClassName('post-comment');
-      if (commentSubmission != null) {
-        // The timeout is to wait for the dynamically generated forms of each
-        // answer to appear in the DOM so that the attribute can be changed.
-        setTimeout(() => {
-          for (element of commentSubmission) {
-            element.style.display = "block";
-          }
-          // The timeout of 500ms is enough to let the forms load and not make
-          // the user feel like it's taking too long to load the whole page.
-        }, 500);
-      }
-
     } else {
       // If user is logged out, show signup and login buttons in navbar.
 
@@ -174,7 +151,9 @@ async function fetchForum(pageNumber) {
   // Empty the HTML for multiple searches in a row.
   questionsContainer.innerHTML = '';
   questionsContainer.appendChild(createPageElement(
-      questionsObject, pageNumber, ''));
+      questionsObject, pageNumber, /**seargString=*/''));
+  
+  showElementsOnLogin();
 }
 
 /**
@@ -560,20 +539,20 @@ function createQuestionElement(question, isForum) {
   questionWrapper.appendChild(questionElement);
 
   // Star icon.
-  const iconElement = document.createElement('i');
-  iconElement.setAttribute('id', 'icon' + question.id);
-  iconElement.setAttribute('style', 'cursor: pointer');
+  const starIconElement = document.createElement('i');
+  starIconElement.setAttribute('id', 'icon' + question.id);
+  starIconElement.setAttribute('style', 'cursor: pointer; display: none');
   if (question.userFollowsQuestion) {
     // If the user follows the question, the icon will be solid.
-    iconElement.setAttribute('class', 'fas fa-star fa-2x');
+    starIconElement.setAttribute('class', 'fas fa-star fa-2x');
   } else {
     // If the user doesn't follow the question, the icon will be outlined.
-    iconElement.setAttribute('class', 'far fa-star fa-2x');
+    starIconElement.setAttribute('class', 'far fa-star fa-2x');
   }
   // Add logic to follow or unfollow when clicking the star.
-  iconElement.setAttribute('onclick', 'updateFollowerStatus(' 
+  starIconElement.setAttribute('onclick', 'updateFollowerStatus(' 
       + question.userFollowsQuestion + ', ' + question.id + ')');
-  questionElement.appendChild(iconElement);
+  questionElement.appendChild(starIconElement);
 
   // Div to hold all of the text and style it.
   const textContainer = document.createElement('div');
@@ -764,7 +743,7 @@ function createCommentFormElement(answerId) {
 function addAutoResize() {
   document.querySelectorAll('[data-autoresize]').forEach(function (element) {
     element.style.boxSizing = 'border-box';
-    var offset = element.offsetHeight - element.clientHeight;
+    let offset = element.offsetHeight - element.clientHeight;
     element.addEventListener('input', function (event) {
       event.target.style.height = 'auto';
       event.target.style.height = event.target.scrollHeight + offset + 'px';
@@ -867,7 +846,47 @@ function getQuestionId() {
  * Sets attribute to the corresponding form elements.
  */
 function setQuestionIdValue() {
-  document.getElementById('question-id').value = getQuestionId(); 
+  document.getElementById('question-id').value = getQuestionId();
+}
+
+/**
+ * Displays relevant elements when the user is logged in.
+ */
+function showElementsOnLogin() {
+  fetch('/authentication').then(response => response.json()).then(user => {
+    if (user.isUserLoggedIn) {
+      const questionSubmission = document.getElementById('post-question');
+      if (questionSubmission) {
+        questionSubmission.style.display = 'block';
+      }
+
+      const answerSubmission = document.getElementById('post-answer');
+      if (answerSubmission) {
+        answerSubmission.style.display = "block";
+      }
+
+      const commentSubmission = document.getElementsByClassName('post-comment');
+      if (commentSubmission != null) {
+        for (element of commentSubmission) {
+          element.style.display = "block";
+        }
+      }
+
+      const starIconSolid = document.getElementsByClassName('fas fa-star fa-2x');
+      if (starIconSolid != null) {
+        for (element of starIconSolid) {
+          element.style.display = "block";
+        }
+      }
+
+      const starIconOutline = document.getElementsByClassName('far fa-star fa-2x');
+      if (starIconOutline != null) {
+        for (element of starIconOutline) {
+          element.style.display = "block";
+        }
+      }
+    }
+  })
 }
 
 /**
@@ -893,7 +912,7 @@ function searchRedirect() {
 /**
  * Searches questions that contain the input string in the title or body elements.
  */
-function searchQuestion(stringSearchInput, pageNumber) {
+async function searchQuestion(stringSearchInput, pageNumber) {
   if (stringSearchInput != "") {
     const questionsContainer = document.getElementById('forum');
     questionsContainer.innerHTML = "";
@@ -901,7 +920,7 @@ function searchQuestion(stringSearchInput, pageNumber) {
         .then(response => response.json()).then(forumPage => {
           questionsContainer.appendChild(createPageElement(
               forumPage, pageNumber, stringSearchInput));
-        })
+        }).then(response => showElementsOnLogin());
   }
 }
 
@@ -912,9 +931,9 @@ function searchQuestion(stringSearchInput, pageNumber) {
   'use strict';
   window.addEventListener('load', function() {
     // Fetch all the forms we want to apply custom Bootstrap validation styles to
-    var forms = document.getElementsByClassName('needs-validation');
+    let forms = document.getElementsByClassName('needs-validation');
     // Loop over them and prevent submission
-    var validation = Array.prototype.filter.call(forms, function(form) {
+    let validation = Array.prototype.filter.call(forms, function(form) {
       form.addEventListener('submit', function(event) {
         if (form.checkValidity() === false) {
           event.preventDefault();
