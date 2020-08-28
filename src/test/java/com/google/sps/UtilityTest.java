@@ -123,7 +123,10 @@ public final class UtilityTest {
     Assert.assertEquals(actual, expected);
   }
 
-  /** Tests for buildQuestion function */
+  /** 
+   * Tests for buildQuestion function.
+   * Testing for null input is out of scope since it never happens.
+   */
   @Test
   public void normalResult() {
     ResultSet testResultTest = mock(ResultSet.class);
