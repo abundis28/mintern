@@ -40,7 +40,7 @@ public final class UtilityTest {
   
   /** Tests for convertUsingGsonToJson() function */
   @Test
-  public void convertUsingGsonToJsonTest() {
+  public void convertUsingGsonToJson_test_returnsJson() {
     // Object with attributes.
     SubjectTag tag = new SubjectTag(5, "Interviews", "red");
     String expectedJson = "{\"id\":5,\"subject\":\"Interviews\",\"color\":\"red\"}";
@@ -51,7 +51,7 @@ public final class UtilityTest {
   }
 
   @Test
-  public void convertUsingGsonToJsonEmptyTest() {
+  public void convertUsingGsonToJson_emptyTest_returnsJsonWithEmptyValues() {
     // Empty object that will take the default values in the constructor.
     SubjectTag tag = new SubjectTag();
     String expectedJson = "{\"id\":-1,\"subject\":\"\",\"color\":\"\"}";
@@ -63,7 +63,7 @@ public final class UtilityTest {
   
   /** Tests for tryParseInt() function */
   @Test
-  public void positiveValue() {
+  public void tryParseInt_positiveValue_returnsPositiveInt() {
     // String with a positive integer value.
     String stringToInt = "1";
     
@@ -74,7 +74,7 @@ public final class UtilityTest {
   }
   
   @Test
-  public void zeroValue() {
+  public void tryParseInt_zeroValue_returnsZero() {
     // String with value of zero.
     String stringToInt = "0";
     
@@ -85,7 +85,7 @@ public final class UtilityTest {
   }
   
   @Test
-  public void negativeValue() {
+  public void tryParseInt_negativeValue_returnsNegativeInt() {
     // String with a negative integer value.
     String stringToInt = "-1";
     
@@ -96,7 +96,7 @@ public final class UtilityTest {
   }
   
   @Test
-  public void emptyValue() {
+  public void tryParseInt_emptyValue_returnsZero() {
     // String with empty value.
     String stringToInt = "";
     
@@ -107,7 +107,7 @@ public final class UtilityTest {
   }
   
   @Test
-  public void nonIntegerValue() {
+  public void tryParseInt_nonIntegerValue_returnsZero() {
     // String with non integer value.
     String stringToInt = "Non integer value";
     
@@ -118,7 +118,7 @@ public final class UtilityTest {
   }
   
   @Test
-  public void nullValue() {
+  public void tryParseInt_nullValue_returnsZero() {
     // String with null value.
     String stringToInt = null;
     
